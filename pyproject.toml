@@ -1,0 +1,23 @@
+[project]
+name = "agentkit"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+llm = ["litellm>=1.55.0"]
+speech = ["mlx-audio>=0.3.0", "numpy", "sounddevice", "parakeet-mlx>=0.2.0", "soundfile"]
+mlx_llm = ["mlx-lm>=0.20.0"]
+audio = ["sounddevice", "numpy", "webrtcvad"]
+gmail = ["google-api-python-client>=2.0", "google-auth>=2.0"]
+imap = []
+notify = []
+youtube = ["youtube-transcript-api", "requests"]
+all = ["agentkit[llm,speech,mlx_llm,audio,gmail,youtube]"]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
