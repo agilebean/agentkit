@@ -1,62 +1,170 @@
-# Lessons learned — agentkit module extraction CI failures
+# Lessons learned — agentkit module extraction
 
-## Root cause chain
+**Read this before touching any consumer repo after extracting shared code.**
 
-Three independent issues cascaded into repeated CI failures across 4 repos:
+---
 
-| # | Issue | Commits affected | When detected |
-|---|---|---|---|
-| 1 | `slugify_vendor` missing from `naming.py` | Pre-existing since repo creation | Post-migration CI run |
-| 2 | `agentkit` not installed in project mamba envs or CI | `core/` migration commit | User runtime + CI |
-| 3 | `agentkit` was a private repo — cross-repo CI checkout failed | All migration commits | CI |
-| 4 | `ensure_brave_running` not mocked in CLI tests | Pre-existing since refactor | CI |
+## 1. WRONG: Not installing agentkit in every project's mamba env
 
-## Fixes
+**Symptom:** `ModuleNotFoundError: No module named 'agentkit'` at runtime.
 
-### 1. `slugify_vendor` missing (invoice-admin)
+**False assumption:** "I ran `pip install -e .` in the agentkit directory, so all projects can import it."
 
-**Root cause:** Test `test_core/test_naming.py` imported `slugify_vendor` from `invoice_admin.core.naming`, but the function was never implemented. The test had been broken since the repo's initial commit.
+**Reality:** Each project uses its OWN mamba environment. Installing in the base env or another project's env does nothing for the other envs.
 
-**Fix:** Added `slugify_vendor(text)` to `naming.py` — lowercases, hyphenates, falls back to `"vendor"` for symbol-only input. Also unified filename separators (spaces → underscores) to match test expectations.
+**DO THIS:**
+```bash
+# After every extraction, install agentkit in EVERY consumer env:
+~/Software/miniforge3/envs/decisionmaker/bin/pip install -e ~/Software/Prototypes/agentkit
+~/Software/miniforge3/envs/email-digest/bin/pip install -e ~/Software/Prototypes/agentkit
+~/Software/miniforge3/envs/invoice-admin/bin/pip install -e ~/Software/Prototypes/agentkit
+~/Software/miniforge3/envs/swim/bin/pip install -e ~/Software/Prototypes/agentkit
+~/Software/miniforge3/envs/localai/bin/pip install -e ~/Software/Prototypes/agentkit
+```
 
-**Fixed in:** `56daa8d` ("Fix: LLM provider routing via OpenCode Go API, OCR fallback for scanned PDFs, and human-readable filenames"), amended.
+Also add to each repo's CI workflow:
+```yaml
+- uses: actions/checkout@v4
+  with:
+    repository: SoHu-Labs/agentkit
+    path: vendor/agentkit
+- run: pip install -e vendor/agentkit
+```
 
-### 2. `agentkit` not installed
+---
 
-**Root cause:** `pip install -e agentkit` was run in the base miniforge3 env, but each project uses its own mamba env (`invoice-admin`, `decisionmaker`, `email-digest`, `swim`, `localai`). The migration added `from agentkit.core import AgentError` which failed at runtime because agentkit wasn't in those envs.
+## 2. WRONG: Not running the full test suite before pushing
 
-**Fix:** `pip install -e ~/Software/Prototypes/agentkit` in every mamba env. For CI, added agentkit checkout step to each project's workflow.
+**Symptom:** CI failures that were "pre-existing" but actually caught by tests I skipped.
 
-**Lesson:** After extracting shared code, install it in EVERY consumer environment — not just the current shell. CI needs it too.
+**False assumption:** "I ran `test_smoke.py` and `test_config.py`, so everything else must be fine."
 
-### 3. Private repo — CI can't clone
+**Reality:** My shim changes (new imports, changed function signatures) can break tests I didn't run. Import errors happen during collection, before any test runs. `-x` stops at the FIRST error — hiding subsequent ones.
 
-**Root cause:** `agentkit` was a private GitHub repo. Even with `token: ${{ secrets.GITHUB_TOKEN }}` in the `actions/checkout` step, cross-repo access is blocked — the token is scoped to the current repo only.
+**DO THIS:**
+```bash
+cd ~/Software/Prototypes/<project>
+~/Software/miniforge3/envs/<env>/bin/python -m pytest tests/ -q
+# Fix ALL failures. If some are pre-existing, fix them anyway —
+# they're now part of the migration scope.
+```
 
-**Fix:** Made `agentkit` public. No secrets in the repo (just shared library code), so public visibility is correct.
+Never push with known failures. Never skip tests with `--ignore` unless you've verified they were already broken before your change.
 
-**Attempted fixes that did NOT work:**
-- `"agentkit @ git+https://github.com/..."` in `pyproject.toml` dependencies → Hatchling rejects direct URL refs unless `[tool.hatch.metadata] allow-direct-references = true` is set
-- `token: ${{ secrets.GITHUB_TOKEN }}` in checkout step → token is repo-scoped, can't access other private repos
+---
 
-### 4. `ensure_brave_running` not mocked in CI (invoice-admin)
+## 3. WRONG: Fixing CI in a separate commit instead of amending
 
-**Root cause:** `test_run_month.py::TestCliSend` calls `main(["send"])` which invokes `ensure_brave_running()` — a macOS-only function that looks for Brave at `/Applications/Brave Browser.app/...`. The test mocks `run_month.run_month` but does not mock `ensure_brave_running`. On Ubuntu CI, the function raises `RuntimeError` before reaching the mocked code.
+**Symptom:** `git bisect` lands on a broken commit. History shows "fix" commits that should have never existed alone.
 
-**Fix:** Added `@patch("invoice_admin.googleads.browser_download.ensure_brave_running")` to `test_happy_path` and `test_propagates_run_month_error`. These tests validate CLI orchestration, not browser launch — mocking the browser check is correct.
+**False assumption:** "I'll fix it in the next commit."
 
-**Lesson:** Tests that call CLI entry points need to mock ALL side effects in the call chain, not just the primary function. Platform-specific functions (macOS-only browser paths) will always fail on Ubuntu CI unless explicitly mocked.
+**Reality:** Every commit on `main` must pass CI. A broken commit in the middle breaks `git bisect` for everyone forever.
 
-## Process lessons
+**DO THIS:**
+```bash
+# Fix the issue
+git add <fixed files>
+git commit --amend --no-edit
+git push --force-with-lease origin main
+```
 
-1. **Test in the project's env, not global env.** Every project has its own mamba environment. `pip install` in base doesn't help. Run `~/Software/miniforge3/envs/<name>/bin/python -m pytest` or use `mamba run -n <name>`.
+One commit = one complete, working change. No "fixup" or "chore: re-trigger CI" commits. CI was never meant to see the broken state.
 
-2. **Run the full test suite.** I validated with selective tests (`test_smoke.py`, `test_config.py`) but missed `test_naming.py` and `test_run_month.py`. Python's `-x` flag stops at the first failure — but import errors and platform-specific runtime errors happen during collection or execution before targeted tests run.
+---
 
-3. **Fix CI in the commit that broke it, reference it by title.** The `slugify_vendor` fix was amended into `56daa8d` ("Fix: LLM provider routing via OpenCode Go API, OCR fallback for scanned PDFs, and human-readable filenames") — the commit where the test originally broke. Amending keeps `git bisect` clean. Always reference the broken commit by its full title in documentation.
+## 4. WRONG: Patching `pyproject.toml` with git URL dependencies
 
-4. **Check repo visibility before cross-repo dependencies.** If a shared library repo is private, CI in consumer repos can't access it unless a deploy key or org-level PAT is set up. Making it public is the simplest fix when there are no secrets.
+**Symptom:** CI fails with `ValueError: Dependency #1 cannot be a direct reference` (hatchling) or `fatal: could not read Username` (private repo auth).
 
-5. **Don't use direct URL deps in pyproject.toml with Hatchling.** Hatchling blocks them by default. Either set `allow-direct-references = true` or handle installation in CI steps instead.
+**False assumption:** "I'll add `agentkit @ git+https://...` to dependencies so pip installs it automatically."
 
-6. **Mock platform-specific functions in CLI tests.** macOS-only functions (Brave browser path) will always fail on Ubuntu CI. Tests calling CLI entry points must mock every platform-specific side effect in the call chain, not just the primary business logic.
+**Reality:** 
+- Hatchling blocks direct URL refs by default (needs `[tool.hatch.metadata] allow-direct-references = true`)
+- Private repos need authentication that CI tokens can't provide cross-repo
+- The CI checkout step already handles this — don't duplicate it
+
+**DO THIS:**
+- Install agentkit in CI via checkout + `pip install -e vendor/agentkit` (already works)
+- Do NOT add agentkit to `pyproject.toml` dependencies
+- If you must, use `[tool.hatch.metadata] allow-direct-references = true` AND make agentkit public
+
+---
+
+## 5. WRONG: Assuming `repo_root()` finds the right project
+
+**Symptom:** Tests fail with paths pointing to `agentkit/` instead of the consumer project.
+
+**False assumption:** "`repo_root()` walks up from CWD and always finds the right project."
+
+**Reality:** `repo_root()` walks from CWD first. If your shell is in `~/Software/Prototypes/agentkit`, it finds agentkit, not the consumer project.
+
+**DO THIS:**
+- Always run tests from the consumer project's directory: `cd ~/Software/Prototypes/<project> && pytest tests/`
+- Consumer wrappers pass `env_var` parameter: `return _repo_root(env_var="INVOICE_ADMIN_REPO_ROOT")`
+- CI runs from project root — so this only bites you locally
+
+---
+
+## 6. WRONG: Skipping the walkthrough questions before implementing
+
+**Symptom:** Wrong decisions discovered during code review or CI failure that could have been caught before writing code.
+
+**False assumption:** "The questions are optional, I'll just implement what the plan says."
+
+**Reality:** The walkthrough questions catch API mismatches, default behavior conflicts, and test compatibility BEFORE you write a line. Skipping them → rework.
+
+**DO THIS:**
+- Read the walkthrough questions for the module
+- Answer them with the user
+- ONLY THEN start writing code
+
+---
+
+## 7. WRONG: Making litellm a hard dependency for mlx-only consumers
+
+**Symptom:** `ModuleNotFoundError: No module named 'litellm'` in local-chat which only uses `MlxLlm`.
+
+**False assumption:** "All LLM consumers use litellm."
+
+**Reality:** local-chat uses ONLY the mlx backend. The `llm/__init__.py` eagerly imported litellm, breaking mlx-only consumers.
+
+**DO THIS:**
+- Use lazy imports via `__getattr__` in `__init__.py`:
+```python
+def __getattr__(name: str):
+    if name in ("complete", "complete_with_tools", ...):
+        from agentkit.llm._litellm import complete, ...
+        return globals().get(name) or locals()[name]
+    raise AttributeError(...)
+```
+- Always test with the LEAST capable consumer first (local-chat has no litellm)
+
+---
+
+## 8. WRONG: Not adding `py.typed` marker to agentkit
+
+**Symptom:** mypy errors: `Skipping analyzing "agentkit.core": module is installed, but missing library stubs or py.typed marker`
+
+**Fix:** Create empty `src/agentkit/py.typed` and add to pyproject.toml:
+```toml
+[tool.setuptools.package-data]
+agentkit = ["py.typed"]
+```
+
+**DO THIS immediately after Phase 0.** Every project that type-checks will need it.
+
+---
+
+## 9. WRONG: Forgetting to push agentkit BEFORE consumer pushes
+
+**Symptom:** CI fails because agentkit's latest code isn't on `main` yet when consumer CI clones it.
+
+**False assumption:** "I pushed both repos, they're both live."
+
+**Reality:** Push order matters. Consumer CI triggers on the consumer push and clones agentkit `main` at that moment. If agentkit hasn't been pushed yet, CI gets stale code.
+
+**DO THIS:**
+1. Push agentkit first
+2. WAIT for the push to complete
+3. THEN push the consumer repo
