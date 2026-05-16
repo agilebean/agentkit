@@ -243,25 +243,19 @@ def clean_email_body(raw: str) -> str:
 
 
 def resolve_spec_to_message(
-    client: GmailFacade,
+    backend: GmailBackend,
     spec: str,
     *,
     pick_index: int = 0,
 ) -> tuple[str, str]:
-    """Resolve a message ID or Gmail search query to (message_ref, body).
+    """Resolve a message ID or Gmail search query to (message_ref, body)."""
+    try:
+        body = backend.fetch_message_body(spec)
+        return spec, body
+    except GmailMessageNotFoundError:
+        pass
 
-    If *spec* looks like a message ID (contains '@'), fetch directly.
-    Otherwise, treat it as a Gmail search query and return the first result.
-    *pick_index* selects which search result to use (0 = first).
-    """
-    if "@" in spec and "." in spec.split("@")[-1]:
-        try:
-            body = client.get_message(spec)
-            return spec, body
-        except GmailError:
-            pass
-
-    results = client.search(spec, max_results=max(pick_index + 1, 5))
+    results = backend.search_messages(spec, max_results=max(pick_index + 1, 5))
     if not results:
         raise GmailError(f"No messages found for query: {spec}")
 
@@ -271,7 +265,7 @@ def resolve_spec_to_message(
         )
 
     msg = results[pick_index]
-    body = client.get_message(msg["id"])
+    body = backend.fetch_message_body(msg["id"])
     return msg["id"], body
 
 

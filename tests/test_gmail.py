@@ -124,26 +124,24 @@ class TestGmailApiBackend:
 
 class TestResolveSpecToMessage:
     def test_resolves_message_id_like_spec(self):
-        client = MagicMock(spec=GmailFacade)
-        client.get_message.return_value = "email body"
-        msg_id, body = resolve_spec_to_message(client, "msg@example.com")
+        backend = MagicMock(spec=GmailBackend)
+        backend.fetch_message_body.return_value = "email body"
+        msg_id, body = resolve_spec_to_message(backend, "msg@example.com")
         assert body == "email body"
 
     def test_falls_back_to_search(self):
-        client = MagicMock(spec=GmailFacade)
-        client.get_message.side_effect = GmailError("nope")
-        client.search.return_value = [{"id": "abc", "threadId": "t1"}]
-        client.get_message.side_effect = None
-        client.get_message.return_value = "found via search"
-        msg_id, body = resolve_spec_to_message(client, "some query")
+        backend = MagicMock(spec=GmailBackend)
+        backend.search_messages.return_value = [{"id": "abc", "threadId": "t1"}]
+        backend.fetch_message_body.return_value = "found via search"
+        msg_id, body = resolve_spec_to_message(backend, "some query")
         assert body == "found via search"
 
     def test_raises_when_no_results(self):
-        client = MagicMock(spec=GmailFacade)
-        client.get_message.side_effect = GmailError("nope")
-        client.search.return_value = []
+        backend = MagicMock(spec=GmailBackend)
+        backend.fetch_message_body.side_effect = GmailMessageNotFoundError("abc")
+        backend.search_messages.return_value = []
         with pytest.raises(GmailError, match="No messages found"):
-            resolve_spec_to_message(client, "nothing")
+            resolve_spec_to_message(backend, "nothing")
 
 
 class TestExceptions:
