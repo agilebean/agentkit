@@ -8,7 +8,7 @@
 | ✅ | llm/ | MLX local models + litellm cloud + DeepSeek auth fallback (3 consumers) |
 | ✅ | gmail/ | Gmail API client with Protocol-based testability (1 consumer: decisionmaker) |
 | ☐ | browser/ | Selenium Brave attach + WebDriver utilities (2 consumers) |
-| ☐ | speech/tts | MLX Kokoro-82M text-to-speech (2 consumers) |
+| ✅ | speech/ | MLX Kokoro-82M TTS + Parakeet STT (2 consumers) |
 
 ---
 
