@@ -50,20 +50,16 @@ def _read_auth_json() -> dict:
         return {}
 
 
-def _resolve_deepseek_auth() -> tuple[str, str]:
-    """Return ``(api_key, source_description)`` for DeepSeek.
+def _get_go_api_key() -> str | None:
+    """Return the OpenCode Go API subscription key, or ``None`` if unavailable.
 
     Priority:
     1. ``OPENCODE_API_KEY`` env var — explicit override
-    2. auth.json → ``opencode``, ``opencode-go``, ``zen``, ``opencode-zen`` blocks — opencode subscription
-    3. auth.json → ``deepseek`` block — personal API key
-    4. ``DEEPSEEK_API_KEY`` env var — explicit override
-
-    The subscription key is used via the OpenCode Go API endpoint.
+    2. auth.json → ``opencode``, ``opencode-go``, ``zen``, ``opencode-zen`` blocks
     """
     key = os.environ.get("OPENCODE_API_KEY", "").strip()
     if key:
-        return key, "OPENCODE_API_KEY env var"
+        return key
 
     data = _read_auth_json()
     for block in ("opencode", "opencode-go", "zen", "opencode-zen"):
@@ -71,25 +67,28 @@ def _resolve_deepseek_auth() -> tuple[str, str]:
         if isinstance(entry, dict):
             k = entry.get("key") or entry.get("apiKey")
             if isinstance(k, str) and k.strip():
-                print("DeepSeek auth: using opencode subscription")
-                return k.strip(), f"opencode subscription (auth.json → {block})"
+                return k.strip()
+    return None
 
+
+def _get_personal_deepseek_key() -> str | None:
+    """Return the personal DeepSeek API key, or ``None`` if unavailable.
+
+    Priority:
+    1. auth.json → ``deepseek`` block
+    2. ``DEEPSEEK_API_KEY`` env var
+    """
+    data = _read_auth_json()
     entry = data.get("deepseek")
     if isinstance(entry, dict):
         k = entry.get("key")
         if isinstance(k, str) and k.strip():
-            print("DeepSeek auth: using personal API key")
-            return k.strip(), "personal API key (auth.json → deepseek)"
+            return k.strip()
 
     key = os.environ.get("DEEPSEEK_API_KEY", "").strip()
     if key:
-        print("DeepSeek auth: using DEEPSEEK_API_KEY env var")
-        return key, "DEEPSEEK_API_KEY env var"
-
-    raise LLMError(
-        "No DeepSeek API key found. Add it under 'opencode' or 'deepseek' blocks in "
-        "~/.local/share/opencode/auth.json, or set DEEPSEEK_API_KEY / OPENCODE_API_KEY env var."
-    )
+        return key
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -167,7 +166,23 @@ def complete(
             json_mode=json_mode,
             **extra_kwargs,
         )
-        resp = litellm.completion(**kwargs)
+        try:
+            resp = litellm.completion(**kwargs)
+        except Exception:
+            if kwargs.get("api_base") and "go/v1" in str(kwargs.get("api_base", "")):
+                fallback_key = _get_personal_deepseek_key()
+                if fallback_key and fallback_key != kwargs.get("api_key"):
+                    print(
+                        "Go API request failed, falling back to direct DeepSeek API.",
+                        file=sys.stderr,
+                    )
+                    kwargs.pop("api_base", None)
+                    kwargs["api_key"] = fallback_key
+                    resp = litellm.completion(**kwargs)
+                else:
+                    raise
+            else:
+                raise
     except Exception as e:
         error_msg = str(e)
         raise LLMError(error_msg) from e
@@ -292,13 +307,24 @@ def _build_completion_kwargs(
         kwargs["api_key"] = os.environ.get("LM_STUDIO_API_KEY", "lm-studio")
         return kwargs
 
-    # Cloud models via OpenCode Go API
+    # Cloud models via OpenCode Go API (subscription) or direct DeepSeek (personal key)
     if alias in _GO_API_ALIASES or "deepseek" in model.lower():
-        key, _source = _resolve_deepseek_auth()
-        kwargs["api_key"] = key
-        kwargs["api_base"] = os.environ.get(
-            "OPENCODE_API_BASE", "https://opencode.ai/zen/go/v1"
-        )
+        go_key = _get_go_api_key()
+        if go_key:
+            kwargs["api_key"] = go_key
+            kwargs["api_base"] = os.environ.get(
+                "OPENCODE_API_BASE", "https://opencode.ai/zen/go/v1"
+            )
+        else:
+            personal_key = _get_personal_deepseek_key()
+            if personal_key:
+                kwargs["api_key"] = personal_key
+                # No api_base → direct to DeepSeek
+            else:
+                raise LLMError(
+                    "No DeepSeek API key found. Add it under 'opencode' or 'deepseek' blocks in "
+                    "~/.local/share/opencode/auth.json, or set DEEPSEEK_API_KEY / OPENCODE_API_KEY env var."
+                )
         return kwargs
 
     return kwargs
