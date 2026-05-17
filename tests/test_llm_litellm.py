@@ -209,9 +209,9 @@ class TestCompleteMocked:
         # First call: Go API with subscription key
         assert call_kwargs[0]["api_key"] == "sk-go-sub"
         assert "go/v1" in call_kwargs[0]["api_base"]
-        # Second call: direct DeepSeek with personal key, no api_base
+        # Second call: direct DeepSeek with personal key
         assert call_kwargs[1]["api_key"] == "sk-personal-fallback"
-        assert "api_base" not in call_kwargs[1]
+        assert "api.deepseek.com/v1" in call_kwargs[1]["api_base"]
 
 
 class TestBuildCompletionKwargs:
@@ -263,7 +263,7 @@ class TestBuildCompletionKwargs:
             temperature=0.5,
         )
         assert kwargs["api_key"] == "sk-personal"
-        assert "api_base" not in kwargs
+        assert "api.deepseek.com/v1" in kwargs["api_base"]
 
     def test_raises_when_no_key(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.delenv("OPENCODE_API_KEY", raising=False)

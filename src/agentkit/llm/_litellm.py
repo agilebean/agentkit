@@ -178,6 +178,9 @@ def complete(
                     )
                     kwargs.pop("api_base", None)
                     kwargs["api_key"] = fallback_key
+                    kwargs["api_base"] = os.environ.get(
+                        "DEEPSEEK_API_BASE", "https://api.deepseek.com/v1"
+                    )
                     resp = litellm.completion(**kwargs)
                 else:
                     raise
@@ -319,7 +322,9 @@ def _build_completion_kwargs(
             personal_key = _get_personal_deepseek_key()
             if personal_key:
                 kwargs["api_key"] = personal_key
-                # No api_base → direct to DeepSeek
+                kwargs["api_base"] = os.environ.get(
+                    "DEEPSEEK_API_BASE", "https://api.deepseek.com/v1"
+                )
             else:
                 raise LLMError(
                     "No DeepSeek API key found. Add it under 'opencode' or 'deepseek' blocks in "
