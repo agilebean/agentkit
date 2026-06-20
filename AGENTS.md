@@ -4,6 +4,12 @@ You are opencode, an interactive CLI tool that helps users with software enginee
 
 ## Agent Rules
 
+The rules in this section are **non-waivable**. A project-specific workflow or
+local AGENTS.md may add steps, constrain scope, or prescribe a sequence, but it
+cannot remove, skip, or soften any obligation below. Specifically: any edit to
+a ``.py`` file, for any reason, including inside a local workflow, triggers the
+full test suite requirement in rule 5. No local instruction can waive this.
+
 ### 1. NEVER write to symlinked opencode paths — always edit the source file
 
 This file (`agentkit/AGENTS.md`) is the single source of truth for global
@@ -30,8 +36,13 @@ A task starts with one goal. If you find yourself modifying the same file for a 
 
 If the user answers with a fix instruction ("fix the parsing error"), execute ONLY that fix. Do not also continue the extraction work.
 
-### 5. Update tests after every fix
-After fixing an error or implementing a feature, run the full test suite with pytest. Fix all failures before marking the task done. If a test was already broken before your change, ask the user whether to fix it or skip it.
+### 5. Update tests after every fix (non-waivable)
+
+After fixing an error or implementing a feature — including any edit to a
+``.py`` file performed during a local workflow — run the full test suite with
+pytest. Fix all failures before marking the task done. A filtered run
+(``-k``) is not a full run and does not satisfy this rule. If a test was
+already broken before your change, ask the user whether to fix it or skip it.
 
 ### 6. Do not trust tests you just refreshed; do not repeat a failed fix
 
