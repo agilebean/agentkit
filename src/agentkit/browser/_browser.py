@@ -46,12 +46,21 @@ def ensure_brave_running(
     port = int(port_str)
 
     with open(os.devnull, "w") as devnull:
-        subprocess.Popen(
-            [binary, f"--remote-debugging-port={port}", "--no-first-run", "--disable-extensions"],
-            stdout=devnull,
-            stderr=devnull,
-            start_new_session=True,
-        )
+        if _IS_MACOS:
+            subprocess.Popen(
+                ["open", "-a", "Brave Browser", "--args",
+                 f"--remote-debugging-port={port}", "--no-first-run", "--disable-extensions"],
+                stdout=devnull,
+                stderr=devnull,
+                start_new_session=True,
+            )
+        else:
+            subprocess.Popen(
+                [binary, f"--remote-debugging-port={port}", "--no-first-run", "--disable-extensions"],
+                stdout=devnull,
+                stderr=devnull,
+                start_new_session=True,
+            )
 
     print(f"Launched Brave (port {port}), waiting up to {launch_timeout_s:.0f}s...", file=sys.stderr)
     deadline = time.monotonic() + launch_timeout_s
@@ -60,7 +69,10 @@ def ensure_brave_running(
             print("Brave ready.", file=sys.stderr)
             return
         time.sleep(0.5)
-    raise RuntimeError(f"Brave did not become ready on {address} within {launch_timeout_s:.0f}s.")
+    raise RuntimeError(
+        f"Brave did not become ready on {address} within {launch_timeout_s:.0f}s. "
+        "If Brave is already running, close it first (Cmd+Q) and retry."
+    )
 
 
 def build_chrome_options(
