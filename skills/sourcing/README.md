@@ -8,17 +8,17 @@ Two trigger phrases, recognized from the skill `description`:
 
 | Trigger | Use when | What happens |
 |---|---|---|
-| **do sourcing for [problem]** | Starting a new sourcing task | Agent onboards you via the question tool, then searches for providers |
+| **source for [problem]** | Starting a new sourcing task | Agent onboards you via the question tool, then searches for providers |
 | **update [problem]** | Continuing an existing problem | Agent checks Gmail for replies since the last table update |
 
-The `[problem]` name matches a file in `memory/`. Examples:
+The `[problem]` name matches a `src_*.md` file in `memory/`. Examples:
 
-- `do sourcing for insurance brokers in Seoul` → new file `memory/insurance_seoul.md`
-- `update shipping` → loads `memory/shipping_ca2korea.md`, checks for new quotes
+- `source for insurance brokers in Seoul` → new file `memory/src_insurance_seoul.md`
+- `update shipping` → loads `memory/src_shipping_ca2korea.md`, checks for new quotes
 
 ## New problem: onboarding via question tool
 
-When you say **do sourcing for [problem]**, the agent asks:
+When you say **source for [problem]**, the agent asks:
 
 1. **Working folder** — where to save PDFs and converted `.md` files
 2. **Owner email** — for CC on all correspondence (default: `chaehan.so@gmail.com`)
@@ -44,7 +44,7 @@ When you say **update [problem]**, the agent:
 
 ## Memory file naming
 
-Name files after the problem, not the workflow: `shipping_ca2korea.md`, not `sourcing_ca2korea.md`. No `sourcing/` folder. A problem may start as a question and become a sourcing problem later — just add the in-file pointer when it does:
+`src_` prefix + problem description: `src_shipping_ca2korea.md`, not `shipping_ca2korea.md` or `sourcing_ca2korea.md`. No `sourcing/` folder. The prefix lets the agent distinguish sourcing files from other memory files when resolving "update [problem]". A problem may start as a question and become a sourcing problem later — rename to add `src_` and the in-file pointer when it does:
 
 ```
 > Formatting and email rules are in the `sourcing` skill. This file holds only domain data.
