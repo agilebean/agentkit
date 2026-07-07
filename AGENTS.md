@@ -24,6 +24,22 @@ point back into repos. Edit the source, never the symlink target.
 Project-specific `.opencode/agents/*.md` files in individual repos are NOT
 symlinked and are safe to edit.
 
+### agentkit architecture
+
+`agentkit/skills/` contains cross-project skill definitions. To make a skill
+available to all opencode agents, symlink it into `~/.agents/skills/`:
+
+```
+ln -sfn ~/Software/Prototypes/agentkit/skills/<name> ~/.agents/skills/<name>
+```
+
+opencode auto-loads `**/SKILL.md` from `~/.agents/skills/`. Once symlinked,
+the skill appears in the `available_skills` list for every agent.
+
+Agent definitions in `.opencode/agents/` are project-specific. Cross-project
+agent behaviors go in agentkit and are loaded via global `AGENTS.md`. Skills
+go in `agentkit/skills/`.
+
 ### 2. No AI-generated artifacts in writing — avoid em-dashes, filler phrases, and complex sentence structures
 
 Em-dashes, long sentences with embedded clauses, and filler transitions ("through X and Y, students gain Z") are telltale signs of AI writing. Never use em-dashes. Write short, direct sentences. Prefer concrete details over abstract descriptions. Write from the reader's perspective, not an omniscient narrator.
