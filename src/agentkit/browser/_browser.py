@@ -4,6 +4,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.request
@@ -45,24 +46,32 @@ def ensure_brave_running(
     host, _, port_str = address.partition(":")
     port = int(port_str)
 
-    with open(os.devnull, "w") as devnull:
-        if _IS_MACOS:
-            subprocess.Popen(
-                ["open", "-a", "Brave Browser", "--args",
-                 f"--remote-debugging-port={port}", "--no-first-run", "--disable-extensions"],
-                stdout=devnull,
-                stderr=devnull,
-                start_new_session=True,
-            )
-        else:
-            subprocess.Popen(
-                [binary, f"--remote-debugging-port={port}", "--no-first-run", "--disable-extensions"],
-                stdout=devnull,
-                stderr=devnull,
-                start_new_session=True,
-            )
+    args = [
+        binary,
+        f"--remote-debugging-port={port}",
+        "--no-first-run",
+        "--disable-extensions",
+    ]
 
-    print(f"Launched Brave (port {port}), waiting up to {launch_timeout_s:.0f}s...", file=sys.stderr)
+    if _IS_MACOS:
+        profile_dir = Path(tempfile.mkdtemp(prefix="brave_digest_profile_"))
+        args.append(f"--user-data-dir={profile_dir}")
+        print(
+            f"Launching separate Brave instance with temp profile {profile_dir} (port {port})...",
+            file=sys.stderr,
+        )
+    else:
+        print(f"Launching Brave (port {port})...", file=sys.stderr)
+
+    with open(os.devnull, "w") as devnull:
+        subprocess.Popen(
+            args,
+            stdout=devnull,
+            stderr=devnull,
+            start_new_session=True,
+        )
+
+    print(f"Waiting for Brave, up to {launch_timeout_s:.0f}s...", file=sys.stderr)
     deadline = time.monotonic() + launch_timeout_s
     while time.monotonic() < deadline:
         if _brave_cdp_ready(address):
@@ -70,8 +79,7 @@ def ensure_brave_running(
             return
         time.sleep(0.5)
     raise RuntimeError(
-        f"Brave did not become ready on {address} within {launch_timeout_s:.0f}s. "
-        "If Brave is already running, close it first (Cmd+Q) and retry."
+        f"Brave did not become ready on {address} within {launch_timeout_s:.0f}s."
     )
 
 
