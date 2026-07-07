@@ -1,14 +1,14 @@
 ---
 name: sourcing
-description: Sourcing workflow for any provider comparison problem. Use when the user says "do sourcing for [problem]", "update [problem]", "find vendors", "compare providers", "get quotes", or "check quotes for replies". Searches providers, requests quotes, converts PDFs, checks email for replies, and maintains comparison tables in memory/.
+description: Sourcing workflow for any provider comparison problem. Use when the user says "source for [problem]", "update [problem]", "find vendors", "compare providers", "get quotes", or "check quotes for replies". Searches providers, requests quotes, converts PDFs, checks email for replies, and maintains comparison tables in memory/.
 ---
 
 # Sourcing
 
 ## Triggers
 
-- **New problem**: user says "do sourcing for [problem description]"
-- **Existing problem**: user says "update [problem]" — problem name matches a file in `memory/`
+- **New problem**: user says "source for [problem description]"
+- **Existing problem**: user says "update [problem]" — problem name matches a `src_*.md` file in `memory/`
 
 ## Onboarding (new problems only)
 
@@ -169,7 +169,7 @@ Never embed the owner's negotiation floor, fallback strategy, minimum price, or 
 
 Each sourcing problem has its own `memory/` file. The file contains domain data only — no behavioral rules.
 
-**Filename**: describe the problem, not the workflow. `shipping_ca2korea.md` not `sourcing_ca2korea.md`. No `sourcing/` folder. A problem may start as a question and become a sourcing problem later — the filename shouldn't force premature classification. The in-file pointer signals the workflow.
+**Filename**: `src_` prefix + problem description. `src_shipping_ca2korea.md` not `shipping_ca2korea.md` or `sourcing_ca2korea.md`. No `sourcing/` folder. The `src_` prefix lets the agent distinguish sourcing files from other memory files when resolving "update [problem]". A problem may start as a question and become a sourcing problem later — rename to add `src_` and the in-file pointer when it does.
 
 Contents:
 - Onboarding answers (working folder, owner email, language, provider type, comparison metrics)
