@@ -7,8 +7,8 @@ description: Search providers, request quotes, convert PDFs, and maintain minima
 
 ## Process
 
-1. **Request quotes** from providers in the Awaiting quotes table. If they reply with generic info only (no price), follow up with the item list link from the memory file.
-2. **Convert PDFs.** Save attachments to the working directory. Run `markitdown "file.pdf" -o "YYYY-MM-DD Company Quote $X.md"`. Rename the PDF to match.
+1. **Request quotes** from providers in the Awaiting table. If they reply with generic info only (no price), follow up with the item list link from the memory file.
+2. **Convert PDFs.** Save attachments to `~/Desktop/Shipping Quotes/`. Run `markitdown "file.pdf" -o "YYYY-MM-DD Company Quote $X.md"`. Rename the PDF to match. Delete files the user instructs to delete.
 3. **Update the table.** Read the `.md` files, extract volume/price/per CBM, and add rows ordered by descending Per CBM (waiting first, rejected last).
 
 ## Table rules
