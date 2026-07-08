@@ -15,63 +15,44 @@ Token saved at `~/.local/share/socrates/evernote_token` (chmod 600).
 Extract: Chrome DevTools > Application > Cookies > www.evernote.com > clipper-sso.
 Alternatively: set `EVERNOTE_TOKEN` env var.
 
-## How to update a note with tables (read-modify-write, --raw)
+## Read-modify-write (use --raw by default)
 
-Notes with tables, links, or formatting CANNOT be edited using plain text
-mode. The plain text output strips all structure (tables become
-newline-separated rows with space-separated cells, losing boundaries).
+Almost every Evernote note has tables, links, or formatting. **Always use
+`--raw`** unless you are certain the note is plain text only.
 
-For any note that contains tables or structured formatting, use `--raw`:
+With `--raw`, get-by-title returns raw ENML (HTML-like): `<table><tr><td>`,
+`<div>`, `<a href="...">`, `<h3>` — full structure preserved. Without
+`--raw`, tables become newline-separated cells with no row boundaries and
+are impossible to edit.
 
 1. **Read** the raw ENML:
    ```
    mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title --raw "<title>"
    ```
-   Returns `{"title": "", "content": "<en-note>...</en-note>"}`. Content is
-   raw ENML (HTML-like): tables are `<table><tr><td>...</td></tr></table>`,
-   text is in `<div>` tags, line breaks are `<br/>`.
+   Returns `{"title": "", "content": "<en-note>...</en-note>"}`.
 
-2. **Modify** the ENML in memory. Parse the table structure, add or change
-   `<tr>`/`<td>` elements, keep everything else intact. The content must
-   stay valid ENML (wrapped in `<en-note>...</en-note>`).
+2. **Modify** the ENML in memory. Parse the structure, make changes, keep
+   everything else intact. Content must stay valid ENML (wrapped in
+   `<en-note>`).
 
 3. **Write back** the full ENML:
    ```
    mamba run -n socrates python -m projects.evernote.src.evernote_api update-by-title --raw "<title>" "<full_enml>"
    ```
-   With `--raw`, the content is sent to Evernote as-is, no wrapping or
-   escaping applied. You are responsible for valid ENML.
+   With `--raw`, content is sent to Evernote as-is with no wrapping.
 
 **Never** call `update-by-title` without first reading the note. You would
 destroy existing content.
 
-## How to update a plain text note (no tables)
-
-For notes that are plain text only (no tables, no links, no formatting):
-
-1. **Read**:
-   ```
-   mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title "<title>"
-   ```
-   Content is plain text. Newlines separate lines.
-
-2. **Write back** the full text:
-   ```
-   mamba run -n socrates python -m projects.evernote.src.evernote_api update-by-title "<title>" "<full_new_content>"
-   ```
-   Without `--raw`, content is wrapped in ENML automatically (plain text to
-   div/br tags, XML-escaped).
-
 ## Append (add to end only)
 
-If the user just wants to add text at the bottom with no structured edit:
 ```
 mamba run -n socrates python -m projects.evernote.src.evernote_api append-by-title "<title>" "<text>"
 ```
-This reads, appends, and writes back in one call. Use for log entries,
-notes, or anything where order does not matter.
+Reads, appends, and writes back in one call. For log entries or notes where
+order does not matter.
 
-## Find a note (check title exists)
+## Find a note
 
 ```
 mamba run -n socrates python -m projects.evernote.src.evernote_api find-note "<title>"
