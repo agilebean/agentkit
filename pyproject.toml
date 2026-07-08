@@ -14,7 +14,8 @@ imap = []
 notify = []
 youtube = ["youtube-transcript-api", "requests"]
 config = ["pyyaml>=6"]
-all = ["agentkit[llm,speech,mlx_llm,audio,gmail,youtube,config]"]
+evernote = ["evernote2", "thrift"]
+all = ["agentkit[llm,speech,mlx_llm,audio,gmail,youtube,config,evernote]"]
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]
@@ -26,3 +27,7 @@ include = ["agentkit*"]
 
 [tool.setuptools.package-data]
 agentkit = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

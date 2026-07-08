@@ -109,6 +109,14 @@ class TestGmailFacade:
         facade = GmailFacade(backend)
         assert facade.search("test") == [{"id": "1", "threadId": "t1"}]
 
+    def test_get_attachment_delegates_to_backend(self):
+        backend = MagicMock(spec=GmailBackend)
+        backend.download_attachment.return_value = b"PDF_BYTES"
+        facade = GmailFacade(backend)
+        result = facade.get_attachment("msg1", "att1")
+        assert result == b"PDF_BYTES"
+        backend.download_attachment.assert_called_once_with("msg1", "att1")
+
 
 class TestGmailApiBackend:
     def test_constructor_accepts_custom_path(self, tmp_path):
@@ -120,6 +128,37 @@ class TestGmailApiBackend:
             m.return_value = mock_creds
             backend = GmailApiBackend(credentials_path=token)
             assert backend._creds is not None
+
+    def test_constructor_finds_token_at_google_oauth_path(self, tmp_path, monkeypatch):
+        """Token at ~/.google/oauth_token.json is found without explicit path."""
+        google_dir = tmp_path / ".google"
+        google_dir.mkdir()
+        token = google_dir / "oauth_token.json"
+        token.write_text('{"token": "test"}')
+        monkeypatch.setenv("HOME", str(tmp_path))
+        monkeypatch.delenv("GOOGLE_OAUTH_TOKEN", raising=False)
+        with patch("google.oauth2.credentials.Credentials.from_authorized_user_file") as m:
+            mock_creds = MagicMock()
+            mock_creds.valid = True
+            m.return_value = mock_creds
+            backend = GmailApiBackend()
+            assert backend._creds is not None
+            assert str(token) in str(m.call_args[0][0])
+
+    def test_explicit_path_takes_priority_over_google_oauth(self, tmp_path, monkeypatch):
+        """Explicit credentials_path wins over ~/.google/oauth_token.json."""
+        explicit = tmp_path / "explicit.json"
+        explicit.write_text('{"token": "explicit"}')
+        google_dir = tmp_path / ".google"
+        google_dir.mkdir()
+        (google_dir / "oauth_token.json").write_text('{"token": "default"}')
+        monkeypatch.setenv("HOME", str(tmp_path))
+        with patch("google.oauth2.credentials.Credentials.from_authorized_user_file") as m:
+            mock_creds = MagicMock()
+            mock_creds.valid = True
+            m.return_value = mock_creds
+            GmailApiBackend(credentials_path=explicit)
+            assert str(explicit) in str(m.call_args[0][0])
 
 
 class TestResolveSpecToMessage:
@@ -144,11 +183,148 @@ class TestResolveSpecToMessage:
             resolve_spec_to_message(backend, "nothing")
 
 
+class TestExtractAttachments:
+    def test_finds_attachment_in_flat_payload(self):
+        from agentkit.gmail._client import _extract_attachments_from_payload
+        payload = {
+            "parts": [
+                {"mimeType": "text/plain", "body": {"data": "SGVsbG8="}},
+                {"mimeType": "application/pdf", "filename": "quote.pdf",
+                 "body": {"attachmentId": "att123"}},
+            ]
+        }
+        atts = _extract_attachments_from_payload(payload)
+        assert len(atts) == 1
+        assert atts[0]["filename"] == "quote.pdf"
+        assert atts[0]["attachment_id"] == "att123"
+        assert atts[0]["mime_type"] == "application/pdf"
+
+    def test_finds_nested_attachments(self):
+        from agentkit.gmail._client import _extract_attachments_from_payload
+        payload = {
+            "parts": [
+                {"parts": [
+                    {"mimeType": "text/plain", "body": {"data": "SGk="}},
+                    {"mimeType": "image/png", "filename": "logo.png",
+                     "body": {"attachmentId": "img1"}},
+                ]},
+                {"mimeType": "application/pdf", "filename": "doc.pdf",
+                 "body": {"attachmentId": "att2"}},
+            ]
+        }
+        atts = _extract_attachments_from_payload(payload)
+        assert len(atts) == 2
+        assert atts[0]["filename"] == "logo.png"
+        assert atts[1]["filename"] == "doc.pdf"
+
+    def test_no_attachments_returns_empty(self):
+        from agentkit.gmail._client import _extract_attachments_from_payload
+        payload = {"mimeType": "text/plain", "body": {"data": "SGVsbG8="}}
+        assert _extract_attachments_from_payload(payload) == []
+
+    def test_skips_inline_images_without_filename(self):
+        from agentkit.gmail._client import _extract_attachments_from_payload
+        payload = {
+            "parts": [
+                {"mimeType": "image/png", "filename": "",
+                 "body": {"attachmentId": "inline1"}},
+            ]
+        }
+        assert _extract_attachments_from_payload(payload) == []
+
+    def test_skips_parts_without_attachment_id(self):
+        from agentkit.gmail._client import _extract_attachments_from_payload
+        payload = {
+            "parts": [
+                {"mimeType": "text/plain", "filename": "text.txt",
+                 "body": {"data": "SGk="}},
+            ]
+        }
+        assert _extract_attachments_from_payload(payload) == []
+
+
+class TestFetchMessageFull:
+    def test_returns_body_and_attachments(self):
+        from unittest.mock import MagicMock
+        backend = GmailApiBackend.__new__(GmailApiBackend)
+        backend._service = MagicMock()
+        mock_msg = {
+            "payload": {
+                "parts": [
+                    {"mimeType": "text/plain", "body": {"data": "SGVsbG8="}},
+                    {"mimeType": "application/pdf", "filename": "q.pdf",
+                     "body": {"attachmentId": "a1"}},
+                ]
+            }
+        }
+        backend._service.users().messages().get().execute.return_value = mock_msg
+        result = backend.fetch_message_full("msg1")
+        assert "Hello" in result["body"]
+        assert len(result["attachments"]) == 1
+        assert result["attachments"][0]["filename"] == "q.pdf"
+
+    def test_returns_empty_attachments_when_none(self):
+        from unittest.mock import MagicMock
+        backend = GmailApiBackend.__new__(GmailApiBackend)
+        backend._service = MagicMock()
+        mock_msg = {
+            "payload": {
+                "mimeType": "text/plain",
+                "body": {"data": "SGVsbG8="},
+            }
+        }
+        backend._service.users().messages().get().execute.return_value = mock_msg
+        result = backend.fetch_message_full("msg1")
+        assert result["attachments"] == []
+
+    def test_raises_not_found_for_404(self):
+        from unittest.mock import MagicMock
+        from googleapiclient.errors import HttpError
+        backend = GmailApiBackend.__new__(GmailApiBackend)
+        backend._service = MagicMock()
+        mock_resp = MagicMock()
+        mock_resp.status = 404
+        backend._service.users().messages().get().execute.side_effect = HttpError(
+            mock_resp, b'{"error": "not found"}'
+        )
+        with pytest.raises(GmailMessageNotFoundError):
+            backend.fetch_message_full("badid")
+
+
+class TestDownloadAttachment:
+    def test_returns_decoded_bytes(self):
+        import base64 as b64mod
+        from unittest.mock import MagicMock
+        backend = GmailApiBackend.__new__(GmailApiBackend)
+        backend._service = MagicMock()
+        encoded = b64mod.urlsafe_b64encode(b"PDF_CONTENT").decode().rstrip("=")
+        backend._service.users().messages().attachments().get().execute.return_value = {
+            "data": encoded
+        }
+        result = backend.download_attachment("msg1", "att1")
+        assert result == b"PDF_CONTENT"
+
+    def test_raises_gmail_error_on_http_error(self):
+        from unittest.mock import MagicMock
+        from googleapiclient.errors import HttpError
+        backend = GmailApiBackend.__new__(GmailApiBackend)
+        backend._service = MagicMock()
+        mock_resp = MagicMock()
+        mock_resp.status = 500
+        backend._service.users().messages().attachments().get().execute.side_effect = HttpError(
+            mock_resp, b'{"error": "server error"}'
+        )
+        with pytest.raises(GmailError):
+            backend.download_attachment("msg1", "att1")
+
+
 class TestExceptions:
     def test_gmail_error_hierarchy(self):
         assert issubclass(GmailAuthError, GmailError)
         assert issubclass(GmailMessageNotFoundError, GmailError)
 
-    def test_auth_error_message(self):
+    def test_auth_error_message(self, monkeypatch):
+        monkeypatch.setattr(Path, "home", lambda: Path("/nonexistent_home"))
+        monkeypatch.delenv("GOOGLE_OAUTH_TOKEN", raising=False)
         with pytest.raises(GmailAuthError):
             GmailApiBackend(credentials_path=Path("/nonexistent.json"))

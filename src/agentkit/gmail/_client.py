@@ -18,6 +18,8 @@ class GmailBackend(Protocol):
     """Pluggable Gmail read-only backend."""
 
     def fetch_message_body(self, message_id: str) -> str: ...
+    def fetch_message_full(self, message_id: str) -> dict: ...
+    def download_attachment(self, message_id: str, attachment_id: str) -> bytes: ...
     def search_messages(self, query: str, max_results: int = 10) -> list[dict[str, str]]: ...
 
 
@@ -48,6 +50,22 @@ class GmailFacade:
         except Exception as e:
             raise GmailError(f"Search failed for '{query}': {e}") from e
 
+    def get_message_full(self, message_id: str) -> dict:
+        try:
+            return self._backend.fetch_message_full(message_id)
+        except GmailError:
+            raise
+        except Exception as e:
+            raise GmailError(f"Failed to fetch message {message_id}: {e}") from e
+
+    def get_attachment(self, message_id: str, attachment_id: str) -> bytes:
+        try:
+            return self._backend.download_attachment(message_id, attachment_id)
+        except GmailError:
+            raise
+        except Exception as e:
+            raise GmailError(f"Failed to download attachment {attachment_id}: {e}") from e
+
 
 # ---------------------------------------------------------------------------
 # Gmail API Backend
@@ -75,10 +93,19 @@ class GmailApiBackend:
     ) -> Any:
         from google.oauth2.credentials import Credentials
 
-        path = Path(credentials_path) if credentials_path else None
+        candidates: list[Path] = []
+        if credentials_path:
+            candidates.append(Path(credentials_path))
+        env_path = os.environ.get(token_env_var, "").strip()
+        if env_path:
+            candidates.append(Path(env_path).expanduser())
+        candidates.append(Path.home() / ".google" / "oauth_token.json")
+        candidates.append(Path.home() / ".config" / "gmail_token.json")
 
-        if path and path.is_file():
-            creds = Credentials.from_authorized_user_file(str(path), scopes=list(scopes))
+        for candidate in candidates:
+            if not candidate.is_file():
+                continue
+            creds = Credentials.from_authorized_user_file(str(candidate), scopes=list(scopes))
             if creds and creds.valid:
                 return creds
             if creds and creds.expired and creds.refresh_token:
@@ -86,23 +113,9 @@ class GmailApiBackend:
                 creds.refresh(Request())
                 return creds
 
-        env_path = os.environ.get(token_env_var, "").strip()
-        if env_path:
-            token_file = Path(env_path).expanduser()
-            if token_file.is_file():
-                creds = Credentials.from_authorized_user_file(str(token_file), scopes=list(scopes))
-                if creds and creds.valid:
-                    return creds
-
-        default_path = Path.home() / ".config" / "gmail_token.json"
-        if default_path.is_file():
-            creds = Credentials.from_authorized_user_file(str(default_path), scopes=list(scopes))
-            if creds and creds.valid:
-                return creds
-
         raise GmailAuthError(
             "No valid Gmail credentials found. Set GOOGLE_OAUTH_TOKEN env var, "
-            f"or place a token at {default_path}."
+            f"or place a token at ~/.google/oauth_token.json or ~/.config/gmail_token.json."
         )
 
     def _get_service(self) -> Any:
@@ -153,6 +166,41 @@ class GmailApiBackend:
             for m in results.get("messages", [])
         ]
 
+    def fetch_message_full(self, message_id: str) -> dict:
+        from googleapiclient.errors import HttpError
+
+        try:
+            service = self._get_service()
+            msg = (
+                service.users()
+                .messages()
+                .get(userId="me", id=message_id, format="full")
+                .execute()
+            )
+        except HttpError as e:
+            if e.resp.status in (400, 404):
+                raise GmailMessageNotFoundError(f"Message {message_id} not found") from e
+            raise GmailError(str(e)) from e
+
+        payload = msg.get("payload", {})
+        body = _extract_body_from_payload(payload)
+        attachments = _extract_attachments_from_payload(payload)
+        return {"body": body, "attachments": attachments}
+
+    def download_attachment(self, message_id: str, attachment_id: str) -> bytes:
+        from googleapiclient.errors import HttpError
+
+        try:
+            service = self._get_service()
+            att = service.users().messages().attachments().get(
+                userId="me", messageId=message_id, id=attachment_id
+            ).execute()
+        except HttpError as e:
+            raise GmailError(str(e)) from e
+
+        data = att.get("data", "")
+        return base64.urlsafe_b64decode(data + "===")
+
 
 # ---------------------------------------------------------------------------
 # Payload decoding
@@ -184,6 +232,24 @@ def _extract_body_from_payload(payload: dict) -> str:
         return _strip_html(decoded)
 
     return ""
+
+
+def _extract_attachments_from_payload(payload: dict) -> list[dict]:
+    """Recursively find all attachment parts in a Gmail message payload."""
+    results: list[dict] = []
+    if "parts" in payload:
+        for part in payload["parts"]:
+            results.extend(_extract_attachments_from_payload(part))
+    filename = payload.get("filename", "")
+    body = payload.get("body", {})
+    attachment_id = body.get("attachmentId", "")
+    if filename and attachment_id:
+        results.append({
+            "filename": filename,
+            "attachment_id": attachment_id,
+            "mime_type": payload.get("mimeType", ""),
+        })
+    return results
 
 
 def _strip_html(html: str) -> str:
