@@ -25,7 +25,7 @@ For any note that contains tables or structured formatting, use `--raw`:
 
 1. **Read** the raw ENML:
    ```
-   mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title "<title>" --raw
+   mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title --raw "<title>"
    ```
    Returns `{"title": "", "content": "<en-note>...</en-note>"}`. Content is
    raw ENML (HTML-like): tables are `<table><tr><td>...</td></tr></table>`,
@@ -37,7 +37,7 @@ For any note that contains tables or structured formatting, use `--raw`:
 
 3. **Write back** the full ENML:
    ```
-   mamba run -n socrates python -m projects.evernote.src.evernote_api update-by-title "<title>" "<full_enml>" --raw
+   mamba run -n socrates python -m projects.evernote.src.evernote_api update-by-title --raw "<title>" "<full_enml>"
    ```
    With `--raw`, the content is sent to Evernote as-is, no wrapping or
    escaping applied. You are responsible for valid ENML.
