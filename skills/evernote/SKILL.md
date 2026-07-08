@@ -15,34 +15,52 @@ Token saved at `~/.local/share/socrates/evernote_token` (chmod 600).
 Extract: Chrome DevTools > Application > Cookies > www.evernote.com > clipper-sso.
 Alternatively: set `EVERNOTE_TOKEN` env var.
 
-## How to update a note (read-modify-write)
+## How to update a note with tables (read-modify-write, --raw)
 
-`update-by-title` REPLACES the entire note content. It does NOT merge or
-patch. To add a row to a table, insert a line in a list, or change one
-field, you must:
+Notes with tables, links, or formatting CANNOT be edited using plain text
+mode. The plain text output strips all structure (tables become
+newline-separated rows with space-separated cells, losing boundaries).
 
-1. **Read** the note first:
-   ```
-   mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title "<title>"
-   ```
-   Returns `{"title": "...", "content": "..."}`. Content is plain text:
-   tables come back as rows separated by newlines, cells within a row
-   separated by a single space.
+For any note that contains tables or structured formatting, use `--raw`:
 
-2. **Modify** the content in memory. Reconstruct the full text with the
-   change applied. Examples:
-   - Add a table row: append a new line with cells joined by spaces.
-   - Add a list item: append a new line.
-   - Change a value: find the line, replace it, keep everything else intact.
+1. **Read** the raw ENML:
+   ```
+   mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title "<title>" --raw
+   ```
+   Returns `{"title": "", "content": "<en-note>...</en-note>"}`. Content is
+   raw ENML (HTML-like): tables are `<table><tr><td>...</td></tr></table>`,
+   text is in `<div>` tags, line breaks are `<br/>`.
 
-3. **Write back** the FULL content:
+2. **Modify** the ENML in memory. Parse the table structure, add or change
+   `<tr>`/`<td>` elements, keep everything else intact. The content must
+   stay valid ENML (wrapped in `<en-note>...</en-note>`).
+
+3. **Write back** the full ENML:
    ```
-   mamba run -n socrates python -m projects.evernote.src.evernote_api update-by-title "<title>" "<full_new_content>"
+   mamba run -n socrates python -m projects.evernote.src.evernote_api update-by-title "<title>" "<full_enml>" --raw
    ```
-   Newlines in content are preserved (converted to div / br in ENML).
+   With `--raw`, the content is sent to Evernote as-is, no wrapping or
+   escaping applied. You are responsible for valid ENML.
 
 **Never** call `update-by-title` without first reading the note. You would
 destroy existing content.
+
+## How to update a plain text note (no tables)
+
+For notes that are plain text only (no tables, no links, no formatting):
+
+1. **Read**:
+   ```
+   mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title "<title>"
+   ```
+   Content is plain text. Newlines separate lines.
+
+2. **Write back** the full text:
+   ```
+   mamba run -n socrates python -m projects.evernote.src.evernote_api update-by-title "<title>" "<full_new_content>"
+   ```
+   Without `--raw`, content is wrapped in ENML automatically (plain text to
+   div/br tags, XML-escaped).
 
 ## Append (add to end only)
 
@@ -52,12 +70,6 @@ mamba run -n socrates python -m projects.evernote.src.evernote_api append-by-tit
 ```
 This reads, appends, and writes back in one call. Use for log entries,
 notes, or anything where order does not matter.
-
-## Read a note
-
-```
-mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title "<title>"
-```
 
 ## Find a note (check title exists)
 
@@ -73,8 +85,8 @@ No results: stderr message, exit 6.
 ```
 mamba run -n socrates python -m projects.evernote.src.evernote_api notebooks
 mamba run -n socrates python -m projects.evernote.src.evernote_api search <query> [--notebook <name>] [--max <n>]
-mamba run -n socrates python -m projects.evernote.src.evernote_api get <guid>
-mamba run -n socrates python -m projects.evernote.src.evernote_api update <guid> <content>
+mamba run -n socrates python -m projects.evernote.src.evernote_api get <guid> [--raw]
+mamba run -n socrates python -m projects.evernote.src.evernote_api update <guid> <content> [--raw]
 mamba run -n socrates python -m projects.evernote.src.evernote_api append <guid> <text>
 mamba run -n socrates python -m projects.evernote.src.evernote_api create <title> <content> [--notebook <name>]
 ```
