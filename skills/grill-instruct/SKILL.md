@@ -16,101 +16,102 @@ during instruction reading, before data is ever seen.
 Instead, grill the user with targeted questions until every ambiguity that
 could produce a prediction is resolved. Only then write the instructions.
 
-## Why this matters: a real failure
+## Why this matters: how predictions become silent failures
 
-An evernote-shipping agent was instructed to check Gmail for shipping quote
-replies and update an Evernote table. The instruction had this branching:
+An LLM reads instruction text and builds a task model before it sees any
+data. Every prediction in the text becomes a fact in that model. Every fact
+becomes a filter. Every filter skips data when the prediction is wrong. The
+LLM cannot override its own priors because they are built during instruction
+reading, before data is ever seen.
 
-```
-If the reply has PDF attachments (this is the common case — quotes
-are in PDFs, not email bodies):
-    1. Download PDF, convert, parse
-    2. ALSO parse the email body for corrections
-
-If the reply has NO PDF attachments (quote is inline, or it's a
-follow-up without a new quote):
-    1. Parse the email body
-    2. If parsed["volume_price"] is empty, this is not a quote —
-       it's a follow-up. Note it but do not add a row.
-```
-
-The agent searched Riham, found a Jul 8 PDF ($3,220), parsed it, added the
-row, moved on. A Jul 9 follow-up email with no PDF contained a revised price
-of $3,000 in the email body. The agent never parsed it. It also added
-`before:2026/07/09` to its Gmail search, excluding the day the revised
-quote arrived.
-
-Four elements in the instruction text caused this, each a different error
-type. Understanding these is necessary to write instructions that do not
-repeat them.
+Four error types cause this. Each is a way of writing an instruction that
+seems helpful but creates a prior the LLM cannot escape.
 
 ### Error type 1: Domain prediction
 
-The PDF branch heading said "(this is the common case — quotes are in PDFs,
-not email bodies)." The LLM internalized "quotes are in PDFs" as a domain
-fact. Every message without a PDF was pre-classified as "not containing a
-quote" before any parsing ran. When a revised price arrived in an email body
-without a PDF, the LLM skipped it — not because it ignored the instruction,
-but because its task model said the message cannot contain a quote.
+A parenthetical or aside claiming where data lives or does not live. The
+LLM reads it as a domain fact, not as a heuristic.
 
-**The forward mechanism:** The LLM reads instruction text and builds a task
-model before it sees any data. A parenthetical claiming where data lives
-becomes a fact in the task model. That fact becomes a filter. That filter
-skips data when the claim is wrong. The LLM cannot override this because the
-filter was built during instruction reading, before data was ever seen.
+Example: an instruction branch heading says "(data arrives as JSON, not
+XML)." The LLM internalizes "data is JSON" as a fact. When XML arrives, the
+LLM does not parse it because its task model says it cannot exist. The LLM
+did not ignore the instruction. It followed the prediction the instruction
+made.
+
+Detection: Look for parentheticals on branch headings, "this is the common
+case" framing, "X is in Y, not Z" assertions. For each, ask: "Is this
+always true? Can the opposite case occur?" If yes, the wording is a
+prediction.
+
+Fix: Strip the parenthetical. The branch condition ("if the data is JSON")
+is sufficient. The prediction adds nothing to the action and everything to
+the prior.
 
 ### Error type 2: Supplementary framing
 
-Step 4 said "ALSO parse the email body." "ALSO" marked email body parsing as
-secondary to the PDF. The PDF was the primary source. Under cognitive load
-(many providers, many messages), the supplementary task had no clear
-completion signal and was dropped.
+A word that makes a mandatory action look optional. The LLM treats the
+action as enhancement, not requirement. Under cognitive load, the
+enhancement is dropped.
 
-**The forward mechanism:** "ALSO" tells the LLM this action is optional
-enhancement. When the LLM's attention is spread across many items, it
-completes the primary task (parse the PDF) and drops the supplementary task
-(parse the body). The word "ALSO" made a mandatory action look optional.
+Example: an instruction says "ALSO check the error log." "ALSO" marks
+error-log checking as secondary to the primary task. When the LLM's
+attention is spread across many items, it completes the primary task and
+drops the supplementary one. The word "ALSO" made a mandatory action look
+optional.
+
+Detection: "ALSO", "additionally", "optionally", "as a bonus" before an
+action. For each, ask: "Is this action mandatory?" If mandatory, the word
+is lying about the action's status.
+
+Fix: Remove the word. "Check the error log" is the instruction. "ALSO
+check the error log" is a suggestion.
 
 ### Error type 3: Outcome prediction
 
-The non-PDF branch said "If parsed['volume_price'] is empty, this is not a
-quote — it's a follow-up." The instruction stated the conclusion before the
-evidence. The LLM entered the parse already expecting an empty result and
-accepted weak parses (Korean text the parser did not recognize) as
-confirmation.
+A sentence stating the expected result of an action before the action runs.
+The LLM enters the action expecting that outcome and accepts ambiguous or
+weak results as confirmation.
 
-**The forward mechanism:** When an instruction tells the LLM what the
-result will be, the LLM treats that as the expected outcome. When the actual
-result is ambiguous (the parser returns partial or weak data), the LLM
-rounds to the expected outcome rather than investigating. The instruction
-provided the conclusion before the evidence.
+Example: an instruction says "if the field is empty, the record was
+deleted." The instruction states the conclusion before the evidence. When
+the field is empty due to a parsing error (not a deletion), the LLM accepts
+the empty result as the expected outcome rather than investigating. The
+instruction provided the conclusion before the evidence.
+
+Detection: "this is not X" or "this means Y" language attached to a check.
+For each, ask: "Does this sentence describe what the result IS, or what it
+SHOULD BE?" If the latter, it is a prediction.
+
+Fix: Replace with a conditional on the actual result. "Check the field.
+If it is empty, investigate whether the record was deleted or the parse
+failed." The action is the same. The prediction is gone.
 
 ### Error type 4: Pattern invitation
 
-The search template used `from:{email} after:{date}`. The LLM generalized:
-if `after:` is a lower bound, `before:` is an upper bound. It added
-`before:2026/07/09` to narrow the search, silently cutting off the most
-recent day — the day the revised quote arrived.
+A code example or template establishing a query pattern the LLM extends
+without being told to. The extension is not in the instruction and may be
+harmful.
 
-**The forward mechanism:** Code examples in instructions are not just
-illustrations. They are patterns the LLM extends. If the example uses
-`after:`, the LLM infers `before:` is also available. If the example uses
-`-v`, the LLM infers `-vv` is also available. The LLM is not overriding the
-instruction; it is extending a pattern the instruction established.
+Example: a search template uses `query after:{date}`. The LLM generalizes:
+if `after:` is a lower bound, `before:` is an upper bound. It adds
+`before:` to narrow the search, silently cutting off recent data. The LLM
+is not overriding the instruction. It is extending a pattern the instruction
+established.
 
-### The principle
+Detection: code examples with query operators, flag patterns, CLI
+arguments. For each, ask: "Would the LLM naturally extend this pattern?
+What would the extension look like, and would it be harmful?"
 
-Agent instructions should contain **actions and conditions**, never
-**predictions about the data**. Every prediction becomes a prior. Every
-prior becomes a filter. Every filter skips work when the prediction is
-wrong.
+Fix: Use the simplest example that does not invite extension. Move
+filtering into application code rather than query syntax. If the example
+must use operators, explicitly state what must NOT be added.
 
 ## Phase 1: Grill
 
 Ask questions one at a time using the question tool. Each question targets
 a specific class of ambiguity that, if left unresolved, would produce one
-of the four error types above in the instruction text. Provide a recommended
-answer based on what you know so far, but let the user override.
+of the four error types above. Provide a recommended answer based on what
+you know so far, but let the user override.
 
 If a fact can be found by exploring the codebase (existing agent files,
 skill files, memory), look it up rather than asking. The decisions are the
@@ -120,34 +121,33 @@ user's. The facts are yours to discover.
 
 **Data shape (prevents domain predictions).** For every data source the
 agent reads (emails, files, API responses, web pages), ask: "What formats
-can the data arrive in?" If the user says "quotes arrive as PDFs," ask: "Can
-a quote also arrive in the email body without a PDF?" If yes, the
-instruction needs a branch for it. If no, the user confirmed it — the LLM
-did not assume it.
+can the data arrive in?" If the user says "data arrives as JSON," ask: "Can
+it also arrive in another format?" If yes, the instruction needs a branch
+for it. If no, the user confirmed it. The LLM did not assume it.
 
 **Completion signals (prevents supplementary framing drops).** For every
-loop in the workflow ("for each provider," "for each message"), ask: "What
-signals that this item is done and you should move to the next?" If the user
-says "when I find a quote," ask: "Can a follow-up message from the same
-provider contain a revised quote?" If yes, "found a quote" is not a
-completion signal — the agent must process every message.
+loop in the workflow ("for each item," "for each message"), ask: "What
+signals that this item is done and you should move to the next?" If the
+user says "when I find a result," ask: "Can a follow-up item from the same
+source contain a revised result?" If yes, "found a result" is not a
+completion signal. The agent must process every item.
 
 **Expected results (prevents outcome predictions).** For every check or
 parse step, ask: "What can the result look like? Can it be partial or
 ambiguous?" If yes, the instruction must not state what the result will be
 before the action runs. It must say "check the result and decide based on
-what you find" — not "this is not a quote."
+what you find."
 
 **Query patterns (prevents pattern invitations).** If the workflow involves
 searching (Gmail, files, APIs), ask: "What filters should the search use?
 Are there filters that must NOT be applied?" If the user says "search after
-the last checked date," ask: "Should you also bound the upper date? Could
-bounding it exclude recent data?" Resolve the query pattern before writing
-code examples. Use the simplest query that works. Move filtering into
+a date," ask: "Should you also bound the upper date? Could bounding it
+exclude recent data?" Resolve the query pattern before writing code
+examples. Use the simplest query that works. Move filtering into
 application code.
 
 **Exception and edge cases.** Ask: "What happens when [step] fails? When
-the data is in an unexpected format? When the provider replies from a
+the data is in an unexpected format? When the source replies from a
 different address?" Every exception is a branch. Every branch is an
 opportunity for a prediction to sneak in. Resolve them before writing.
 
@@ -158,67 +158,48 @@ condition is a procedural box the agent cannot escape.
 ### How to ask
 
 Use the question tool. Ask one question at a time. Do not write any
-instruction text until the grilling is complete and the user confirms shared
-understanding.
+instruction text until the grilling is complete and the user confirms
+shared understanding.
 
 ## Phase 2: Write
 
 Once all ambiguities are resolved, write the instruction file applying
-these principles. For each, the rule and the concrete evernote failure that
-motivates it:
+these principles:
 
 **Actions and conditions, never predictions.** Every branch is defined by
-its condition, not by a claim about the data. Write "If the reply has PDF
-attachments:" — not "If the reply has PDF attachments (this is the common
-case — quotes are in PDFs, not email bodies):" The parenthetical became a
-prior that caused the LLM to skip email-body quotes.
+its condition, not by a claim about the data. "If the data is JSON:" not
+"If the data is JSON (this is the common case)."
 
-**No supplementary framing.** Every action is mandatory and primary. Write
-"Parse the email body" — not "ALSO parse the email body." "ALSO" made a
-mandatory action look optional and the LLM dropped it under cognitive load.
+**No supplementary framing.** Every action is mandatory and primary. Do
+not use "ALSO," "additionally," or "optionally" before a mandatory action.
 
 **No outcome predictions.** Do not state what a result will be before the
-action runs. Write "Check the parsed result. If it contains pricing, add a
-row. If not, note as follow-up." — not "this is not a quote, it's a
-follow-up." The prediction made the LLM accept weak parses as confirmation
-of the expected empty result.
+action runs. "Check the result. If it contains the expected fields,
+proceed. If not, investigate."
 
 **Simplest code examples.** Use the simplest query that works. Move
 filtering into application code. Do not include operators the LLM would
-naturally extend. The `after:{date}` template invited the LLM to add
-`before:{date}`, which silently excluded the day a revised quote arrived.
+naturally extend.
 
-**Exit conditions on every workflow.** Every step sequence must define what
-ends it and what happens on failure. A workflow that says "follow these
-steps" without saying what to do when a step fails is a procedural box with
-no exit hatch.
+**Exit conditions on every workflow.** Every step sequence must define
+what ends it and what happens on failure. "If this step fails, stop and
+report to the user."
 
 ## Phase 3: Self-audit
 
-After writing the draft, re-read it and check for the four error types.
-Each check includes the concrete failure that motivates it:
+After writing the draft, re-read it and check for the four error types:
 
-1. **Domain prediction** — any parenthetical, aside, or framing that claims
-   where data lives. Ask: "If this claim is wrong, what data gets skipped?"
-   In the evernote case, "quotes are in PDFs" skipped email-body quotes. If
-   the claim was not confirmed by the user during grilling, strip it.
+1. **Domain prediction** — any parenthetical or aside claiming where data
+   lives. If not confirmed by the user during grilling, strip it.
 
 2. **Supplementary framing** — any "ALSO," "additionally," or "optionally"
-   before a mandatory action. Ask: "Is this action mandatory?" In the
-   evernote case, "ALSO parse the email body" caused the LLM to drop email
-   body parsing under cognitive load. If the action is mandatory, strip the
-   word.
+   before a mandatory action. Strip the word.
 
-3. **Outcome prediction** — any sentence that states what a result will be
-   before the action runs. Ask: "Does this sentence describe what the result
-   IS, or what it SHOULD BE?" In the evernote case, "this is not a quote"
-   made the LLM accept weak parses as confirmation. Replace with a
-   conditional on the actual result.
+3. **Outcome prediction** — any sentence stating what a result will be
+   before the action runs. Replace with a conditional on the actual result.
 
 4. **Pattern invitation** — any code example with query operators the LLM
-   would extend. Ask: "Would the LLM naturally extend this pattern?" In the
-   evernote case, `after:{date}` invited `before:{date}`. Simplify or move
-   filtering to application code.
+   would extend. Simplify or move filtering to application code.
 
 Fix violations before showing the draft to the user.
 
@@ -227,38 +208,39 @@ Fix violations before showing the draft to the user.
 ### Control flows
 
 Control flows are not inherently bad. A well-structured if/else branch with
-clear conditions helps the LLM route correctly. The danger is when a control
-flow fixates the scope — when the branching tells the LLM "this is the only
-shape the data can take" instead of "if the data has this shape, do this."
+clear conditions helps the LLM route correctly. The danger is when a
+control flow fixates the scope: when the branching tells the LLM "this is
+the only shape the data can take" instead of "if the data has this shape,
+do this."
 
-A condition ("if the reply has PDF attachments") is an action trigger. A
-prediction on a condition ("quotes are in PDFs, not email bodies") is a
-scope fixation. Conditions are fine. Predictions on conditions are not.
+A condition ("if the data has a PDF attachment") is an action trigger. A
+prediction on a condition ("data is always in PDFs") is a scope fixation.
+Conditions are fine. Predictions on conditions are not.
 
-When a workflow is complex enough that a control flow helps the LLM
-navigate, the control flow should describe what to DO in each branch, not
-what the data WILL BE. "If PDF: download, convert, parse" is fine. "If PDF
-(this is where quotes live): download, convert, parse" is not.
+When a control flow helps the LLM navigate, it should describe what to DO
+in each branch, not what the data WILL BE. "If PDF: download, convert,
+parse" is fine. "If PDF (this is where data lives): download, convert,
+parse" is not.
 
 ### Prohibitions
 
-Prohibitions ("never add before:") are weak against the LLM's optimization
-drive. The LLM will find a different shortcut around the prohibition. They
-have a place — as guardrails after the prediction is stripped, not as the
-primary fix. Fix the wording that creates the prior first. Add a prohibition
-only if the LLM has repeatedly extended a pattern in the same direction.
+Prohibitions are weak against the LLM's optimization drive. The LLM will
+find a different shortcut around the prohibition. They have a place as
+guardrails after the prediction is stripped, not as the primary fix. Fix
+the wording that creates the prior first.
 
 ### Failure examples
 
-Failure examples are useful when they are correct and generalizable. They
-are harmful when they are specific to one instance and the LLM overfits to
-that instance. One example per error type, grounded in the principle, is
-enough. Ten examples of specific failures teach the LLM to pattern-match
-against those cases rather than understand the principle.
+Failure examples in instructions must be abstracted from the specific past
+incident to the general pattern. A specific example ("quotes are in PDFs,
+not email bodies") teaches the LLM to pattern-match against that one case.
+An abstracted example ("a parenthetical claiming where data lives") teaches
+the LLM to recognize the pattern in any future case.
 
-The test: "If I remove this example, does the LLM still understand the
-principle?" If yes, the example is supplementary. If no, the example is
-doing the work of the principle, and the principle is too weak.
+The test: "Does this example teach the principle, or does it teach the
+specific instance?" If the example only makes sense in the context of the
+original failure, it overfits. If it makes sense in any context where the
+same error type could occur, it generalizes.
 
 ## When this skill applies
 

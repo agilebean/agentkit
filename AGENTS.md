@@ -147,6 +147,32 @@ Prefer **one level of abstraction higher** than narrow special cases: what must 
 
 Capture the **principle**; use **examples** only to illustrate, not as the only cases covered.
 
+### 10. Abstract from the specific instance to the general pattern
+
+When writing instructions, lessons learned, or memory files for future use,
+abstract from the specific past incident to the general pattern. A specific
+example ("the shipping agent skipped email-body quotes because the
+instruction said 'quotes are in PDFs'") teaches the LLM to pattern-match
+against that one case. An abstracted example ("a parenthetical claiming
+where data lives becomes a prior that filters out data that doesn't match")
+teaches the LLM to recognize the pattern in any future case.
+
+The test: "Does this text teach the principle, or does it teach the specific
+instance?" If the text only makes sense in the context of the original
+incident, it overfits. If it makes sense in any context where the same
+pattern could occur, it generalizes.
+
+This applies to:
+- Memory files documenting lessons learned from past failures
+- Agent instructions referencing past incidents as motivation
+- Skill files using past failures as examples
+- Any instruction text meant to guide future LLM behavior
+
+A concrete example may follow the abstracted principle to ground it, but
+the principle must stand alone without the example. If removing the example
+makes the principle incomprehensible, the example is doing the work of the
+principle and the principle is too weak.
+
 ### Extraction into agentkit (externalizing logic from an app)
 
 When moving code INTO agentkit from a consumer app: **don't simplify the structure.** Two functions in the original means two functions in agentkit. A try/except fallback means a try/except fallback. If you change module paths that tests patch, update every test; a test patching the old path passes silently against dead code. Before done, run the consumer's full test suite.
