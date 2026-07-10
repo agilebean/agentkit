@@ -185,7 +185,22 @@ class GmailApiBackend:
         payload = msg.get("payload", {})
         body = _extract_body_from_payload(payload)
         attachments = _extract_attachments_from_payload(payload)
-        return {"body": body, "attachments": attachments}
+
+        # Extract key headers from the top-level payload (not recursive).
+        # Sub-parts may carry their own Content-Type / Content-Disposition
+        # headers, but From/Subject/Date live on the envelope only.
+        headers = {}
+        for h in payload.get("headers", []):
+            name = h.get("name", "").lower()
+            if name in ("from", "subject", "date"):
+                headers[name] = h.get("value", "")
+
+        result: dict = {"body": body, "attachments": attachments}
+        result["from"] = headers.get("from", "")
+        result["subject"] = headers.get("subject", "")
+        result["date"] = headers.get("date", "")
+        result["internalDate"] = msg.get("internalDate", "")
+        return result
 
     def download_attachment(self, message_id: str, attachment_id: str) -> bytes:
         from googleapiclient.errors import HttpError
