@@ -32,14 +32,35 @@ are impossible to edit.
    Returns `{"title": "", "content": "<en-note>...</en-note>"}`.
 
 2. **Modify** the ENML in memory. Parse the structure, make changes, keep
-   everything else intact. Content must stay valid ENML (wrapped in
-   `<en-note>`).
+    everything else intact. Content must stay valid ENML (wrapped in
+    `<en-note>`).
+
+   **After every edit**, validate the HTML structure of every `<table>`:
+   - Count `<tr>` and `</tr>` in each table. They must match.
+   - No row may have a missing `</tr>` — the next `<tr>` must not appear
+     before the previous row's `</tr>`. Missing `</tr>` merges two rows
+     into one, and the merged rows will not render in the Evernote app.
+   - No row may have a duplicate `</tr>` (two consecutive `</tr>`).
+   - Fix any violations before proceeding to write.
+
+   **Table row ordering**: when a table column contains dates, rows must be
+   in descending date order (newest first). After any insert, reorder rows
+   to maintain this invariant.
 
 3. **Write back** the full ENML:
    ```
    mamba run -n socrates python -m projects.evernote.src.evernote_api update-by-title --raw "<title>" "<full_enml>"
    ```
    With `--raw`, content is sent to Evernote as-is with no wrapping.
+
+4. **Verify** the write took effect by re-reading:
+   ```
+   mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title --raw "<title>"
+   ```
+   **Never trust** `{"updated": true}` alone. The Evernote API can return
+   success even when cloud-side sync fails silently. Always grep the
+   re-read output for the specific values you changed and confirm they
+   appear.
 
 **Never** call `update-by-title` without first reading the note. You would
 destroy existing content.
