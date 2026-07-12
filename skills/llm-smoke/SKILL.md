@@ -16,5 +16,5 @@ completion succeeds.
      `DEEPSEEK_API_KEY`, or add a key under the `opencode`/`deepseek` block in
      `~/.local/share/opencode/auth.json`.
    - `response:` should be a short non-empty string.
-   - `cost_usd:` is the litellm-estimated cost.
+   - `cost_usd:` is the estimated cost (from the pricing table in `_litellm.py`).
 3. If it fails, the printed exception is the real auth/connectivity error.

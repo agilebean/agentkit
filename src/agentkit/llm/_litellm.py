@@ -1,4 +1,8 @@
-"""Cloud LLM abstraction via litellm with provider aliases and DeepSeek auth fallback.
+"""Cloud LLM abstraction via direct HTTP to OpenAI-compatible endpoints.
+
+All endpoints (opencode go proxy, direct DeepSeek, LM Studio) speak the
+OpenAI chat completions API format, so litellm's multi-provider normalization
+is not needed. Uses stdlib urllib.request instead.
 
 For local MLX models see ``agentkit.llm.mlx``.
 """
@@ -8,10 +12,11 @@ import json
 import os
 import sys
 import time
+import urllib.error
+import urllib.request
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any, Callable
-
-import litellm
 
 from agentkit.core import LLMError
 
@@ -54,8 +59,8 @@ def _get_go_api_key() -> str | None:
     """Return the OpenCode Go API subscription key, or ``None`` if unavailable.
 
     Priority:
-    1. ``OPENCODE_API_KEY`` env var — explicit override
-    2. auth.json → ``opencode``, ``opencode-go``, ``zen``, ``opencode-zen`` blocks
+    1. ``OPENCODE_API_KEY`` env var
+    2. auth.json -> ``opencode``, ``opencode-go``, ``zen``, ``opencode-zen`` blocks
     """
     key = os.environ.get("OPENCODE_API_KEY", "").strip()
     if key:
@@ -75,7 +80,7 @@ def _get_personal_deepseek_key() -> str | None:
     """Return the personal DeepSeek API key, or ``None`` if unavailable.
 
     Priority:
-    1. auth.json → ``deepseek`` block
+    1. auth.json -> ``deepseek`` block
     2. ``DEEPSEEK_API_KEY`` env var
     """
     data = _read_auth_json()
@@ -119,6 +124,127 @@ def resolve_model(
 
 
 # ---------------------------------------------------------------------------
+# HTTP transport (mockable seam)
+# ---------------------------------------------------------------------------
+
+_HTTP_TIMEOUT_S = 120
+
+
+def _strip_provider_prefix(model: str) -> str:
+    """Strip litellm-style provider prefix (e.g. 'deepseek/deepseek-v4-flash' -> 'deepseek-v4-flash')."""
+    if "/" in model:
+        return model.split("/", 1)[1]
+    return model
+
+
+def _wrap_tool_calls(tool_calls: list | None) -> list:
+    if not tool_calls:
+        return []
+    result = []
+    for tc in tool_calls:
+        if isinstance(tc, dict):
+            fn = tc.get("function", {})
+            result.append(SimpleNamespace(
+                id=tc.get("id", ""),
+                type=tc.get("type", "function"),
+                function=SimpleNamespace(
+                    name=fn.get("name", ""),
+                    arguments=fn.get("arguments", ""),
+                ),
+            ))
+        else:
+            result.append(tc)
+    return result
+
+
+def _wrap_response(data: dict) -> SimpleNamespace:
+    """Wrap OpenAI JSON response in SimpleNamespace for attribute access."""
+    choices = []
+    for c in data.get("choices", []):
+        msg = c.get("message", {})
+        message = SimpleNamespace(
+            role=msg.get("role", "assistant"),
+            content=msg.get("content"),
+            tool_calls=_wrap_tool_calls(msg.get("tool_calls")),
+        )
+        choices.append(SimpleNamespace(
+            message=message,
+            finish_reason=c.get("finish_reason"),
+            index=c.get("index", 0),
+        ))
+
+    usage_data = data.get("usage") or {}
+    usage = SimpleNamespace(
+        prompt_tokens=usage_data.get("prompt_tokens", 0),
+        completion_tokens=usage_data.get("completion_tokens", 0),
+        total_tokens=usage_data.get("total_tokens", 0),
+    )
+
+    return SimpleNamespace(choices=choices, usage=usage, id=data.get("id", ""))
+
+
+def _post_completion(**kwargs: Any) -> SimpleNamespace:
+    """Make an OpenAI-compatible chat completion HTTP request.
+
+    This is the mockable seam for tests. Returns a SimpleNamespace wrapping
+    the JSON response with attribute access for .choices, .usage, etc.
+    """
+    api_base = kwargs.pop("api_base", "https://api.openai.com/v1")
+    api_key = kwargs.pop("api_key", "")
+
+    request_model = kwargs.get("model", "")
+    kwargs["model"] = _strip_provider_prefix(request_model)
+
+    url = f"{api_base.rstrip('/')}/chat/completions"
+    body = json.dumps(kwargs).encode("utf-8")
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}",
+    }
+
+    req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+
+    try:
+        with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT_S) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"HTTP {e.code}: {error_body}") from e
+    except urllib.error.URLError as e:
+        raise RuntimeError(f"Connection failed: {e.reason}") from e
+
+    response = _wrap_response(data)
+    response.model = request_model
+    return response
+
+
+# ---------------------------------------------------------------------------
+# Cost estimation
+# ---------------------------------------------------------------------------
+
+# USD per million tokens: (input_price, output_price).
+# Add entries here as needed; unknown models default to 0.0.
+_PRICING: dict[str, tuple[float, float]] = {}
+
+
+def _estimate_cost(model: str, usage: Any) -> float:
+    """Estimate USD cost from token counts and model pricing."""
+    if usage is None:
+        return 0.0
+    pricing = _PRICING.get(model)
+    if pricing is None:
+        return 0.0
+    try:
+        input_per_token = pricing[0] / 1_000_000
+        output_per_token = pricing[1] / 1_000_000
+        prompt = getattr(usage, "prompt_tokens", 0) or 0
+        completion = getattr(usage, "completion_tokens", 0) or 0
+        return float(prompt * input_per_token + completion * output_per_token)
+    except Exception:
+        return 0.0
+
+
+# ---------------------------------------------------------------------------
 # Core completion
 # ---------------------------------------------------------------------------
 
@@ -136,26 +262,26 @@ def complete(
     log_fn: LogFn | None = None,
     **extra_kwargs: Any,
 ) -> str:
-    """Send a chat completion request via litellm. Returns the response text.
+    """Send a chat completion request. Returns the response text.
 
-    DeepSeek auth is resolved automatically with fallback: opencode subscription
-    key first, then personal API key. The source is printed to stdout.
+    Auth is resolved automatically with fallback: opencode subscription
+    key first, then personal DeepSeek API key. The source is printed to stdout.
 
     Args:
         messages: Chat messages in OpenAI format.
         alias: Model alias (``fast``, ``smart``, ``cheap``, ``local``, etc.).
         max_tokens: Maximum tokens to generate.
-        temperature: Sampling temperature (0.0–1.0).
+        temperature: Sampling temperature (0.0-1.0).
         json_mode: If True, request JSON object response format.
         aliases: Override ``DEFAULT_MODEL_ALIASES`` per project.
         log_fn: Optional callback ``log_fn(record)`` called after completion.
-        **extra_kwargs: Passed directly to ``litellm.completion()``.
+        **extra_kwargs: Passed directly to the API as JSON body fields.
 
     Returns:
         Generated text string.
 
     Raises:
-        AgentError.LLMError: On any litellm or auth failure.
+        LLMError: On any HTTP or auth failure.
     """
     model = resolve_model(alias, aliases=aliases)
     t0 = time.perf_counter()
@@ -172,7 +298,7 @@ def complete(
             **extra_kwargs,
         )
         try:
-            resp = litellm.completion(**kwargs)
+            resp = _post_completion(**kwargs)
         except Exception:
             if kwargs.get("api_base") and "go/v1" in str(kwargs.get("api_base", "")):
                 fallback_key = _get_personal_deepseek_key()
@@ -186,7 +312,7 @@ def complete(
                     kwargs["api_base"] = os.environ.get(
                         "DEEPSEEK_API_BASE", "https://api.deepseek.com/v1"
                     )
-                    resp = litellm.completion(**kwargs)
+                    resp = _post_completion(**kwargs)
                 else:
                     raise
             else:
@@ -209,7 +335,7 @@ def complete(
                 except Exception:
                     pass
                 try:
-                    cost = float(litellm.completion_cost(completion_response=resp))
+                    cost = _estimate_cost(model, resp.usage)
                 except Exception:
                     pass
             log_fn(
@@ -241,7 +367,7 @@ def complete_with_tools(
 ) -> Any:
     """Send a chat completion request with tool definitions.
 
-    Returns the raw litellm response object. Consumers parse tool calls themselves.
+    Returns the raw response object. Consumers parse tool calls themselves.
 
     Args:
         messages: Chat messages in OpenAI format.
@@ -252,10 +378,10 @@ def complete_with_tools(
         temperature: Sampling temperature.
         aliases: Override ``DEFAULT_MODEL_ALIASES``.
         log_fn: Optional callback.
-        **extra_kwargs: Passed to ``litellm.completion()``.
+        **extra_kwargs: Passed to the API as JSON body fields.
 
     Returns:
-        Raw litellm completion response object.
+        Raw response object (SimpleNamespace with .choices, .usage, .model).
     """
     model = resolve_model(alias, aliases=aliases)
 
@@ -270,15 +396,17 @@ def complete_with_tools(
         )
         kwargs["tools"] = tools
         kwargs["tool_choice"] = tool_choice
-        return litellm.completion(**kwargs)
+        return _post_completion(**kwargs)
     except Exception as e:
         raise LLMError(str(e)) from e
 
 
 def response_cost_usd(response: Any) -> float:
-    """Estimate USD cost of a litellm response."""
+    """Estimate USD cost of a completion response."""
     try:
-        return float(litellm.completion_cost(completion_response=response))
+        model = getattr(response, "model", "")
+        usage = getattr(response, "usage", None)
+        return _estimate_cost(model, usage)
     except Exception:
         return 0.0
 

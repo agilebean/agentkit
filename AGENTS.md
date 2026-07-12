@@ -177,6 +177,19 @@ principle and the principle is too weak.
 
 When moving code INTO agentkit from a consumer app: **don't simplify the structure.** Two functions in the original means two functions in agentkit. A try/except fallback means a try/except fallback. If you change module paths that tests patch, update every test; a test patching the old path passes silently against dead code. Before done, run the consumer's full test suite.
 
+### 11. Trace the full delivery path for shared-library changes
+
+When a shared library (e.g. agentkit) is consumed by downstream repos via a pinned git tag in CI, complete every step of the delivery path before claiming done: source change → commit → push → new git tag → update consumer CI workflow pins → CI checks out the new version.
+
+An editable install (`pip install -e`) makes local tests pass against the source tree, but consumers' CI checks out a pinned git tag, not the local tree. Local tests are one step toward done, not the final verification.
+
+**Before claiming done on a shared-library change:**
+1. Check every consumer's CI workflow for how it pins the library (git tag, commit hash, branch).
+2. If pinned to a tag, commit and push the library, create a new tag, and update every consumer's workflow to reference it.
+3. Confirm every consumer's CI will check out the new version.
+
+The user-facing outcome is CI green. Verify there, not only at local tests.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:

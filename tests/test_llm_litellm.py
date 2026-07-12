@@ -1,9 +1,11 @@
-"""Tests for agentkit.llm.litellm — alias resolution + auth fallback (no live API)."""
+"""Tests for agentkit.llm._litellm — alias resolution + auth fallback + HTTP transport (no live API)."""
 from __future__ import annotations
 
 import json
 import os
 from pathlib import Path
+from types import SimpleNamespace
+from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -20,6 +22,33 @@ from agentkit.llm._litellm import (
     _get_go_api_key,
     _get_personal_deepseek_key,
 )
+
+
+def _mock_response(
+    content: str = "hello",
+    *,
+    prompt_tokens: int = 10,
+    completion_tokens: int = 5,
+    total_tokens: int = 15,
+    model: str = "test/model",
+    tool_calls: list | None = None,
+) -> SimpleNamespace:
+    """Build a SimpleNamespace response matching the _post_completion return type."""
+    message = SimpleNamespace(
+        role="assistant",
+        content=content,
+        tool_calls=tool_calls or [],
+    )
+    return SimpleNamespace(
+        choices=[SimpleNamespace(message=message, finish_reason="stop", index=0)],
+        usage=SimpleNamespace(
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            total_tokens=total_tokens,
+        ),
+        model=model,
+        id="test-id",
+    )
 
 
 class TestResolveModel:
@@ -113,9 +142,7 @@ class TestPersonalDeepSeekKey:
 class TestCompleteMocked:
     def test_complete_returns_text(self, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.setenv("OPENCODE_API_KEY", "sk-test")
-        with patch("agentkit.llm._litellm.litellm.completion") as mock:
-            mock.return_value.choices = [type("c", (), {"message": type("m", (), {"content": "hello"})()})()]
-            mock.return_value.usage = type("u", (), {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15})()
+        with patch("agentkit.llm._litellm._post_completion", return_value=_mock_response("hello")):
             result = complete(
                 [{"role": "user", "content": "hi"}],
                 alias="fast",
@@ -127,10 +154,8 @@ class TestCompleteMocked:
         monkeypatch.setenv("OPENCODE_API_KEY", "sk-test")
         records = []
 
-        with patch("agentkit.llm._litellm.litellm.completion") as mock:
-            mock.return_value.choices = [type("c", (), {"message": type("m", (), {"content": "ok"})()})()]
-            mock.return_value.usage = type("u", (), {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2})()
-            with patch("agentkit.llm._litellm.litellm.completion_cost", return_value=0.01):
+        with patch("agentkit.llm._litellm._post_completion", return_value=_mock_response("ok", prompt_tokens=1, completion_tokens=1, total_tokens=2)):
+            with patch("agentkit.llm._litellm._estimate_cost", return_value=0.01):
                 complete(
                     [{"role": "user", "content": "x"}],
                     alias="fast",
@@ -149,7 +174,7 @@ class TestCompleteMocked:
         monkeypatch.setenv("OPENCODE_API_KEY", "sk-test")
         records = []
 
-        with patch("agentkit.llm._litellm.litellm.completion", side_effect=RuntimeError("boom")):
+        with patch("agentkit.llm._litellm._post_completion", side_effect=RuntimeError("boom")):
             try:
                 complete(
                     [{"role": "user", "content": "x"}],
@@ -166,15 +191,15 @@ class TestCompleteMocked:
 
     def test_complete_with_tools_returns_raw(self, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.setenv("OPENCODE_API_KEY", "sk-test")
-        with patch("agentkit.llm._litellm.litellm.completion") as mock:
-            mock.return_value = "raw-response"
+        fake = _mock_response("raw-response")
+        with patch("agentkit.llm._litellm._post_completion", return_value=fake):
             resp = complete_with_tools(
                 [{"role": "user", "content": "x"}],
                 tools=[{"type": "function", "function": {"name": "test"}}],
                 alias="fast",
                 aliases={"fast": "test/model"},
             )
-            assert resp == "raw-response"
+            assert resp is fake
 
     def test_complete_falls_back_on_go_api_failure(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -198,10 +223,9 @@ class TestCompleteMocked:
             call_kwargs.append(dict(kwargs))
             if len(call_kwargs) == 1:
                 raise RuntimeError("Go API unavailable")
-            resp = type("r", (), {"choices": [type("c", (), {"message": type("m", (), {"content": "fallback-ok"})()})()], "usage": None})()
-            return resp
+            return _mock_response("fallback-ok", prompt_tokens=0, completion_tokens=0, total_tokens=0)
 
-        with patch("agentkit.llm._litellm.litellm.completion", side_effect=fail_then_succeed):
+        with patch("agentkit.llm._litellm._post_completion", side_effect=fail_then_succeed):
             result = complete([{"role": "user", "content": "hi"}], alias="fast")
             assert result == "fallback-ok"
 
@@ -281,11 +305,11 @@ class TestBuildCompletionKwargs:
 
 class TestResponseCost:
     def test_returns_float(self):
-        with patch("agentkit.llm._litellm.litellm.completion_cost", return_value=0.05):
+        with patch("agentkit.llm._litellm._estimate_cost", return_value=0.05):
             assert response_cost_usd(None) == 0.05
 
     def test_returns_zero_on_error(self):
-        with patch("agentkit.llm._litellm.litellm.completion_cost", side_effect=Exception("nope")):
+        with patch("agentkit.llm._litellm._estimate_cost", side_effect=Exception("nope")):
             assert response_cost_usd(None) == 0.0
 
 
