@@ -5,7 +5,7 @@ requires-python = ">=3.12"
 dependencies = []
 
 [project.optional-dependencies]
-llm = ["litellm>=1.55.0"]
+llm = []
 speech = ["mlx-audio>=0.3.0", "numpy", "sounddevice", "parakeet-mlx>=0.2.0", "soundfile"]
 mlx_llm = ["mlx-lm>=0.20.0"]
 audio = ["sounddevice", "numpy", "webrtcvad"]
