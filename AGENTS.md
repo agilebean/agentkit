@@ -104,6 +104,7 @@ A commit must contain only the work for the current task — never the user's un
 - Stage files **by name** (`git add src/foo.py tests/test_foo.py`). **Never** `git add -A`, `git add .`, `git add --all`, or `git commit -a / -am / --all` — these sweep unrelated changes into your commit. (The `commit-discipline` plugin blocks them; if blocked, list the files explicitly.)
 - Before committing, run `git status` and `git diff --cached --stat`. Unstage anything not part of the task (`git restore --staged <file>`). If the tree holds changes you did **not** make, leave them unstaged and tell the user they're there.
 - "Done" means the committed state is green **on a clean tree**: with unrelated edits stashed/unstaged, the relevant suite passes at HEAD. Never commit a code change while leaving its matching test update uncommitted — that makes HEAD red even though the dirty working tree looks green.
+- **Recovering lost commits.** When your own operation (reset, rebase, force-push, amend) drops a commit that the user authored, you must restore it exactly — same files, same subject line, same body. Check `git reflog` to find the lost sha, then `git log --format=full <sha> -1` to read the full message. Copy the subject and body verbatim. Never paraphrase or shorten a commit message you're restoring.
 
 ## Agile slices + strict TDD (do not deviate)
 
