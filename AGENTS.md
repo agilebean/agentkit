@@ -52,7 +52,29 @@ A task starts with one goal. If you find yourself modifying the same file for a 
 
 If the user answers with a fix instruction ("fix the parsing error"), execute ONLY that fix. Do not also continue the extraction work.
 
-### 5. Update tests after every fix (non-waivable)
+### 5. When a user gives an explicit constraint, every subsequent proposal must satisfy it
+
+A constraint stated once by the user is standing until withdrawn. "Do NOT
+generate the title from command-line arguments" means no proposal you make
+may include `--date`, `--clinic`, `--amount`, or any other argument that
+becomes part of a generated title. If you propose a design that uses
+exactly the mechanism the user forbade, you are not listening — you are
+re-framing your original solution in different words.
+
+When the user rejects your proposal because it violates a constraint:
+1. Identify the constraint verbatim from the user's words.
+2. Before presenting any new proposal, check it against every standing
+   constraint the user has stated in this conversation. If any constraint
+   fails, discard the proposal.
+3. If you cannot satisfy a constraint with code alone, state that clearly
+   and ask whether the constraint should be relaxed.
+
+A constraint repeated 3+ times is a structural failure in your listening,
+not a negotiation. At repetition 3, stop proposing and ask: "I have
+proposed solutions that violate your constraint [quote it]. Can you show me
+the right approach?"
+
+### 6. Update tests after every fix (non-waivable)
 
 After fixing an error or implementing a feature — including any edit to a
 ``.py`` file performed during a local workflow — run the full test suite with
@@ -60,7 +82,7 @@ pytest. Fix all failures before marking the task done. A filtered run
 (``-k``) is not a full run and does not satisfy this rule. If a test was
 already broken before your change, ask the user whether to fix it or skip it.
 
-### 6. Do not trust tests you just refreshed; do not repeat a failed fix
+### 7. Do not trust tests you just refreshed; do not repeat a failed fix
 
 **Snapshots are not validation after refresh.**
 After you refresh a snapshot/baseline, it matches current output by definition. A test that compares against it is not evidence your fix works — it only proves you ran the refresh. Verify with an independent check: the actual file content, a grep for the bad data, the rendered page.
@@ -90,15 +112,15 @@ The user sees the rendered dashboard, not the CSV. A script sees the API respons
 **Every repeated failure is structural information.**
 If you apply the same fix three times and the user reports the same bug three times, the system is telling you something: your fix is not on the causal path. The bug persists because something else — a merge step, a cache, a regeneration hook, a sync script — overrides your change. That "something else" is not an obstacle to work around; it is the thing you need to understand. Each repeated failure narrows the search: the mechanism that undoes your fix must run between your edit and the user's view. Find it.
 
-### 7. Never revert or overwrite production/user files to make tests pass
+### 8. Never revert or overwrite production/user files to make tests pass
 Tests should be self-contained. When a test fails because a production file (config, data, topics YAML, `.env`, keep-list JSON, etc.) was changed in the working tree, the **test** is coupled wrong — the production file is user data. Fix the *test* (make it use temp fixtures or a copy), never `git checkout` or modify the production file to green the suite. Reverting a user's working-tree changes is data loss.
 
-### 8. When a user's input is ambiguous, ask before acting
+### 9. When a user's input is ambiguous, ask before acting
 User messages can have multiple reasonable interpretations, especially when they embed output from one tool as part of their complaint. Before acting, think about what the user most likely means from their perspective (not yours). If another interpretation is plausible and would lead to different code changes, use the question tool to narrow it down. Do not assume your first reading is correct.
 
 This applies in particular to user requirements and to file removal or editing: check whether alternative interpretations are possible for the instruction. If they are, ask questions before touching files.
 
-### 9. Stage explicitly; every commit must be self-contained and green
+### 10. Stage explicitly; every commit must be self-contained and green
 A commit must contain only the work for the current task — never the user's unrelated, pre-existing working-tree edits.
 
 - Stage files **by name** (`git add src/foo.py tests/test_foo.py`). **Never** `git add -A`, `git add .`, `git add --all`, or `git commit -a / -am / --all` — these sweep unrelated changes into your commit. (The `commit-discipline` plugin blocks them; if blocked, list the files explicitly.)
@@ -148,7 +170,7 @@ Prefer **one level of abstraction higher** than narrow special cases: what must 
 
 Capture the **principle**; use **examples** only to illustrate, not as the only cases covered.
 
-### 10. Abstract from the specific instance to the general pattern
+### 11. Abstract from the specific instance to the general pattern
 
 When writing instructions, lessons learned, or memory files for future use,
 abstract from the specific past incident to the general pattern. A specific
@@ -178,7 +200,7 @@ principle and the principle is too weak.
 
 When moving code INTO agentkit from a consumer app: **don't simplify the structure.** Two functions in the original means two functions in agentkit. A try/except fallback means a try/except fallback. If you change module paths that tests patch, update every test; a test patching the old path passes silently against dead code. Before done, run the consumer's full test suite.
 
-### 11. Trace the full delivery path for shared-library changes
+### 12. Trace the full delivery path for shared-library changes
 
 When a shared library (e.g. agentkit) is consumed by downstream repos via a pinned git tag in CI, complete every step of the delivery path before claiming done: source change → commit → push → new git tag → update consumer CI workflow pins → CI checks out the new version.
 
