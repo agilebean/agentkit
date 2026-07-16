@@ -213,6 +213,34 @@ An editable install (`pip install -e`) makes local tests pass against the source
 
 The user-facing outcome is CI green. Verify there, not only at local tests.
 
+### 13. A pipeline that runs without crashing is not correct — verify the output on real data
+
+Automated features that pass all unit tests can still produce wrong results
+when run against real-world inputs. "Didn't crash" is not the bar. "Produced
+the right output" is.
+
+After implementing any feature that transforms data, OCRs images, parses text,
+or maps between formats, run it on at least one real-world input. Inspect the
+output. If any field is wrong — a wrong name, a wrong amount, a wrong
+classification — that is a bug. Fix the root cause before committing. Do not
+call the feature done because the pipeline "completed successfully." A
+successful pipeline with wrong output is a broken pipeline.
+
+Failure to do this creates a cycle: build → "works" → user points out error
+→ fix → "works" → user points out next error. Each round erodes trust. The
+first round is avoidable: test on real data before claiming done.
+
+This applies especially to:
+- OCR-based extraction where the parser's heuristics differ from reality
+- Currency conversion where the detected currency code may be wrong
+- Name extraction where frequency-based heuristics pick OCR noise over real names
+- Classification where keyword lists miss the domain-specific terms in real data
+1. Check every consumer's CI workflow for how it pins the library (git tag, commit hash, branch).
+2. If pinned to a tag, commit and push the library, create a new tag, and update every consumer's workflow to reference it.
+3. Confirm every consumer's CI will check out the new version.
+
+The user-facing outcome is CI green. Verify there, not only at local tests.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
