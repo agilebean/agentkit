@@ -4,7 +4,6 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
-import tempfile
 import time
 import urllib.error
 import urllib.request
@@ -26,6 +25,26 @@ def _brave_cdp_ready(address: str, timeout_s: float = 2.0) -> bool:
         return False
 
 
+def _brave_is_running() -> bool:
+    """Check if process named 'Brave Browser' exists (with or without debug port)."""
+    try:
+        result = subprocess.run(
+            ["pgrep", "-f", "Brave Browser"],
+            capture_output=True,
+            text=True,
+        )
+        return result.returncode == 0
+    except Exception:
+        return False
+
+
+def _kill_brave() -> None:
+    subprocess.run(
+        ["pkill", "-f", "Brave Browser"],
+        capture_output=True,
+    )
+
+
 def ensure_brave_running(
     address: str = "127.0.0.1:9222",
     *,
@@ -43,6 +62,17 @@ def ensure_brave_running(
             "Start Brave manually with --remote-debugging-port first."
         )
 
+    # If Brave is already running without the debug port, kill it first
+    # so the relaunch picks up the real profile with existing logins.
+    if _brave_is_running():
+        print(
+            "Brave is running without --remote-debugging-port. "
+            "Restarting with debug port...",
+            file=sys.stderr,
+        )
+        _kill_brave()
+        time.sleep(2)
+
     host, _, port_str = address.partition(":")
     port = int(port_str)
 
@@ -50,18 +80,8 @@ def ensure_brave_running(
         binary,
         f"--remote-debugging-port={port}",
         "--no-first-run",
-        "--disable-extensions",
     ]
-
-    if _IS_MACOS:
-        profile_dir = Path(tempfile.mkdtemp(prefix="brave_digest_profile_"))
-        args.append(f"--user-data-dir={profile_dir}")
-        print(
-            f"Launching separate Brave instance with temp profile {profile_dir} (port {port})...",
-            file=sys.stderr,
-        )
-    else:
-        print(f"Launching Brave (port {port})...", file=sys.stderr)
+    print(f"Launching Brave (port {port})...", file=sys.stderr)
 
     with open(os.devnull, "w") as devnull:
         subprocess.Popen(

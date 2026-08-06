@@ -210,6 +210,19 @@ This applies especially to:
 - Name extraction where frequency-based heuristics pick OCR noise over real names
 - Classification where keyword lists miss the domain-specific terms in real data
 
+### 14. Environment substitution is a false convenience — never auto-launch a substitute profile, credential, or directory
+
+When a helper detects that a required environment is absent (browser session, login context, data directory), it must NOT silently substitute a different one. The substitute has different state — different cookies, permissions, data — and downstream code will fail in ways that are hard to diagnose because the swap is hidden inside a convenience function.
+
+The two valid responses:
+
+1. **Fail fast** with a message that tells the user what is missing and how to provide it.
+2. **Acquire the exact environment**, not a substitute. If the real browser profile is needed, use the real profile. If that means killing the existing browser and restarting it, do that — but never present a temp profile as "good enough."
+
+A "close enough" environment is never close enough. The gap between the substitute and the real environment is always the thing the caller depends on. This applies to browser profiles, working directories, credential contexts, database connections, and any stateful context that a function auto-creates.
+
+**Auto-launch that hides an environment difference is worse than no auto-launch at all.** A clear error message ("start Brave with --remote-debugging-port") preserves the user's mental model. A silent substitution ("I'll just launch a temp profile for you") breaks it, and the resulting failure appears to be a navigation or auth bug rather than a profile problem.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
