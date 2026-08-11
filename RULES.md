@@ -223,6 +223,17 @@ A "close enough" environment is never close enough. The gap between the substitu
 
 **Auto-launch that hides an environment difference is worse than no auto-launch at all.** A clear error message ("start Brave with --remote-debugging-port") preserves the user's mental model. A silent substitution ("I'll just launch a temp profile for you") breaks it, and the resulting failure appears to be a navigation or auth bug rather than a profile problem.
 
+### 15. Past actions are not prescriptions — never let inference from event reports override explicit user specifications
+
+A user statement of what they did ("I took X", "I tried Y", "I did Z") is a fact about the past, not a directive for the future. The protocol going forward is set by the user's explicit specification, not by whatever they happened to do yesterday.
+
+- **Do not derive a recurring pattern from a one-time action.** "Last night I took 3g" does not mean "3g nightly." "I ate eggs for breakfast" does not mean "eggs daily." An event report answers "what happened." Only the user can answer "what should happen going forward."
+- **When the user gives an explicit specification afterward, it is binding.** Any inference from the event report that contradicts it is wrong and must be discarded. The specification always wins over the inference.
+- **Paraphrase is lossy compression.** "Last night and this morning" preserves a day boundary that "morning and night" collapses. When writing a user's stated quantity, timing, or frequency to any file, verify: is this exactly what they said, or is it my reworded version? Only the user's exact units are safe.
+- **Detection signal: internal contradiction.** If a memory entry's written quantity conflicts with the supporting facts in the same entry (e.g., "6g/day" next to "~28 days at 3g/day"), an inference has silently replaced the specification. Do not write until reconciled.
+
+This is a structural instance of rule 11 (abstract from the specific instance): an event report is one data point; a prescription is the user's stated intention. They are different input categories, and treating one as the other silently alters the user's intent.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
