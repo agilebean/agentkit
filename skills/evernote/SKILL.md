@@ -17,8 +17,8 @@ Alternatively: set `EVERNOTE_TOKEN` env var.
 
 ## Note structure rules
 
-- Any graphic (chart, screenshot, image) must be placed at the top of the note, right below the TL;DR section. Never embed graphics at the bottom or in the middle of a note.
-- A note starts with a TL;DR section. Graphics go immediately after it, before the body sections.
+- Any graphic (chart, screenshot, image) must be placed at the very top of the note, ABOVE the TL;DR section. Never embed graphics below the TL;DR, at the bottom, or in the middle of a note.
+- Order: graphic first, then TL;DR, then the body sections.
 
 ## Reading notes
 
