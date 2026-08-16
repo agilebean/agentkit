@@ -241,6 +241,17 @@ A user statement of what they did ("I took X", "I tried Y", "I did Z") is a fact
 
 This is a structural instance of rule 11 (abstract from the specific instance): an event report is one data point; a prescription is the user's stated intention. They are different input categories, and treating one as the other silently alters the user's intent.
 
+### 16. Chart annotation placement: measure the rendered geometry, never guess coordinates
+
+When positioning annotation boxes relative to data (for example "to the right of the last data point with a minimum gap"), do not hard-code x offsets from memory. Measure the rendered artists and compute the position:
+
+1. Measure with the FINAL transform. Apply layout first (`plt.tight_layout()`), then `fig.canvas.draw()`. Measuring before layout is wrong: layout resizes the axes, which changes the data width of every text box, so a box measured pre-layout lands off-target.
+2. Measure each box with `artist.get_bbox_patch().get_window_extent()` and each reference element (data marker, value label) with `get_window_extent()`. Convert both to data coordinates via `ax.transData.inverted()`.
+3. Find the last data point programmatically (`max` over the plotted x positions), never from an assumed axis index. A miscounted index (last month is index 8, not 7) is a common silent bug that places the box directly on a point.
+4. Convert a physical gap into data units: `units_per_mm = xlim_span / (axes_width_in * 25.4)`, where `axes_width_in = ax.get_position().width * fig.get_size_inches()[0]` and `xlim_span = ax.get_xlim()[1] - ax.get_xlim()[0]`.
+5. To put the box's left edge at `last_data_x + gap_mm * units_per_mm`: with the text anchored at a reference x (e.g. 0), measure the box's left edge `bx0`; then set the anchor to `desired_left - bx0`. This is exact because the box moves rigidly with its anchor. Equivalently, for a centered box, `anchor = last_data_x + box_width/2 + gap`.
+6. After placing, re-measure with the same final transform and verify the box right edge stays inside `xlim` and the gap to the data meets the required minimum.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
