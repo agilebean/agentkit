@@ -17,8 +17,23 @@ Alternatively: set `EVERNOTE_TOKEN` env var.
 
 ## Note structure rules
 
-- Any graphic (chart, screenshot, image) must be placed at the top of the note, right below the TL;DR section. Never embed graphics at the bottom or in the middle of a note.
-- A note starts with a TL;DR section. Graphics go immediately after it, before the body sections.
+- Any graphic (chart, screenshot, image) must be placed at the very top of the note, ABOVE the TL;DR section. Never embed graphics below the TL;DR, at the bottom, or in the middle of a note.
+- Order: graphic first, then TL;DR, then the body sections.
+
+## Notebook placement
+
+Every note must be created in its topic's notebook, never the default.
+
+| Topic | Notebook |
+|-------|----------|
+| Health | Health |
+| Swimming | Swimming |
+| Personal | Chaehan |
+
+- Pass `--notebook <name>` to `create` with the exact notebook name.
+- For topics not in the table, pick the obviously matching existing notebook (finance → "Chaehan Financials", travel → the current year's travel notebook). If none matches, ask.
+- The CLI has no move command and `update` cannot change a note's notebook. To move a note, set `notebookGuid` directly via the thrift client.
+- Exact-title search (`find-note`, `get-by-title`) fails on titles containing parentheses; Evernote parses them as search operators. Use a partial query or the guid.
 
 ## Reading notes
 
