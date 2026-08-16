@@ -35,6 +35,13 @@ becomes part of a generated title. If you propose a design that uses
 exactly the mechanism the user forbade, you are not listening — you are
 re-framing your original solution in different words.
 
+Before you implement any proposal, stop and ask yourself: **Is this what
+the user meant?** Then check the proposal against every standing constraint
+stated in this conversation. Doubt about the meaning, or about whether the
+proposal violates a standing constraint, is a signal to stop, not to
+proceed: use the question tool to clarify with the user before touching
+code or files.
+
 When the user rejects your proposal because it violates a constraint:
 1. Identify the constraint verbatim from the user's words.
 2. Before presenting any new proposal, check it against every standing
@@ -90,9 +97,9 @@ If you apply the same fix three times and the user reports the same bug three ti
 Tests should be self-contained. When a test fails because a production file (config, data, topics YAML, `.env`, keep-list JSON, etc.) was changed in the working tree, the **test** is coupled wrong — the production file is user data. Fix the *test* (make it use temp fixtures or a copy), never `git checkout` or modify the production file to green the suite. Reverting a user's working-tree changes is data loss.
 
 ### 9. When a user's input is ambiguous, ask before acting
-User messages can have multiple reasonable interpretations, especially when they embed output from one tool as part of their complaint. Before acting, think about what the user most likely means from their perspective (not yours). If another interpretation is plausible and would lead to different code changes, use the question tool to narrow it down. Do not assume your first reading is correct.
+User messages can have multiple reasonable interpretations, especially when they embed output from one tool as part of their complaint. Before acting, think about what the user most likely means from their perspective (not yours). If another interpretation is plausible and would lead to different code changes, use the question tool to narrow it down. Do not assume your first reading is correct. Before acting, ask yourself: "Is this what the user meant?" If you are in doubt, use the question tool. Do not implement one reading and hope it was right.
 
-This applies in particular to user requirements and to file removal or editing: check whether alternative interpretations are possible for the instruction. If they are, ask questions before touching files.
+This applies in particular to user requirements and to file removal or editing: check whether alternative interpretations are possible for the instruction. In case of doubt, use the question tool before touching files.
 
 ### 10. Stage explicitly; every commit must be self-contained and green
 A commit must contain only the work for the current task — never the user's unrelated, pre-existing working-tree edits.
