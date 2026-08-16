@@ -15,6 +15,11 @@ Token saved at `~/.local/share/socrates/evernote_token` (chmod 600).
 Extract: Chrome DevTools > Application > Cookies > www.evernote.com > clipper-sso.
 Alternatively: set `EVERNOTE_TOKEN` env var.
 
+## Note structure rules
+
+- Any graphic (chart, screenshot, image) must be placed at the top of the note, right below the TL;DR section. Never embed graphics at the bottom or in the middle of a note.
+- A note starts with a TL;DR section. Graphics go immediately after it, before the body sections.
+
 ## Reading notes
 
 Three read modes with different token costs and fidelity:
