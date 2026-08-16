@@ -197,3 +197,45 @@ This makes test discovery deterministic and independent of `__init__.py` files.
 - Catch specific exceptions before the generic catch-all. `GmailAuthError` before `Exception`.
 - Use distinct exit codes: 2 for auth, 1 for generic errors, 0 for success. Match existing conventions in the same codebase.
 - Import the specific exception class inside the function, not at module top, to avoid import failures when optional dependencies are not installed.
+
+---
+
+# Lessons learned: swim dashboard chart regression (2026-08-16)
+
+**Context:** Task 1 removed non-freestyle cooldown reps from the CD markers and was correct. Task 2 asked to surface Jan/Feb pre-course data and "not interpolate the missing 60/90% markers." The agent surfaced the data correctly, then misread "not interpolate" as "break the connecting line at every missing date" and rewrote the shared average-trace renderer for every effort series. That deleted the interconnecting lines the user had told the agent to preserve.
+
+---
+
+## 17. WRONG: Turning an ambiguous symptom phrase into a broad rendering change
+
+**What happened:** The user said "the missing 60 and 90% markers should not be interpolated." The agent read this as "break the line at every date where a series has no data" and rewrote the trace renderer. The correct meaning was "do not draw a fake line across the empty Jan/Feb stretch," which the Jan/Feb data surfacing already fixed. The rendering rewrite removed the connecting lines for every series and broke the chart.
+
+**Root cause:** The phrase had two readings. One reading needed only the change already in progress. The other needed a change to a shared rendering path the user had protected. The agent chose the second and did not ask.
+
+**DO THIS:**
+- When an instruction has two readings, and one requires changing a protected shared path while the other is already satisfied by the work in progress, ask before acting. Default to the reading that needs no new risky change.
+- If the primary change already fixes the symptom the instruction describes, do not add a second independent fix for the same symptom.
+
+---
+
+## 18. WRONG: Applying a two-series change to a shared path that serves every series
+
+**What happened:** The user named "60 and 90%." The change went into the average-trace renderer, which draws 60/70/80/90/CD and pull-buoy series alike. Every series lost its connecting line.
+
+**Root cause:** A named subset is a scope hint. A shared code path has a blast radius larger than the named subset.
+
+**DO THIS:**
+- Before editing a shared renderer or mapper, list every consumer it serves. If the instruction names a subset and the edit changes the rest, the edit is wrong or needs a guard to limit it to the named subset.
+- Check the blast radius before the edit, not after the user reports the regression.
+
+---
+
+## 19. WRONG: Shipping a visual change the agent cannot verify
+
+**What happened:** The agent edited the dashboard's JavaScript line rendering and verified only that the JS parsed and the payload data was correct. The agent cannot view the rendered chart, so it shipped a change that visually broke the chart.
+
+**Root cause:** A rendering change's correctness lives in the rendered output, not in syntax or data.
+
+**DO THIS:**
+- A chart or visual change is verified at the rendered page, not the source or the payload. If you cannot see the result, do not make the change on an ambiguous instruction. State the verification gap and get confirmation first.
+- Treat passing tests and correct data as insufficient evidence for a visual change.
