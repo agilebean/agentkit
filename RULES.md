@@ -90,6 +90,9 @@ A passing test, a clean file, a zero count from `grep` — these are measurement
 **Verify at the user-facing outcome, not the intermediate artifact.**
 The user sees the rendered dashboard, not the CSV. A script sees the API response, not the database row. If you verify at an intermediate layer and stop, you haven't verified the fix — you've verified that layer. The downstream transformation (template rendering, payload generation, API serialization) may reintroduce the bug or mask your fix. Check the artifact the user actually experiences.
 
+**Verify at the external boundary, not at the mock.**
+A mock is an intermediate artifact with the same blind spot. When the real system's acceptance rule lives only in that system (a format validator, a required header, a schema check), a test against a permissive fake proves nothing about the real call. For any seam where the external system enforces a contract, the verification that counts is the one the external system performs: a live call, or a fake that replicates the exact rejection. Green against a permissive fake while the real system rejects the same input is not a green build, it is an unexecuted failure.
+
 **Every repeated failure is structural information.**
 If you apply the same fix three times and the user reports the same bug three times, the system is telling you something: your fix is not on the causal path. The bug persists because something else — a merge step, a cache, a regeneration hook, a sync script — overrides your change. That "something else" is not an obstacle to work around; it is the thing you need to understand. Each repeated failure narrows the search: the mechanism that undoes your fix must run between your edit and the user's view. Find it.
 
@@ -107,6 +110,7 @@ A commit must contain only the work for the current task — never the user's un
 - Stage files **by name** (`git add src/foo.py tests/test_foo.py`). **Never** `git add -A`, `git add .`, `git add --all`, or `git commit -a / -am / --all` — these sweep unrelated changes into your commit. (The `commit-discipline` plugin blocks them; if blocked, list the files explicitly.)
 - Before committing, run `git status` and `git diff --cached --stat`. Unstage anything not part of the task (`git restore --staged <file>`). If the tree holds changes you did **not** make, leave them unstaged and tell the user they're there.
 - "Done" means the committed state is green **on a clean tree**: with unrelated edits stashed/unstaged, the relevant suite passes at HEAD. Never commit a code change while leaving its matching test update uncommitted — that makes HEAD red even though the dirty working tree looks green.
+- **Your uncommitted work is vulnerable to being swept into another commit.** Rule 10 protects against sweeping *others'* work into *your* commit. The mirror hazard: *your* uncommitted changes get swept into a concurrent session's commit, losing their subject and attribution. Commit small units immediately after they pass verification; never end a working session with tracked-file modifications still uncommitted; run `git status` before ending any turn. If you return to find your change already committed under an unrelated message, do not rewrite pushed history without asking — report the misattribution and let the user decide.
 - **Recovering lost commits.** When your own operation (reset, rebase, force-push, amend) drops a commit that the user authored, you must restore it exactly — same files, same subject line, same body. Check `git reflog` to find the lost sha, then `git log --format=full <sha> -1` to read the full message. Copy the subject and body verbatim. Never paraphrase or shorten a commit message you're restoring.
 
 ## Agile slices + strict TDD (do not deviate)
@@ -143,6 +147,22 @@ Prefer **one level of abstraction higher** than narrow special cases: what must 
 - APIs: backward compatibility, error shapes consumers assume.
 - UI: semantic separation of overlapping elements, readable scales, unchanged meaning of controls.
 - Builds: env vars, feature flags, and migrations that must stay aligned.
+
+### External contracts must be encoded, not assumed
+
+Requirements imposed by an external system (format headers, validation rules,
+required fields, protocol framing) are invariants like any other. If they exist
+only in the external documentation, they are invisible to every future
+contributor. Encode them in the code:
+
+1. Extract the requirement into a named constant or helper (e.g. a document
+   header wrapper, a validation check).
+2. Add a test named after the requirement that asserts the invariant holds.
+3. The requirement survives as long as the constant and its test survive.
+
+An undocumented external contract is a latent bug: the codebase can be
+self-consistent and wrong at the same time, and the failure surfaces only when
+a real call reaches the external system.
 
 ### Coupling (change one → check the system)
 1. Identify **all** readers, writers, tests, configs, and user-visible surfaces that shared the old contract.
@@ -199,6 +219,22 @@ The user-facing outcome is CI green. Verify there, not only at local tests.
 Automated features that pass all unit tests can still produce wrong results
 when run against real-world inputs. "Didn't crash" is not the bar. "Produced
 the right output" is.
+
+**A passing suite against fakes proves compatibility with the fakes, not with
+the real system.** The mock is a model of the external system, and the failure
+lives in the model's omissions: a fake that accepts anything makes the unit
+suite green while the real system rejects the same input. For every integration
+seam (API client, converter, parser, exporter, serializer), either the fake
+enforces the external contract's invariants (required headers, format rules,
+validation checks), or a live integration test against the real system must
+exist. A mock that accepts anything is not a test oracle, it is a rubber stamp.
+
+**A new mechanism for an existing operation must be exercised during the
+work, not at the next user request.** When a refactor introduces a new way to
+do something that already worked (a new converter, a new write path, a new
+serialization), coverage of the old path proves nothing about the new one.
+Run a real operation through the new mechanism before declaring the change
+done. The bug that survives is the one in the path nobody exercised.
 
 After implementing any feature that transforms data, OCRs images, parses text,
 or maps between formats, run it on at least one real-world input. Inspect the
