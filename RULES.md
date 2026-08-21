@@ -288,6 +288,33 @@ When positioning annotation boxes relative to data (for example "to the right of
 5. To put the box's left edge at `last_data_x + gap_mm * units_per_mm`: with the text anchored at a reference x (e.g. 0), measure the box's left edge `bx0`; then set the anchor to `desired_left - bx0`. This is exact because the box moves rigidly with its anchor. Equivalently, for a centered box, `anchor = last_data_x + box_width/2 + gap`.
 6. After placing, re-measure with the same final transform and verify the box right edge stays inside `xlim` and the gap to the data meets the required minimum.
 
+### 17. Notes must bind every datum to its referent — an ambiguous note is a write-time defect
+
+Notes written by one agent (memory files, Evernote notes, docs, comments) are
+read later by an agent that cannot ask the author what was meant. Anything the
+author knows but the text does not carry is already lost. The reader's job is
+to attach each datum to a subject; if two attachments are possible, the wrong
+one will eventually be chosen.
+
+- **Bind every datum to its subject within its own clause.** A number,
+  prescription, status, or plan must name what it applies to in the same
+  sentence. A sentence whose antecedent could attach to either the preceding
+  or the following topic is a defective note. Rewrite it with the subject
+  named. The metric is irrelevant: loads, doses, prices, dates, and
+  frequencies all misattach the same way when unbound.
+- **Plans carry scope: activity, metric, time.** "Load at 50-60% of normal"
+  is defective. "Freestyle-return program (swim sessions after 2026-08-18,
+  not gym lat work): load at 50-60% of normal volume" survives. An event
+  record describes what happened; a plan describes what will be done; a
+  dated entry that contains a plan must state the plan's future scope, never
+  leave the entry date to imply it.
+- **Read side.** When reading a note one did not write, an ambiguity is a
+  defect to surface, not a guess to make. Ask the user which reading is
+  correct before using the datum.
+
+The write-time test: if a careful reader could attach the datum to the wrong
+subject, the note is wrong no matter what the author knows.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
