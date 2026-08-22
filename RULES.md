@@ -338,6 +338,35 @@ Failure: on 2026-08-22, gym sessions were recorded as Budapest (08-20)
 and Munich (08-22) straight from the CSV; both were travel days, and the
 actual locations were Bucharest and Budapest.
 
+### 19. Notes and summaries: answer first, human words, no hedging rituals
+
+Any text written for the user to read later (decision notes, session
+summaries, memory entries, Evernote notes, reports) follows the reader's
+order and the reader's language, not the analyst's process.
+
+- **Answer first.** If the document exists to answer a question, the answer
+  is the first sentence. Reasoning follows. Never build suspense by saving
+  the recommendation for the end.
+- **No confidence rituals.** Do not attach labels like "Confidence:
+  moderate" or "high confidence on X". State the call. If genuinely
+  uncertain, name the specific fact that would change it.
+- **Write the sentence a friend would say.** "You risk more hurting the
+  shoulder than gaining strength", not "the risk is the serious one and the
+  payoff is fictional". Compare concrete outcomes in plain words. Mechanism
+  stays; analyst jargon goes. "Benign", "sub-clinical", "protocol signal",
+  "fictional payoff", "eliminated by error analysis" are all defects in
+  user-facing prose.
+- **One claim per sentence.** Short sentences, no semicolon chains, no em
+  dashes (rule 2).
+- **Cut restatement, keep numbers.** Each fact appears once, in the place
+  where it does the most work. Concrete numbers, dates, names, and places
+  survive every cut. Repeated descriptions of the same option do not.
+
+Detection signal: if a note reads like the transcript of an analysis
+(reframe, enumeration, assumptions, reveal), it is in the wrong order. The
+reader's questions are: what do I do, why, what would change it. In that
+order.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
