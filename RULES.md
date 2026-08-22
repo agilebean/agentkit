@@ -316,6 +316,28 @@ one will eventually be chosen.
 The write-time test: if a careful reader could attach the datum to the wrong
 subject, the note is wrong no matter what the author knows.
 
+### 18. Itinerary rows are exact for mid-stay dates; travel days must be asked
+
+A shared schedule — Chaehan's `memory/travelitinerary.csv` — is
+authoritative for where he is on any date inside a stay. Use it exactly
+there. On travel days, the last day of one stay or the first day of the
+next, the schedule cannot place him: he moves later in the day, plans
+shift, and the file can lag reality. On those dates, ASK Chaehan or take
+his reported location; his report overrides the file. Never write a city
+for a travel day into a note, summary, or message without his
+confirmation. When a task involves location, time, travel, or
+adaptation-to-place, read the itinerary first; only skip it when the
+task is genuinely location-independent.
+
+The principle: when a data source is authoritative for interior values
+but ambiguous at boundary values, do not extrapolate the boundary — take
+it from the owner. The extrapolated boundary silently corrupts every
+record that names it.
+
+Failure: on 2026-08-22, gym sessions were recorded as Budapest (08-20)
+and Munich (08-22) straight from the CSV; both were travel days, and the
+actual locations were Bucharest and Budapest.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
