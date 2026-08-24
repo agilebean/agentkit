@@ -210,6 +210,7 @@ mamba run -n socrates python -m projects.evernote.src.evernote_api embed-image <
 mamba run -n socrates python -m projects.evernote.src.evernote_api photos-embed <title> [--count N] [--after-heading <heading>]
 mamba run -n socrates python -m projects.evernote.src.evernote_api log-entry <title> <heading> --fields "k=v" [--photo] [--after-heading <heading>]
 mamba run -n socrates python -m projects.evernote.src.evernote_api sync-memory --from-evernote|--to-evernote [--topics a,b]
+mamba run -n socrates python -m projects.evernote.src.evernote_api close-note "<title>"
 ```
 
 ## Output
@@ -221,6 +222,41 @@ All output is JSON to stdout. Errors to stderr. Exit codes:
 - 4: network error or retries exhausted
 - 5: ambiguous title (multiple matches or partial matches, stdout lists candidates)
 - 6: title not found (search returned nothing)
+
+## Note lock recovery (RTE room)
+
+Write commands auto-release the "RTE room" lock (exit 4, stderr contains
+"locked"). The lock exists only while Evernote has the note in an active
+edit session (the note open in a tab with the editor used). Clicking
+another note in the sidebar switches the tab away from the locked note,
+and the lock then releases on Evernote's own timing, observed at 15s in
+one live run and ~59s in another. View > Reload does NOT speed this up.
+The CLI clicks, verifies via AX that the tab actually switched (clicking
+further down the list if not), then retries the write every 20s for up to
+~2 minutes before giving up. Tabs are never closed.
+
+The helper activates Evernote (brings it to the front) before clicking,
+and only runs when Evernote's window is on the current macOS Space. The
+first sidebar row is usually the locked note itself (most recently updated
+sorts to the top), so the helper clicks further down too.
+
+If a write still exits 4 with the lock message:
+
+1. Run `close-note "<title>"`. It returns `{"closed": true, ...}` on
+   success or `{"closed": false, "error": "..."}` on failure.
+2. If closed, wait about a minute, then retry the original write once.
+   If the result includes `"switched": false`, the tab still shows the
+   locked note (the sidebar list likely holds only that note); ask the
+   user to switch the note themselves.
+3. If the close returns `{"closed": false, "error": "evernote window not
+   visible on current Space"}`, Evernote's window is on another macOS
+   Space. Ask the user to click the Evernote Dock icon so the window is
+   visible, then retry the close once.
+4. If the close returns a release-helper error, the helper failed to build
+   or run. Report the error; do not retry in a loop.
+
+Do not retry a locked write more than twice in total. Never close the
+user's note tabs yourself; the click mechanism already avoids this.
 
 ## Disambiguation
 
