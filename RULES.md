@@ -441,6 +441,41 @@ implemented in a project repo (.opencode/agents/socrates.md); Chaehan
 corrected: "you still confuse where to put the overall agent
 instructions: it is always in agentkit!"
 
+### 24. User-designated plan hierarchy is binding
+
+When the user marks one option as the main plan and another as an
+alternative or fallback, that hierarchy is part of the specification.
+Present the main plan as the plan and the alternative as conditional on
+its trigger (e.g., "if twice-a-day training proves unsustainable"). Do
+not promote the fallback to the main presentation, and do not drop the
+trigger condition when restating the alternative. The failure class:
+the agent swapped them and presented the fallback as the main week.
+
+Failure: on 2026-08-24 swim routine planning, the user proposed "second
+band on Thu and Sat aerobic as alternative" to the main course of
+Wed-interval-plus-band double days; the agent presented Mon+Thu band as
+the main week. User: "the band on Thu is an alternative, not the main
+course which is Wed interval + band!"
+
+### 25. Protocol schemes must match the stated training goal
+
+When proposing a training or dosing scheme, anchor every parameter
+(reps, sets, load, frequency, progression rule) to the goal the user
+stated. A generic default that serves a different goal is an error even
+if the scheme is internally sound for that other goal. Before
+presenting any scheme, name the adaptation it targets (max force,
+muscle size, endurance, skill) and check each parameter against it. If
+the available tool limits the goal (e.g., a resistance band underloads
+most of the range for max strength), state the limitation instead of
+silently adapting the scheme away from the goal.
+
+Failure: on 2026-08-24 the agent proposed a hypertrophy double
+progression (work up to 15 reps, then increase band thickness) for lats
+training whose stated goal was max strength acquisition. User: "this is
+not good for max strength acquisition!" The goal-matched scheme: 3-6
+reps at high tension, 2-3 min rest, progress by adding resistance only,
+never by extending reps beyond the strength range.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
