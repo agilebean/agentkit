@@ -19,6 +19,7 @@ Alternatively: set `EVERNOTE_TOKEN` env var.
 
 - Any graphic (chart, screenshot, image) must be placed at the very top of the note, ABOVE the TL;DR section. Never embed graphics below the TL;DR, at the bottom, or in the middle of a note.
 - Order: graphic first, then TL;DR, then the body sections.
+- The TL;DR is an H2 heading (`## TL;DR`), never plain text or a bolded line. Its text follows on the next line(s).
 
 ## Notebook placement
 
