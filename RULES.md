@@ -367,6 +367,21 @@ Detection signal: if a note reads like the transcript of an analysis
 reader's questions are: what do I do, why, what would change it. In that
 order.
 
+### 20. The date goes at the beginning of the title, never in the body
+
+A note about a dated decision, event, or session carries its date at the
+start of the title, not as a line in the body. The title is the first thing
+a reader scans; it must tell them when. A "Date:" line in the body is a
+defect.
+
+- Evernote note titles: `2026-08-21 Decision: Lats session scheduling
+  Budapest`, not `Decision: Lats session scheduling Budapest` with a
+  `Date: 2026-08-21` line inside.
+- Local decision files: the date already leads the filename
+  (`decisions/YYYY-MM-DD-slug.md`); do not duplicate it as a body line.
+- If the date is unknown, leave it out of the title rather than inventing
+  one from context.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
