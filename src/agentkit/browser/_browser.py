@@ -1,7 +1,9 @@
 """Browser helpers — Selenium/Brave attach and Chrome options for macOS automation."""
 from __future__ import annotations
 
+import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -11,9 +13,13 @@ from pathlib import Path
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.common.selenium_manager import SeleniumManager
 
 _BRAVE_PATH_MACOS = "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
 _IS_MACOS = sys.platform == "darwin"
+
+_CDP_BROWSER_VERSION_RE = re.compile(r"(?:Chrome|Chromium)/(\d+)")
 
 
 def _brave_cdp_ready(address: str, timeout_s: float = 2.0) -> bool:
@@ -23,6 +29,22 @@ def _brave_cdp_ready(address: str, timeout_s: float = 2.0) -> bool:
         return True
     except Exception:
         return False
+
+
+def _cdp_browser_major(address: str, timeout_s: float = 2.0) -> str | None:
+    """Major version of the browser currently listening on ``address``, or ``None``.
+
+    Reads the CDP ``/json/version`` endpoint so the attach can pick a driver matching
+    the **running** browser (Brave auto-updates; the on-disk binary may be newer).
+    """
+    try:
+        req = urllib.request.Request(f"http://{address}/json/version")
+        with urllib.request.urlopen(req, timeout=timeout_s) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+        match = _CDP_BROWSER_VERSION_RE.match(str(payload.get("Browser", "")))
+        return match.group(1) if match else None
+    except Exception:
+        return None
 
 
 def _brave_is_running() -> bool:
@@ -160,4 +182,22 @@ def chrome_driver_attach(
         debugger_address=debugger_address,
         download_dir=download_dir,
     )
-    return webdriver.Chrome(options=opts)
+    # Resolve the chromedriver that matches the RUNNING browser instead of trusting
+    # whatever chromedriver happens to be on PATH (brew-installed drivers lag Brave's
+    # auto-updated Chromium and produce version-mismatch hangs).
+    args = [
+        "--browser",
+        opts.capabilities["browserName"],
+        "--driver",
+        "chromedriver",
+        "--skip-driver-in-path",
+    ]
+    major = _cdp_browser_major(debugger_address)
+    binary = getattr(opts, "binary_location", None)
+    if major:
+        args += ["--browser-version", major]
+    elif binary:
+        args += ["--browser-path", str(binary)]
+    paths = SeleniumManager().binary_paths(args)
+    service = ChromeService(executable_path=paths["driver_path"])
+    return webdriver.Chrome(options=opts, service=service)
