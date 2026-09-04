@@ -476,6 +476,66 @@ not good for max strength acquisition!" The goal-matched scheme: 3-6
 reps at high tension, 2-3 min rest, progress by adding resistance only,
 never by extending reps beyond the strength range.
 
+### 26. Skills are live files: re-read from disk after a failed operation
+
+A skill loaded via the skill tool is a snapshot of the file at load
+time. Concurrent sessions update skill files on disk, and the snapshot
+can silently predate those updates. When a skill-guided operation fails
+with an error the skill might cover, re-read the skill file from disk
+before retrying or asking the user to do manual work. Do not repeat the
+same failing command or hand the user a manual fix while an
+already-documented recovery command exists on disk.
+
+Failure: on 2026-08-24 an Evernote write failed with an RTE-room note
+lock; the agent told the user twice to close the note manually because
+its skill snapshot predated the lock-recovery section (`close-note`
+command) added to SKILL.md by a concurrent session the same hour. The
+recovery command existed on disk the whole time; the user had to ask
+"why can't you see the skill to unclick a blocked evernote note?"
+
+### 27. Artifacts are standalone, never pointers
+
+Any artifact created for the user (Evernote note, memory file, document,
+message draft, slide text) must be complete on its own. It never
+references conversation context the artifact's future reader does not
+have: no "the script above," no "as discussed," no "apply the corrections
+from the conversation." Every artifact, however trivial, gets a name
+(e.g. "Opener Story"), and the full current content lives inside the
+artifact, not in the conversation that produced it.
+
+The test: open the artifact in six months with zero memory of the
+conversation that produced it. If any sentence points outside the
+artifact for its meaning, the artifact is defective. Deltas ("the
+corrected version") belong in the artifact as an applied edit or a
+documented change list inside it, never as an instruction to mentally
+patch earlier conversation content.
+
+This extends rule 17 (bind every datum to its referent) from ambiguity
+within a note to dependency between the note and the conversation.
+
+Failure: on 2026-09-04 course-design content was delivered as "the
+script above" plus a list of corrections, instead of a named, complete,
+standalone note; the user instructed "every artefact must be standalone."
+
+### 28. Evernote artifacts ship with a local markdown twin in the same turn
+
+When creating or updating an Evernote note as a deliverable, also write
+or update a markdown twin with identical content in the same turn. The
+twin lives next to the project's working files (the folder holding the
+project's source-of-truth documents) and is named to match the Evernote
+note title. Evernote is the user-facing store; the markdown twin is the
+working copy and diff base for future edits.
+
+Report artifact changes in chat as a summary only: which artifact
+changed and what changed at headline level. Never restate the
+artifact's content in detail in the chat reply.
+
+Failure basis: on 2026-09-05 the opener story existed only in Evernote
+while the course working files lived in a local Google Drive folder; the
+user instructed "make a markdown of the content and the evernote at the
+same time" and "in this chat, only explain what you changed as summary,
+not in detail."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
