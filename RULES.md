@@ -517,24 +517,56 @@ Failure: on 2026-09-04 course-design content was delivered as "the
 script above" plus a list of corrections, instead of a named, complete,
 standalone note; the user instructed "every artefact must be standalone."
 
-### 28. Evernote artifacts ship with a local markdown twin in the same turn
+### 28. Markdown is the artifact of record; Evernote is a sync copy made on request
 
-When creating or updating an Evernote note as a deliverable, also write
-or update a markdown twin with identical content in the same turn. The
-twin lives next to the project's working files (the folder holding the
-project's source-of-truth documents) and is named to match the Evernote
-note title. Evernote is the user-facing store; the markdown twin is the
-working copy and diff base for future edits.
+Create artifacts as markdown files in the project's working folder: the
+source of truth and diff base. Do not create or update Evernote copies
+automatically. The cost is not computation; it is divergence. The user
+views the markdown and invokes a short sync shortcut ("evernote it")
+whenever he needs the Evernote version (teaching, travel, phone). On the
+shortcut, sync the named artifacts: Evernote notes are created or
+updated with content identical to the markdown.
+
+Evernote copies never deviate from their markdown. No Evernote-only
+comments, banners, or editorial markers (for example "SUPERSEDED on
+2026-09-05") that the user never specified. Artifacts contain only the
+content the user asked for plus corrections the user requested.
+Evernote renders code blocks fine; only the CLI markdown export is
+lossy, so verify by raw content, not by the markdown export.
 
 Report artifact changes in chat as a summary only: which artifact
 changed and what changed at headline level. Never restate the
 artifact's content in detail in the chat reply.
 
-Failure basis: on 2026-09-05 the opener story existed only in Evernote
-while the course working files lived in a local Google Drive folder; the
-user instructed "make a markdown of the content and the evernote at the
-same time" and "in this chat, only explain what you changed as summary,
-not in detail."
+Failure basis: on 2026-09-05 the agent created Evernote twins
+automatically when the user preferred markdown-only with an on-demand
+sync shortcut, and added a "SUPERSEDED on 2026-09-05" banner to a note
+that the user never asked to mark. The user instructed: "how much
+computational effort is it to generate the evernote twin? if too much,
+let's drop it as i can also view the markdown. i only need the evernote
+when underway, but maybe you can give me a very short shortcut i can
+specify whenever i need it" and "don't write comments in evernote that
+deviate from anything in the markdown ... these are superfluous and
+never specified."
+
+### 29. Branch proposals must cover every unit of the span they commit to
+
+When proposing if-then branches for stays, bookings, schedules, or any
+plan whose units are concrete resources (nights, beds, tickets,
+deadline windows), map every branch to the resource covering each unit
+of the span it commits to and verify there is no gap before presenting
+it. A branch is defective when it cancels the only covering resource for
+a range, or when its timeline silently presupposes another branch's
+outcome. The timeline is an outcome of the decision, never a fixed
+input. When a branch's coverage cannot be established from known
+bookings, present the gap as an explicit open question or ask the user;
+never fill it by assuming a booking exists.
+
+Failure: on 2026-08-29 an agent's "Valencia does not hold" branch said
+"cancel Valencia, go to Madrid on the 6th", but the Valencia room was
+the only bed covering Sep 3-6 and the Madrid booking started on the 6th.
+The branch left three nights uncovered, and "cancel Valencia" had no
+referent under the user's reading.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
