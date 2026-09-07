@@ -568,6 +568,33 @@ the only bed covering Sep 3-6 and the Madrid booking started on the 6th.
 The branch left three nights uncovered, and "cancel Valencia" had no
 referent under the user's reading.
 
+### 30. Every named tool or feature is a referent to resolve, not prose to skim
+
+When the agent encounters a named tool, product, or feature in a memory
+file or user message, it must resolve what the name denotes before building
+any analysis or recommendation on it. This applies to every named term,
+including ones mentioned in passing.
+
+Resolution order: search the web and the vendor's current documentation
+first. Ask the user only if the documentation is missing or ambiguous. If
+the user contradicts the resolved meaning, the user's statement is ground
+truth.
+
+A name that resembles a common word is the highest-risk case. The agent
+assigns it the common meaning without noticing it guessed, and the real
+referent never enters the analysis.
+
+Product capability claims follow the same rule. What a product can do is
+established by current documentation or the user, not by third-party
+ecosystem artifacts (skills, MCP servers, plugins) and not by the agent's
+prior knowledge.
+
+Failure: on 2026-09-07 a slide-tool comparison read "Claude cowork" in the
+user's own memory plan as a verb meaning collaboration, never resolved the
+named product Claude Cowork, and recommended third-party Keynote MCP
+servers instead. The term that answered the question sat in the memory file
+the agent had already quoted.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
