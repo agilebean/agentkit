@@ -517,15 +517,18 @@ Failure: on 2026-09-04 course-design content was delivered as "the
 script above" plus a list of corrections, instead of a named, complete,
 standalone note; the user instructed "every artefact must be standalone."
 
-### 28. Markdown is the artifact of record; Evernote is a sync copy made on request
+### 28. Evernote twins are updated automatically; no stale notes survive
 
-Create artifacts as markdown files in the project's working folder: the
-source of truth and diff base. Do not create or update Evernote copies
-automatically. The cost is not computation; it is divergence. The user
-views the markdown and invokes a short sync shortcut ("evernote it")
-whenever he needs the Evernote version (teaching, travel, phone). On the
-shortcut, sync the named artifacts: Evernote notes are created or
-updated with content identical to the markdown.
+Artifacts are authored as markdown in the project's working folder (the
+source of truth and diff base). Every time an artifact is created or
+changed, its Evernote twin is updated in the same turn with identical
+content: same title, full replacement of the note body. A note never
+survives with older content than its markdown.
+
+When an artifact is superseded, renamed, or removed, its Evernote note
+is deleted or renamed to the new title, never left behind as a stale
+copy. If the CLI lacks a delete command, flag the note to the user for
+removal or implement the capability; do not leave cadavers.
 
 Evernote copies never deviate from their markdown. No Evernote-only
 comments, banners, or editorial markers (for example "SUPERSEDED on
@@ -538,16 +541,13 @@ Report artifact changes in chat as a summary only: which artifact
 changed and what changed at headline level. Never restate the
 artifact's content in detail in the chat reply.
 
-Failure basis: on 2026-09-05 the agent created Evernote twins
-automatically when the user preferred markdown-only with an on-demand
-sync shortcut, and added a "SUPERSEDED on 2026-09-05" banner to a note
-that the user never asked to mark. The user instructed: "how much
-computational effort is it to generate the evernote twin? if too much,
-let's drop it as i can also view the markdown. i only need the evernote
-when underway, but maybe you can give me a very short shortcut i can
-specify whenever i need it" and "don't write comments in evernote that
-deviate from anything in the markdown ... these are superfluous and
-never specified."
+Failure basis: on 2026-09-05 the rule required sync-on-request
+("evernote it"), so the three course notes froze at old versions while
+the markdown advanced. The user found several stale course-design
+notes in Evernote and none with the current version, and instructed:
+"you must install a rule in agentkit that evernotes must be
+automatically updated so no old cadavers float around." The earlier
+on-demand preference is superseded by this rule.
 
 ### 29. Branch proposals must cover every unit of the span they commit to
 
@@ -594,6 +594,34 @@ user's own memory plan as a verb meaning collaboration, never resolved the
 named product Claude Cowork, and recommended third-party Keynote MCP
 servers instead. The term that answered the question sat in the memory file
 the agent had already quoted.
+
+### 31. Legacy-version scan at session start, per artifact, not per operation
+
+When a NEW SESSION begins handling an artifact, scan the target notebook
+once for legacy versions of that artifact before creating or updating
+anything: same title, similar titles (dates, "Overview", "draft", "v2"
+variants), and notes with overlapping content. Update the canonical note
+in place; delete or fold in duplicates, never leaving two notes with the
+same or overlapping content. The delete command exists
+(`evernote_api delete <title> [--permanent]`); use it instead of asking
+the user which note to remove, and reason from the note content to decide
+what is a duplicate.
+
+Do not re-scan on every subsequent operation: rule 28's automatic
+same-turn sync keeps the canonical note current, so per-operation scans
+are redundant overhead. The scan happens at session start because the
+agent's memory of the notebook is a compressed snapshot, not the notebook
+state; a fresh session establishes the true state once, before touching
+the artifact.
+
+Failure: on 2026-09-05 the agent created a consolidated Course Design note
+while the abridged Course Design Overview note already existed, and left
+both in the notebook for days. The user found several stale course-design
+notes, none with the current version, and instructed: "look at agent
+instructions if what you just did happens every time to look for any
+legacy note versions." The user's correction on the fix: "you only do this
+for a new session which handles one artefact not for every evernote
+operation."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
