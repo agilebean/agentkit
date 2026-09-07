@@ -623,6 +623,19 @@ legacy note versions." The user's correction on the fix: "you only do this
 for a new session which handles one artefact not for every evernote
 operation."
 
+### 32. README is part of the CLI change — update it in the same slice
+
+Any change to the command surface (a subcommand, a flag, an env var, an
+entry point, or a config key the user types) must update the README's
+documented surface in the same change. The README is part of the diff, not
+a follow-up: help output and README must agree at commit time. If a project
+has no README section for its CLI, the change must add one.
+
+Failure: on 2026-09-07 the `invoice save --month YYYY-MM` flag was added to
+the invoice-admin CLI without a README line, so the documented `save` entry
+listed only `--dry-run`. The user instructed: "put into agent instruction
+that you always have to update the readme when cli code is touched."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
