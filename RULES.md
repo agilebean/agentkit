@@ -636,6 +636,62 @@ the invoice-admin CLI without a README line, so the documented `save` entry
 listed only `--dry-run`. The user instructed: "put into agent instruction
 that you always have to update the readme when cli code is touched."
 
+### 33. Memory files serve future planning, not exhaustive event records
+
+A memory file is a decision-support index: it exists so a future follow-up
+can reconstruct what matters without re-reading the whole past. It is not a
+chronicle. When a meeting, conversation, or event is documented, record only
+the points that change how future decisions are made — constraints, commitments,
+contact details, availability patterns, standing agreements. Everything else
+(the verbatim exchange, the emotional texture, the full Q&A) belongs in the
+dedicated artifact (Evernote note, meeting notes file), and the memory entry
+then points to that artifact with a one-line reference. If a memory entry for
+a single meeting would take more than a few bullets, the entry is bloated.
+
+Failure: on 2026-09-08 the agent created `memory/kubs.md` from a single TA
+meeting and its Signal follow-up, transcribing the entire exchange (wellbeing
+agreements, exact quotes, action-item confirmations) into the memory file
+while the full Q&A already lived in the Evernote note "2026-09-08 KUBS DT TA
+Questions - Yeonju Lee". The user: "this is 10x too verbose... the context is
+not to make a huge memory of this one meeting but just to note the crucial
+points. the point here is to maximize efficiency for followups which
+interconnect seamlessly with the knowledge about the kubs dt lecture, not
+overrepresent a single meeting."
+
+The test: strip the memory entry down to what a future follow-up must know
+without opening the artifact. What remains is the entry. Anything that only
+makes sense as part of the event narrative is artifact content, not memory
+content.
+
+### 34. Periodically review the memory parking lot for promotion candidates
+
+`memory/_misc.md` is the parking lot: facts that do not yet warrant a dedicated
+file. The creation threshold for new topic files is intentionally high
+(major life domains). The failure mode: a topic parked in `_misc.md` grows
+into a substantial domain — multiple dated entries, contacts, recurring
+decisions, artifacts — but never gets promoted because no mechanism scans the
+parking lot periodically; promotion only ever happened reactively when a
+main-topic file happened to be updated and matched a parked item.
+
+Rule: when reading memory (session start, or whenever `_misc.md` is loaded or
+updated), scan parked items for promotion candidates. A parked item warrants
+its own `memory/{topic}.md` when it has accumulated multiple dated entries on
+the same subject (roughly 3+), gained durable facts a future follow-up needs
+(contacts, availability, constraints, commitments), or spawned its own
+artifacts (meeting notes, decision docs, Evernote notes). When promoting:
+propose the new filename (e.g., `kubs.md`), create the file in lean form per
+rule 33 (bare minimum + one-line artifact pointers), and remove the parked
+item from `_misc.md` entirely — no [MOVED TO] marker left behind.
+
+Failure: on 2026-09-08 the KUBS adjunct appointment had sat in `_misc.md`
+since 2026-06-06 while it grew into a full course-design domain (TA
+relationship, meeting artifacts, admin contacts); no mechanism reviewed the
+parking lot, so `kubs.md` was created only after Chaehan asked. His question:
+"if misc is the parking lot does the agentkit rules know to look periodically
+if they can extract topics out if they become bigger or merge them to new
+memory files? if not do that. that's why you didn't create kubs.md before and
+you should suggest a name."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
