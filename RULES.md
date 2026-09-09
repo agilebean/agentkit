@@ -692,6 +692,22 @@ if they can extract topics out if they become bigger or merge them to new
 memory files? if not do that. that's why you didn't create kubs.md before and
 you should suggest a name."
 
+### 35. Domain queries load the domain memory file before any web research or answer
+
+When a query names a life domain — any topic with a file in `memory/`
+(health, swim, travel, finance, dating, shipping, partner search, ...) — the
+matching memory file must be read BEFORE web research and before answering.
+The memory file is ground truth for the domain's facts, current states,
+constraints, and history; a web-only answer for a domain that has a memory
+file is incomplete research and will miss or contradict what the user already
+recorded. If a scan finds no matching file, state that explicitly (including
+that `_misc.md` was checked) instead of silently proceeding on web sources
+alone.
+
+Failure: on 2026-09-09 a Mapo swim-partner query was answered from web sources
+alone while `memory/swim.md` existed with the user's training context. The
+user: "there should be a swim memory file don't you see it?"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
