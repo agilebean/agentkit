@@ -856,11 +856,13 @@ parsing paragraphs.
 Icons tag the category of an item; they do not decorate it:
 
 - ⚠️ important or urgent: a deadline or action that outranks everything else
-- ☐ todo: an action the user must take
+- 📌 todo: an action the user must take
 - 🎯 goal: an outcome the user is pursuing
 
 Use each icon only where its category applies, at most once per item. A
-list where every line carries an icon is decoration, not structure.
+list where every line carries an icon is decoration, not structure. Use
+emoji glyphs, not text characters: ☐ rendered thin, colorless, and
+unclickable in Evernote (2026-09-11), and the todo tag was changed to 📌.
 
 Failure: on 2026-09-11 a life overview note was rejected: "the summary is
 unreadable as it is not well formatted. we need bullet points for the
