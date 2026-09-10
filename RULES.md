@@ -808,6 +808,65 @@ error. When a memory topic becomes a sourcing problem, rename the file to
 add the prefix and the in-file pointer. Full conventions:
 `agentkit/skills/sourcing/SKILL.md` and its README.
 
+### 40. Anchor every time claim to today's date
+
+The environment states today's date; read it before writing any timing
+statement. Compute every date against today, give the day count or
+duration of the phase the user is on, and say how long ago or how far
+ahead the referenced date is. Never describe a past event in the future
+tense, and never leave the reader to compare a bare date against today to
+learn where they stand.
+
+- On 2026-09-10, "you started 2026-08-10; the 28-day load completed on
+  2026-09-07, 3 days ago, and you have taken it for 31 days" is right.
+  "The load completes in 28 days, around 2026-09-07" is wrong: the date is
+  already past, the tense is wrong, and the reader has to do the math.
+- Date, day count, and relative distance must agree with each other and
+  with today. Check them against the environment date before writing.
+- A note read later keeps its own anchor: pair the relative phrase with
+  the reference date ("completed 2026-09-07, three days before the
+  2026-09-10 update"), so the count stays true after the note ages.
+
+Failure: on 2026-09-10 the note read "at 3g/day the slow load completes in
+28 days, around 2026-09-07" when the load had already completed 3 days
+earlier; the user: "agent instructions must be changed so you are always
+aware which day it is, here 2026-09-10."
+
+### 41. Answer from the phase the user is actually in
+
+A question about a protocol, course, or load is answered for the phase the
+user is in now, verified against today's date. When the phase has
+completed, the operative answer is how to continue: what to keep doing, at
+what dose and frequency, what the off-ramp is, and what the way back in
+is. The completion is one line of context; the continuation is the answer.
+
+Failure: on 2026-09-10 the creatine guidance still framed the question
+around loading ("you are already saturated"; "a new loading phase cannot
+finish in time") when the load had completed and the user's question was
+how to continue; the user: "you seem to not understand if the load
+completed, the user wants to know how to continue."
+
+### 42. Summaries and notes are bulleted; icons tag categories, used sparingly
+
+Any summary or overview written for the user (Evernote note, memory report,
+session summary) uses bullets for the TL;DR and for every subsection. A
+wall of prose in a summary is a defect: notes are read by scanning, not by
+parsing paragraphs.
+
+Icons tag the category of an item; they do not decorate it:
+
+- ⚠️ important or urgent: a deadline or action that outranks everything else
+- ☐ todo: an action the user must take
+- 🎯 goal: an outcome the user is pursuing
+
+Use each icon only where its category applies, at most once per item. A
+list where every line carries an icon is decoration, not structure.
+
+Failure: on 2026-09-11 a life overview note was rejected: "the summary is
+unreadable as it is not well formatted. we need bullet points for the
+summary and all subsections" and "visualize sparely but effectively with
+icons eg for todos, goals, important".
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
