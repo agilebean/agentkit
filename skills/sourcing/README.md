@@ -2,6 +2,8 @@
 
 Sourcing workflow for any provider comparison problem: find vendors, request quotes, check email for replies, maintain comparison tables in `memory/`.
 
+**Sourcing problems live in `memory/src_*.md` files.** The `src_` prefix marks a file as a sourcing problem instance, and it is the routing key for both triggers: "source for [problem]" creates one, "update [problem]" resolves to one. Never merge a `src_` file into another memory file, and never treat it as a plain domain-knowledge file.
+
 ## Triggers
 
 Two trigger phrases, recognized from the skill `description`:
@@ -55,6 +57,7 @@ When you say **update [problem]**, the agent:
 | Location | Contents |
 |---|---|
 | **This skill** (`SKILL.md`) | Behavioral rules: process, table formatting, email, Gmail pattern |
-| **Memory file** | Domain data: onboarding answers, provider tables, addresses, contacts, key findings |
+| **Memory file** (`src_*.md`) | Problem instance data: onboarding answers, addresses, contacts, and provider tables by default; when the tables live in an external system of record (e.g., Evernote), config plus pointers instead |
+| **Agent file** (variant) | Problem-specific update workflow for the external-system variant, e.g. `.opencode/agents/evernote-shipping.md` |
 
-The skill is the behavior. The memory file is the data.
+The skill is the behavior. The memory file is the problem instance. In the external-system variant the agent file carries the update behavior, and the memory file carries config plus pointers.
