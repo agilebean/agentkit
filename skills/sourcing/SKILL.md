@@ -178,4 +178,16 @@ Contents:
 - Key references: addresses, item list URL, contacts
 - Pointer to this skill: `> Formatting and email rules are in the sourcing skill`
 
+### Variant: tables in an external system of record
+
+Some problems keep the quote tables in an external system of record (for
+example Evernote) and define their update workflow in a dedicated agent
+file instead of the generic Gmail-and-markdown path above. In that variant
+the src file holds the onboarding answers and key references plus pointers
+to the system of record, and it does not carry the tables. The triggers
+stay the same: "source for [problem]" and "update [problem]". Reference
+implementation: `memory/src_shipping_ca2korea.md` with
+`.opencode/agents/evernote-shipping.md` and the Evernote note "Logistics
+Test".
+
 The memory file is the domain data. This skill is the behavior around it.
