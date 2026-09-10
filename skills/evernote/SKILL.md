@@ -20,6 +20,8 @@ Alternatively: set `EVERNOTE_TOKEN` env var.
 - Any graphic (chart, screenshot, image) must be placed at the very top of the note, ABOVE the TL;DR section. Never embed graphics below the TL;DR, at the bottom, or in the middle of a note.
 - Order: graphic first, then TL;DR, then the body sections.
 - The TL;DR is an H2 heading (`## TL;DR`), never plain text or a bolded line. Its text follows on the next line(s).
+- Titles carry the date as the bare first word: `2026-08-16 Top Supplements`, never `Top Supplements (2026-08-16)`. Canonical rule: RULES.md rule 20.
+- The body is written the way you would say it to Chaehan in chat, not as a reference entry: no label prefixes ("Status:", "Why:"), no telegraphic fragments, no analyst third person. Canonical rule: RULES.md rule 19.
 
 ## Notebook placement
 
