@@ -366,6 +366,13 @@ order and the reader's language, not the analyst's process.
   stays; analyst jargon goes. "Benign", "sub-clinical", "protocol signal",
   "fictional payoff", "eliminated by error analysis" are all defects in
   user-facing prose.
+- **The artifact speaks in the same voice as the chat answer.** The note,
+  memory entry, or report is read by the same person; it reads the way the
+  chat answer reads. If the chat version is better, the artifact is wrong
+  and gets rewritten to match before delivery. Robot markers: label
+  prefixes ("Status:", "Why:", "Context:"), telegraphic fragments instead
+  of sentences, third-person summary voice, and evidence compressed into
+  parenthetical data capsules.
 - **One claim per sentence.** Short sentences, no semicolon chains, no em
   dashes (rule 2).
 - **Cut restatement, keep numbers.** Each fact appears once, in the place
@@ -377,6 +384,14 @@ Detection signal: if a note reads like the transcript of an analysis
 reader's questions are: what do I do, why, what would change it. In that
 order.
 
+Failure: on 2026-09-10 the Evernote update for the creatine and protein
+guidance was written as analyst bullets ("Status 2026-09-10: loading
+complete...", "Why it stays Tier 1: ...") while the chat answer for the
+same content read plainly; the user: "this whole text sounds good but the
+evernote is written differently and too robotic... read again rule 19."
+Evernote notes were already named in this rule; the miss was not applying
+it during the note-writing pass.
+
 ### 20. The date goes at the beginning of the title, never in the body
 
 A note about a dated decision, event, or session carries its date at the
@@ -387,10 +402,18 @@ defect.
 - Evernote note titles: `2026-08-21 Decision: Lats session scheduling
   Budapest`, not `Decision: Lats session scheduling Budapest` with a
   `Date: 2026-08-21` line inside.
+- Never trail the date behind the title in parentheses: `2026-08-16 Top
+  Supplements`, never `Top Supplements (2026-08-16)`. The date is the bare
+  first word of the title.
 - Local decision files: the date already leads the filename
   (`decisions/YYYY-MM-DD-slug.md`); do not duplicate it as a body line.
 - If the date is unknown, leave it out of the title rather than inventing
   one from context.
+
+Failure: on 2026-09-10 the note "Top Supplements (2026-08-16)" carried the
+date parenthesized at the end; the user instructed: "when evernote, never
+put the date behind in parentheses but always in front without them as
+first word."
 
 ### 21. A focused question gets a two-sentence answer
 
@@ -707,6 +730,83 @@ alone.
 Failure: on 2026-09-09 a Mapo swim-partner query was answered from web sources
 alone while `memory/swim.md` existed with the user's training context. The
 user: "there should be a swim memory file don't you see it?"
+
+### 36. Third-party asks start at the smallest footprint
+
+When a plan needs another person's time — a favor, a paid engagement, a
+coordination role — design around the smallest ask that reaches the goal,
+and present that version first. Async artifacts (a list, photos, a link)
+and service relays beat meetings; meetings beat multi-hour on-site
+sessions. A paid engagement is not automatically a small ask: burden is
+measured against the relationship, not the hourly rate. Session-length
+asks of personal contacts are proposed only after the user has confirmed
+he wants to call in that favor. Availability, rate, and willingness
+figures for third parties that sit in memory files are planning
+artifacts, not approved asks. When the user drafts his own message to a
+third party, treat that draft as the calibration of what he is willing to
+ask: review it at that size, never inflate it.
+
+Failure: on 2026-09-10 the Venice storage clearance was drafted around
+asking Daniel (former LA real-estate agent) for a 3-5 hour sorting session
+at ~$300/hr. The user rejected the ask ("No i cannot do a session with
+Daniel it is too much time to ask for") and replaced it with a photos-and-
+list message that asks only for a format preference.
+
+### 37. Draft messages as the sender, not as a structured memo
+
+Text written for the user to send is the user speaking, not a coordinator
+memo. Open with his situation or feeling in his own register (relief,
+urgency, "finally"), keep the ask in one short plain line, and drop
+rationale the recipient already has. Chat-length lines, not balanced full
+sentences. Robotic markers: explanatory preambles ("since we will book
+soon..."), embedded justifications ("the quote is two months old, so..."),
+and conditionals built from the analyst's logic instead of the reader's
+ear. Close with a natural relational line when one fits (reciprocity, a
+commitment, warmth); formal formulas stay banned. When the user rewrites a
+draft, the delta is the specification: the opening and closing he adds are
+calibration for every following draft in that thread.
+
+Failure: on 2026-09-10 a reminder to the user's cousin was drafted as
+"곧 예약할 거라서, ... 두 달 전 견적이라 바뀌었을 수 있으니까, 달라졌으면
+새 견적 받아서 알려줘" (preamble, embedded rationale, conditional). The
+user called it "too robotic" and rewrote it: "늦어지만 드디어 내 가구
+한국에 보내고싶어. 어떻게 하지? / 일단 전에 제일 싸게 견적 준 회사에 다시
+연락해서 그 가격이 아직 그대로인지 확인해줘 / 또같이 해주면 빨리 계약
+사인 할게" (his state plus an open question, one plain ask, a reciprocal
+close).
+
+### 38. Memory writes start with a search of existing files
+
+Before creating a memory file or writing a knowledge update, scan `memory/`
+for every file that already covers the topic or references it: quotes,
+addresses, contacts, item lists, cross-references. An existing file must
+be found and updated in place; never scope an update to one file while
+another file or entry on the same topic is left stale, and never create a
+parallel file because the search was skipped. When a referenced artifact
+changes (a link, a note, a document), update every file that points to it
+in the same pass. If the scan finds nothing, state which files were checked
+before creating anything new.
+
+Failure: on 2026-09-10 a pending update for the furniture shipment was
+scoped to `furniture-relocation.md` while the same topic's references also
+live in `src_shipping_ca2korea.md`. The user: "i think we already had a
+different memory file. this must be in agentkit instructions to always
+search and make sure not an existing memory file is ignored."
+
+### 39. `memory/src_*.md` files are sourcing problem files
+
+The `src_` prefix marks a memory file as a sourcing problem instance. It is
+the routing key for the sourcing skill's triggers: "source for [problem]"
+creates one, "update [problem]" resolves to one. These files hold the
+problem's config and references (onboarding answers, working folder,
+addresses, contacts, links), and by default its quote tables. When a
+problem keeps its tables in an external system of record instead (for
+example Evernote), the file holds config plus pointers and the update
+workflow lives in the problem's agent file. Do not rename them, do not
+merge them into domain files, and do not treat a missing quote table as an
+error. When a memory topic becomes a sourcing problem, rename the file to
+add the prefix and the in-file pointer. Full conventions:
+`agentkit/skills/sourcing/SKILL.md` and its README.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
