@@ -19,7 +19,7 @@ file.
 Em-dashes, long sentences with embedded clauses, and filler transitions ("through X and Y, students gain Z") are telltale signs of AI writing. Never use em-dashes. Write short, direct sentences. Prefer concrete details over abstract descriptions. Write from the reader's perspective, not an omniscient narrator.
 
 ### 3. Do not commit or push unless explicitly told to
-Never run `git commit` or `git push` unless the user says "commit", "push", or "commit and push". "Commit" alone authorizes both commit and push. Git commit amend is allowed. When fixing an error, do not push until the user confirms the fix works.
+Never run `git commit` or `git push` unless the user says "commit", "push", or "commit and push". "Commit" alone authorizes both commit and push. Git commit amend is allowed. When fixing an error, do not push until the user confirms the fix works. Trigger extension (2026-09-15): detected user satisfaction also authorizes the commit; see rule 46.
 
 ### 4. Detect when a task evolves into a parallel task touching the same files
 A task starts with one goal. If you find yourself modifying the same file for a DIFFERENT reason than the original task, stop and ask. Example: you are fixing a parsing error in `invoice_pdf.py` but also want to apply an extraction shim to `browser_download.py`. These are not the same task — the shim change is a separate goal that happens to touch shared dependencies. Continuing both simultaneously creates a loop where every fix to one undoes progress on the other. Ask the user: "I need to change browser_download.py for two reasons — the CLI refactor and the module extraction. Which should I complete first?"
@@ -868,6 +868,120 @@ Failure: on 2026-09-11 a life overview note was rejected: "the summary is
 unreadable as it is not well formatted. we need bullet points for the
 summary and all subsections" and "visualize sparely but effectively with
 icons eg for todos, goals, important".
+
+### 43. Integration tasks produce a chosen set, not an archive
+
+When the task is to fold source material (a book, research, a method, a
+vendor list) into a target artifact (a course, a lecture, a plan, a note),
+the deliverable is a curated selection sized to the target's capacity,
+never an inventory of everything found. A constraint like "without
+overloading" or "don't confuse the audience" means: choose the smallest
+set that reaches the goal, present it decisively as the design, and put
+the rest in a short "stays out" list with one-line reasons. An exhaustive
+list, even ranked with recommendations, is a failed deliverable when the
+user asked for selection.
+
+- The artifact opens with the conceptual overview: what this is and how
+  the parts relate, before any detail. Add a visual when one clarifies
+  the structure, placed at the top of the note, above the TL;DR.
+- Wording test: a reader with no context must reconstruct each idea from
+  the artifact alone, in plain short sentences. If a sentence needs the
+  source material to be understood, it is written wrong.
+- Open decisions are formatted as a decision tree: each option with its
+  consequence ("If A, then ...; if B, then ...") and a recommended
+  default. State the questions in the chat reply itself so the user can
+  answer there, never only inside the artifact.
+
+Failure: on 2026-09-11 the Ulwick-to-course integration note ranked all 12
+extracted concepts as the main body and buried three decisions at the end;
+the user: "the wording is not comprehensible... you tried to use everything
+whereas the point was to choose well as the goal is not to confuse
+students... give me the questions here so i can answer", "the formatting
+should give the decision tree".
+
+### 44. Availability and licensing claims are verified at the official source
+
+Before presenting an availability, pricing, licensing, or distribution
+constraint as a fact (paywalled, cannot be distributed, out of print,
+requires purchase), check the official source: the author's or publisher's
+current website, the product's own page. A notice printed inside a file,
+or a status remembered from an earlier session, is not the current policy.
+Most source material names its own official channel (a book's "Learn More"
+page, the publisher's URL, the vendor's site); that named channel is the
+first place to look, not the last. This is the availability-side instance
+of rule 30: a named source is a referent to resolve, not prose to skim.
+
+Failure: on 2026-09-11 the Ulwick book was described as "cannot be
+distributed to students" based on the watermark in the PDF, and the course
+reading options were built around a purchase barrier. The author offers
+the book as a free download on his own website (jobs-to-be-done-book.com),
+a URL printed in the book's own resource section, and the site grants
+educators permission to distribute the PDF to students. The user: "ulwick
+book is free to download on his website! how did you miss that??"
+
+### 45. Choice questions get the objective answer, never validation of the user's leaning
+
+When the user asks a choice question ("should I do X", "would it be better
+to X or Y", "or is that irrelevant"), the framing can reveal a preference:
+the option named first, the one described in more detail, or the "is it
+better not to" phrasing that implies hoping to proceed anyway. That signal
+is not evidence. It must not steer the research, the reasoning, or the
+recommendation.
+
+Order of operations: research thoroughly first (domain memory files, then
+external evidence), reason to a conclusion from the evidence alone, and
+only then compare that conclusion with the apparent leaning. State the
+result as the evidence gives it:
+
+- Evidence supports the leaning: say so plainly and show the numbers or
+  mechanism that carry it. Agreement is a finding, not a default.
+- Evidence opposes the leaning: say so without softening, and give the
+  reason.
+- Evidence shows the choice is largely indifferent: say the choice is
+  close to irrelevant and name the factor that actually moves the
+  outcome.
+- Evidence is thin: state what it does show and what would tip the
+  balance, instead of borrowing confidence.
+
+Never shape an answer to match what the user appears to want, and never
+bury a negative finding to avoid friction.
+
+Instruction basis: on 2026-09-15 Chaehan asked whether to swim or rest on
+a post-flight cold day and added: "i don't want an affirmative response
+for any answer I might be leaning to but an objective answer based on
+thorough reasoning and research."
+
+### 46. Each session commits its work once the user's satisfaction is detected
+
+The session that produced a change owns getting it committed. This extends
+rule 3's trigger: waiting for the user to type "commit" is a defect, and
+detecting satisfaction is the agent's job. Rule 3's mechanics still apply:
+commit and push together, stage by name, and write a message that covers
+the change.
+
+Detect satisfaction: the user confirms the result ("yes", "correct",
+"good", "perfect"), accepts it and builds on it, or moves on to another
+topic without further changes. Not satisfaction: any correction request or
+doubt (keep iterating), a "yes" that answers a question instead of
+approving a work product, and silence. When the signal is genuinely
+ambiguous, ask one short question ("commit and push?") rather than
+guessing.
+
+On satisfaction: run git status, stage only this session's files by name,
+commit, push, and report in one line what was committed. Act when
+satisfaction appears, not at session end; a session never ends with its
+own tracked-file changes uncommitted. Uncommitted accepted work is how
+rules 43-44 sat in this file from 2026-09-12 until 2026-09-15.
+
+Other sessions' edits: leave other files unstaged and name them in the
+report. If one file mixes this session's edits with another session's,
+commit the file and name both sets in the message; the message carries
+the attribution, and leaving accepted work dirty is the worse failure.
+
+Instruction basis: on 2026-09-15 Chaehan asked why rules 43-45 were still
+uncommitted and instructed: "establish a rule that each session is
+responsible for committing as soon as i'm satisfied which the agent
+should detect."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
