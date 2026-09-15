@@ -23,10 +23,10 @@ Zone rule (set by Chaehan 2026-09-07), applied to the rounded CSS:
 
 | Zone | Rule | Example (CSS 2:12) |
 |------|------|--------------------|
-| 60%  | CSS + 6 s  | 2:18 |
-| 70%  | CSS        | 2:12 (threshold) |
-| 80%  | CSS - 6 s  | 2:06 |
-| 90%  | CSS - 12 s | 2:00 |
+| 60%  | CSS         | 2:12 (aerobic) |
+| 70%  | CSS - 8 s   | 2:04 |
+| 80%  | CSS - 16 s  | 1:56 |
+| 90%  | CSS - 24 s  | 1:48 |
 
 All stored values are whole seconds. No fractional paces.
 
@@ -81,10 +81,10 @@ computed:
 
 ```
 CSS 2:12 (400m 8:08, 200m 3:45).
-- 60% 2:18 (CSS +6)
-- 70% 2:12 (CSS, threshold)
-- 80% 2:06 (CSS -6)
-- 90% 2:00 (CSS -12)
+- 60% 2:12 (CSS, aerobic)
+- 70% 2:04 (CSS -8)
+- 80% 1:56 (CSS -16)
+- 90% 1:48 (CSS -24)
 ```
 
 Bullets must be real `<ul><li>` elements in the ENML. The `add-row` command
