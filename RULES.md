@@ -983,6 +983,93 @@ uncommitted and instructed: "establish a rule that each session is
 responsible for committing as soon as i'm satisfied which the agent
 should detect."
 
+### 47. Artifacts built on the user's own plan must add value beyond it
+
+When the user supplies the raw material (his plan, his reasoning, his own
+structure) and asks for a note, summary, synthesis, or reflection,
+restating that material in cleaner wording is not a deliverable. He
+already has it. The artifact is defective if a reader comparing it with
+the user's input finds only reorganized input.
+
+Every such artifact must add at least:
+
+- verified new information the user did not have;
+- scenario analysis: an optimistic version, a pessimistic version (what
+  drifts or breaks), and a sequencing-failure version, each with the
+  early signal that would tell which one is unfolding;
+- optimization ideas tied to the user's actual constraints;
+- a frame that makes the situation more legible than it was, in plain
+  words.
+
+Write it as a well-read friend thinking alongside him, not as a formatter
+of his input: interpretation over recap, short sentences, dry wit
+allowed, no filler. The test: what does this piece say that the user has
+not already told us?
+
+Scope: this governs artifacts the user will read later (notes, summaries,
+reflections, syntheses). It does not apply to information queries, where
+a faithful list of findings is the correct output, or to chat replies
+carrying fresh facts.
+
+Instruction basis: on 2026-09-17 the first version of the Melbourne
+second-home note was rejected: "the wording is just a reformulation of my
+input - i expected a much more intellectual, human and witty reflection,
+not just a rephrasing. i already gave you the whole structure. you must
+give added benefit, e.g. interesting new info, speculative optimistic
+pessimistic scenarios, optimization ideas, etc."
+
+### 48. Artifacts must be readable without decoding
+
+A phrase the user has to ask about is a defect, even when it is memorable.
+Write so the reader never has to reverse-engineer what a sentence means.
+
+- No coined phrases, slogans, or metaphors that need explaining. "A
+  commitment sold as a feeling" failed here: it required a paragraph of
+  interpretation and implied deception the user never described. Say the
+  plain thing: "Melbourne was a place you loved for its daily life, not a
+  place you could legally live."
+- No invented labels as headings or scenario names. "The drift" was a
+  coined noun the reader could not resolve. Name the scenario by what
+  happens: "If nothing changes for years".
+- Bind every reference at every mention. "The card" is defective where
+  "the green card" is meant. A named referent is repeated, never
+  abbreviated for rhythm. Rule 17 applies to wording, not only tables.
+- Keep warmth and dry humor only where the meaning is immediate. If a
+  line is clever and needs decoding, the cleverness is the wrong trade.
+
+The test: read each sentence and ask "could the user ask what this
+means?" If yes, rewrite.
+
+Instruction basis: on 2026-09-17 two rounds of feedback: "you must
+express less robotic", with a list of unreadable phrases from the note
+("what is a commitment sold to you as a feeling? no idea"; "which card?";
+"what drift?").
+
+### 49. A recommendation must clear the constraint that decides its usefulness
+
+Naming an option is not research. Before presenting a place, tool, or
+route as an improvement for a specific purpose, identify the constraint
+that decides whether the option serves that purpose, and check the option
+against it. Surface attributes are not evidence: a 50 m pool does not
+deliver pace training when the lanes are slow and overtaking is
+forbidden.
+
+- Verify the deciding constraint (lane discipline and swimmer level for
+  swim training; date availability and room type for stays; sponsor and
+  age limits for visas), not just the headline attribute.
+- Check whether the user has already evaluated the option. He scouts
+  pools, venues, and flights himself; when he reports an operational
+  verdict, that verdict is ground truth and removes the option.
+- If the deciding constraint cannot be verified from a source that
+  covers it, present the option as unverified with the constraint named,
+  or ask. Never present it as a fix.
+
+Instruction basis: on 2026-09-17 the Seoul 50 m pool suggestion was
+rejected: "I had already checked there 50m pools in Seoul. Olympic pool
+is terrible as people are super slow and wait for each lane as
+overtaking is forbidden." The schedule data was correct; the option was
+useless.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
