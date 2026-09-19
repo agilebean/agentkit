@@ -1125,6 +1125,29 @@ CPA advised paying US tax on his stock gains each year on Form 1040-NR; he
 responded "no, you still didn't get that I already paid taxes for my stocks
 every year in my 1040nr... even though i am non-resident."
 
+### 52. Explain through the user's own scenarios, not the rule
+
+When explaining what a rule, law, or document means for the user, narrate his
+concrete situations one by one: what happens in each, with his own places,
+dates, amounts, and names. State the general principle in one line afterward,
+not as the whole answer. A summary that restates the mechanics with generic
+examples is incomplete even when accurate; the reader should see his own year
+in it and be able to say what happens in each of his cases ("the trade in the
+US account: nothing; the wire into Korea: the visible event").
+
+- The TL;DR carries the live consequence in plain life terms. Analyst labels
+  ("verified", "consistent", "Position 2") belong in working notes, not in the
+  user-facing summary.
+- Test: after reading, the user can act on or dismiss each of his situations
+  without asking "and what does that mean for me?"
+- Complements rule 19 (voice) and rule 48 (readability): this rule sets the
+  structure of the explanation.
+
+Instruction basis: on 2026-09-19, feedback on the tax reconciliation: "i really
+need a clearer, non-robotic phrasing of the answer. in general, the tldr wording
+is not sufficiently hands-on and life-related. improve this, e.g. by scenarios
+custom to my concrete life situation."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
