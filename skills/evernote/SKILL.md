@@ -140,9 +140,20 @@ mamba run -n socrates python -m projects.evernote.src.evernote_api append-by-tit
 Embed images from files or directly from macOS Photos:
 
 ```
-mamba run -n socrates python -m projects.evernote.src.evernote_api embed-image "<title>" /path/to/image.jpg [--after-heading "<heading>"]
+mamba run -n socrates python -m projects.evernote.src.evernote_api embed-image "<title>" /path/to/image.jpg [--top | --after-heading "<heading>"]
 mamba run -n socrates python -m projects.evernote.src.evernote_api photos-embed "<title>" [--count N] [--after-heading "<heading>"]
 ```
+
+Re-embedding the same file reuses the existing attachment (same-hash check),
+so re-runs do not duplicate resources.
+
+**Full-content writes drop embedded images.** `create`, `update`, and
+`update-by-title` replace the note together with its resource list, so
+after such a write the note has no images; a markdown local-path
+reference is left as a broken `<img>` element. Re-embed the note's images
+in the same turn; when the source markdown points at local files, strip
+those image lines before the write, then embed the files with `--top` or
+`--after-heading`.
 
 ## Log entry (heading + fields + optional photo)
 
