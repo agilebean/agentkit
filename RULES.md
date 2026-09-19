@@ -618,24 +618,29 @@ named product Claude Cowork, and recommended third-party Keynote MCP
 servers instead. The term that answered the question sat in the memory file
 the agent had already quoted.
 
-### 31. Legacy-version scan at session start, per artifact, not per operation
+### 31. New or reworked notes sweep the superseded Evernote copies automatically
 
-When a NEW SESSION begins handling an artifact, scan the target notebook
-once for legacy versions of that artifact before creating or updating
-anything: same title, similar titles (dates, "Overview", "draft", "v2"
-variants), and notes with overlapping content. Update the canonical note
-in place; delete or fold in duplicates, never leaving two notes with the
-same or overlapping content. The delete command exists
-(`evernote_api delete <title> [--permanent]`); use it instead of asking
-the user which note to remove, and reason from the note content to decide
-what is a duplicate.
+Every time an Evernote note is created for an artifact — and every time
+an existing artifact is reworked, renamed, or declared superseded — sweep
+that topic's notes as part of the same operation: search the target
+notebook for the title stem and the topic keywords, and check each hit
+for content the new or updated note takes over (same title, similar
+titles with dates, "Overview", "draft", "v2", or overlapping content).
+Fold any unique still-valid content into the canonical note, then delete
+the superseded note — `evernote_api delete <title>` trashes it, so the
+deletion is recoverable; `--permanent` only when the user says so. Never
+leave two notes with the same or overlapping content.
 
-Do not re-scan on every subsequent operation: rule 28's automatic
-same-turn sync keeps the canonical note current, so per-operation scans
-are redundant overhead. The scan happens at session start because the
+The sweep is automatic; asking is the exception. Decide from the note
+content which note is superseded and delete it instead of asking the user
+which one to keep. Ask only when the content genuinely cannot tell you
+which note is canonical, and then ask one concrete question, not a menu.
+
+Routine operations do not re-trigger the sweep: add-row, update-cell,
+append, and rule 28's same-turn sync run on an already-settled set. A new
+session's first touch of an artifact family still gets one scan — the
 agent's memory of the notebook is a compressed snapshot, not the notebook
-state; a fresh session establishes the true state once, before touching
-the artifact.
+state.
 
 Failure: on 2026-09-05 the agent created a consolidated Course Design note
 while the abridged Course Design Overview note already existed, and left
@@ -645,6 +650,17 @@ instructions if what you just did happens every time to look for any
 legacy note versions." The user's correction on the fix: "you only do this
 for a new session which handles one artefact not for every evernote
 operation."
+
+Failure, same gap, second instance: the rework of the "Course Design
+Overview" note (2026-09-15 to 2026-09-18) took over the superseded
+"2026-09-05 KUBS DT Course Design" note's content, but the old note was
+never swept — the check ran at session start and looked for older
+versions of the same artifact, while the stale note was a sibling
+document that the overview still listed as a live artifact. The user,
+2026-09-19: "why did you not delete the duplicate evernote '2026-09-05
+KUBS DT Course Design' which contains old content...? correct whenever new
+evernotes are created. you should manage this automatically and in doubt,
+but only in doubt, ask me."
 
 ### 32. README is part of the CLI change — update it in the same slice
 
