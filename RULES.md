@@ -964,8 +964,15 @@ Detect satisfaction: the user confirms the result ("yes", "correct",
 topic without further changes. Not satisfaction: any correction request or
 doubt (keep iterating), a "yes" that answers a question instead of
 approving a work product, and silence. When the signal is genuinely
-ambiguous, ask one short question ("commit and push?") rather than
+ambiguous, ask one short question ("Commit and push?") rather than
 guessing.
+
+Always ask as a question. When you need the user's go-ahead, the request
+is a direct question: `Commit and push?` A declarative offer that makes
+the user infer the question ("I have not committed; say the word and I
+will commit and push") is a defect, even when it means the same thing.
+Questions are parsed at a glance; offers have to be decoded. This applies
+to every go-ahead request, not only commits.
 
 On satisfaction: run git status, stage only this session's files by name,
 commit, push, and report in one line what was committed. Act when
@@ -981,7 +988,9 @@ the attribution, and leaving accepted work dirty is the worse failure.
 Instruction basis: on 2026-09-15 Chaehan asked why rules 43-45 were still
 uncommitted and instructed: "establish a rule that each session is
 responsible for committing as soon as i'm satisfied which the agent
-should detect."
+should detect." On 2026-09-19 a reply ended "I have not committed; say the
+word and I will commit and push"; Chaehan: "change this wording - i cannot
+parse this quickly. always ask as a question!"
 
 ### 47. Artifacts built on the user's own plan must add value beyond it
 
@@ -1069,6 +1078,26 @@ rejected: "I had already checked there 50m pools in Seoul. Olympic pool
 is terrible as people are super slow and wait for each lane as
 overtaking is forbidden." The schedule data was correct; the option was
 useless.
+
+### 50. Use the user's consolidated figure as-is; never decompose or hedge it
+
+When the user records a payment, price, or cost as one all-in amount,
+that figure is the unit of calculation and communication. Do not split it
+into internal line items, and do not attach speculative variants (a
+possible refund, an alternate total the user did not ask about). A
+breakdown is used only when the split changes the decision or the user
+asks for it.
+
+- The user consolidated the figure deliberately; re-deriving its parts
+  reads as contradicting their record even when the parts are accurate.
+- What the amount includes or excludes is settled by the user's own
+  representation, not by re-adding the columns of a receipt.
+- A question about money the user might recover is the user's to raise.
+
+Instruction basis: on 2026-09-19 the agent reported a storage receipt as
+"$3355.40 = 12 x $263 rent + $170.40 insurance + $29 admin" and flagged
+a possible refund of an unused prepaid tail; the user: "this is stupid.
+the 3355 included already all other cost!!"
 
 ## Shell: `~/.bash_aliases` (user-global)
 
