@@ -1099,6 +1099,32 @@ Instruction basis: on 2026-09-19 the agent reported a storage receipt as
 a possible refund of an unused prepaid tail; the user: "this is stupid.
 the 3355 included already all other cost!!"
 
+### 51. A user-reported professional practice is reconciled, not corrected
+
+When the user reports that a licensed professional (CPA, lawyer, doctor,
+advisor) has advised or is executing a practice, that report is ground truth
+about the user's operating reality. State the governing rule once, name the
+specific facts that would make the professional's position correct, and route
+verification to the professional (ask for the basis in writing). Do not repeat
+the generic rule as if the user or the professional had missed it, and do not
+argue the user's record back at them.
+
+- The user's filings, payments, and history are facts; the agent's job is to
+  reconcile analysis to them and to surface the open question, not to
+  relitigate the professional's position.
+- If the research suggests the practice goes beyond the default rule, the
+  deliverable is the reconciliation path (which fact pattern would justify it,
+  what to ask the professional, what changes if either answer holds), not a
+  second explanation of the rule.
+- This is the professional-practice instance of rule 22 (user-stated facts are
+  facts, not bias observations).
+
+Instruction basis: on 2026-09-19 the agent twice explained NRA capital-gains
+sourcing (IRC 865/864) at Chaehan while he had already stated that his licensed
+CPA advised paying US tax on his stock gains each year on Form 1040-NR; he
+responded "no, you still didn't get that I already paid taxes for my stocks
+every year in my 1040nr... even though i am non-resident."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
