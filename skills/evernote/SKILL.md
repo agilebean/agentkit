@@ -1,6 +1,6 @@
 ---
 name: evernote
-description: Read and update Evernote notes by title via the evernote_api Thrift CLI. Use when told to read, update, append, create, or search Evernote notes. Calls shell commands; do NOT import evernote_api in-process.
+description: Read, update, create, delete, or search Evernote notes by title via the evernote_api Thrift CLI. Use when told to read, update, append, create, delete, or search Evernote notes. Calls shell commands; do NOT import evernote_api in-process.
 ---
 
 # Evernote CLI
@@ -54,6 +54,23 @@ Three read modes with different token costs and fidelity:
 mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title --markdown "<title>"
 mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title --clean "<title>"
 mamba run -n socrates python -m projects.evernote.src.evernote_api get-by-title --raw "<title>"
+```
+
+## Creating or reworking a note: sweep superseded copies first (RULES.md rule 31)
+
+Before a `create`, search the target notebook for the topic
+(`search "<title stem>" --notebook "<notebook>"`) and resolve what the new
+note supersedes: fold any unique content into the new note, then delete
+the superseded note. The same sweep runs when an existing artifact is
+reworked, renamed, or declared superseded. The sweep is automatic; ask
+the user only when the content cannot tell you which note is canonical.
+
+Delete moves a note to the trash (recoverable); `--permanent` expunges —
+only when the user says so:
+
+```
+mamba run -n socrates python -m projects.evernote.src.evernote_api delete "<title>"
+mamba run -n socrates python -m projects.evernote.src.evernote_api delete "<guid>" --guid
 ```
 
 ## Write modes (update, update-by-title, create)
@@ -212,6 +229,7 @@ mamba run -n socrates python -m projects.evernote.src.evernote_api embed-image <
 mamba run -n socrates python -m projects.evernote.src.evernote_api photos-embed <title> [--count N] [--after-heading <heading>]
 mamba run -n socrates python -m projects.evernote.src.evernote_api log-entry <title> <heading> --fields "k=v" [--photo] [--after-heading <heading>]
 mamba run -n socrates python -m projects.evernote.src.evernote_api sync-memory --from-evernote|--to-evernote [--topics a,b]
+mamba run -n socrates python -m projects.evernote.src.evernote_api delete <title> [--guid] [--permanent]
 mamba run -n socrates python -m projects.evernote.src.evernote_api close-note "<title>"
 ```
 
