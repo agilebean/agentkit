@@ -1154,6 +1154,9 @@ US account: nothing; the wire into Korea: the visible event").
 - The TL;DR carries the live consequence in plain life terms. Analyst labels
   ("verified", "consistent", "Position 2") belong in working notes, not in the
   user-facing summary.
+- Lists of open items read as actions: what to do, who does it, and the timing
+  (now, before a deadline, or later). A retired item is marked retired with the
+  evidence. An undifferentiated list of unknowns is a defect.
 - Test: after reading, the user can act on or dismiss each of his situations
   without asking "and what does that mean for me?"
 - Complements rule 19 (voice) and rule 48 (readability): this rule sets the
@@ -1162,7 +1165,8 @@ US account: nothing; the wire into Korea: the visible event").
 Instruction basis: on 2026-09-19, feedback on the tax reconciliation: "i really
 need a clearer, non-robotic phrasing of the answer. in general, the tldr wording
 is not sufficiently hands-on and life-related. improve this, e.g. by scenarios
-custom to my concrete life situation."
+custom to my concrete life situation." Amended 2026-09-20 on "also make the open
+items clearer".
 
 ## Shell: `~/.bash_aliases` (user-global)
 
