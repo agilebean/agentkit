@@ -1255,6 +1255,77 @@ Any text the user reads (chat replies, notes, artifacts, drafts) must expand eve
 
 Failure: on 2026-09-21 a training answer used "RPE drifts up with duration" and "your AeT is 2:05" without definitions; Chaehan: "what is rpe and aet". Both abbreviations sat bare in the swim memory file, and the answer imported them as-is.
 
+### 56. Trims are scoped to what was named and must leave the artifact valuable to its reader
+
+An instruction to remove, simplify, or de-risk content in a document written for
+other people (a syllabus, a handout, a report, a message) applies only to the
+items it names. Everything else stays. After the edit, read the result from the
+reader's seat and name the facts that reader needs from this document (for a
+syllabus: when the sessions are, what each covers, what will be learned, what is
+assessed). If any of them is gone, the trim went too far.
+
+- **De-risking means removing fragile specifics, not substance.** Counts,
+  internal method rules, drafting notes, and distribution logistics are the
+  named targets; the schedule, the topics, and the learning objectives are the
+  reader's value and survive at the level that stays true when details change
+  (frameworks, phases, deliverables), not in activity steps.
+- **Do not extend the reduction to unnamed sections.** A list of items to fix
+  is not a license to rework the rest of the document.
+- **When in doubt, keep the information and cut the wording.** If the reader
+  would know less after the edit than before, the edit is wrong, however
+  sensitive the original text was.
+
+Failure: on 2026-09-20, making the KUBS course syllabus send-safe (the named
+targets: activity detail, quantitative specs, the distribution note, the skip
+list) also stripped the session table to bare labels with no dates or substance
+and flattened the learning objectives, though neither was named. Chaehan: "the
+schedule is too much reduced and provides no value to students. same for
+learning objectives which i didn't tell you to reduce. always always think of
+added value for the target audience when making such changes."
+
+### 57. Reader-facing text: lead with what the audience gets, in the register the relationship calls for
+
+Before drafting anything a group will read (students, customers, a mailing list,
+a team), sit in their seat: what do they already know, what do they care about,
+what will they feel reading this, and what is in it for them? Answer those
+first. Frame changes as improvements for the reader, never as the author's
+housekeeping.
+
+- **Register and bookends follow the audience and the occasion.** A class
+  announcement is warm and upbeat and may open with "Dear Students" and close
+  with "Best regards, Dr. Chaehan So"; a correction to a customer is plain and
+  apologetic; a note to a colleague is short and dry. Occasion-appropriate
+  bookends are part of the format. The no-greeting, no-sign-off convention
+  belongs to chat-style messages inside an ongoing thread, not to a formal
+  group announcement.
+- **Name the change and pair it with the reader's benefit.** Do not hide that
+  something changed, and do not frame it as an error. The formula: what
+  changed, and why it serves the reader ("The Moesta & Spiek book is replaced
+  by Kalbach's Jobs To Be Done Playbook, which is conceptually much better, so
+  it will guide you better hands-on"; "I cut the process I had planned to
+  teach alongside it, so instead of confusing you, you will work with one
+  process from day 1").
+- **Keep the announcement's structure.** A group announcement is not a chat
+  reply: greeting, numbered items, an IMPORTANT block, sign-off. Do not
+  compress it into two sentences and do not strip the parts.
+- **Give value, not just information.** A reader-facing message carries
+  something for the reader: why this is good news, what to do, what they will
+  experience, what it saves them.
+- **Test it without the backstory.** If the draft only makes sense with the
+  author's context, or reads like a list of edits, rewrite it from the
+  reader's side.
+
+Failure: on 2026-09-20, the student announcement for the updated KUBS syllabus
+went through three rejected drafts: a bare change log ("Two changes. The
+reading now centers on Kalbach's ..."), a friendly version that hid the change,
+and a version that dropped the process mention entirely. Chaehan rewrote it
+himself with the accepted shape: "Dear Students" greeting, two numbered
+improvements each with the student benefit (the Kalbach book "is conceptually
+much better so it will guide you better hands-on"; the cut process "so instead
+of confusing you, you will work with one design thinking process from day 1"),
+the reading block, and a sign-off. His comment: "please learn better
+formulation."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
