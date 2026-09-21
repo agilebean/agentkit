@@ -1249,6 +1249,12 @@ around the bush." Amended the same day: the first version overfit the failing
 example ("two questions get two short answers"); Chaehan: "you write too
 specific to two-part question you must generalize!"
 
+### 55. Expand every abbreviation on first use in anything the user reads
+
+Any text the user reads (chat replies, notes, artifacts, drafts) must expand every abbreviation, acronym, and domain shorthand the first time it appears, with the term spelled out and its role in plain words: "rating of perceived exertion (RPE, how hard the effort feels)". Abbreviations carried over from memory files, source notes, or professional literature are not exempt; a note's shorthand is not user vocabulary. The user should never have to ask what a term means.
+
+Failure: on 2026-09-21 a training answer used "RPE drifts up with duration" and "your AeT is 2:05" without definitions; Chaehan: "what is rpe and aet". Both abbreviations sat bare in the swim memory file, and the answer imported them as-is.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
