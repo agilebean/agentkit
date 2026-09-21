@@ -1168,6 +1168,50 @@ is not sufficiently hands-on and life-related. improve this, e.g. by scenarios
 custom to my concrete life situation." Amended 2026-09-20 on "also make the open
 items clearer".
 
+### 53. Fix the layout before the first build; repair the artifact in place after it
+
+Building a visual artifact (slide, diagram, chart, page layout) is two passes
+that do not mix. Reconnaissance measures; the build writes. A build pass that
+reveals a collision, an overlap, or text that does not fit is not a bug in the
+build. It is a specification that was never finished, and the render was doing
+design work the plan owed.
+
+- **Measure the constraints before creating anything.** Compute each new
+  element's position and size against the measured geometry of what is already
+  on the canvas: the bounding boxes of neighbouring elements, the canvas edge,
+  the rendered width of the text at the real font and size. These numbers come
+  from reconnaissance, not from trial. If they show the intended scheme does
+  not fit, change the scheme before building, not the artifact afterward.
+- **Check the surface before the pass.** A build run against a target that
+  still carries reconnaissance debris (a test object, a duplicated element, a
+  half-applied edit) produces an invalid artifact and wastes the whole pass.
+  Verify the target's state, then build.
+- **Repair in place.** Once elements exist, a wrong coordinate, size, or label
+  is fixed by mutating those properties on the objects already in place.
+  Discarding the artifact and re-running the creation pass on a clean copy is
+  never the fix for a defect that is a property value. Rebuild is reserved for
+  the case where the element's source must change (a different parent object is
+  needed to inherit different styling), and then only the affected element is
+  rebuilt.
+- **What the loop costs.** Each rebuild discards decisions already accepted and
+  pushes them through the risky path again, so the work stops accumulating. The
+  user watches identical objects appear and disappear with no visible progress,
+  and a task that needed one build plus one nudge becomes unbounded.
+- **No in-place removal is not a license to rebuild.** When the tooling cannot
+  delete a single element (some scripting APIs cannot), that raises the cost of
+  a wrong element and therefore the bar on the specification. It does not make
+  "reset everything" the ordinary way to correct one property.
+
+Failure: on 2026-09-21 the two new entries on a Keynote timeline slide were
+created, discarded, and recreated four times (six rounded rectangles made, five
+thrown away, three full resets of the working copy) because the placement scheme
+was never settled before the first build. The collision that forced the first
+redesign (a new box overlapping the neighbouring box) was computable from the
+two existing bounding boxes before anything was created, and the later defects
+(a frame taller than its text, a box that did not hug its label) were each a
+position, width, or height value that could have been set on the objects already
+present.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
