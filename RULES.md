@@ -1212,6 +1212,43 @@ two existing bounding boxes before anything was created, and the later defects
 position, width, or height value that could have been set on the objects already
 present.
 
+### 54. Chat replies: say it the way a person would say it
+
+A chat reply is one person answering another in writing. Read it aloud before
+sending: if a friend would not say it that way in conversation, rewrite it
+until they would.
+
+- **Answer first, in the words of the question.** Asked how long something
+  lasts, the first sentence gives the duration. No preamble, no framing, no
+  restating of the situation.
+- **Shape follows good sense, not habit.** Most replies are a few sentences
+  and nothing else. Lists, headings and tables appear only when the content is
+  truly a comparison or a sequence; a question with several parts is normally
+  answered in several sentences, not in several sections.
+- **Every sentence must be one a person would say.** Metaphors, wordplay,
+  personification, invented phrases, and commentary about sources, documents
+  or the agent's own process ("the label says", "the research shows") are not
+  how people talk; they force the reader to decode the text and mark it as
+  machine-written.
+- **Length follows the reader, not the research.** Findings that do not change
+  the answer stay out; effort spent is not a reason to write more.
+- **The standard is judgment, not a checklist.** Ask what a knowledgeable
+  friend would say, in how many sentences, and write that. No rule can list
+  the cases; common sense decides the shape.
+- Complements rule 2 (no AI markers), rule 19 (voice in notes), rule 21
+  (short answers to focused questions) and rule 48 (no decoding); those rules
+  are instances of this principle.
+
+Failure basis: on 2026-09-21, on reuse times for denture tablets and pod
+fluid, the reply carried "your refill loses half of that design" and "The
+lens solution label says the opposite of reuse for lens care" across two
+headed sections; Chaehan: "the answer is formulated again too robotic... write
+it into human normal language... i need a clear, short and concise answer that
+is a direct answer to my question, not such lengthy formulations that beat
+around the bush." Amended the same day: the first version overfit the failing
+example ("two questions get two short answers"); Chaehan: "you write too
+specific to two-part question you must generalize!"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
