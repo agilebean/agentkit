@@ -1232,6 +1232,14 @@ until they would.
   machine-written.
 - **Length follows the reader, not the research.** Findings that do not change
   the answer stay out; effort spent is not a reason to write more.
+- **Report markers are the send-time trigger.** Before sending, scan the draft
+  for the shapes only reports have: a bolded lead-in in front of a paragraph, a
+  heading, a premise announced as a labeled noun ("The hole:", "The promising
+  part:"), a verdict label ("plausible, not established", "mixed evidence",
+  "moderate confidence"), and a section per part of the question. Any one of
+  them means the draft is a report, not a reply. Strip the scaffolding and say
+  the same content in a person's sentences. This check is a step, not an
+  intention: the read-aloud test runs at send time on the finished draft.
 - **The standard is judgment, not a checklist.** Ask what a knowledgeable
   friend would say, in how many sentences, and write that. No rule can list
   the cases; common sense decides the shape.
@@ -1248,6 +1256,14 @@ is a direct answer to my question, not such lengthy formulations that beat
 around the bush." Amended the same day: the first version overfit the failing
 example ("two questions get two short answers"); Chaehan: "you write too
 specific to two-part question you must generalize!"
+
+Second instance: on 2026-09-21 a reply on dairy, oat milk and soy milk arrived
+as four bolded sections, one per part of the question, with verdict labels
+("plausible, not established", "mixed, partly industry-funded") and a bridge
+line ("One thing decides which branch you are on"). The draft was assembled in
+the research order (evidence, comparison, products) and never passed the
+read-aloud test. Chaehan: "the whole formulation is again too robotic. read the
+agent rules about it and tell me why they are not applied here."
 
 ### 55. Expand every abbreviation on first use in anything the user reads
 
