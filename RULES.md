@@ -1380,6 +1380,50 @@ been. The handoff itself had already recorded that its timeline "was corrected
 four times; quote it back rather than reconstructing", an instruction sitting in
 a document no session loads.
 
+### 59. A completion report follows the user's order of relevance, not the agent's process order
+
+The reply that closes a piece of work is not the log of what you did. It is a
+briefing for someone who wants to know where things stand and what he has to do.
+Start from his seat: ask what he will do with this reply, what he must decide,
+verify, or forward, and write those answers first. Then order the rest by how
+much it matters to him, and group like items under headings he would use.
+
+1. **The state he cares about.** What is true now that was not true before, in
+   one or two lines. The outcome, not the steps.
+2. **What waits on him.** Anything needing his decision, input, or action. This
+   is the most valuable part of the report and never belongs at the bottom.
+3. **Deviations and surprises.** What went differently from what he asked or
+   expected, including what you fixed mid-way and what you could not do.
+4. **Supporting detail.** File names, hashes, counts, and only where they let
+   him verify or act.
+
+- **Group like items under short plain headings.** A heading is the noun for the
+  group ("Waiting on you", "What moved", "Not done"), not a stage of your process
+  ("Phase 2 results", "Verification"). Parallel items become bullets, one point
+  per bullet. Prose is for a single connected point, never for a list of
+  unrelated facts.
+- **No process narration.** The order in which you did things is irrelevant, and
+  so are the tools you used and the checks you ran, unless a check is the
+  evidence he asked for.
+- **Identifiers earn their place.** A commit hash, path, or file list appears
+  when he needs it to act or verify, not as proof of effort.
+- **A file list is not a report.** Enumerating files he already knows is not
+  information; naming the one file whose state changed is.
+
+Test: read the reply as if you had just walked in and wanted to know where things
+stand and what you have to do next. If you must read to the end to find that, the
+order is wrong. Rule 42 (bulleted summaries) and rule 54 (the way a person would
+say it) apply to work reports as much as to any other writing.
+
+Failure: on 2026-09-22 a cleanup report led with a commit hash, listed seven
+legacy file names he already knew, buried the one item that needed his decision
+(an uncommitted memory file from another session) in the closing line, and
+reported a date discrepancy in the middle of a paragraph. Chaehan: "the last
+output summary is not well written. read rules 51+ for writing and apply also for
+such summary. the main point is to get into the user's shoes and find out what's
+the most relevant, then sort output in this order, and then format things in easy
+to read structures like bullet lists for similar items with intuitive headings."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
