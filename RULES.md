@@ -1466,6 +1466,14 @@ wording and the decision buried. A version with question-shaped headings,
 one-idea bullets and the mechanism spelled out was accepted: "ok this is the
 output i want every time."
 
+### 61. Reference data is user-owned; never rewrite it by inference
+
+Values the user's files live by (pace benchmarks, zone tables, prices, rates, IDs, contacts, schedules) change only in two ways: the user states the new values, or a workflow the user has explicitly triggered produces them (for example the update-css skill). Never change them because another file, another system, or your own reasoning suggests they are stale. A file being current is not authorization, and a source you found on your own is not the source of truth for a different system's data.
+
+When a number you used is challenged, fix the answer you gave; to change the stored record, ask first. When two sources disagree, surface the conflict and let the user pick; never silently choose one. Never present an inferred update as a "correction", a "fix", or a "supersession": an inference is a proposal and it goes to the user before the record changes.
+
+Failure: on 2026-09-21 Chaehan asked "why do you use 2:08?". The agent read the swim repo's config, treated its zone table as the source of truth, and rewrote the swim memory's training reference with that file's values, committed as "pace zones corrected". The config's own history held two versions of the zone rule (2026-09-07 and 2026-09-15), and the agent checked with no one. Chaehan: "these are not from the css test, you made up new times!"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
