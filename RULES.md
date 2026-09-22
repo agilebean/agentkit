@@ -1474,6 +1474,14 @@ When a number you used is challenged, fix the answer you gave; to change the sto
 
 Failure: on 2026-09-21 Chaehan asked "why do you use 2:08?". The agent read the swim repo's config, treated its zone table as the source of truth, and rewrote the swim memory's training reference with that file's values, committed as "pace zones corrected". The config's own history held two versions of the zone rule (2026-09-07 and 2026-09-15), and the agent checked with no one. Chaehan: "these are not from the css test, you made up new times!"
 
+### 62. Ask with the question tool, before acting, not in prose
+
+When a decision belongs to the user, the question goes through the question tool before any action, with the options laid out so he can answer in one tap. This covers anything that changes his records, files, plans, or money, and every choice where more than one option is defensible.
+
+The tool is not only for ambiguity. Feeling certain is not a reason to skip it: certainty that a value is stale, that a reading is right, or that the user will agree is the state in which the question gets skipped and the damage happens. When the agent is about to write a sentence that asks the user to decide or provide something ("Tell me which table is yours", "Which should it be?"), that question goes into the question tool instead of the reply. Asking is the next step of the work, never an interruption of it.
+
+Failure: on 2026-09-21/22, in the pace-benchmark incident, the agent rewrote the user's stored benchmarks instead of asking whether they should change, then ended two long explanations with prose questions instead of tool calls. Chaehan: "why do you forget using the question tool?"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
