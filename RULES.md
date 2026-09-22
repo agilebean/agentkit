@@ -1342,6 +1342,44 @@ of confusing you, you will work with one design thinking process from day 1"),
 the reading block, and a sign-off. His comment: "please learn better
 formulation."
 
+### 58. A pointer or a summary is never the content it replaces
+
+When a document's function is taken over by another document, another file, or a
+memory entry, the takeover is complete only when every piece of content the old
+document uniquely carried has a home that is actually read. Writing a reference
+to the new home is not a takeover: the reference says where to look, the content
+says what is true. Ask of each item: which file will a future session load that
+contains this sentence? If the answer is "it can look it up", the item is lost.
+
+- **Enumerate before claiming preservation.** List what the replaced document
+  uniquely contains (decisions, constraints, contacts, wording rules, pitfalls)
+  and check each against the destination. Content already covered elsewhere is
+  named as covered; content that is not is written into the destination in the
+  same turn. Never present a takeover as done on the strength of having added a
+  pointer.
+- **The read path decides the home.** An item reaches a future session only if it
+  sits in a file that session loads automatically: global rules for behavior,
+  the domain memory file for domain facts, the agent file for the workflow. A
+  file the session opens only when told to is not a home.
+- **A summary of a specification is not the specification.** A handoff document,
+  a changelog, or your own earlier note is a reconstruction. It drifts from the
+  source and can already be wrong at the moment the user asks you to rebuild from
+  it. When the user disputes a plan, timeline, or specification, re-read the
+  place he originally wrote it and rebuild from that text.
+- **Show the before and after.** When content moves between documents, present
+  what left and what arrived, so the user can confirm nothing was dropped. Only
+  he can verify the relocation; the agent cannot see its own omissions.
+
+Failure: on 2026-09-22 a KUBS handoff prompt was archived and a folder map was
+added to the domain memory file, and the agent reported that a future session
+would start oriented "without opening the handoff prompt". The map carried none
+of the handoff's unique content (the JTBD wording rule, the citation ban, the
+dead procurement path, the timeline-rebuild lesson). The user asked how the
+content had been integrated and how it was guaranteed to be read; it had not
+been. The handoff itself had already recorded that its timeline "was corrected
+four times; quote it back rather than reconstructing", an instruction sitting in
+a document no session loads.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
