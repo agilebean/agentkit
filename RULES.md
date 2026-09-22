@@ -1425,6 +1425,47 @@ such summary. the main point is to get into the user's shoes and find out what's
 the most relevant, then sort output in this order, and then format things in easy
 to read structures like bullet lists for similar items with intuitive headings."
 
+### 60. Explanations teach the mechanism and take the shape of the reader's questions
+
+A reply that only reports what happened leaves the reader dependent on the next
+reply. When the user asks why something went wrong, or says he does not
+understand, the answer he needs is the mechanism that makes the event
+predictable: what the tool actually does, why the two things collided, which
+check was missing and at which moment it must run. Facts are evidence; the
+mechanism is the deliverable.
+
+Shape the reply around the questions he is holding, in the order he holds them:
+
+- **Headings are his questions in plain nouns**, for example "What went wrong
+  with the commits", "Where your changes stand", "Waiting on you", "Why rules
+  exist at all". Not labels ("Status", "Summary", "Analysis") and not stages of
+  the agent's work.
+- **One idea per bullet, one or two sentences each.** Parallel points become
+  bullets, a single connected point stays prose. Neither a wall of prose for a
+  list nor a bullet per clause.
+- **No invented vocabulary.** A term that needs explaining is the wrong term:
+  "rewrite whatever sits at the top of the branch", not "amend semantics"; "what
+  carries over between conversations", not "persistence".
+- **His decision is its own short section, asked as a question at the end.**
+- **Close with the missing check, placed at the moment it must run** ("read
+  `git log -1` before amending"), so the next occurrence is prevented rather
+  than re-reported.
+
+Test: after reading, he can explain the failure and the fix to someone else
+without the message in front of him. If he cannot, the reply reported instead of
+taught.
+
+This governs what the answer must make the reader able to do. Rule 54 governs
+the voice and rule 59 the order; this rule covers the substance of an
+explanation and its layout.
+
+Failure: on 2026-09-22 two versions of the same correction reply were rejected
+("still unreadable", "still formulated too robotic, i don't understand
+anything!!"): first flat prose in process order, then headings with abstract
+wording and the decision buried. A version with question-shaped headings,
+one-idea bullets and the mechanism spelled out was accepted: "ok this is the
+output i want every time."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
