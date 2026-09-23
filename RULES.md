@@ -1490,6 +1490,14 @@ A dated series is history: when a new observation arrives, append it. Older entr
 
 Failure: on 2026-09-21, in the pace-benchmark incident, the agent copied zone values that traced to the 2026-09-07 CSS test while a later test (2026-09-11) sat unprocessed in the same data, and both repair attempts missed the recency check. The agent also proposed correcting the 2026-09-07 row of the historic benchmark table. Chaehan: "if you take the css test based times, why don't you apply common sense and take the latest test?", "always the latest! ... this is non-negotiable.", and "of course keep the row, and tell me why don't you apply common sense here to see that the table shows historic benchmarks, then you would see there were benchmarks before 7 sep as well."
 
+### 64. A slide's title lives in the deck's title element, never as a line of body text
+
+A slide has one place for its title: the element the deck already uses for titles, whether that is a title placeholder, a coloured title bar, or a header text object. Writing the heading as the first line of the body content is the same as having no title: the deck's title element stays generic while the reader has to find the topic inside the text. Before building or editing a slide, read how the deck's existing slides carry their titles, position, size and styling, then put the new slide's title in that same element and start the body below it.
+
+The same principle governs the layout inside a slide: each point's heading sits above its own body text with a visible gap, and body text that renders over its heading is a defect no matter how the paragraph styles were inherited. Resizing a text object can also move its text, because a box whose text is vertically centred re-centres when its height changes. After any size change, set the position explicitly and verify on a rendered slide, never on the coordinates alone.
+
+Failure: on 2026-09-21 Chaehan corrected the agent twice on the KUBS deck ("the title line like Assessment should be in the title, not in the slide body", "can't you read the title in the slides at the top? it says eg 'Design Thinking - In My Life' ! what you did is not the title but inside the body text!"). On 2026-09-23 the same mistake recurred on two new homework slides, together with grey body text that overlaid the point headings. Chaehan: "you still make the same mistakes. how often do i need to tell you that the title of a slide is NOT in the body text but above?? ... the grey text overlays the headers so spread the points vertically". The 2026-09-21 correction was never encoded, so it was lost between sessions.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
