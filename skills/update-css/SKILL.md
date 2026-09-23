@@ -9,26 +9,30 @@ The user swims a CSS test (all-out 200 m and 400 m), reports both times, and
 the benchmark zones (60/70/80/90%) are regenerated from the test. One test,
 one update. Never derive the zones from a hypothetical "true CSS" the user
 floats in conversation; the measured test is the only anchor unless the user
-explicitly says otherwise.
+explicitly says otherwise. Always the latest test: if a newer measured test
+exists than the one in `css_history`, process it instead; older entries stay
+as history.
 
 ## 1. Compute CSS and zones
 
 CSS pace per 100 m in seconds: `(T400 - T200) / 2`. Round the result UP to a
 whole second.
 
-Example: 400 m 8:08 (488 s), 200 m 3:45 (225 s) gives (488-225)/2 = 131.5 s,
-rounded up to 132 s = 2:12.
+Example: 400 m 8:05 (485 s), 200 m 4:10 (250 s) gives (485-250)/2 = 117.5 s,
+rounded up to 118 s = 1:58.
 
-Zone rule (set by Chaehan 2026-09-07), applied to the rounded CSS:
+Zone rule (set by Chaehan), applied to the rounded CSS:
 
-| Zone | Rule | Example (CSS 2:12) |
+| Zone | Rule | Example (CSS 1:58) |
 |------|------|--------------------|
-| 60%  | CSS         | 2:12 (aerobic) |
-| 70%  | CSS - 8 s   | 2:04 |
-| 80%  | CSS - 16 s  | 1:56 |
-| 90%  | CSS - 24 s  | 1:48 |
+| 60%  | CSS + 6 s   | 2:04 (aerobic) |
+| 70%  | CSS         | 1:58 |
+| 80%  | CSS - 6 s   | 1:52 |
+| 90%  | CSS - 12 s  | 1:46 |
 
-All stored values are whole seconds. No fractional paces.
+The 60% row is open at the slow end: every pace at or slower than its target
+is also 60% (otherwise slow paces would have no category). All stored values
+are whole seconds. No fractional paces.
 
 ## 2. Update config/benchmark.yaml (swim repo)
 
@@ -80,11 +84,11 @@ connectives are forbidden; the user removed that phrasing). Numbers exactly as
 computed:
 
 ```
-CSS 2:12 (400m 8:08, 200m 3:45).
-- 60% 2:12 (CSS, aerobic)
-- 70% 2:04 (CSS -8)
-- 80% 1:56 (CSS -16)
-- 90% 1:48 (CSS -24)
+CSS 1:58 (400m 8:05, 200m 4:10).
+- 60% 2:04 (CSS +6)
+- 70% 1:58 (CSS)
+- 80% 1:52 (CSS -6)
+- 90% 1:46 (CSS -12)
 ```
 
 Bullets must be real `<ul><li>` elements in the ENML. The `add-row` command
