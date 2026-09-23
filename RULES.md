@@ -1482,6 +1482,12 @@ The tool is not only for ambiguity. Feeling certain is not a reason to skip it: 
 
 Failure: on 2026-09-21/22, in the pace-benchmark incident, the agent rewrote the user's stored benchmarks instead of asking whether they should change, then ended two long explanations with prose questions instead of tool calls. Chaehan: "why do you forget using the question tool?"
 
+### 63. Under uncertainty, always take the latest observation
+
+When information has a time series (test results, prices, rates, measurements, statuses, documents), the latest observation is the basis for any analysis or decision. Order the vintages by date, take the newest, and never use an older one without saying so. Do not pick by convenience and do not average across vintages. This is the user's standing rule, stated 2026-09-21 and marked non-negotiable: "always the latest! you must apply common sense." It applies to every decision under uncertainty.
+
+Failure: on 2026-09-21, in the pace-benchmark incident, the agent copied zone values that traced to the 2026-09-07 CSS test while a later test (2026-09-11) sat unprocessed in the same data, and both repair attempts missed the recency check. Chaehan: "if you take the css test based times, why don't you apply common sense and take the latest test?" and "always the latest! ... this is non-negotiable."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
