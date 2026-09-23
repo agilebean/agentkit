@@ -1486,7 +1486,9 @@ Failure: on 2026-09-21/22, in the pace-benchmark incident, the agent rewrote the
 
 When information has a time series (test results, prices, rates, measurements, statuses, documents), the latest observation is the basis for any analysis or decision. Order the vintages by date, take the newest, and never use an older one without saying so. Do not pick by convenience and do not average across vintages. This is the user's standing rule, stated 2026-09-21 and marked non-negotiable: "always the latest! you must apply common sense." It applies to every decision under uncertainty.
 
-Failure: on 2026-09-21, in the pace-benchmark incident, the agent copied zone values that traced to the 2026-09-07 CSS test while a later test (2026-09-11) sat unprocessed in the same data, and both repair attempts missed the recency check. Chaehan: "if you take the css test based times, why don't you apply common sense and take the latest test?" and "always the latest! ... this is non-negotiable."
+A dated series is history: when a new observation arrives, append it. Older entries are never rewritten to match the new state, and the agent never proposes to. A table with one dated row per update is a log, not a current-state record; read it as a series, where the newest row is current and the older rows record the past.
+
+Failure: on 2026-09-21, in the pace-benchmark incident, the agent copied zone values that traced to the 2026-09-07 CSS test while a later test (2026-09-11) sat unprocessed in the same data, and both repair attempts missed the recency check. The agent also proposed correcting the 2026-09-07 row of the historic benchmark table. Chaehan: "if you take the css test based times, why don't you apply common sense and take the latest test?", "always the latest! ... this is non-negotiable.", and "of course keep the row, and tell me why don't you apply common sense here to see that the table shows historic benchmarks, then you would see there were benchmarks before 7 sep as well."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
