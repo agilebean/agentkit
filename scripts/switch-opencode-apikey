@@ -1,0 +1,167 @@
+#!/usr/bin/env python3
+"""Toggle between opencode-go API keys.
+
+This is the manual equivalent of switchboard-go: instead of running a proxy
+process that auto-rotates keys on exhaustion, you run this script to swap.
+It updates opencode's credential files directly. No background process,
+no launchd config, no network sandbox issues. Two keys, one command.
+
+Files:
+  ~/.config/opencode/opencode-go-keys    <key> <label> per line
+  ~/.config/opencode/opencode-go-active  current index (1-based)
+  ~/.local/share/opencode/auth.json      opencode 1.x credential store
+  ~/.local/share/opencode/account.json   opencode account store
+  ~/.local/share/opencode/opencode.db    opencode 2.x credential DB (table `credential`)
+
+OpenCode 1.x reads auth.json; OpenCode 2.x and the OpenChamber app read the
+`credential` table in opencode.db, picking the row with active=1 (else the most
+recently updated). This script keeps both stores on the same key.
+
+Usage:
+  switch-opencode-apikey           toggle to the other key
+  switch-opencode-apikey --sync    re-apply the current key to every store
+  switch-opencode-apikey --list    list all keys with labels
+"""
+import json
+import sqlite3
+import sys
+import time
+from pathlib import Path
+
+AUTH_FILE = Path.home() / ".local" / "share" / "opencode" / "auth.json"
+ACCT_FILE = Path.home() / ".local" / "share" / "opencode" / "account.json"
+DB_FILE = Path.home() / ".local" / "share" / "opencode" / "opencode.db"
+KEYS_FILE = Path.home() / ".config" / "opencode" / "opencode-go-keys"
+STATE_FILE = Path.home() / ".config" / "opencode" / "opencode-go-active"
+INTEGRATION_ID = "opencode-go"
+
+
+def load_keys():
+    """Return list of (key, label) tuples from the keys file."""
+    text = KEYS_FILE.read_text().strip()
+    if not text:
+        sys.exit(f"Keys file is empty: {KEYS_FILE}")
+    entries = []
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        parts = line.split(None, 1)
+        key = parts[0]
+        label = parts[1] if len(parts) > 1 else f"key {len(entries) + 1}"
+        entries.append((key, label))
+    return entries
+
+
+def current_index():
+    """Read the active key index (1-based) from the state file."""
+    try:
+        return int(STATE_FILE.read_text().strip()) - 1
+    except (FileNotFoundError, ValueError):
+        return 0
+
+
+def update_json(path, key):
+    """Replace the opencode-go API key in a credential JSON file."""
+    data = json.loads(path.read_text())
+    if "opencode-go" in data:
+        data["opencode-go"]["key"] = key
+    # account.json nests keys inside accounts -> credential
+    if "accounts" in data:
+        for acct in data["accounts"].values():
+            if acct.get("serviceID") == "opencode-go" and "credential" in acct:
+                acct["credential"]["key"] = key
+    path.write_text(json.dumps(data, indent=2) + "\n")
+
+
+def update_credential_db(key):
+    """Point the OpenCode 2.x credential DB at the given opencode-go API key.
+
+    OpenCode 2.x (and the OpenChamber app) read opencode.db, table
+    `credential`, picking the active=1 row per integration. Keep exactly one
+    active opencode-go row and set its key, so both tools use the same key.
+    Returns False when there is no DB to update.
+    """
+    if not DB_FILE.exists():
+        return False
+
+    value = json.dumps({"type": "key", "key": key})
+    now = int(time.time() * 1000)
+    con = sqlite3.connect(str(DB_FILE), timeout=15)
+    try:
+        cur = con.cursor()
+        rows = cur.execute(
+            "SELECT id FROM credential WHERE integration_id = ? "
+            "ORDER BY active DESC, time_updated DESC",
+            (INTEGRATION_ID,),
+        ).fetchall()
+        if rows:
+            cur.execute(
+                "UPDATE credential SET active = 0 WHERE integration_id = ?",
+                (INTEGRATION_ID,),
+            )
+            cur.execute(
+                "UPDATE credential SET value = ?, active = 1, time_updated = ? WHERE id = ?",
+                (value, now, rows[0][0]),
+            )
+        else:
+            cur.execute(
+                "INSERT INTO credential (id, integration_id, label, value, active, "
+                "time_created, time_updated) VALUES (?, ?, ?, ?, 1, ?, ?)",
+                (f"cred_{now:x}{now:x}", INTEGRATION_ID, "OpenCode Go", value, now, now),
+            )
+        con.commit()
+        return True
+    finally:
+        con.close()
+
+
+def list_keys(entries, idx):
+    for i, (key, label) in enumerate(entries):
+        marker = " <-- active" if i == idx else ""
+        print(f"  {i + 1}. {label}  ({key[:12]}...{key[-4:]}){marker}")
+
+
+def main():
+    if not KEYS_FILE.exists():
+        sys.exit(
+            f"Keys file not found: {KEYS_FILE}\n"
+            "Create it with one key+label per line:\n"
+            "  sk-xxx...   user@example.com\n"
+            "  sk-yyy...   user@other.com"
+        )
+    entries = load_keys()
+    if len(entries) < 2:
+        sys.exit(f"Need at least 2 keys in {KEYS_FILE}, found {len(entries)}")
+
+    if len(sys.argv) > 1 and sys.argv[1] == "--list":
+        list_keys(entries, current_index())
+        return
+
+    if len(sys.argv) > 1 and sys.argv[1] == "--sync":
+        idx = current_index()
+        key, label = entries[idx]
+        update_json(AUTH_FILE, key)
+        update_json(ACCT_FILE, key)
+        db_ok = update_credential_db(key)
+        print(f"Re-applied key {idx + 1}: {label}")
+        if not db_ok:
+            print(f"Note: no credential DB found at {DB_FILE}")
+        print("Restart opencode or OpenChamber to apply.")
+        return
+
+    idx = current_index()
+    nxt = (idx + 1) % len(entries)
+    key, label = entries[nxt]
+
+    update_json(AUTH_FILE, key)
+    update_json(ACCT_FILE, key)
+    update_credential_db(key)
+    STATE_FILE.write_text(str(nxt + 1))
+
+    print(f"Switched to key {nxt + 1}: {label}")
+    print("Restart opencode or OpenChamber to apply.")
+
+
+if __name__ == "__main__":
+    main()
