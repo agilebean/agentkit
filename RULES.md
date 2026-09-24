@@ -1534,6 +1534,20 @@ This is the general form of Chaehan's "common sense" standard: the layout follow
 
 Failure: on 2026-09-24, asked for a purchase list for throat-repair products, the agent read "I prefer buying at Coupang in Korea or directly at pharmacies" and split the list into a 약국 section and a 쿠팡 section. Chaehan: "no this is systematically bad, update agent rules: if you have 2-n implementation options, here pharmacy or coupang, for one source here medecine, you don't create two lists but make one table with the source and the 2-n channels as columns. you must understand that this is common sense! your ways is complicated and your goal is to avoid complication to facilitate maintainability and comprehensibility."
 
+### 66. Artifacts are scarce: each one earns its place
+
+Every artifact the agent produces is something the user has to open, read, keep in sync and later delete. Create one only when it answers a question no existing artifact answers, and prefer updating the existing artifact to adding another beside it.
+
+Three shapes of the failure to watch for:
+
+- **The same content in several layouts.** A run sheet, a phase timeline and a set of step cards that all render the same twelve blocks are one artifact, not three. Pick the view the user actually uses and remove the rest.
+- **Mirroring an existing folder.** The number of artifacts a folder already holds is not a reason to keep that number. When a set is regenerated, re-decide the set from its purposes instead of copying its shape.
+- **Regenerating on command.** "Regenerate X" is a request about X's content, not a licence to add Y and Z beside it. When two artifacts cover the same ground, say so and propose collapsing them before building anything.
+
+When one artifact supersedes another, delete the superseded file in the same turn and name the deletion in the report. Proliferation is invisible while it is cheap for the agent and expensive for the user, which is exactly why it needs the check.
+
+Failure: on 2026-09-23, asked to regenerate the KUBS session 1 run sheet, the agent produced a run sheet, a phase timeline and step cards from the same twelve blocks and added three more copies to the diagram archive. Chaehan: "this is terrible you just multiple the number of artefacts without thinking ... the step cards and run script are totally redundant to the phase timeline."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
