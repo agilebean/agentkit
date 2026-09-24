@@ -1525,7 +1525,7 @@ Wrong — two lists, each item repeated as a heading:
 
 Right — one table, each item once, the options as columns:
 
-| Item | Why it is in the list | 약국 (pharmacy) | 쿠팡 (Coupang) |
+| Item | Why | 약국 (pharmacy) | 쿠팡 (Coupang) |
 |---|---|---|---|
 | Azulene throat spray | soothes the inflammation in a raw throat | 아즈렌인후스프레이 — 일반의약품 | not sold |
 | Hyaluronic acid lozenges | coats the mucosa in a gel film so it can repair | not sold | 겔로리보이스 — 20정 ≈ 16,900원 |
@@ -1540,11 +1540,11 @@ Every row also states why it is there — see rule 68.
 
 No table or list carries bare names. Every row says what the item is for — its function, the symptom it addresses, the problem it solves — so the reader can decide about it without looking anywhere else. A row that names a product and stops is not an entry: it asks the reader to already know what the product does, which is the exact question he opened the table to answer.
 
-The reason gets its own column. It is a field like any other, and it is the field the reader scans for first: merging it into the item name ("Azulene throat spray — the soothing one") buries it inside a sentence and gives it no scan line. One column carries the item, the next carries why it is there, and the option columns carry the channel detail — product name, price, availability.
+The reason gets its own column, headed with the single word **Why**. It is a field like any other, and it is the field the reader scans for first: merging it into the item name ("Azulene throat spray — the soothing one") buries it inside a sentence and gives it no scan line, and spelling the header out as a sentence ("Why it is in the list") makes the reader read a title to find a one-word field. One column carries the item, the next carries Why, and the option columns carry the channel detail — product name, price, availability. Headers are labels, not sentences: use the shortest word that names the field, for this column and every other.
 
 The reason is written once, at the item level, never repeated per option: a drug's purpose does not change between a pharmacy and an online shop. Never make the reader infer the purpose from the name, and never assume the name is self-explanatory because it is familiar to you.
 
-Failure: on 2026-09-24 the agent's purchase table listed 아즈렌인후스프레이, 삼아탄툼액, 가브스콘 and 생리식염수 as names with prices and no function. Chaehan: "instead of just merely putting in an item in the table you must always always always describe the reason why this is there. so this table was useless in the pharmacy bec i didn't know whether the sprays were for soothing or something else." The first repair merged the function into the item cell; Chaehan: "the WHY should be of course in a separate column!"
+Failure: on 2026-09-24 the agent's purchase table listed 아즈렌인후스프레이, 삼아탄툼액, 가브스콘 and 생리식염수 as names with prices and no function. Chaehan: "instead of just merely putting in an item in the table you must always always always describe the reason why this is there. so this table was useless in the pharmacy bec i didn't know whether the sprays were for soothing or something else." The first repair merged the function into the item cell; Chaehan: "the WHY should be of course in a separate column!" The second repair headed that column "Why it is in the list"; Chaehan: "just why, not a lengthy title".
 
 ### 69. Artifacts are scarce: each one earns its place
 
