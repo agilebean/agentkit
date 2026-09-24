@@ -1525,16 +1525,28 @@ Wrong — two lists, each item repeated as a heading:
 
 Right — one table, each item once, the options as columns:
 
-| Item | 약국 (pharmacy) | 쿠팡 (Coupang) |
-|---|---|---|
-| Azulene throat spray | 아즈렌인후스프레이 — 일반의약품 | not sold |
-| Hyaluronic acid lozenges | not sold | 겔로리보이스 — 20정 ≈ 16,900원 |
+| Item | Why it is in the list | 약국 (pharmacy) | 쿠팡 (Coupang) |
+|---|---|---|---|
+| Azulene throat spray | soothes the inflammation in a raw throat | 아즈렌인후스프레이 — 일반의약품 | not sold |
+| Hyaluronic acid lozenges | coats the mucosa in a gel film so it can repair | not sold | 겔로리보이스 — 20정 ≈ 16,900원 |
 
 This is the general form of Chaehan's "common sense" standard: the layout follows the reader's decision, and complication is the defect. Rule 48's test applies to structure as well as wording — if the reader has to reassemble the picture, the structure is wrong.
 
 Failure: on 2026-09-24, asked for a purchase list for throat-repair products, the agent read "I prefer buying at Coupang in Korea or directly at pharmacies" and split the list into a 약국 section and a 쿠팡 section. Chaehan: "no this is systematically bad, update agent rules: if you have 2-n implementation options, here pharmacy or coupang, for one source here medecine, you don't create two lists but make one table with the source and the 2-n channels as columns. you must understand that this is common sense! your ways is complicated and your goal is to avoid complication to facilitate maintainability and comprehensibility."
 
-### 66. Artifacts are scarce: each one earns its place
+Every row also states why it is there — see rule 68.
+
+### 68. Every row states why it is there, in a column of its own
+
+No table or list carries bare names. Every row says what the item is for — its function, the symptom it addresses, the problem it solves — so the reader can decide about it without looking anywhere else. A row that names a product and stops is not an entry: it asks the reader to already know what the product does, which is the exact question he opened the table to answer.
+
+The reason gets its own column. It is a field like any other, and it is the field the reader scans for first: merging it into the item name ("Azulene throat spray — the soothing one") buries it inside a sentence and gives it no scan line. One column carries the item, the next carries why it is there, and the option columns carry the channel detail — product name, price, availability.
+
+The reason is written once, at the item level, never repeated per option: a drug's purpose does not change between a pharmacy and an online shop. Never make the reader infer the purpose from the name, and never assume the name is self-explanatory because it is familiar to you.
+
+Failure: on 2026-09-24 the agent's purchase table listed 아즈렌인후스프레이, 삼아탄툼액, 가브스콘 and 생리식염수 as names with prices and no function. Chaehan: "instead of just merely putting in an item in the table you must always always always describe the reason why this is there. so this table was useless in the pharmacy bec i didn't know whether the sprays were for soothing or something else." The first repair merged the function into the item cell; Chaehan: "the WHY should be of course in a separate column!"
+
+### 69. Artifacts are scarce: each one earns its place
 
 Every artifact the agent produces is something the user has to open, read, keep in sync and later delete. Create one only when it answers a question no existing artifact answers, and prefer updating the existing artifact to adding another beside it.
 
