@@ -1500,15 +1500,39 @@ Failure: on 2026-09-21 Chaehan corrected the agent twice on the KUBS deck ("the 
 
 ### 65. Every reply ends with the artifact list
 
-The last section of every reply is a bullet list of the artifacts that reply created or changed. Files are listed by their full file name, with the folder when the name alone would not locate them; Evernote notes are listed by their exact title. Nothing that was only read belongs in the list.
+The last section of every reply is a bullet list of the artifacts the work produced. The scope is the work, not the single turn: when a reply reports a task whose files and notes were produced over several turns, every artifact of that task is listed, so the list reads as the inventory of the piece of work. Files are listed by their full file name, with the folder when the name alone would not locate them; Evernote notes are listed by their exact title; files deleted as part of the work are named and marked deleted. Nothing that was only read belongs in the list.
 
 This is the user's index of what to open, diff, or send. A reply that changed five files and names none of them forces him to ask, and an artifact named in prose inside the reply body is not findable. The list goes last, under its own heading, and it stays even when the reply is short.
 
-### 65. A simile reports degree, never a symptom
+### 66. A simile reports degree, never a symptom
 
 When Chaehan describes a sensation by comparison — "scratchy like when hoarse", "like a burn", "as if stung" — the comparison is his yardstick for intensity or quality, not a report of that condition. Never promote it into a clinical sign, a diagnosis input, or a recorded fact. If the distinction would change the answer, ask which he means before writing anything. Record the sensation in his own words and keep the simile attached to the word he attached it to.
 
 Failure: on 2026-09-24 Chaehan wrote "i still feel the sore throat ... scratchy like when hoarse". The agent read the simile as hoarseness, built an entire answer around laryngeal/vocal-fold irritation, and wrote that misreading into `memory/health.md`. Chaehan: "wait this is misunderstanding i didn't say i'm hoarse i just meant it as a metaphor of the degree of feeling the soreness like the hoarseness, not the same feeling!"
+
+### 67. Options are columns, never separate lists
+
+When one set of items can be obtained, done, or routed through more than one option — two shops, two channels, two vendors, two methods, two dates, two formats — the artifact is one table, not one list per option. The items run down the rows. Each option gets a column. A cell says what that option means for that item: the local product name, the price, the lead time, the requirement. A cell with no route says so in plain words ("not sold", "no route") instead of being left blank or dropped.
+
+The reason is not aesthetic. The reader's decision is per item, across options — "for the throat repair, what do I buy, and where?" A list per option forces him to hold one list in his head while reading the other, and it hides the comparison that a single table shows at a glance. It also multiplies the maintenance: the same item lives in several sections, so a change means finding and editing every copy, and one copy will be missed.
+
+The failure mode to avoid: reading a stated preference for options as an instruction to partition the content by option. A preference tells you which options earn a column; it never tells you to split the rows.
+
+Wrong — two lists, each item repeated as a heading:
+
+- 약국: azulene spray, benzydamine gargle, alginate, saline
+- 쿠팡: hyaluronic acid lozenges, ectoine lozenges
+
+Right — one table, each item once, the options as columns:
+
+| Item | 약국 (pharmacy) | 쿠팡 (Coupang) |
+|---|---|---|
+| Azulene throat spray | 아즈렌인후스프레이 — 일반의약품 | not sold |
+| Hyaluronic acid lozenges | not sold | 겔로리보이스 — 20정 ≈ 16,900원 |
+
+This is the general form of Chaehan's "common sense" standard: the layout follows the reader's decision, and complication is the defect. Rule 48's test applies to structure as well as wording — if the reader has to reassemble the picture, the structure is wrong.
+
+Failure: on 2026-09-24, asked for a purchase list for throat-repair products, the agent read "I prefer buying at Coupang in Korea or directly at pharmacies" and split the list into a 약국 section and a 쿠팡 section. Chaehan: "no this is systematically bad, update agent rules: if you have 2-n implementation options, here pharmacy or coupang, for one source here medecine, you don't create two lists but make one table with the source and the 2-n channels as columns. you must understand that this is common sense! your ways is complicated and your goal is to avoid complication to facilitate maintainability and comprehensibility."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
