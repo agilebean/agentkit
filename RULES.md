@@ -1498,6 +1498,18 @@ The same principle governs the layout inside a slide: each point's heading sits 
 
 Failure: on 2026-09-21 Chaehan corrected the agent twice on the KUBS deck ("the title line like Assessment should be in the title, not in the slide body", "can't you read the title in the slides at the top? it says eg 'Design Thinking - In My Life' ! what you did is not the title but inside the body text!"). On 2026-09-23 the same mistake recurred on two new homework slides, together with grey body text that overlaid the point headings. Chaehan: "you still make the same mistakes. how often do i need to tell you that the title of a slide is NOT in the body text but above?? ... the grey text overlays the headers so spread the points vertically". The 2026-09-21 correction was never encoded, so it was lost between sessions.
 
+### 65. Every reply ends with the artifact list
+
+The last section of every reply is a bullet list of the artifacts that reply created or changed. Files are listed by their full file name, with the folder when the name alone would not locate them; Evernote notes are listed by their exact title. Nothing that was only read belongs in the list.
+
+This is the user's index of what to open, diff, or send. A reply that changed five files and names none of them forces him to ask, and an artifact named in prose inside the reply body is not findable. The list goes last, under its own heading, and it stays even when the reply is short.
+
+### 65. A simile reports degree, never a symptom
+
+When Chaehan describes a sensation by comparison — "scratchy like when hoarse", "like a burn", "as if stung" — the comparison is his yardstick for intensity or quality, not a report of that condition. Never promote it into a clinical sign, a diagnosis input, or a recorded fact. If the distinction would change the answer, ask which he means before writing anything. Record the sensation in his own words and keep the simile attached to the word he attached it to.
+
+Failure: on 2026-09-24 Chaehan wrote "i still feel the sore throat ... scratchy like when hoarse". The agent read the simile as hoarseness, built an entire answer around laryngeal/vocal-fold irritation, and wrote that misreading into `memory/health.md`. Chaehan: "wait this is misunderstanding i didn't say i'm hoarse i just meant it as a metaphor of the degree of feeling the soreness like the hoarseness, not the same feeling!"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
