@@ -26,4 +26,8 @@ Agent definitions in `.opencode/agents/` are project-specific. Cross-project age
 
 ## Behavioral rules
 
-Behavioral rules are loaded globally via the `instructions` field in `opencode.jsonc`. See `agentkit/RULES.md` for the canonical rule text. Do not duplicate rules here.
+**Read `RULES.md` in this folder before you start a task, and treat it as binding.** It is the canonical rule text. At minimum read the section that governs what you are about to do, and follow the pointers to it from the agent definition.
+
+Why this line exists: opencode's `instructions` field does not load this file in v2.0.16. Probe of 2026-09-25 (config carried both `RULES.md` via a config-dir symlink and `$HOME/.../agentkit/RULES.md`): a freshly created session could confirm this file's text and the agent prompt, but not one sentence of RULES.md. A GitHub user who clones agentkit and symlinks this AGENTS.md into `~/.config/opencode/` gets the rules through this pointer, with no absolute path anywhere.
+
+Do not duplicate rule text here.
