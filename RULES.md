@@ -1244,6 +1244,15 @@ until they would.
 - **The standard is judgment, not a checklist.** Ask what a knowledgeable
   friend would say, in how many sentences, and write that. No rule can list
   the cases; common sense decides the shape.
+- **The question tool is read-aloud text too.** The question and its option
+  labels are read by the same person who reads the reply, so they get the same
+  read-aloud test before the tool call. The goal is that he understands the
+  choice in one pass and answers without decoding anything. The reason is that a
+  question he cannot parse is a decision he cannot make. Two habits get the
+  question right: ask in his words about his own thing ("Save today's lats work
+  to your health memory?"), and make each option label say what will happen
+  ("Yes, save it", "No, skip it") rather than what text the agent intends to
+  write.
 - Complements rule 2 (no AI markers), rule 19 (voice in notes), rule 21
   (short answers to focused questions) and rule 48 (no decoding); those rules
   are instances of this principle.
@@ -1265,6 +1274,15 @@ line ("One thing decides which branch you are on"). The draft was assembled in
 the research order (evidence, comparison, products) and never passed the
 read-aloud test. Chaehan: "the whole formulation is again too robotic. read the
 agent rules about it and tell me why they are not applied here."
+
+Third instance: on 2026-09-25 a memory-update question reached Chaehan as
+"Record this block in memory (Thu 09-24 + Fri 09-25 + Sun 09-27, 3-4x8 light
+band, ahead of Tuesday's swim restart)?" with option labels naming the internal
+findings ("the light-band-vs-dumbbell finding, and the load-progression
+conclusion"). Every word of it was lifted from the shorthand of the draft entry
+instead of spoken; the reply it closed also carried a bolded lead-in, a table
+and a section per part of the question. Chaehan: "this is incomprehensible.
+read rules 50+ to make it human accessible and less robotic".
 
 ### 55. Expand every abbreviation on first use in anything the user reads
 
@@ -1498,11 +1516,19 @@ The same principle governs the layout inside a slide: each point's heading sits 
 
 Failure: on 2026-09-21 Chaehan corrected the agent twice on the KUBS deck ("the title line like Assessment should be in the title, not in the slide body", "can't you read the title in the slides at the top? it says eg 'Design Thinking - In My Life' ! what you did is not the title but inside the body text!"). On 2026-09-23 the same mistake recurred on two new homework slides, together with grey body text that overlaid the point headings. Chaehan: "you still make the same mistakes. how often do i need to tell you that the title of a slide is NOT in the body text but above?? ... the grey text overlays the headers so spread the points vertically". The 2026-09-21 correction was never encoded, so it was lost between sessions.
 
-### 65. Every reply ends with the artifact list
+### 65. Every reply ends with the artifact list, in two parts: his set first, the complete set second
 
-The last section of every reply is a bullet list of the artifacts the work produced. The scope is the work, not the single turn: when a reply reports a task whose files and notes were produced over several turns, every artifact of that task is listed, so the list reads as the inventory of the piece of work. Files are listed by their full file name, with the folder when the name alone would not locate them; Evernote notes are listed by their exact title; files deleted as part of the work are named and marked deleted. Nothing that was only read belongs in the list.
+The last section of every reply lists the artifacts the work produced, in two parts, under one heading.
 
-This is the user's index of what to open, diff, or send. A reply that changed five files and names none of them forces him to ask, and an artifact named in prose inside the reply body is not findable. The list goes last, under its own heading, and it stays even when the reply is short.
+**Part 1 — his set.** The artifacts the request was about, or the ones he is most likely to open, in priority order: the file he asked to see, the note he will send, the document that now holds the decision. Most relevant first, in the order it became relevant to him during the turn, not the order the agent handled it. This is the part he reads; each entry names the file so it opens without a search.
+
+**Part 2 — the complete set.** Everything else the work touched, for completeness: supporting files, renamed and moved files, merged and deleted files, code, memory files, and the Evernote notes as bullet points of their own. Nothing is dropped for being minor, and a merged or deleted file is named and marked, because this part is also the record of what disappeared.
+
+Across both parts: the scope is the work, not the single turn, so a task whose files and notes were produced over several turns lists every artifact of that task. Files are listed by their full file name, with the folder when the name alone would not locate them; Evernote notes are listed by their exact title. Nothing that was only read belongs in the list.
+
+This is the user's index of what to open, diff, or send, and it is also his record of what was merged away or deleted. A reply that changed five files and names none of them forces him to ask, and an artifact named in prose inside the reply body is not findable. The list goes last, under its own heading, and it stays even when the reply is short.
+
+Stated 2026-09-25: "the artefacts list should be two fold: first the most relevant files in order of highest priority first as requested or seen by the user. second all related files, to be comprehensive, eg deleted or merged files. put things like evernote as a bullet point of second tab."
 
 ### 66. A simile reports degree, never a symptom
 
@@ -1548,17 +1574,66 @@ Failure: on 2026-09-24 the agent's purchase table listed 아즈렌인후스프�
 
 ### 69. Artifacts are scarce: each one earns its place
 
-Every artifact the agent produces is something the user has to open, read, keep in sync and later delete. Create one only when it answers a question no existing artifact answers, and prefer updating the existing artifact to adding another beside it.
+Every artifact the agent produces is something the user has to open, read, keep in sync and later delete. Create one only when it answers a question no existing artifact answers, and prefer updating the existing artifact to adding another beside it. Before creating anything, list what the destination folder already holds: the artifacts that would answer the same question are the ones to update, rename or collapse, never the ones to sit beside.
 
-Three shapes of the failure to watch for:
+Five shapes of the failure to watch for:
 
 - **The same content in several layouts.** A run sheet, a phase timeline and a set of step cards that all render the same twelve blocks are one artifact, not three. Pick the view the user actually uses and remove the rest.
+- **Parallel-named siblings.** Files whose names differ by a suffix (X, X v2, X timeline, X cards) are a symptom, not a family: one item rendered several ways. Ask which single view the user opens, keep exactly that one, and name it after its function — a session's phase timeline is its run sheet, so it is named run sheet.
 - **Mirroring an existing folder.** The number of artifacts a folder already holds is not a reason to keep that number. When a set is regenerated, re-decide the set from its purposes instead of copying its shape.
 - **Regenerating on command.** "Regenerate X" is a request about X's content, not a licence to add Y and Z beside it. When two artifacts cover the same ground, say so and propose collapsing them before building anything.
+- **Renaming by adding the twin.** When an artifact's name no longer matches its function, rename that artifact in place; adding a correctly-named copy beside the old file is the same duplication in a new costume.
 
-When one artifact supersedes another, delete the superseded file in the same turn and name the deletion in the report. Proliferation is invisible while it is cheap for the agent and expensive for the user, which is exactly why it needs the check.
+When one artifact supersedes another, delete the superseded file in the same turn and name the deletion in the report. When content changes — an order, a name, a procedure — sweep every artifact that carries it in the same turn, or state which artifact now leads; a corrected copy beside a stale copy is a defect the user discovers by reading the wrong one first. Proliferation is invisible while it is cheap for the agent and expensive for the user, which is exactly why it needs the check.
 
-Failure: on 2026-09-23, asked to regenerate the KUBS session 1 run sheet, the agent produced a run sheet, a phase timeline and step cards from the same twelve blocks and added three more copies to the diagram archive. Chaehan: "this is terrible you just multiple the number of artefacts without thinking ... the step cards and run script are totally redundant to the phase timeline."
+Failure: on 2026-09-23, asked to regenerate the KUBS session 1 run sheet, the agent produced a run sheet, a phase timeline and step cards from the same twelve blocks and added three more copies to the diagram archive. Chaehan: "this is terrible you just multiple the number of artefacts without thinking ... the step cards and run script are totally redundant to the phase timeline." On 2026-09-25 the same set needed a second pass, and he had deleted the redundant files himself: "i had to delete several files you created which were redundant to the run sheet ... improve the agent rules to rethink about redundancy and scarcety to avoid the proliferation of artefacts."
+
+### 70. File names stay short enough to read in Finder
+
+A file name has to identify the file in the visible part of a Finder row, roughly the first 30 to 40 characters. The date plus a short descriptive stem carries the identity; everything else the document contains belongs inside it, in the title line or the status paragraph, never appended to the name.
+
+- Keep the convention of the folder the file lands in (`YYYY-MM-DD <Project> <short topic>.md`), so the files sort together and neighbouring names differ inside the visible width.
+- A name that runs past the visible width is less descriptive, not more: files sharing a prefix become indistinguishable, because the tail that separates them is exactly what gets truncated.
+- When descriptive detail has grown into the file name (a subtitle, a list, a method), move that detail into the document's own title or status line and shorten the name; the Evernote twin then carries the same short title.
+- Applies to Drive and Desktop files, quote PDFs, diagram versions, and session material alike.
+
+Failure: on 2026-09-25 the KUBS Design Thinking design folder held "2026-09-04 KUBS DT Opener Story - Where This Course Comes From.md"; Chaehan: "long file names cannot be read in the finder, they are shortened so i didn't see which is the opener story file." The file became "2026-09-04 KUBS DT Opener Story.md", the title the Evernote twin had carried all along.
+
+### 71. A rename, move, merge or deletion sweeps every pointer to it
+
+Adding a file is one edit; changing a file's identity is a project-wide edit. As soon as a file is renamed, moved, merged, or deleted, every pointer to it is found and fixed in the same turn — quoted file names, relative markdown links, `evernote:///` links between notes, folder references in prose, and the memory entries (rule 38). A pointer that resolves nowhere is a defect even when it sits in a document that is itself history.
+
+- Sweep by both routes: grep for the old file name across the project, and check every quoted name that carries an extension against the tree with a checker that resolves paths relative to the file that names them.
+- Make each fixed link resolve from the file that carries it: count the depth difference for a relative path (a file in `A/B/C/` reaches `A/D/` as `../../D/`, not `../D/`), and use the target note's `evernote:///view/<user>/<shard>/<guid>/<guid>/` form between Evernote notes.
+- In a retained history document, fix the pointer lines (intro, artifact list, header) and leave dated change-log entries untouched; where a line must name a file that no longer exists, mark it in the line itself: `it was "old-name.md" until 2026-09-25`.
+- Verify by re-running the sweep and report what resolves, not the intent to fix.
+
+Failure: on 2026-09-25 the KUBS design documents were merged, renamed and moved; the retired topics note kept an `evernote:///` link to a note that had been deleted, and the retired overview carried two relative paths one `../` short. Chaehan: "don't leave obsolete links."
+
+### 72. A canonical artifact's change fans out to every dependent artifact in the same turn
+
+When the source of truth changes — a chart, a script, a design decision, a reading set — every artifact that carries it is updated before the turn ends. Knowing the source is half the job; the other half is the list of dependents, and that list is a fact to verify, not a memory to trust.
+
+- Write the dependents down before starting and check each one. For a course chart that is: the render in the design folder, the archived version, the session script, the script's Evernote twin, the slide in the deck, the design document, the evolution document, and the memory file.
+- A dependent that is an image inside another file (a slide, a note) does not follow the file on disk: it is a copy that must be replaced by hand, and "the file is updated" is not evidence that the copy is.
+- Close the turn by naming what was synced and, explicitly, what was not.
+
+Failure: on 2026-09-25 the new course chart v8 went into the design document and its Evernote twin, while the S1 script, its Evernote twin and the deck kept old material (the deck still showed the v5 chart). Chaehan: "the course map must be included in the session 1 script, and evernote and slides. why did you forget them, aren't there agent rules for always updating and syncing??"
+
+### 73. Never wait more than 60 seconds for a tool call: 20, then 40, then 60
+
+Every tool call is visible to the user. A call that runs for minutes reads as a hang — he cannot tell work from a stall, and the machine meanwhile does things he did not ask for, such as an application window opening again and again.
+
+- Start at **20 seconds**. If the call times out, retry once at **40 seconds**, then at most once more at **60**. Never beyond 60. **Two retries maximum**: after the second retry the timeout is no longer the problem, so stop and investigate the root cause (wrong index, wrong tool, blocked app, missing file) before any further attempt. Prepare the command so that the correct run fits inside the first 20 seconds — the first attempt must already be the best one, not a probe.
+- A timeout is a signal to change the approach, not only to wait longer: narrow the step, split it, or run it in the background and report progress. Never repeat a timed-out call unchanged.
+- Application automation (Keynote and other GUI apps) counts as a tool call: if the app does not answer inside the cap, say that it is blocking instead of relaunching it.
+- Never wrap a command in `timeout`: macOS ships no such binary (only GNU coreutils' `gtimeout`, and only if installed), so the shell answers `timeout: command not found` and the command never runs at all. The timeout parameter of the shell tool is the mechanism that always exists.
+- **The back door is inside the script**: `with timeout of N seconds` in AppleScript overrides the app's own 120-second default. It is the same defect as a long tool timeout, so it never goes above 60 seconds either. 2026-09-25: three Keynote builds ran 3 to 15 minutes each on `with timeout of 900 seconds` plus five foreground retries, and the fix (the row groups are 1, 2, 4, group 3 is the footer) was never reached because each attempt was allowed to hang instead of failing.
+- **Long app automation**: give the script progress markers (`do shell script "echo step >> <log>"`) and read the log, run it in the background rather than blocking on it, and never relaunch the app after it fails to answer.
+- **An attempt budget counts per tool and per deliverable, not per command.** One tool gets at most two attempts on one deliverable; rewriting the command does not reset the count, and the third attempt at the same tool for the same thing is the failure — not the timeouts that preceded it. Before the second attempt, name the fallback in the reply ("this gets 40 seconds; if it hangs, I switch to X"), and take the fallback when the attempt fails instead of inventing a third variant. 2026-09-25: a Keynote build took six attempts and half an hour, because every rewritten script counted as a fresh first try; the same artifact was finally produced in 40 seconds once a different rendering path was used.
+- **Watch the clock, not only the call.** Tool output carries no elapsed time, so the cost of a session is invisible unless it is written down: put a `date` line into the progress markers, read them back with the log, and report the wall-clock cost of the task in the reply. Being unaware of a 30-minute hang is a missing clock, not bad luck.
+
+Stated 2026-09-25: "why do you do such long timeouts of 600s? the max timeout should be 60s!!! i say keynote opened several times with error message." Followed by: "the toolcall should actually be different, timeout at 20s then successive retry with +20s".
 
 ## Shell: `~/.bash_aliases` (user-global)
 
