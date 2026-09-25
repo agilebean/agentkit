@@ -9,6 +9,16 @@ All commands run from the socrates repo root via the `socrates` mamba env.
 
 Run prefix: `mamba run -n socrates python -m projects.evernote.src.evernote_api`
 
+## Which path to use
+
+The **Evernote MCP server is the preferred path** when its tools are available in the session. It is configured in `~/.config/opencode/opencode.jsonc` under `mcp.evernote` (`type: remote`, `url: https://mcp.evernote.com/mcp`); in an opencode session opencode itself is the MCP client, so its tools appear directly and need no shell call. If the `evernote` tools are absent from the session's tool list, the MCP connection is not up — it holds an OAuth session that expires. Ask Chaehan to re-authenticate it; never fall back to the shell CLI silently.
+
+The shell CLI below is the fallback, and the only path outside an opencode session.
+
+**Batch MCP work into one visible call.** Fetch the note once inside a single `execute` call, apply every edit in that same call (await them in a loop), and read the note back once at the end for the report. Never read-modify-verify per edit: each MCP call is a remote round trip, and on 2026-09-25 thirteen edits became twenty calls while Chaehan watched it hang ("is that absolutely necessary? if yes, timeout early!!!!!"). One call for the changes, one for the verification; the execute runtime has no timers, so the only lever is fewer calls.
+
+**Verify every write by re-reading, on both paths.** A write can report success and not persist. Observed 2026-09-25 on the note "2026-09-11 KUBS DT Course Design - Sprint and JTBD": `replace-section` and `insert-after-heading` returned `updated: true` six times in a row while a by-guid read kept returning byte-identical content, and a scratch note in the same notebook accepted a write in the same minute. After any `update-by-title`, `replace-section`, `insert-after-heading` or `update`, read the note back by guid and confirm the new text is in it; if it is not, report that instead of reporting the note as updated.
+
 ## Prerequisites
 
 Token saved at `~/.local/share/socrates/evernote_token` (chmod 600).
@@ -96,6 +106,38 @@ Full read-modify-write with `--raw` (preserved for backward compat):
    mamba run -n socrates python -m projects.evernote.src.evernote_api update-by-title --raw "<title>" "<full_enml>"
    ```
 4. **Verify** by re-reading.
+
+## Embedded graphics do not survive a full-body replacement
+
+A full-body write (`--markdown`, `--clean`, or `--raw`) replaces the whole note
+body, and the conversion cannot upload a local image path. The rewrite also does
+not carry the note's existing resources, so every embedded image must be
+re-uploaded in the same operation or it is lost.
+
+- A markdown line such as `![Course overview, week grid v6](<Diagram evolution/week grid v6.png>)`
+  becomes `<img src="Diagram%20evolution/...png">`: a path Evernote cannot
+  resolve. The note's embedded resource is gone and the reader sees a broken
+  image. An `evernote:` image URI in the input fails the same way.
+- Symptom to check for after any body replacement: raw content containing
+  `<img src="...">` instead of `<en-media type="image/png" hash="..."/>`.
+
+Procedure when the note carries (or should carry) a graphic:
+
+1. Before the write, read the note with resources and record each hash
+   (`projects/evernote/src`, `thrift_client.make_user_store` /
+   `resolve_note_store_url` / `make_note_store`, then
+   `getNote(token, guid, True, True, False, False)`).
+2. Do the body replacement.
+3. Re-upload each image:
+   `embed-image "<title>" "<file>" --after-heading "<heading the graphic sat under>"`
+   or `--top` when it sits above everything. The returned hash must equal the
+   hash recorded in step 1; a different hash means the wrong file.
+4. Verify: the raw content holds one `<en-media>` per graphic with the recorded
+   hash and no relative-path `<img>` tag.
+
+Risk set: notes whose markdown twin references images by path. In KUBS DT those
+are the course design overview (week grid at the top), the opener story (the BigP
+retrospective photo) and the diagram evolution document.
 
 ## Surgical update commands (delta only, no read needed)
 
