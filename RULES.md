@@ -18,6 +18,18 @@ file.
 
 Em-dashes, long sentences with embedded clauses, and filler transitions ("through X and Y, students gain Z") are telltale signs of AI writing. Never use em-dashes. Write short, direct sentences. Prefer concrete details over abstract descriptions. Write from the reader's perspective, not an omniscient narrator.
 
+**Robot markers.** Chaehan, 2026-09-26, on a session script: "sounds robotic! remember that". These read as machine-written in spoken scripts, student handouts, notes and drafts:
+
+- **Container words that name a list instead of being one:** catalogue, inventory, taxonomy, matrix, framework, pipeline, mechanism, protocol, lever, modality. Name the thing: "the three filters", "how it works".
+- **Field labels in speech:** "The mechanism:", "The counter:", "Atmosphere:", "Status:", "Why:", "Context:". Spoken text carries no labels.
+- **Abstractions where a person or an action fits:** artifact, deliverable, learnings, insight, alignment, journey, problem space, solution space, touchpoint, friction, granularity, altitude ("at the right altitude"), needs-first, end-to-end.
+- **Consultant verbs:** leverage, utilize, facilitate, ideate, operationalize, socialize, surface (a need), unpack, double-click on, align on, drive (a change), enable, empower.
+- **Nominalizations:** "the collection of", "the utilization of", "the implementation of", "an improvement in". Use the verb: "we collect", "you improve".
+- **Fake-sentence patterns:** "It's not just X, it's Y"; "It's not about X, it's about Y"; "The key is..."; "At its core..."; "when it comes to"; "in order to" (write "to"); "the ability to" (write "you can").
+- **Empty intensifiers and hedges:** robust, holistic, seamless, comprehensive, cutting-edge, best-in-class, impactful, meaningful, significant, truly, deeply, arguably.
+- **Trade slang kept out of speech:** "run of show" (write "the session plan"), "the block that stretches" (say what happens when it runs long), "shaded blocks" (say "after the break"), "in reading order", "on purpose" (write "deliberately").
+- **Rhythm for sound, not content:** em-dashes, semicolon chains, and three-item runs ("faster, clearer, stronger").
+
 ### 3. Do not commit or push unless explicitly told to
 Never run `git commit` or `git push` unless the user says "commit", "push", or "commit and push". "Commit" alone authorizes both commit and push. Git commit amend is allowed. When fixing an error, do not push until the user confirms the fix works. Trigger extension (2026-09-15): detected user satisfaction also authorizes the commit; see rule 46.
 
@@ -1641,6 +1653,61 @@ Every tool call is visible to the user. A call that runs for minutes reads as a 
 - **Search with `rg` and `fd`, never shell `grep -r` and `find`, and never unbounded over the home directory.** Both are already installed (`/opt/homebrew/bin/rg` 15.2.0, `fd` 10.3.0). Benchmarked 2026-09-26: on the Google Drive KUBS tree `grep -rl` took 14 to 21 s where `rg -l --hidden` took 0.02 to 0.07 s, because `grep -r` opens every file on the mount including the `.key` bundles and the PDFs; on `~/Software/Prototypes` `find -name '*.md'` took 0.92 to 1.86 s against `fd -e md` at 0.02 s, or 0.32 s for the like-for-like `fd -e md -I -H` with the same 391 results. Over the home directory both are unusable — `fd -H -I -d 6` needed 37.7 s and `find` did not finish inside 55 s — because that tree carries the Google Drive mount and `~/Library`, so bound every search to the project directory and to the file types needed. `fd` skips hidden and git-ignored paths by default, so add `-H -I` when the target may live under `~/Library` or behind a `.gitignore`.
 
 Stated 2026-09-25: "why do you do such long timeouts of 600s? the max timeout should be 60s!!! i say keynote opened several times with error message." Followed by: "the toolcall should actually be different, timeout at 20s then successive retry with +20s".
+
+### 74. Time every artifact, report the measurement, and spend the round trips
+
+**Report measured time, not an impression of it.** Wrap every generation step — render, crop, upload, copy, write — in `date +%s.%N` markers and give the measured seconds after each artifact in the reply. Stated 2026-09-26: "you must time them from now on and every kubs session, give the time measured after each artefact." Measured baselines: headless Brave render 0.94 to 3.6 s, Pillow crop 0.5 to 0.7 s, copy into Google Drive 0.02 s, swapping one image inside an Evernote note 5.3 s.
+
+**The wall clock is the call count, not the work.** A session that renewed one chart and swapped one note image ran 35 tool calls and sat open for about 100 minutes around roughly 10 seconds of machine time: each round trip costs about a minute of model and framework latency, and each question that ends a turn adds the user's turnaround. So every avoidable call is a minute spent without progress:
+
+- One script per analysis. Colours, bounding boxes, counts and hashes come out of a single shell call, never one call per question.
+- One `execute` for tool discovery. Fetch every MCP tool signature the task needs in one call instead of one family per call.
+- One question batch per change set (rule 62). A change set that opens three decisions asks all three in one call; splitting them into two rounds costs a full turn each.
+- One verification read after the last write, not a read after every write.
+- Close a multi-artifact turn with the call count and the measured machine time, so the ratio stays visible.
+
+### 75. Heavy local work has a weight budget, a stated cost, and a one-element probe
+
+Rule 73 caps how long a call may wait. It says nothing about how much the call
+loads onto the machine, and on 2026-09-26 that gap cost two kernel panics:
+18:45:14 and 19:30:58, both `[data.kalloc.1024]: element modified after free`,
+each inside a window where this work ran large headless-Brave renders and
+Keynote automation. A panic is kernel heap corruption, not ordinary memory
+exhaustion, so the load is a trigger candidate and not a proven cause. The
+defect is that the load was never budgeted, so neither of us could see it
+coming. Chaehan: "the agent rules are not good enough for the timing."
+
+- **State the cost before the pass.** One line: how many renders, the expected
+  seconds each, the peak memory, and how many GUI app launches. Then run it. A
+  pass whose cost cannot be stated in one line is two passes.
+- **Weight budget per call.** One browser page carries at most one slide at the
+  render scale (960x540 CSS px, device scale 2 gives 1920x1080 px). Never build
+  a contact sheet from full-size renders: render each page small and downscale
+  the finished PNGs with Pillow instead. A 2880x1620 page at scale 2 is a
+  5760x3240 px bitmap, about 56 MB, Chromium holds several copies at once, and
+  three such pages in one call is the heaviest thing this workflow can do.
+- **One GUI app at a time, nothing heavy in parallel.** Do not launch a browser
+  render, a Keynote script and a copy of large files into Google Drive inside
+  the same minute. Close the app's documents before the next step and report
+  which documents were closed.
+- **Probe the tool contract on one element before the batch.** One slide before
+  26, one table cell before a table, one file before a folder. Anything new to
+  the toolchain (a property, a theme, a container, an attribute quoting rule) is
+  exercised once, cheaply, and only then run at scale.
+- **Stop at twice the stated cost.** If a pass takes twice the time or the load
+  it announced, stop and report. Do not try a variant, and do not resume a pass
+  after a crash or a restart without re-planning it. This extends rule 73's
+  attempt budget to machine-level load.
+- **One sweep per change set.** Before writing, grep every file for the wording
+  being changed and fix every occurrence in one pass, including paraphrases in
+  neighbouring files. Each missed occurrence costs a full round trip later:
+  2026-09-26, three successive Evernote re-syncs for one changed phrase
+  ("six need types"), one per rediscovery.
+- **Temp artifacts are expendable; deliverables are not.** macOS emptied the
+  session temp folder mid-turn on 2026-09-26 (generators, 26 renders, one
+  reference export). Copy a deliverable to its real folder in the same call that
+  creates it, and write a generator that must survive where the project keeps
+  its sources.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
