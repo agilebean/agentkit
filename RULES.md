@@ -1703,6 +1703,12 @@ coming. Chaehan: "the agent rules are not good enough for the timing."
   neighbouring files. Each missed occurrence costs a full round trip later:
   2026-09-26, three successive Evernote re-syncs for one changed phrase
   ("six need types"), one per rediscovery.
+- **Reuse the project's pipeline; never re-derive the recipe.** When a repeated
+  pass has a script in the project, the pass is one command. A new recipe is
+  written only when the pass is genuinely new, and it lands in the project, not
+  in the temp folder, so the next session does not pay for it again. socrates
+  carries `projects/kubs_dt/pipeline.py` (context, budget, render, verify, deck,
+  sweep) for every KUBS render, deck build and phrase sweep.
 - **Temp artifacts are expendable; deliverables are not.** macOS emptied the
   session temp folder mid-turn on 2026-09-26 (generators, 26 renders, one
   reference export). Copy a deliverable to its real folder in the same call that
