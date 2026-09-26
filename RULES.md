@@ -1503,6 +1503,8 @@ The tool is not only for ambiguity. Feeling certain is not a reason to skip it: 
 
 Failure: on 2026-09-21/22, in the pace-benchmark incident, the agent rewrote the user's stored benchmarks instead of asking whether they should change, then ended two long explanations with prose questions instead of tool calls. Chaehan: "why do you forget using the question tool?"
 
+**Batch: one call per change set, not one question per turn.** The tool takes several questions at once, so when a change set opens more than one decision, they all go into a single call — the deliverable's unknown numbers, its order, the scope of the sweep, the wording of a title. Each separate call ends the turn, waits for the user to read and answer, and starts a fresh turn: on 2026-09-26 the S2 run sheet needed three question rounds for one edit set, and the session ran 76 minutes of wall clock over about 15 seconds of machine time. A later round is justified only when an earlier answer opened a fork that did not exist before.
+
 ### 63. Under uncertainty, always take the latest observation
 
 When information has a time series (test results, prices, rates, measurements, statuses, documents), the latest observation is the basis for any analysis or decision. Order the vintages by date, take the newest, and never use an older one without saying so. Do not pick by convenience and do not average across vintages. This is the user's standing rule, stated 2026-09-21 and marked non-negotiable: "always the latest! you must apply common sense." It applies to every decision under uncertainty.
