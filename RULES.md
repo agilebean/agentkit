@@ -74,6 +74,9 @@ Your first instinct will be to try the same fix again (delete the rows again, ch
 **Understand what regenerates a file before editing it.**
 If a data file is an artifact of a pipeline (CSV from merge, JSON from build step, HTML from template + data), editing the artifact is fragile. Find the source of truth and fix it there. If you must edit the artifact directly, verify the fix survives a full pipeline regeneration before claiming success.
 
+**Render the visual with the documented command; never reverse-engineer the PNG.**
+A change to a generated visual is a text edit plus the render command, nothing else. Render it (headless Brave at 2x, then the crop) and look at the result. If a stage is missing from the recipe, ask for the command instead of matching pixels of the output. 2026-09-26: two text edits in the S2 run sheet became pixel matching; Chaehan: "remember this, not the clutter."
+
 **Pipeline commands in repo docs are for normal workflow, not for fix loops.**
 The project rules file or README may say "run `python -m swim && python -m swim dashboard`" — that command regenerates everything from source data. If you just manually edited a pipeline artifact, running the full pipeline will silently overwrite your edit. Use only the subcommand that targets what you changed (e.g. `python -m swim dashboard` to regenerate just the dashboard from existing CSV).
 
