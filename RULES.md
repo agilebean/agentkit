@@ -1703,6 +1703,12 @@ coming. Chaehan: "the agent rules are not good enough for the timing."
   neighbouring files. Each missed occurrence costs a full round trip later:
   2026-09-26, three successive Evernote re-syncs for one changed phrase
   ("six need types"), one per rediscovery.
+- **The go-gate (Chaehan, 2026-09-26).** A pass expected to exceed about 15 tool
+  calls, or that launches any GUI app, starts with a cost line and stops for his
+  go: "this pass is N calls, about X s of machine time, N app launch(es)". Small
+  passes (a read, a text edit, one render) run through and report the cost
+  afterwards. Count the whole pass, not the single command, and count per
+  deliverable: a second pass makes its own count.
 - **Reuse the project's pipeline; never re-derive the recipe.** When a repeated
   pass has a script in the project, the pass is one command. A new recipe is
   written only when the pass is genuinely new, and it lands in the project, not
