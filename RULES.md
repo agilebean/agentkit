@@ -1724,6 +1724,12 @@ coming. Chaehan: "the agent rules are not good enough for the timing."
   creates it, and write a generator that must survive where the project keeps
   its sources.
 
+### 76. A user-quoted string is content to use, not a pointer to a place
+
+When a request contains a string in quotes, the default is that the wording is specified for the work: use it verbatim, in the artifact the task produces. Read it as a mere reference to an existing section only when it unmistakably names one; when in doubt, ask. The same rule covers a source the user names: if he says where content should come from (a book's chapter, an earlier document), go to that source and extract the substance from it. Never invent the content and attribute it to him.
+
+Failure: on 2026-09-26 the user wrote "in 'two design challenges: challenges of elder or alone living people' I changed my mind on the decision". The quoted string was the card wording he wanted; the agent read it as a location reference and rewrote the S3 challenge card in its own words, so his phrase never appeared — "why did you ignore in my very first chat turn that i specified for s3 run sheet the wording of chip 5". In the same session the S3 interview card carried "the three filters from session 2", which the user had never specified — "you made this up"; the card was rebuilt from the source he named (the Sprint book's interview chapter: the five acts, be a good host, open questions with no yes/no, broken questions, the silence, group note-taking).
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
