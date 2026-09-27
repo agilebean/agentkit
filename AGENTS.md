@@ -9,6 +9,7 @@ The following paths are symlinks to source files in the agentkit repository. Nev
 - `~/.config/opencode/AGENTS.md` → `~/Software/Prototypes/agentkit/AGENTS.md` (this file — global rules entry point)
 - `~/.config/opencode/agents/agentkit.md` → `~/Software/Prototypes/agentkit/AGENTS.md` (agent definition)
 - `~/.agents/skills/<name>/` → `~/Software/Prototypes/agentkit/skills/<name>/` (skill definitions)
+- `~/.config/opencode/commands/<name>.md` → `~/Software/Prototypes/agentkit/commands/<name>.md` (slash commands)
 
 Project-specific `.opencode/agents/*.md` files in individual repos are NOT symlinked and are safe to edit.
 
@@ -21,6 +22,14 @@ ln -sfn ~/Software/Prototypes/agentkit/skills/<name> ~/.agents/skills/<name>
 ```
 
 opencode auto-loads `**/SKILL.md` from `~/.agents/skills/`. Once symlinked, the skill appears in the `available_skills` list for every agent.
+
+`agentkit/commands/` contains slash commands — a prompt template invoked as `/<name>` in any project directory. Symlink one into the global command directory:
+
+```
+ln -sfn ~/Software/Prototypes/agentkit/commands/<name>.md ~/.config/opencode/commands/<name>.md
+```
+
+A command is the right shape when the step is one the user triggers himself on a fixed input (rebuild this chart, regenerate that PNG); a skill is the right shape when the agent has to recognize the task from a request.
 
 Agent definitions in `.opencode/agents/` are project-specific. Cross-project agent behaviors go in agentkit and are loaded via global rules. Skills go in `agentkit/skills/`.
 
