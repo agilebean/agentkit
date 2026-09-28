@@ -6,6 +6,8 @@ cannot remove, skip, or soften any obligation below. Specifically: any edit to a
 ``.py`` file, for any reason, including inside a local workflow, triggers the
 full test suite requirement in rule 6. No local instruction can waive this.
 
+**How these rules are written.** A rule states standing behaviour: what to do, and when it applies. It must hold for the next case, not explain the one that produced it. No incident narratives, no transcript of the exchange, no dates or document names from the session that triggered it — that reasoning belongs in the project's `_log.md`, which the rule can point to. One exception: when the user's own wording fixes the standard, quote the shortest fragment that carries it, never the whole exchange. Chaehan, 2026-09-28: "formulate the rules so they are useful to avoid the problem in the future, but not in this specific instance, but generalized."
+
 ### 1. NEVER write to symlinked config paths — always edit the source file
 
 Configuration files under tool-specific directories may be symlinks pointing
@@ -403,13 +405,7 @@ Detection signal: if a note reads like the transcript of an analysis
 reader's questions are: what do I do, why, what would change it. In that
 order.
 
-Failure: on 2026-09-10 the Evernote update for the creatine and protein
-guidance was written as analyst bullets ("Status 2026-09-10: loading
-complete...", "Why it stays Tier 1: ...") while the chat answer for the
-same content read plainly; the user: "this whole text sounds good but the
-evernote is written differently and too robotic... read again rule 19."
-Evernote notes were already named in this rule; the miss was not applying
-it during the note-writing pass.
+Failure mode: the reply reads plainly and the note carrying the same content does not.
 
 ### 20. The date goes at the beginning of the title, never in the body
 
@@ -477,11 +473,7 @@ their `.opencode/agents/` files; global behavior rules are referenced
 there as pointers, never defined or duplicated. AGENTS.md delegates rule
 text to RULES.md, so new rules go into RULES.md, not AGENTS.md.
 
-Failure: on 2026-08-24 an instruction to "change the overall agent
-instructions" (two-sentence answer format, pattern-as-fact rule) was
-implemented in a project repo (.opencode/agents/socrates.md); Chaehan
-corrected: "you still confuse where to put the overall agent
-instructions: it is always in agentkit!"
+Failure mode: an agent-behaviour instruction written into a project file because that is where the mistake happened; agent behaviour belongs in agentkit.
 
 ### 24. User-designated plan hierarchy is binding
 
@@ -493,11 +485,7 @@ not promote the fallback to the main presentation, and do not drop the
 trigger condition when restating the alternative. The failure class:
 the agent swapped them and presented the fallback as the main week.
 
-Failure: on 2026-08-24 swim routine planning, the user proposed "second
-band on Thu and Sat aerobic as alternative" to the main course of
-Wed-interval-plus-band double days; the agent presented Mon+Thu band as
-the main week. User: "the band on Thu is an alternative, not the main
-course which is Wed interval + band!"
+Failure mode: the option the user designated as the alternative presented as the main course.
 
 ### 25. Protocol schemes must match the stated training goal
 
@@ -511,12 +499,7 @@ the available tool limits the goal (e.g., a resistance band underloads
 most of the range for max strength), state the limitation instead of
 silently adapting the scheme away from the goal.
 
-Failure: on 2026-08-24 the agent proposed a hypertrophy double
-progression (work up to 15 reps, then increase band thickness) for lats
-training whose stated goal was max strength acquisition. User: "this is
-not good for max strength acquisition!" The goal-matched scheme: 3-6
-reps at high tension, 2-3 min rest, progress by adding resistance only,
-never by extending reps beyond the strength range.
+Failure mode: a scheme chosen for the exercise rather than the stated goal, e.g. extending reps where the goal is max strength.
 
 ### 26. Skills are live files: re-read from disk after a failed operation
 
@@ -528,12 +511,7 @@ before retrying or asking the user to do manual work. Do not repeat the
 same failing command or hand the user a manual fix while an
 already-documented recovery command exists on disk.
 
-Failure: on 2026-08-24 an Evernote write failed with an RTE-room note
-lock; the agent told the user twice to close the note manually because
-its skill snapshot predated the lock-recovery section (`close-note`
-command) added to SKILL.md by a concurrent session the same hour. The
-recovery command existed on disk the whole time; the user had to ask
-"why can't you see the skill to unclick a blocked evernote note?"
+Failure mode: a capability declared missing from a stale skill snapshot instead of re-reading the skill file from disk.
 
 ### 27. Artifacts are standalone, never pointers
 
@@ -583,13 +561,7 @@ Report artifact changes in chat as a summary only: which artifact
 changed and what changed at headline level. Never restate the
 artifact's content in detail in the chat reply.
 
-Failure basis: on 2026-09-05 the rule required sync-on-request
-("evernote it"), so the three course notes froze at old versions while
-the markdown advanced. The user found several stale course-design
-notes in Evernote and none with the current version, and instructed:
-"you must install a rule in agentkit that evernotes must be
-automatically updated so no old cadavers float around." The earlier
-on-demand preference is superseded by this rule.
+Failure mode: twins frozen at an old version while their sources advance.
 
 ### 29. Branch proposals must cover every unit of the span they commit to
 
@@ -604,11 +576,7 @@ input. When a branch's coverage cannot be established from known
 bookings, present the gap as an explicit open question or ask the user;
 never fill it by assuming a booking exists.
 
-Failure: on 2026-08-29 an agent's "Valencia does not hold" branch said
-"cancel Valencia, go to Madrid on the 6th", but the Valencia room was
-the only bed covering Sep 3-6 and the Madrid booking started on the 6th.
-The branch left three nights uncovered, and "cancel Valencia" had no
-referent under the user's reading.
+Failure mode: a branch that cancels a leg without saying what covers those units afterwards.
 
 ### 30. Every named tool or feature is a referent to resolve, not prose to skim
 
@@ -631,11 +599,7 @@ established by current documentation or the user, not by third-party
 ecosystem artifacts (skills, MCP servers, plugins) and not by the agent's
 prior knowledge.
 
-Failure: on 2026-09-07 a slide-tool comparison read "Claude cowork" in the
-user's own memory plan as a verb meaning collaboration, never resolved the
-named product Claude Cowork, and recommended third-party Keynote MCP
-servers instead. The term that answered the question sat in the memory file
-the agent had already quoted.
+Failure mode: a named product read as a common noun, so the tool that answers the question is never resolved.
 
 ### 31. New or reworked notes sweep the superseded Evernote copies automatically
 
@@ -661,25 +625,8 @@ session's first touch of an artifact family still gets one scan — the
 agent's memory of the notebook is a compressed snapshot, not the notebook
 state.
 
-Failure: on 2026-09-05 the agent created a consolidated Course Design note
-while the abridged Course Design Overview note already existed, and left
-both in the notebook for days. The user found several stale course-design
-notes, none with the current version, and instructed: "look at agent
-instructions if what you just did happens every time to look for any
-legacy note versions." The user's correction on the fix: "you only do this
-for a new session which handles one artefact not for every evernote
-operation."
+Failure mode: a new or reworked note left beside its superseded sibling in the notebook.
 
-Failure, same gap, second instance: the rework of the "Course Design
-Overview" note (2026-09-15 to 2026-09-18) took over the superseded
-"2026-09-05 KUBS DT Course Design" note's content, but the old note was
-never swept — the check ran at session start and looked for older
-versions of the same artifact, while the stale note was a sibling
-document that the overview still listed as a live artifact. The user,
-2026-09-19: "why did you not delete the duplicate evernote '2026-09-05
-KUBS DT Course Design' which contains old content...? correct whenever new
-evernotes are created. you should manage this automatically and in doubt,
-but only in doubt, ask me."
 
 ### 32. README is part of the CLI change — update it in the same slice
 
@@ -689,10 +636,7 @@ documented surface in the same change. The README is part of the diff, not
 a follow-up: help output and README must agree at commit time. If a project
 has no README section for its CLI, the change must add one.
 
-Failure: on 2026-09-07 the `invoice save --month YYYY-MM` flag was added to
-the invoice-admin CLI without a README line, so the documented `save` entry
-listed only `--dry-run`. The user instructed: "put into agent instruction
-that you always have to update the readme when cli code is touched."
+Failure mode: a CLI change shipped without its README line.
 
 ### 33. Memory files serve future planning, not exhaustive event records
 
@@ -706,15 +650,7 @@ dedicated artifact (Evernote note, meeting notes file), and the memory entry
 then points to that artifact with a one-line reference. If a memory entry for
 a single meeting would take more than a few bullets, the entry is bloated.
 
-Failure: on 2026-09-08 the agent created `memory/kubs.md` from a single TA
-meeting and its Signal follow-up, transcribing the entire exchange (wellbeing
-agreements, exact quotes, action-item confirmations) into the memory file
-while the full Q&A already lived in the Evernote note "2026-09-08 KUBS DT TA
-Questions - Yeonju Lee". The user: "this is 10x too verbose... the context is
-not to make a huge memory of this one meeting but just to note the crucial
-points. the point here is to maximize efficiency for followups which
-interconnect seamlessly with the knowledge about the kubs dt lecture, not
-overrepresent a single meeting."
+Failure mode: a memory file holding a transcript of one meeting instead of the points a future session needs.
 
 The test: strip the memory entry down to what a future follow-up must know
 without opening the artifact. What remains is the entry. Anything that only
@@ -741,14 +677,7 @@ propose the new filename (e.g., `kubs.md`), create the file in lean form per
 rule 33 (bare minimum + one-line artifact pointers), and remove the parked
 item from `_misc.md` entirely — no [MOVED TO] marker left behind.
 
-Failure: on 2026-09-08 the KUBS adjunct appointment had sat in `_misc.md`
-since 2026-06-06 while it grew into a full course-design domain (TA
-relationship, meeting artifacts, admin contacts); no mechanism reviewed the
-parking lot, so `kubs.md` was created only after Chaehan asked. His question:
-"if misc is the parking lot does the agentkit rules know to look periodically
-if they can extract topics out if they become bigger or merge them to new
-memory files? if not do that. that's why you didn't create kubs.md before and
-you should suggest a name."
+Failure mode: a topic that has grown into its own domain left in the parking lot.
 
 ### 35. Domain queries load the domain memory file before any web research or answer
 
@@ -781,11 +710,7 @@ artifacts, not approved asks. When the user drafts his own message to a
 third party, treat that draft as the calibration of what he is willing to
 ask: review it at that size, never inflate it.
 
-Failure: on 2026-09-10 the Venice storage clearance was drafted around
-asking Daniel (former LA real-estate agent) for a 3-5 hour sorting session
-at ~$300/hr. The user rejected the ask ("No i cannot do a session with
-Daniel it is too much time to ask for") and replaced it with a photos-and-
-list message that asks only for a format preference.
+Failure mode: a third-party ask sized to the agent's plan instead of the smallest footprint that answers the question.
 
 ### 37. Draft messages as the sender, not as a structured memo
 
@@ -801,14 +726,7 @@ commitment, warmth); formal formulas stay banned. When the user rewrites a
 draft, the delta is the specification: the opening and closing he adds are
 calibration for every following draft in that thread.
 
-Failure: on 2026-09-10 a reminder to the user's cousin was drafted as
-"곧 예약할 거라서, ... 두 달 전 견적이라 바뀌었을 수 있으니까, 달라졌으면
-새 견적 받아서 알려줘" (preamble, embedded rationale, conditional). The
-user called it "too robotic" and rewrote it: "늦어지만 드디어 내 가구
-한국에 보내고싶어. 어떻게 하지? / 일단 전에 제일 싸게 견적 준 회사에 다시
-연락해서 그 가격이 아직 그대로인지 확인해줘 / 또같이 해주면 빨리 계약
-사인 할게" (his state plus an open question, one plain ask, a reciprocal
-close).
+Failure mode: a message built as a structured memo (preamble, rationale, conditions) instead of the sender's plain ask.
 
 ### 38. Memory writes start with a search of existing files
 
@@ -822,11 +740,7 @@ changes (a link, a note, a document), update every file that points to it
 in the same pass. If the scan finds nothing, state which files were checked
 before creating anything new.
 
-Failure: on 2026-09-10 a pending update for the furniture shipment was
-scoped to `furniture-relocation.md` while the same topic's references also
-live in `src_shipping_ca2korea.md`. The user: "i think we already had a
-different memory file. this must be in agentkit instructions to always
-search and make sure not an existing memory file is ignored."
+Failure mode: a memory update written to the first matching file while the topic's other references stay elsewhere.
 
 ### 39. `memory/src_*.md` files are sourcing problem files
 
@@ -862,10 +776,7 @@ learn where they stand.
   the reference date ("completed 2026-09-07, three days before the
   2026-09-10 update"), so the count stays true after the note ages.
 
-Failure: on 2026-09-10 the note read "at 3g/day the slow load completes in
-28 days, around 2026-09-07" when the load had already completed 3 days
-earlier; the user: "agent instructions must be changed so you are always
-aware which day it is, here 2026-09-10."
+Failure mode: a time claim anchored to the plan's dates instead of today.
 
 ### 41. Answer from the phase the user is actually in
 
@@ -875,11 +786,7 @@ completed, the operative answer is how to continue: what to keep doing, at
 what dose and frequency, what the off-ramp is, and what the way back in
 is. The completion is one line of context; the continuation is the answer.
 
-Failure: on 2026-09-10 the creatine guidance still framed the question
-around loading ("you are already saturated"; "a new loading phase cannot
-finish in time") when the load had completed and the user's question was
-how to continue; the user: "you seem to not understand if the load
-completed, the user wants to know how to continue."
+Failure mode: answering from the phase the plan describes after the user has moved past it.
 
 ### 42. Summaries and notes are bulleted; icons tag categories, used sparingly
 
@@ -899,10 +806,7 @@ list where every line carries an icon is decoration, not structure. Use
 emoji glyphs, not text characters: ☐ rendered thin, colorless, and
 unclickable in Evernote (2026-09-11), and the todo tag was changed to 📌.
 
-Failure: on 2026-09-11 a life overview note was rejected: "the summary is
-unreadable as it is not well formatted. we need bullet points for the
-summary and all subsections" and "visualize sparely but effectively with
-icons eg for todos, goals, important".
+Failure mode: a summary or note without bullets and subsections.
 
 ### 43. Integration tasks produce a chosen set, not an archive
 
@@ -927,12 +831,7 @@ user asked for selection.
   default. State the questions in the chat reply itself so the user can
   answer there, never only inside the artifact.
 
-Failure: on 2026-09-11 the Ulwick-to-course integration note ranked all 12
-extracted concepts as the main body and buried three decisions at the end;
-the user: "the wording is not comprehensible... you tried to use everything
-whereas the point was to choose well as the goal is not to confuse
-students... give me the questions here so i can answer", "the formatting
-should give the decision tree".
+Failure mode: an integration that keeps every extracted item instead of choosing.
 
 ### 44. Availability and licensing claims are verified at the official source
 
@@ -946,13 +845,7 @@ page, the publisher's URL, the vendor's site); that named channel is the
 first place to look, not the last. This is the availability-side instance
 of rule 30: a named source is a referent to resolve, not prose to skim.
 
-Failure: on 2026-09-11 the Ulwick book was described as "cannot be
-distributed to students" based on the watermark in the PDF, and the course
-reading options were built around a purchase barrier. The author offers
-the book as a free download on his own website (jobs-to-be-done-book.com),
-a URL printed in the book's own resource section, and the site grants
-educators permission to distribute the PDF to students. The user: "ulwick
-book is free to download on his website! how did you miss that??"
+Failure mode: an availability or licensing barrier assumed from a file's appearance instead of verified at the source.
 
 ### 45. Choice questions get the objective answer, never validation of the user's leaning
 
@@ -1221,15 +1114,7 @@ design work the plan owed.
   a wrong element and therefore the bar on the specification. It does not make
   "reset everything" the ordinary way to correct one property.
 
-Failure: on 2026-09-21 the two new entries on a Keynote timeline slide were
-created, discarded, and recreated four times (six rounded rectangles made, five
-thrown away, three full resets of the working copy) because the placement scheme
-was never settled before the first build. The collision that forced the first
-redesign (a new box overlapping the neighbouring box) was computable from the
-two existing bounding boxes before anything was created, and the later defects
-(a frame taller than its text, a box that did not hug its label) were each a
-position, width, or height value that could have been set on the objects already
-present.
+Failure mode: objects created before the layout is settled, then rebuilt to repair positions, widths or heights.
 
 ### 54. Chat replies: say it the way a person would say it
 
@@ -1275,15 +1160,7 @@ until they would.
   (short answers to focused questions) and rule 48 (no decoding); those rules
   are instances of this principle.
 
-Failure basis: on 2026-09-21, on reuse times for denture tablets and pod
-fluid, the reply carried "your refill loses half of that design" and "The
-lens solution label says the opposite of reuse for lens care" across two
-headed sections; Chaehan: "the answer is formulated again too robotic... write
-it into human normal language... i need a clear, short and concise answer that
-is a direct answer to my question, not such lengthy formulations that beat
-around the bush." Amended the same day: the first version overfit the failing
-example ("two questions get two short answers"); Chaehan: "you write too
-specific to two-part question you must generalize!"
+Failure mode: a reply in headed sections and circling formulations where one plain answer was due, or a standard overfitted to the single corrected example.
 
 Second instance: on 2026-09-21 a reply on dairy, oat milk and soy milk arrived
 as four bolded sections, one per part of the question, with verdict labels
@@ -1328,13 +1205,7 @@ assessed). If any of them is gone, the trim went too far.
   would know less after the edit than before, the edit is wrong, however
   sensitive the original text was.
 
-Failure: on 2026-09-20, making the KUBS course syllabus send-safe (the named
-targets: activity detail, quantitative specs, the distribution note, the skip
-list) also stripped the session table to bare labels with no dates or substance
-and flattened the learning objectives, though neither was named. Chaehan: "the
-schedule is too much reduced and provides no value to students. same for
-learning objectives which i didn't tell you to reduce. always always think of
-added value for the target audience when making such changes."
+Failure mode: a trim that removes more than was named, or leaves the artifact without what its reader needs.
 
 ### 57. Reader-facing text: lead with what the audience gets, in the register the relationship calls for
 
@@ -1368,16 +1239,7 @@ housekeeping.
   author's context, or reads like a list of edits, rewrite it from the
   reader's side.
 
-Failure: on 2026-09-20, the student announcement for the updated KUBS syllabus
-went through three rejected drafts: a bare change log ("Two changes. The
-reading now centers on Kalbach's ..."), a friendly version that hid the change,
-and a version that dropped the process mention entirely. Chaehan rewrote it
-himself with the accepted shape: "Dear Students" greeting, two numbered
-improvements each with the student benefit (the Kalbach book "is conceptually
-much better so it will guide you better hands-on"; the cut process "so instead
-of confusing you, you will work with one design thinking process from day 1"),
-the reading block, and a sign-off. His comment: "please learn better
-formulation."
+Failure mode: reader-facing text that hides the change, leads with the process, or drops the reader's benefit.
 
 ### 58. A pointer or a summary is never the content it replaces
 
@@ -1407,15 +1269,7 @@ contains this sentence? If the answer is "it can look it up", the item is lost.
   what left and what arrived, so the user can confirm nothing was dropped. Only
   he can verify the relocation; the agent cannot see its own omissions.
 
-Failure: on 2026-09-22 a KUBS handoff prompt was archived and a folder map was
-added to the domain memory file, and the agent reported that a future session
-would start oriented "without opening the handoff prompt". The map carried none
-of the handoff's unique content (the JTBD wording rule, the citation ban, the
-dead procurement path, the timeline-rebuild lesson). The user asked how the
-content had been integrated and how it was guaranteed to be read; it had not
-been. The handoff itself had already recorded that its timeline "was corrected
-four times; quote it back rather than reconstructing", an instruction sitting in
-a document no session loads.
+Failure mode: a retired document replaced by a pointer or a folder map, with its unique instructions lost.
 
 ### 59. A completion report follows the user's order of relevance, not the agent's process order
 
@@ -1452,14 +1306,7 @@ stand and what you have to do next. If you must read to the end to find that, th
 order is wrong. Rule 42 (bulleted summaries) and rule 54 (the way a person would
 say it) apply to work reports as much as to any other writing.
 
-Failure: on 2026-09-22 a cleanup report led with a commit hash, listed seven
-legacy file names he already knew, buried the one item that needed his decision
-(an uncommitted memory file from another session) in the closing line, and
-reported a date discrepancy in the middle of a paragraph. Chaehan: "the last
-output summary is not well written. read rules 51+ for writing and apply also for
-such summary. the main point is to get into the user's shoes and find out what's
-the most relevant, then sort output in this order, and then format things in easy
-to read structures like bullet lists for similar items with intuitive headings."
+Failure mode: a report in process order, with the item needing the user's decision buried at the end.
 
 ### 60. Explanations teach the mechanism and take the shape of the reader's questions
 
@@ -1495,12 +1342,7 @@ This governs what the answer must make the reader able to do. Rule 54 governs
 the voice and rule 59 the order; this rule covers the substance of an
 explanation and its layout.
 
-Failure: on 2026-09-22 two versions of the same correction reply were rejected
-("still unreadable", "still formulated too robotic, i don't understand
-anything!!"): first flat prose in process order, then headings with abstract
-wording and the decision buried. A version with question-shaped headings,
-one-idea bullets and the mechanism spelled out was accepted: "ok this is the
-output i want every time."
+Failure mode: an explanation in process order under abstract headings, the answer buried.
 
 ### 61. Reference data is user-owned; never rewrite it by inference
 
@@ -1508,7 +1350,7 @@ Values the user's files live by (pace benchmarks, zone tables, prices, rates, ID
 
 When a number you used is challenged, fix the answer you gave; to change the stored record, ask first. When two sources disagree, surface the conflict and let the user pick; never silently choose one. Never present an inferred update as a "correction", a "fix", or a "supersession": an inference is a proposal and it goes to the user before the record changes.
 
-Failure: on 2026-09-21 Chaehan asked "why do you use 2:08?". The agent read the swim repo's config, treated its zone table as the source of truth, and rewrote the swim memory's training reference with that file's values, committed as "pace zones corrected". The config's own history held two versions of the zone rule (2026-09-07 and 2026-09-15), and the agent checked with no one. Chaehan: "these are not from the css test, you made up new times!"
+Failure mode: stored reference values rewritten from another source without the user's word.
 
 ### 62. Ask with the question tool, before acting, not in prose
 
@@ -1516,7 +1358,7 @@ When a decision belongs to the user, the question goes through the question tool
 
 The tool is not only for ambiguity. Feeling certain is not a reason to skip it: certainty that a value is stale, that a reading is right, or that the user will agree is the state in which the question gets skipped and the damage happens. When the agent is about to write a sentence that asks the user to decide or provide something ("Tell me which table is yours", "Which should it be?"), that question goes into the question tool instead of the reply. Asking is the next step of the work, never an interruption of it.
 
-Failure: on 2026-09-21/22, in the pace-benchmark incident, the agent rewrote the user's stored benchmarks instead of asking whether they should change, then ended two long explanations with prose questions instead of tool calls. Chaehan: "why do you forget using the question tool?"
+Failure mode: a decision taken without the question tool, or a question asked in prose at the end of a reply.
 
 **Batch: one call per change set, not one question per turn.** The tool takes several questions at once, so when a change set opens more than one decision, they all go into a single call — the deliverable's unknown numbers, its order, the scope of the sweep, the wording of a title. Each separate call ends the turn, waits for the user to read and answer, and starts a fresh turn: on 2026-09-26 the S2 run sheet needed three question rounds for one edit set, and the session ran 76 minutes of wall clock over about 15 seconds of machine time. A later round is justified only when an earlier answer opened a fork that did not exist before.
 
@@ -1526,7 +1368,7 @@ When information has a time series (test results, prices, rates, measurements, s
 
 A dated series is history: when a new observation arrives, append it. Older entries are never rewritten to match the new state, and the agent never proposes to. A table with one dated row per update is a log, not a current-state record; read it as a series, where the newest row is current and the older rows record the past.
 
-Failure: on 2026-09-21, in the pace-benchmark incident, the agent copied zone values that traced to the 2026-09-07 CSS test while a later test (2026-09-11) sat unprocessed in the same data, and both repair attempts missed the recency check. The agent also proposed correcting the 2026-09-07 row of the historic benchmark table. Chaehan: "if you take the css test based times, why don't you apply common sense and take the latest test?", "always the latest! ... this is non-negotiable.", and "of course keep the row, and tell me why don't you apply common sense here to see that the table shows historic benchmarks, then you would see there were benchmarks before 7 sep as well."
+Failure mode: an older vintage used while a newer one sits in the same data.
 
 ### 64. A slide's title lives in the deck's title element, never as a line of body text
 
@@ -1534,7 +1376,7 @@ A slide has one place for its title: the element the deck already uses for title
 
 The same principle governs the layout inside a slide: each point's heading sits above its own body text with a visible gap, and body text that renders over its heading is a defect no matter how the paragraph styles were inherited. Resizing a text object can also move its text, because a box whose text is vertically centred re-centres when its height changes. After any size change, set the position explicitly and verify on a rendered slide, never on the coordinates alone.
 
-Failure: on 2026-09-21 Chaehan corrected the agent twice on the KUBS deck ("the title line like Assessment should be in the title, not in the slide body", "can't you read the title in the slides at the top? it says eg 'Design Thinking - In My Life' ! what you did is not the title but inside the body text!"). On 2026-09-23 the same mistake recurred on two new homework slides, together with grey body text that overlaid the point headings. Chaehan: "you still make the same mistakes. how often do i need to tell you that the title of a slide is NOT in the body text but above?? ... the grey text overlays the headers so spread the points vertically". The 2026-09-21 correction was never encoded, so it was lost between sessions.
+Failure mode: a slide title written into the body instead of the deck's own title element.
 
 ### 65. Every reply ends with the artifact list, in two parts: his set first, the complete set second
 
@@ -1554,7 +1396,7 @@ Stated 2026-09-25: "the artefacts list should be two fold: first the most releva
 
 When Chaehan describes a sensation by comparison — "scratchy like when hoarse", "like a burn", "as if stung" — the comparison is his yardstick for intensity or quality, not a report of that condition. Never promote it into a clinical sign, a diagnosis input, or a recorded fact. If the distinction would change the answer, ask which he means before writing anything. Record the sensation in his own words and keep the simile attached to the word he attached it to.
 
-Failure: on 2026-09-24 Chaehan wrote "i still feel the sore throat ... scratchy like when hoarse". The agent read the simile as hoarseness, built an entire answer around laryngeal/vocal-fold irritation, and wrote that misreading into `memory/health.md`. Chaehan: "wait this is misunderstanding i didn't say i'm hoarse i just meant it as a metaphor of the degree of feeling the soreness like the hoarseness, not the same feeling!"
+Failure mode: a simile read as a symptom and carried into the analysis or the memory file.
 
 ### 67. Options are columns, never separate lists
 
@@ -1578,7 +1420,7 @@ Right — one table, each item once, the options as columns:
 
 This is the general form of Chaehan's "common sense" standard: the layout follows the reader's decision, and complication is the defect. Rule 48's test applies to structure as well as wording — if the reader has to reassemble the picture, the structure is wrong.
 
-Failure: on 2026-09-24, asked for a purchase list for throat-repair products, the agent read "I prefer buying at Coupang in Korea or directly at pharmacies" and split the list into a 약국 section and a 쿠팡 section. Chaehan: "no this is systematically bad, update agent rules: if you have 2-n implementation options, here pharmacy or coupang, for one source here medecine, you don't create two lists but make one table with the source and the 2-n channels as columns. you must understand that this is common sense! your ways is complicated and your goal is to avoid complication to facilitate maintainability and comprehensibility."
+Failure mode: one item set split into one list per option.
 
 Every row also states why it is there — see rule 68.
 
@@ -1590,7 +1432,7 @@ The reason gets its own column, headed with the single word **Why**. It is a fie
 
 The reason is written once, at the item level, never repeated per option: a drug's purpose does not change between a pharmacy and an online shop. Never make the reader infer the purpose from the name, and never assume the name is self-explanatory because it is familiar to you.
 
-Failure: on 2026-09-24 the agent's purchase table listed 아즈렌인후스프레이, 삼아탄툼액, 가브스콘 and 생리식염수 as names with prices and no function. Chaehan: "instead of just merely putting in an item in the table you must always always always describe the reason why this is there. so this table was useless in the pharmacy bec i didn't know whether the sprays were for soothing or something else." The first repair merged the function into the item cell; Chaehan: "the WHY should be of course in a separate column!" The second repair headed that column "Why it is in the list"; Chaehan: "just why, not a lengthy title".
+Failure mode: rows that state what an item is but not why it is in the list, or a Why column headed with a sentence.
 
 ### 69. Artifacts are scarce: each one earns its place
 
@@ -1606,7 +1448,7 @@ Five shapes of the failure to watch for:
 
 When one artifact supersedes another, delete the superseded file in the same turn and name the deletion in the report. When content changes — an order, a name, a procedure — sweep every artifact that carries it in the same turn, or state which artifact now leads; a corrected copy beside a stale copy is a defect the user discovers by reading the wrong one first. Proliferation is invisible while it is cheap for the agent and expensive for the user, which is exactly why it needs the check.
 
-Failure: on 2026-09-23, asked to regenerate the KUBS session 1 run sheet, the agent produced a run sheet, a phase timeline and step cards from the same twelve blocks and added three more copies to the diagram archive. Chaehan: "this is terrible you just multiple the number of artefacts without thinking ... the step cards and run script are totally redundant to the phase timeline." On 2026-09-25 the same set needed a second pass, and he had deleted the redundant files himself: "i had to delete several files you created which were redundant to the run sheet ... improve the agent rules to rethink about redundancy and scarcety to avoid the proliferation of artefacts."
+Failure mode: parallel artifacts multiplying, each a copy of the same content under another name.
 
 ### 70. File names stay short enough to read in Finder
 
@@ -1617,7 +1459,7 @@ A file name has to identify the file in the visible part of a Finder row, roughl
 - When descriptive detail has grown into the file name (a subtitle, a list, a method), move that detail into the document's own title or status line and shorten the name; the Evernote twin then carries the same short title.
 - Applies to Drive and Desktop files, quote PDFs, diagram versions, and session material alike.
 
-Failure: on 2026-09-25 the KUBS Design Thinking design folder held "2026-09-04 KUBS DT Opener Story - Where This Course Comes From.md"; Chaehan: "long file names cannot be read in the finder, they are shortened so i didn't see which is the opener story file." The file became "2026-09-04 KUBS DT Opener Story.md", the title the Evernote twin had carried all along.
+Failure mode: a file name truncated in Finder, so the artifact cannot be identified by sight.
 
 ### 71. A rename, move, merge or deletion sweeps every pointer to it
 
@@ -1628,7 +1470,7 @@ Adding a file is one edit; changing a file's identity is a project-wide edit. As
 - In a retained history document, fix the pointer lines (intro, artifact list, header) and leave dated change-log entries untouched; where a line must name a file that no longer exists, mark it in the line itself: `it was "old-name.md" until 2026-09-25`.
 - Verify by re-running the sweep and report what resolves, not the intent to fix.
 
-Failure: on 2026-09-25 the KUBS design documents were merged, renamed and moved; the retired topics note kept an `evernote:///` link to a note that had been deleted, and the retired overview carried two relative paths one `../` short. Chaehan: "don't leave obsolete links."
+Failure mode: obsolete links or relative paths surviving a rename, move, merge or deletion.
 
 ### 72. A canonical artifact's change fans out to every dependent artifact in the same turn
 
@@ -1638,7 +1480,7 @@ When the source of truth changes — a chart, a script, a design decision, a rea
 - A dependent that is an image inside another file (a slide, a note) does not follow the file on disk: it is a copy that must be replaced by hand, and "the file is updated" is not evidence that the copy is.
 - Close the turn by naming what was synced and, explicitly, what was not.
 
-Failure: on 2026-09-25 the new course chart v8 went into the design document and its Evernote twin, while the S1 script, its Evernote twin and the deck kept old material (the deck still showed the v5 chart). Chaehan: "the course map must be included in the session 1 script, and evernote and slides. why did you forget them, aren't there agent rules for always updating and syncing??"
+Failure mode: a canonical change landed in one artifact while its dependents keep the older version.
 
 ### 73. Never wait more than 60 seconds for a tool call: 20, then 40, then 60
 
@@ -1730,7 +1572,7 @@ coming. Chaehan: "the agent rules are not good enough for the timing."
 
 When a request contains a string in quotes, the default is that the wording is specified for the work: use it verbatim, in the artifact the task produces. Read it as a mere reference to an existing section only when it unmistakably names one; when in doubt, ask. The same rule covers a source the user names: if he says where content should come from (a book's chapter, an earlier document), go to that source and extract the substance from it. Never invent the content and attribute it to him.
 
-Failure: on 2026-09-26 the user wrote "in 'two design challenges: challenges of elder or alone living people' I changed my mind on the decision". The quoted string was the card wording he wanted; the agent read it as a location reference and rewrote the S3 challenge card in its own words, so his phrase never appeared — "why did you ignore in my very first chat turn that i specified for s3 run sheet the wording of chip 5". In the same session the S3 interview card carried "the three filters from session 2", which the user had never specified — "you made this up"; the card was rebuilt from the source he named (the Sprint book's interview chapter: the five acts, be a good host, open questions with no yes/no, broken questions, the silence, group note-taking).
+Failure mode: the user's quoted wording treated as a location reference, or content invented and attributed to him.
 
 ### 77. A plan and its derived view are one artifact: edit either, render the other in the same turn
 
@@ -1743,8 +1585,7 @@ When a document and a generated artifact carry the same plan — a session scrip
 - **The source is hand-edited markdown, so the renderer owns its escapes.** The writer protects markdown-significant characters with a backslash throughout the block (`\#` in the header, `\-` in a Source cell, `\[3x20s\]` in a card body). Every `\X` is the plain character in the render, and resolving them is the renderer's job — once, in the parser, before any card text is drawn. A backslash that reaches the ink is a parser defect: fix `pipeline.py`, never the block's wording. On 2026-09-28 only `\|` was resolved, so the sheet printed `\[3x20s\]` and `\[2x2min\]` in chips 2 and 6.
 - **A render is verified by its ink, not by its exit code.** Exit 0, a plausible pixel size and the expected card count say nothing about what the sheet prints. Read back the text the page drew (the generated `rsn.html`, or the cropped PNG) for stray markup, an overflowing card, or a card whose wording the block no longer holds, before reporting the sheet rebuilt.
 
-
-Failure: on 2026-09-27 the S3 block gained an 8th card (Lightning Talk, 20 min) while the run of show, the section headers and the sub-line still read seven blocks and 110 minutes; the sheet rendered the block, so script and sheet disagreed until the sweep, and the drift was visible only by re-rendering. Chaehan: "run sheet and script should always be kept in sync, remember in agent rules".
+Failure mode: a derived view rendered from a stale source, or a render reported from the command's exit code without reading the ink.
 
 ### 78. A learning goal says what the student can do with it: name the level, tie it to the assignment, keep it attainable
 
@@ -1764,6 +1605,10 @@ Worked example: the KUBS DT design's eight goals climb the taxonomy deliberately
 - **What the log is for.** A diff says what changed; only the log says why, and the why is what a later session needs so it does not silently undo a deliberate decision. Read it when a value looks odd ("why is S3's results block 30 minutes when the headers say 40?"), when reviving something retired, and before changing anything a dated entry explains.
 - **A document that describes something current follows its source in the same pass** — syllabus, guideline, announcement, run sheet, Evernote twin. Never report a known staleness as an open item instead of fixing it. Chaehan, 2026-09-27: "why don't you keep the syllabus in sync? don't understand. this makes me iterate trivial things". Only copies that were explicitly sent are frozen ("... (sent version).pdf") and even then their live sibling is updated.
 
+### 80. Content handed over for a block goes where that block already lives
+
+The user's artifacts are the routing table. When he hands over content for a named card, block or section, resolve the destination from the artifacts — the run sheet's card number and its Source column, the session script's section headings, the document that already carries the block — and edit it there. Do not ask which file it belongs in, and do not offer alternatives: the question tells him you did not look at what he built. Ask only when no artifact names the destination, or when two artifacts both carry the block and the choice decides which is master and which is twin.
+
 ### 81. Name a thing so the user can look it up; never invent a reference
 
 Every artifact is named by the name the user can resolve — its path and its literal heading, with a parenthetical saying what it is — never by a shorthand of the agent's own. A reference the user cannot follow is not a reference: it reads as a name he gave, and the work stops while he asks what it means.
@@ -1774,6 +1619,10 @@ Every artifact is named by the name the user can resolve — its path and its li
 - **When he uses a name the agent cannot resolve**, ask what he means, quoting his words back; do not pick the nearest plausible document and proceed.
 
 Failure: asking "The S2 block and the script body disagree — which side is the new intent?" — a shorthand the user cannot resolve to a document.
+
+### 82. When a block is removed, the lines that exist only to serve it go in the same pass
+
+A removal is a decision, not a finding. Text elsewhere may exist only to point at the removed block — a spoken hand-off into it, a staging note before it, a reference in a neighbouring document. Those lines follow the removal in the same turn: rewrite or delete them, do not list them as open items and do not ask whether to touch them. A sentence whose whole content is the removed block has nothing left to say. Chaehan, 2026-09-28.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
