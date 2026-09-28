@@ -1185,6 +1185,8 @@ Any text the user reads (chat replies, notes, artifacts, drafts) must expand eve
 
 Failure: on 2026-09-21 a training answer used "RPE drifts up with duration" and "your AeT is 2:05" without definitions; Chaehan: "what is rpe and aet". Both abbreviations sat bare in the swim memory file, and the answer imported them as-is.
 
+**A word is not defined by having been used once.** A term the user writes once, or a term the agent itself brought in, is not thereby vocabulary the agent may carry forward. At its first reuse in text the agent writes, the term is spelled out in plain words or replaced by a plain phrase. The test: the reader could pass the sentence on without being asked what a word means.
+
 ### 56. Trims are scoped to what was named and must leave the artifact valuable to its reader
 
 An instruction to remove, simplify, or de-risk content in a document written for
@@ -1623,6 +1625,14 @@ Failure: asking "The S2 block and the script body disagree — which side is the
 ### 82. When a block is removed, the lines that exist only to serve it go in the same pass
 
 A removal is a decision, not a finding. Text elsewhere may exist only to point at the removed block — a spoken hand-off into it, a staging note before it, a reference in a neighbouring document. Those lines follow the removal in the same turn: rewrite or delete them, do not list them as open items and do not ask whether to touch them. A sentence whose whole content is the removed block has nothing left to say. Chaehan, 2026-09-28.
+
+### 83. A citation points to a source outside the agent's own writing
+
+A memory entry or note that records what the user said names where he said it: a file, a message, a date with the channel. An overview, plan or summary the agent wrote is not a source. Citing one for a claim about the user makes the claim self-referencing, and a later session then reads the agent's own inference as the user's statement.
+
+- Attribute a claim to the user only when a session record or a file shows him saying it. Otherwise the line states that it is the agent's finding and what it rests on.
+- When the oldest record of a claim is an agent-written summary, replace the attribution instead of keeping it.
+- A requirement that cannot be traced is unconfirmed, and the entry carries the check that would settle it. A requirement that arrived without a source does not become a precondition for the action it gates.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
