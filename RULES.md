@@ -1740,6 +1740,9 @@ When a document and a generated artifact carry the same plan — a session scrip
 - **Prefer reading a value over copying it.** If the value lives in another document of record — a session's learning goal in the course design — the render reads it from there. A copy is a second place to keep true.
 - **A change to the source is a sweep, not an edit.** The script has more than one place carrying a session's minutes: the run of show table, each section header's cumulative minutes, the block's chips, the note paragraph. One changed number means all of them, in one pass, plus the re-render.
 - **One command, the project's.** Regenerating is not a recipe to re-derive each time (`projects/kubs_dt/pipeline.py runsheet --session N`, exposed as `/runsheet N`).
+- **The source is hand-edited markdown, so the renderer owns its escapes.** The writer protects markdown-significant characters with a backslash throughout the block (`\#` in the header, `\-` in a Source cell, `\[3x20s\]` in a card body). Every `\X` is the plain character in the render, and resolving them is the renderer's job — once, in the parser, before any card text is drawn. A backslash that reaches the ink is a parser defect: fix `pipeline.py`, never the block's wording. On 2026-09-28 only `\|` was resolved, so the sheet printed `\[3x20s\]` and `\[2x2min\]` in chips 2 and 6.
+- **A render is verified by its ink, not by its exit code.** Exit 0, a plausible pixel size and the expected card count say nothing about what the sheet prints. Read back the text the page drew (the generated `rsn.html`, or the cropped PNG) for stray markup, an overflowing card, or a card whose wording the block no longer holds, before reporting the sheet rebuilt.
+
 
 Failure: on 2026-09-27 the S3 block gained an 8th card (Lightning Talk, 20 min) while the run of show, the section headers and the sub-line still read seven blocks and 110 minutes; the sheet rendered the block, so script and sheet disagreed until the sweep, and the drift was visible only by re-rendering. Chaehan: "run sheet and script should always be kept in sync, remember in agent rules".
 
@@ -1760,6 +1763,17 @@ Worked example: the KUBS DT design's eight goals climb the taxonomy deliberately
 - **The convention is stated once, here.** A log file carries a title line and its entries, nothing else — no preamble, no restatement of what a change log is. Chaehan, 2026-09-27, after five logs opened with the same four-line introduction: "you included trivial things in the logs ... and it is repeated in each log file. we need to optimize the knowledge architecture!"
 - **What the log is for.** A diff says what changed; only the log says why, and the why is what a later session needs so it does not silently undo a deliberate decision. Read it when a value looks odd ("why is S3's results block 30 minutes when the headers say 40?"), when reviving something retired, and before changing anything a dated entry explains.
 - **A document that describes something current follows its source in the same pass** — syllabus, guideline, announcement, run sheet, Evernote twin. Never report a known staleness as an open item instead of fixing it. Chaehan, 2026-09-27: "why don't you keep the syllabus in sync? don't understand. this makes me iterate trivial things". Only copies that were explicitly sent are frozen ("... (sent version).pdf") and even then their live sibling is updated.
+
+### 81. Name a thing so the user can look it up; never invent a reference
+
+Every artifact is named by the name the user can resolve — its path and its literal heading, with a parenthetical saying what it is — never by a shorthand of the agent's own. A reference the user cannot follow is not a reference: it reads as a name he gave, and the work stops while he asks what it means.
+
+- **Spell it out the first time it appears in a reply or a question.** "The `## Run sheet cards` section at the foot of `KUBS DT S2/KUBS DT session 2 - script.md` (the block that holds the run sheet's wording)", not "the S2 block". The parenthetical is what tells him the reference resolved.
+- **No label of the agent's own** ("the block", "the doc", "the design", "the master", "the twin") unless he used that label himself in the same conversation. His reach is the test, not the agent's.
+- **A name he gives is repeated verbatim**, never folded into the agent's category, and a name he gives for something the agent would name differently wins.
+- **When he uses a name the agent cannot resolve**, ask what he means, quoting his words back; do not pick the nearest plausible document and proceed.
+
+Failure: asking "The S2 block and the script body disagree — which side is the new intent?" — a shorthand the user cannot resolve to a document.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
