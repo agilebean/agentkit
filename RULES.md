@@ -1185,7 +1185,7 @@ Any text the user reads (chat replies, notes, artifacts, drafts) must expand eve
 
 Failure: on 2026-09-21 a training answer used "RPE drifts up with duration" and "your AeT is 2:05" without definitions; Chaehan: "what is rpe and aet". Both abbreviations sat bare in the swim memory file, and the answer imported them as-is.
 
-**A word is not defined by having been used once.** A term the user writes once, or a term the agent itself brought in, is not thereby vocabulary the agent may carry forward. At its first reuse in text the agent writes, the term is spelled out in plain words or replaced by a plain phrase. The test: the reader could pass the sentence on without being asked what a word means.
+**A word is not defined by having been used once.** A term the user writes once, or a term the agent itself brought in, is not thereby vocabulary the agent may carry forward. At its first reuse, the term gets the parenthetical the rule's opening line describes, or it is replaced by a plain phrase. The parenthetical is the mechanism: the sentence keeps its shape and the reader keeps the meaning. The test: the reader could pass the sentence on without being asked what a word means.
 
 ### 56. Trims are scoped to what was named and must leave the artifact valuable to its reader
 
@@ -1626,13 +1626,15 @@ Failure: asking "The S2 block and the script body disagree — which side is the
 
 A removal is a decision, not a finding. Text elsewhere may exist only to point at the removed block — a spoken hand-off into it, a staging note before it, a reference in a neighbouring document. Those lines follow the removal in the same turn: rewrite or delete them, do not list them as open items and do not ask whether to touch them. A sentence whose whole content is the removed block has nothing left to say. Chaehan, 2026-09-28.
 
-### 83. A citation points to a source outside the agent's own writing
+### 83. A line about the user names where it came from, and an untraceable requirement is checked, not obeyed
 
-A memory entry or note that records what the user said names where he said it: a file, a message, a date with the channel. An overview, plan or summary the agent wrote is not a source. Citing one for a claim about the user makes the claim self-referencing, and a later session then reads the agent's own inference as the user's statement.
+Two habits, one for writing a line and one for reading one.
 
-- Attribute a claim to the user only when a session record or a file shows him saying it. Otherwise the line states that it is the agent's finding and what it rests on.
-- When the oldest record of a claim is an agent-written summary, replace the attribution instead of keeping it.
-- A requirement that cannot be traced is unconfirmed, and the entry carries the check that would settle it. A requirement that arrived without a source does not become a precondition for the action it gates.
+**Writing.** When a memory entry, note or plan says what the user said, wants or requires, that same line says where it came from: the file, the note, or the message with its date. Find that source before writing the line. If no source exists, the line says it is your own reading and what it rests on. Never date it as his statement when no record shows him saying it.
+
+**Reading.** An existing line whose stated source you cannot find is not binding. Do not carry it into a plan, a question or an instruction, and do not repeat it as a fact. Replace the source with what you can show, and where the line gates an action, keep the action and swap the requirement for the check that settles it. "The submission needs the X number" becomes "no X number is on record; check Y before submitting".
+
+Why it matters: such a line is the agent's own earlier inference, and a file makes it read as the user's own requirement. It then blocks work he never asked to block, and each later session copies it forward again.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
