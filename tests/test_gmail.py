@@ -160,6 +160,22 @@ class TestGmailApiBackend:
             GmailApiBackend(credentials_path=explicit)
             assert str(explicit) in str(m.call_args[0][0])
 
+    def test_revoked_refresh_token_raises_auth_error_with_hint(self, tmp_path):
+        """A revoked refresh token surfaces a GmailAuthError naming the re-consent step."""
+        token = tmp_path / "token.json"
+        token.write_text('{"token": "test"}')
+        with patch("google.oauth2.credentials.Credentials.from_authorized_user_file") as m:
+            mock_creds = MagicMock()
+            mock_creds.valid = False
+            mock_creds.expired = True
+            mock_creds.refresh_token = "rt"
+            mock_creds.refresh.side_effect = RuntimeError(
+                "invalid_grant: Token has been expired or revoked."
+            )
+            m.return_value = mock_creds
+            with pytest.raises(GmailAuthError, match="invalid_grant"):
+                GmailApiBackend(credentials_path=token)
+
 
 class TestResolveSpecToMessage:
     def test_resolves_message_id_like_spec(self):

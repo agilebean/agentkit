@@ -105,12 +105,23 @@ class GmailApiBackend:
         for candidate in candidates:
             if not candidate.is_file():
                 continue
-            creds = Credentials.from_authorized_user_file(str(candidate), scopes=list(scopes))
+            try:
+                creds = Credentials.from_authorized_user_file(str(candidate), scopes=list(scopes))
+            except Exception as e:
+                raise GmailAuthError(
+                    f"Could not read OAuth token ({candidate}): {e}"
+                ) from e
             if creds and creds.valid:
                 return creds
             if creds and creds.expired and creds.refresh_token:
                 from google.auth.transport.requests import Request
-                creds.refresh(Request())
+                try:
+                    creds.refresh(Request())
+                except Exception as e:
+                    raise GmailAuthError(
+                        f"Could not refresh OAuth token ({candidate}): {e}. "
+                        "Re-consent with scripts/gmail_oauth_consent.py."
+                    ) from e
                 return creds
 
         raise GmailAuthError(
@@ -361,6 +372,10 @@ class GmailError(Exception):
 
 class GmailAuthError(GmailError):
     """Authentication/credentials failure."""
+
+
+class GmailTransportError(GmailError):
+    """Transport-layer failure (SMTP send, IMAP, or Gmail API)."""
 
 
 class GmailMessageNotFoundError(GmailError):
