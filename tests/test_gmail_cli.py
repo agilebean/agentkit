@@ -99,6 +99,107 @@ class TestAttachmentsCLI:
         assert (target / "f.pdf").exists()
 
 
+class TestSendCLI:
+    def test_send_dry_run_prints_and_does_not_send(self, capsys, monkeypatch):
+        monkeypatch.delenv("GOOGLEADS_GMAIL_SMTP_USER", raising=False)
+        monkeypatch.delenv("AGENTKIT_GMAIL_SMTP_USER", raising=False)
+        fake = MagicMock()
+        rc = main(
+            ["send", "--to", "you@example.com", "--subject", "Hi", "--body", "Hello",
+             "--dry-run"],
+            send_backend_override=fake,
+        )
+        assert rc == 0
+        out = json.loads(capsys.readouterr().out)
+        assert out["dry_run"] is True
+        assert out["to"] == "you@example.com"
+        assert out["subject"] == "Hi"
+        assert out["body"] == "Hello"
+        fake.send_plain_text.assert_not_called()
+
+    def test_send_uses_fake_backend(self, capsys, monkeypatch):
+        monkeypatch.delenv("GOOGLEADS_GMAIL_SMTP_USER", raising=False)
+        monkeypatch.delenv("AGENTKIT_GMAIL_SMTP_USER", raising=False)
+        fake = MagicMock()
+        fake.send_plain_text.return_value = "smtp:plain:ok"
+        rc = main(
+            ["send", "--to", "you@example.com", "--subject", "Hi", "--body", "Hello"],
+            send_backend_override=fake,
+        )
+        assert rc == 0
+        out = json.loads(capsys.readouterr().out)
+        assert out == {"status": "smtp:plain:ok"}
+        fake.send_plain_text.assert_called_once_with(
+            sender="chaehan.so@gmail.com",
+            to="you@example.com",
+            subject="Hi",
+            body="Hello",
+        )
+
+    def test_send_body_file_and_cc_bcc(self, capsys, tmp_path, monkeypatch):
+        monkeypatch.delenv("GOOGLEADS_GMAIL_SMTP_USER", raising=False)
+        monkeypatch.delenv("AGENTKIT_GMAIL_SMTP_USER", raising=False)
+        body_file = tmp_path / "body.txt"
+        body_file.write_text("From a file")
+        fake = MagicMock()
+        fake.send_text_with_attachment.return_value = "smtp:attachment:ok"
+        attachment = tmp_path / "a.txt"
+        attachment.write_text("data")
+        rc = main(
+            [
+                "send", "--to", "you@example.com", "--subject", "S",
+                "--body-file", str(body_file), "--attachment", str(attachment),
+                "--cc", "cc@example.com", "--bcc", "bcc@example.com",
+            ],
+            send_backend_override=fake,
+        )
+        assert rc == 0
+        fake.send_text_with_attachment.assert_called_once()
+        kwargs = fake.send_text_with_attachment.call_args.kwargs
+        assert kwargs["body"] == "From a file"
+        assert kwargs["cc"] == ["cc@example.com"]
+        assert kwargs["bcc"] == ["bcc@example.com"]
+        assert kwargs["attachment_path"] == attachment
+
+    def test_send_missing_body_file_returns_2(self, capsys, tmp_path):
+        fake = MagicMock()
+        rc = main(
+            ["send", "--to", "you@example.com", "--subject", "S",
+             "--body-file", str(tmp_path / "nope.txt")],
+            send_backend_override=fake,
+        )
+        assert rc == 2
+        assert "not a file" in capsys.readouterr().err
+        fake.send_plain_text.assert_not_called()
+
+    def test_send_error_returns_1(self, capsys):
+        from agentkit.gmail import GmailTransportError
+        fake = MagicMock()
+        fake.send_plain_text.side_effect = GmailTransportError("connection refused")
+        rc = main(
+            ["send", "--to", "you@example.com", "--subject", "S", "--body", "b"],
+            send_backend_override=fake,
+        )
+        assert rc == 1
+        assert "connection refused" in capsys.readouterr().err
+
+    def test_send_without_credentials_returns_2(self, capsys, monkeypatch):
+        for name in (
+            "GOOGLEADS_GMAIL_SMTP_APP_PASSWORD",
+            "GOOGLEADS_GMAIL_SMTP_APP_PASSWORD_FILE",
+            "AGENTKIT_GMAIL_SMTP_APP_PASSWORD",
+            "AGENTKIT_GMAIL_SMTP_APP_PASSWORD_FILE",
+        ):
+            monkeypatch.delenv(name, raising=False)
+        monkeypatch.setattr(
+            "agentkit.gmail.cli.DEFAULT_APP_PASSWORD_FILE",
+            "/nonexistent/agentkit/pw",
+        )
+        rc = main(["send", "--to", "you@example.com", "--subject", "S", "--body", "b"])
+        assert rc == 2
+        assert "not a file" in capsys.readouterr().err
+
+
 class TestNoCredentials:
     def test_search_without_credentials_returns_2(self, capsys, monkeypatch):
         """CLI returns exit code 2 and auth message when no Gmail credentials found."""
