@@ -772,6 +772,20 @@ commitment, warmth); formal formulas stay banned. When the user rewrites a
 draft, the delta is the specification: the opening and closing he adds are
 calibration for every following draft in that thread.
 
+- **When someone else sends it, write in that sender's voice.** If the user
+  says the message goes out under another name (a TA, an assistant, a
+  colleague), it is framed as that person writing on the user's behalf:
+  institutional, short, no thanks, no warmth aimed at the principal, no
+  bookends that only the principal could write. Set the framing line once
+  ("Professor So asked me to reply on his behalf") and keep the body plain.
+
+- **Keep the object the user named.** When restating a claim he made about a
+  specific thing ("the slides are just reminders, they do not contain the
+  content nor learnings"), keep that thing in the sentence. Widening it to a
+  nearby category ("what is shown in class is a reminder") turns the sentence
+  into a different and false claim — the class is the content, the slides are
+  the reminder.
+
 Failure mode: a message built as a structured memo (preamble, rationale, conditions) instead of the sender's plain ask.
 
 ### 38. Memory writes start with a search of existing files
@@ -1286,6 +1300,14 @@ housekeeping.
 - **Test it without the backstory.** If the draft only makes sense with the
   author's context, or reads like a list of edits, rewrite it from the
   reader's side.
+- **A prediction question is answered with what the outcome depends on, not
+  with a status label.** When the reader asks whether something will be
+  "affected", "still possible", or "blocked", do not answer in the machine
+  frame (blocked / stays open / not affected). Name the thing the outcome is
+  actually decided by: "An A is not decided by attendance; it is decided by
+  what your journal and essay show, and both are built in class." The label
+  answers a rule question; the dependency answers the question the reader
+  asked and remains true whichever way the case turns out.
 
 Failure mode: reader-facing text that hides the change, leads with the process, or drops the reader's benefit.
 
@@ -1728,6 +1750,22 @@ A wrong number is a failed delivery, and a fax that never lands looks exactly li
 - **Prefer the channel with an observable receipt** where a deadline or a legal record is at stake: registered post, a submission stamp at the counter, or a fax whose arrival the desk has confirmed.
 
 Failure mode: a letter sent to a number read once from a single page, or to a desk that turned out not to handle the matter.
+
+### 87. A reply that grants or refuses something is a story that returns the decision
+
+When someone asks the user for a judgment that affects them (a student asking about an absence, a counterparty asking for an exception), the answer is not a policy statement. It is a short story that carries the reader out of rule-hunting and leaves the judgment in his own hands. The order is the story:
+
+1. **The limit first — what the user cannot control.** "I can't predict what one absence does to your grade." Stating the limit before anything else kills the false question (which rule covers this?) before the reader builds on it, and it is what makes the recommendation two lines later read as advice rather than as authority.
+2. **The dependency — what the outcome is actually built from.** "An A comes from your journal and your essay, and both are built on your learning in class." The reader now knows what he is spending.
+3. **The recommendation, drawn by the reader.** Joined to 2 by "Therefore" so it is a conclusion he reaches rather than an order he receives, with its reason behind it joined by "as": "Therefore I strongly recommend that students attend all eight sessions, as each session contains much more content than what the slides show."
+4. **One instance from the reader's own week, carrying its purpose.** Opened by "Moreover", as fact plus what it is for: "Moreover, this Thursday is where everyone introduces themselves which is essential for team building. The teams form from that exercise." Purpose, never penalty.
+5. **The decision handed back.** "Please decide on yourself how much this will affect your learning and grade." No instruction, no condition, no catch-up list.
+
+**Why this order and no other.** It runs from the abstract to the particular — grade, then learning, then this Thursday — and lands in the reader's own hands, so the frame moves from "what does the rule allow" to "what does my learning need." Anything that pulls the frame back toward compliance breaks the story: the school's F line turns the letter into a rulebook, and a closing instruction ("come to Monday knowing what was produced on Thursday; it will not be re-taught") makes the sender the manager of the reader's attendance instead of leaving him the judge of his own.
+
+**Words that carry the story.** "predict", not "tell"; the reason joined by "as", never appended with "and"; no consequence clause tacked onto a fact ("so it's the one session you can't catch up on later" was cut); contractions stay. What the user strikes out binds as hard as what he writes. Chaehan, 2026-09-29: "understand that this is a story. understand what i ordered differently than you and why."
+
+Failure mode: a reply built as a policy memo — the rule stated first, the recommendation announced before its ground, reasons appended with "and", a consequence attached to the reader's own case, and a close that instructs where the decision should have been handed back.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
