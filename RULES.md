@@ -20,20 +20,66 @@ file.
 
 Em-dashes, long sentences with embedded clauses, and filler transitions ("through X and Y, students gain Z") are telltale signs of AI writing. Never use em-dashes. Write short, direct sentences. Prefer concrete details over abstract descriptions. Write from the reader's perspective, not an omniscient narrator.
 
-**Robot markers.** Chaehan, 2026-09-26, on a session script: "sounds robotic! remember that". These read as machine-written in spoken scripts, student handouts, notes and drafts:
+**Robot markers.** Chaehan, 2026-09-26, on a session script: "sounds robotic! remember that". These read as machine-written in spoken scripts, student handouts, notes and drafts. This list is the reference for the word "robotic": when he says a text sounds robotic, the offending feature is in here, and the plain sentence beside the entry is the fix.
+
+*Punctuation and rhythm*
+
+- **Em-dashes, and " --- " used as a substitute.** Write periods and short sentences.
+- **Semicolon chains.** Split into sentences.
+- **Three-item runs** ("faster, clearer, stronger"). Say the one thing that matters.
+- **Long sentences with embedded clauses.**
+- **Cleverness that needs decoding.** If a line is clever and needs a pause to parse, the cleverness is the wrong trade. Test: could he ask "what does this mean?"
+
+*Document scaffolding*
+
+- **Headings over paragraphs**, in a note, a reply or a letter ("What the account shows.", "Why this meets the criteria.").
+- **A section per part of the question.** A balanced report where one answer was due.
+- **Label prefixes** ("Status:", "Why:", "Context:", "The mechanism:", "The counter:", "Atmosphere:").
+- **Bolded lead-ins in front of a paragraph.**
+- **Colon-field blocks in prose** ("Taxpayer: ... SSN: ... Return: ..."), a form pasted into a narrative. In a text that stands alone as a submission, the labeled identifier line is the format, not the marker (rule 85).
+- **Numbered or bulleted asks inside a letter.**
+- **Telegraphic fragments instead of sentences.**
+- **Third-person summary voice** about the person being written for.
+
+*Report and rubric language*
+
+- **Verdict labels** ("plausible, not established", "mixed evidence").
+- **Confidence rituals** ("Confidence: moderate", "high confidence on X"). State the call; genuine uncertainty becomes the fact that would change it.
+- **Premise labels** ("The hole:", "The promising part:").
+- **Rubric labels taken from an institution's manual** ("Reason 5", "the criteria", "criteria 5 and 7").
+- **Narration about the message itself** ("this message completes my earlier request").
+- **Explanatory preambles** ("since we will book soon...") and **embedded justifications** ("the quote is two months old, so...").
+- **Conditionals built from the analyst's logic** instead of the reader's.
+
+*Vocabulary*
 
 - **Container words that name a list instead of being one:** catalogue, inventory, taxonomy, matrix, framework, pipeline, mechanism, protocol, lever, modality. Name the thing: "the three filters", "how it works".
-- **Field labels in speech:** "The mechanism:", "The counter:", "Atmosphere:", "Status:", "Why:", "Context:". Spoken text carries no labels.
 - **Abstractions where a person or an action fits:** artifact, deliverable, learnings, insight, alignment, journey, problem space, solution space, touchpoint, friction, granularity, altitude ("at the right altitude"), needs-first, end-to-end.
 - **Consultant verbs:** leverage, utilize, facilitate, ideate, operationalize, socialize, surface (a need), unpack, double-click on, align on, drive (a change), enable, empower.
 - **Nominalizations:** "the collection of", "the utilization of", "the implementation of", "an improvement in". Use the verb: "we collect", "you improve".
-- **Fake-sentence patterns:** "It's not just X, it's Y"; "It's not about X, it's about Y"; "The key is..."; "At its core..."; "when it comes to"; "in order to" (write "to"); "the ability to" (write "you can").
 - **Empty intensifiers and hedges:** robust, holistic, seamless, comprehensive, cutting-edge, best-in-class, impactful, meaningful, significant, truly, deeply, arguably.
+- **Domain shorthand outside its own trade:** SKU, COGS, BOM, SLA. Say what the thing is.
+- **Analyst jargon in user-facing prose:** benign, sub-clinical, protocol signal, fictional payoff, eliminated by error analysis.
 - **Trade slang kept out of speech:** "run of show" (write "the session plan"), "the block that stretches" (say what happens when it runs long), "shaded blocks" (say "after the break"), "in reading order", "on purpose" (write "deliberately").
-- **Rhythm for sound, not content:** em-dashes, semicolon chains, and three-item runs ("faster, clearer, stronger").
-- **Contrasts built for sound:** "bias is watched, not switched off"; "the filters cost you more on Wednesday" (2026-09-26, second instance: "still sounds overly robotic... learn finally that this is not good"). Write the plain fact: "you cannot switch bias off"; "you get one hour with a stranger and no second chance". The list covers internal working artifacts too (run sheets, session cards, flow notes), and a re-render re-reads the text before it ships: phrasing an earlier pass left behind is swept, not shipped again.
-- **Metaphors that give an abstraction agency, and absolutes about it:** "where bias enters an interview" — bias does not enter an interview the way a person does, and the phrasing claims one overall bias that is completely known. Write what the student does with it: "knows several biases in interviews". Chaehan, 2026-09-27: "understand that this is robotic ... this formulation sounds absolute as if there is one overall bias and is completely known".
-- **Goals a session cannot deliver:** a learning goal is a claim about what a student can do after the session, so it has to be possible and observable in that time. "can name every classmate's skill and strength" (27 people, one session) is neither; the honest version is "knows other classmates better for team building". Chaehan, 2026-09-27: "this is impossible! maybe knows other classmates better for team building". When a goal is corrected, sweep the same claim wherever the design states it, and re-render every artifact that reads it (rule 77).
+
+*Formulas*
+
+- **Fake-sentence patterns:** "It's not just X, it's Y"; "It's not about X, it's about Y"; "The key is..."; "At its core..."; "when it comes to"; "in order to" (write "to"); "the ability to" (write "you can").
+- **Contrasts built for sound:** "bias is watched, not switched off"; "the filters cost you more on Wednesday". Write the plain fact: "you cannot switch bias off"; "you get one hour with a stranger and no second chance".
+- **Metaphors that give an abstraction agency, and absolutes about it:** "where bias enters an interview" claims one overall bias that is completely known. Write what the person does: "knows several biases in interviews".
+- **Formal greeting and closing formulas** in messages he sends (매니저님, 안녕하세요 / 검토 부탁드립니다, 감사합니다). The body only.
+
+*Voice in first-person text*
+
+- **Commentary on the writer's effort, frustration, willingness or hope, and the idioms that carry it:** "I have run out of ways to move it myself", "if that is what it takes to move it", "which puts me under real pressure to close this now", "I would rather resolve this with your office than anywhere else". The formal first person states facts, positions and requests: "I need a clean US tax record", "I prefer to resolve this with your office", "I reserve all rights and remedies".
+- **Hedging and restatement.** One claim per sentence, each fact once, in the place where it does the most work.
+- **Evidence compressed into parenthetical data capsules.**
+
+*Content claims*
+
+- **Goals a session cannot deliver:** a learning goal is a claim about what a student can do after the session, so it has to be possible and observable in that time. "can name every classmate's skill and strength" (27 people, one session) is neither; the honest version is "knows other classmates better for team building" (Bandura: an unattainable goal carries no signal). When a goal is corrected, sweep the same claim wherever the design states it, and re-render every artifact that reads it (rule 77).
+
+The list covers internal working artifacts too (run sheets, session cards, flow notes), and a re-render re-reads the text before it ships: phrasing an earlier pass left behind is swept, not shipped again.
 
 ### 3. Do not commit or push unless explicitly told to
 Never run `git commit` or `git push` unless the user says "commit", "push", or "commit and push". "Commit" alone authorizes both commit and push. Git commit amend is allowed. When fixing an error, do not push until the user confirms the fix works. Trigger extension (2026-09-15): detected user satisfaction also authorizes the commit; see rule 46.
@@ -1635,6 +1681,39 @@ Two habits, one for writing a line and one for reading one.
 **Reading.** An existing line whose stated source you cannot find is not binding. Do not carry it into a plan, a question or an instruction, and do not repeat it as a fact. Replace the source with what you can show, and where the line gates an action, keep the action and swap the requirement for the check that settles it. "The submission needs the X number" becomes "no X number is on record; check Y before submitting".
 
 Why it matters: such a line is the agent's own earlier inference, and a file makes it read as the user's own requirement. It then blocks work he never asked to block, and each later session copies it forward again.
+
+### 84. Nothing goes out that the user has not read in its final form, with every field its recipient needs
+
+Sending is irreversible and lands with a third party. Before the agent sends anything outward (an email, a fax, a form, a message to an agency or a counterparty), two gates:
+
+- **He has read the exact text.** "Send it" authorizes the draft he saw, not a variant of it. If anything changes after that point, the changed version comes back to him before it goes.
+- **Every field the recipient needs is filled.** A letter or form to an authority wants the identifiers, dates, addresses and numbers that let the recipient match the case. When the agent does not hold one, it asks for it. It never drops the field, never replaces it with "available on request", and never guesses. A message missing the field that makes it actionable has not been sent; it has been filed.
+
+Official recipients raise the bar: for tax authorities, immigration authorities, banks and registries, collect the field list before drafting, from the office's own instructions or the blank form, and hold the send until each field is filled or the user has decided to omit that one.
+
+Failure mode: an irreversible message sent without his eyes on the final text, or missing the field that lets the recipient act on it.
+
+### 85. A letter to an authority is prose to one reader: short, with the duty and the amount stated plainly
+
+Drafting an official letter as a structured report is what produces the text an official reads as machine-written and a person would not send. The give-aways are structural, and each one is removable:
+
+- **Headings over paragraphs.** "What the account shows.", "Why this meets the criteria." A letter has no sections.
+- **Enumerations.** Numbered asks, bulleted reasons, three-item runs and semicolon chains. Write sentences.
+- **The colon-field block.** "Taxpayer: ... SSN: ... Return: ... Submission ID: ..." is a form pasted into a letter. The identifiers belong in the first sentence and the signature block.
+- **Rubric and process language.** "Reason 5", "the criteria", "criteria 5 and 7", "this message completes my earlier request". The office's internal vocabulary does not belong in the letter, and neither does narration about the message itself.
+- **Volunteered inventories and offers.** Document lists, forms offered, options beside the request. The recipient asks for what it wants.
+- **First-person commentary.** Effort, frustration, willingness and hope, and the idioms that carry them: "I have run out of ways to move it myself", "if that is what it takes to move it", "which puts me under real pressure to close this now". State facts, positions and requests only; rule 2 holds the class.
+- **State the amount once, in figures.** The sum at stake moves a case faster than its history does.
+
+Then the shape to hit: what happened and what it costs, in two sentences. The provision that binds the office, and the fact that meets it, inline. The history of attempts in two sentences. One ask. A reservation of rights, not a threat aimed at the reader. Around 150 to 200 words; a letter that runs longer has facts that are not yet known, never prose that is not yet written.
+
+**A text that goes by fax or post stands alone.** The recipient files it and matches it to an account, so the page opens with the subject line: Re, then the sender's identification block (name, taxpayer or registration number, the references), then the recipient's address block, then the salutation. The request follows in its own marked line, complete in one sentence and phrased with Please (Korean: -해 주십시오 / -바랍니다), because a bare imperative reads as a demand and the office is not taking orders. The facts follow, compressed, then the signature with the date. Gaps sit between blocks, never inside one, and in the body they appear sparingly: two or three in a one-page letter, at the changes of subject, never after every sentence. One field per line; a row of pipes between fields reads as machine output and slows the scan. The whole text is in the recipient's language, labels included: a label or a name in another script is a defect, not a courtesy. Never refer to another message ("this message completes my earlier email"); a fax is read alone, often by someone who never saw the email.
+
+**The letter carries no heading of its own.** A title that names the document ("IRS escalation letter") is the user's index entry, not the recipient's. The page opens with the sender, the date and the recipient, then one Re: line that says what the matter is and which account it concerns. The file name can carry the user's words; the page never does. In Korean, the same line is the 제목, written so the receiving office reads its own subject, not the sender's label.
+
+**Name the action on the sender's own thing, not on the paper.** The request asks the office to process, decide, confirm or reply: "process my income tax return", with the form named only as the fact that carries it ("filed on Form 1040-NR"). A request built on the document's name ("process Form 1040-NR", "post the return") can be read as a defect in the form, as a request for a copy of it, or as mailing instructions. Where a common verb has a second plain meaning in another setting, the request uses the word the office uses for the action it must take.
+
+Failure mode: a letter that reads as a generated report, with headings, lists and offers, where a person was supposed to state a problem to an office.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
