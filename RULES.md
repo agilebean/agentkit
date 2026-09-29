@@ -1713,7 +1713,21 @@ Then the shape to hit: what happened and what it costs, in two sentences. The pr
 
 **Name the action on the sender's own thing, not on the paper.** (private) (private) Where a common verb has a second plain meaning in another setting, the request uses the word the office uses for the action it must take.
 
+**Route by the desk's stated duties, read from the office's own organization page.** (private) Find the desk whose 담당사무 covers the matter, use its own fax and phone, and keep the office's representative fax as the fallback. When no desk matches, address the head of the office and let routing place it.
+
 Failure mode: a letter that reads as a generated report, with headings, lists and offers, where a person was supposed to state a problem to an office.
+
+### 86. An official address, fax or phone number is verified before it goes into anything the user will use
+
+A wrong number is a failed delivery, and a fax that never lands looks exactly like silence while the deadline passes. Reading a number once from one page is not verification.
+
+- **Match the number to the duty.** Choose the desk from the office's own 조직/담당사무 listing by what it does, not by a name that sounds promising, and take that desk's own line. The office's representative number is the fallback, never the submission address.
+- **Two independent sources, at least one of them the office's own page for that desk.** A blog roundup, an aggregator or a single listing is a lead, not a fact. Where no second source exists, say that next to the number.
+- **A listing is not a working channel.** Fax lines get retired and reassigned without the page changing. Before a document relies on one, confirm it by phone with the desk and record who confirmed it and when. Until that call happens, the document carries the postal address and the desk's phone, and the fax number stays out of it.
+- **Record failures next to the number** ("02-701-5791 failed on 2026-09-29") and never reuse a failed number without a fresh check.
+- **Prefer the channel with an observable receipt** where a deadline or a legal record is at stake: registered post, a submission stamp at the counter, or a fax whose arrival the desk has confirmed.
+
+Failure mode: a letter sent to a number read once from a single page, or to a desk that turned out not to handle the matter.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
