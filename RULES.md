@@ -1855,6 +1855,16 @@ Failure mode: a relocation that deletes the user's formatted lines and inserts a
 
 Stated 2026-09-30: "take my edits and move them around."
 
+### 94. An outbound message is verified by its sent record, not by the send command's exit code
+
+A send that exits 0 and prints an id or a timestamp has proved only that the tool ran. What left the machine is what the record holds: the text, and every attachment. Read it back before reporting the send as done — the platform's own log (signal-cli's `message_send_log_content`, the sent mailbox, the note's revision) — and count the attachments there, not in the command line that was typed. A list-taking option can silently keep only its last value (signal-cli's `--attachment` is a `store` option with `nargs='*'`, so two flags send one file), and a caption is not an announcement: text sent in the same message as files arrives as their caption rather than as a message of its own. Neither failure is visible in the exit code.
+
+Extends rule 77's "verified by its ink, not by its exit code" and rule 88's "check the app's visible state, not the script's exit code" to messages leaving the machine.
+
+Failure mode: "sent" reported from an exit code, with a file missing from the message or the announcement worded onto the files.
+
+Stated 2026-09-30, after the S2 printout reached the TA as the PDF alone with the announce line as its caption: "you only send the script and forgot the run sheet. you sent the message as a comment to the pdf but it should be a text message to announce the files."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
