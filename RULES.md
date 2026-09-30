@@ -1865,6 +1865,20 @@ Failure mode: "sent" reported from an exit code, with a file missing from the me
 
 Stated 2026-09-30, after the S2 printout reached the TA as the PDF alone with the announce line as its caption: "you only send the script and forgot the run sheet. you sent the message as a comment to the pdf but it should be a text message to announce the files."
 
+### 95. A block only the user can clear is asked about within minutes, never worked around for an hour
+
+When progress stops on something no script can do — a click in a GUI, a permission dialog, a device approval, a 2FA code — the user is the fastest input in the loop and the ask costs him seconds. Run at most one or two automated recovery attempts; if they fail, stop, send the one-line request naming exactly what to click or do, and keep every unblocked part of the work moving in the same turn. An hour of escalating workarounds while the user sits at the machine is the failure this rule exists to prevent.
+
+- Classify first: a technical fault (crash, bad input, wrong file) gets debugging; a user-only action (dismiss a dialog, grant a permission, plug in a device, confirm a prompt) gets an ask.
+- The budget: about two recovery attempts or fifteen minutes of blocked time, whichever comes first — then the ask goes out, mid-turn if needed.
+- Name the exact act: "click Continue in the Keynote window on your screen" — not "Keynote is stuck". Location, element, what it unblocks.
+- Synthetic input is gated, not guaranteed. System Events keystrokes may land while `click at`, CoreGraphics event posts and `cliclick` clicks are silently dropped (TCC trust sits with the responsible process), and a panel may ignore keys entirely. Do not build an escalation ladder on clicks you cannot verify landed; the user's own hand is the reliable device.
+- Ask and work both continue: the request goes out, and the rest of the task proceeds around the blocked step, so the wait costs nothing but that step.
+
+Failure mode: 2026-09-30, the deck rebuild stalled behind a Keynote welcome/license panel from 19:52; ninety minutes went into relaunch cycles, container-state surgery, preference forensics and unverifiable synthetic clicks, while the one action that resolves it — a mouse click by Chaehan — was only being drafted when the panel finally cleared.
+
+Stated 2026-09-30: "why did you wait for over 1h?"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
