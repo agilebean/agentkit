@@ -1846,6 +1846,14 @@ Failure mode: studies compressed into a combined sentence, or details trimmed to
 
 Stated 2026-09-30: "the study results should be in bullet points or sub bullet points".
 
+### 93. A restructure carries the user's own lines verbatim: cut and place, never regenerate
+
+When a change moves, swaps, reorders or merges text the user has edited himself (a warmup swapped between two blocks, a section relocated, a list reordered), the unit of work is his line. Cut it and place it at the new location with its wording, punctuation, line breaks and formatting intact: three formatted lines do not collapse into one compressed sentence, and his fix is not re-invented from an older version of the text. Re-read the region immediately before moving it and work from his latest text, not from memory, so his edits are caught rather than bypassed. Glue that the move needs (a heading, a lead-in, a name that must change with the position) is added around his lines and kept minimal. After the move, show the before and after of every moved line; only he can confirm the move was faithful.
+
+Failure mode: a relocation that deletes the user's formatted lines and inserts agent-rewritten ones.
+
+Stated 2026-09-30: "take my edits and move them around."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
