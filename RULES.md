@@ -59,7 +59,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 - **Nominalizations:** "the collection of", "the utilization of", "the implementation of", "an improvement in". Use the verb: "we collect", "you improve".
 - **Empty intensifiers and hedges:** robust, holistic, seamless, comprehensive, cutting-edge, best-in-class, impactful, meaningful, significant, truly, deeply, arguably.
 - **Domain shorthand outside its own trade:** SKU, COGS, BOM, SLA, arm (in a study, write "test group"). Say what the thing is.
-- **Analyst jargon in user-facing prose:** benign, sub-clinical, protocol signal, fictional payoff, eliminated by error analysis.
+- **Analyst jargon in user-facing prose:** benign, sub-clinical, protocol signal, fictional payoff, eliminated by error analysis, tail (of a dose or an effect: write "some of it is still in the blood later").
 - **Trade slang kept out of speech:** "run of show" (write "the session plan"), "the block that stretches" (say what happens when it runs long), "shaded blocks" (say "after the break"), "in reading order", "on purpose" (write "deliberately").
 
 *Formulas*
