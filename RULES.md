@@ -55,7 +55,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 
 - **Container words that name a list instead of being one:** catalogue, inventory, taxonomy, matrix, framework, pipeline, mechanism, protocol, lever, modality. Name the thing: "the three filters", "how it works".
 - **Abstractions where a person or an action fits:** artifact, deliverable, learnings, insight, alignment, journey, problem space, solution space, touchpoint, friction, granularity, altitude ("at the right altitude"), needs-first, end-to-end.
-- **Consultant verbs:** leverage, utilize, facilitate, ideate, operationalize, socialize, surface (a need), unpack, double-click on, align on, drive (a change), enable, empower.
+- **Consultant verbs:** leverage, utilize, facilitate, ideate, operationalize, socialize, surface (a need), unpack, double-click on, align on, drive (a change), enable, empower, front-load, back-load ("front-loads quality": say what comes first, "the hard sessions come first in the week").
 - **Nominalizations:** "the collection of", "the utilization of", "the implementation of", "an improvement in". Use the verb: "we collect", "you improve".
 - **Empty intensifiers and hedges:** robust, holistic, seamless, comprehensive, cutting-edge, best-in-class, impactful, meaningful, significant, truly, deeply, arguably.
 - **Domain shorthand outside its own trade:** SKU, COGS, BOM, SLA. Say what the thing is.
@@ -1767,6 +1767,34 @@ When someone asks the user for a judgment that affects them (a student asking ab
 **Words that carry the story.** "predict", not "tell"; the reason joined by "as", never appended with "and"; no consequence clause tacked onto a fact ("so it's the one session you can't catch up on later" was cut); contractions stay. What the user strikes out binds as hard as what he writes. Chaehan, 2026-09-29: "understand that this is a story. understand what i ordered differently than you and why."
 
 Failure mode: a reply built as a policy memo — the rule stated first, the recommendation announced before its ground, reasons appended with "and", a consequence attached to the reader's own case, and a close that instructs where the decision should have been handed back.
+
+### 88. App automation addresses documents by name or path, never by index, and never writes a file the app has open
+
+The user's documents live in two places at once — a Keynote window and a `.key` file on Google Drive — and either identity can be broken by a careless script. Two failures on 2026-09-29 put the rule at the front. A deck export addressed `document 1` while the wrong document was frontmost, closed Chaehan's open E02 without saving (no autosave copy existed; unsaved edits would have been lost silently). And a build copy was overwritten with `cp` while Keynote had the same file open, which made every later save fail ("the file has been changed by another application"); the modal alert that followed then hung every osascript call, `close` included, until Keynote was force-quit.
+
+- **Address documents by name or by file path, never `document 1` or any index.** The frontmost document is not controllable from a script; the only stable handle is `document "<name>"` or a match on `(file of dd)`. When matching by name, use `contains`, not equality: a file copied by `cp` opens as `name.key` while a file saved by Keynote opens as `name`.
+- **Close only what the script itself opened, and only by its own name prefix.** A build script cleans up `slides_build_*` documents; the user's documents are never closed by a script.
+- **Unique build names per run**, with a timestamp. Never reuse a name an earlier run may have left open; never write over a path while any document points at it.
+- **Before a script writes a deck, refuse the run if the deck is open in Keynote** and say so. This is the guard `pipeline.py slides` carries; pattern for anything that saves a `.key`.
+- **A save failure raises a modal alert, and a modal alert blocks AppleScript forever.** When osascript stops answering or times out: the app is showing an alert on the user's screen; say so plainly, dismiss it (or ask the user to), close the stray document — force-quit the app if `close` hangs too — and fix the cause before retrying. Never relaunch the app into the same trap.
+- **Check the app's visible state, not the script's exit code.** After an export, the pages exist under the name of the destination folder, not the document; after a save, the mtime moved; after a close, `every document` no longer lists it. A script that "succeeded" while the app holds a stale window is not finished.
+
+Failure mode: an export that targets `document 1` and closes the user's document; a `cp` over a file the app has open, followed by an error alert nobody sees and a chain of hung scripts.
+
+### 89. A difference between two averages is a finding only when it clears the noise in the data
+
+When two quantities that vary are compared (paces, times, heart rates, rest intervals, prices, counts), a gap between their averages is not a result until it is larger than the spread in the measurements. A mean difference smaller than the standard error of the difference, or one whose confidence interval includes zero, is no difference. Report it as "no difference detected". Do not write it up as "slightly more" or "slightly less".
+
+- Compute the spread before interpreting the gap. Give each side as a mean with its standard deviation and its count, and give the difference with its standard error or confidence interval.
+- Compare like with like. When the measurements fall into conditions that differ systematically (effort level, distance, time of day, subject), group by the condition first and compare inside a group. Pooling across conditions inflates the spread and can hide a real difference or invent one.
+- Do not rank, narrate, or attach a cause to a gap that sits inside the noise. A tidy number is not evidence.
+- Two observations are a sample of two. At that size almost any gap is noise, so say so instead of explaining it.
+- When a real difference would matter, name what it would take to detect it (the sample size or the separation needed), rather than borrowing confidence.
+- The reverse also holds. A signal the user reports from his own body (a heart rate that reads high, a shoulder that hurts) stands on its own and is reported as itself, not downgraded because a small-sample average is flat.
+
+Failure mode: a mean gap inside the standard error written up as a real difference with a cause attached.
+
+Stated 2026-09-30: "mean differences within standard error are NO differences statistically".
 
 ### 90. Experiments leave no trace: clean up the scratch you created before you finish
 
