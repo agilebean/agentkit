@@ -1768,6 +1768,20 @@ When someone asks the user for a judgment that affects them (a student asking ab
 
 Failure mode: a reply built as a policy memo — the rule stated first, the recommendation announced before its ground, reasons appended with "and", a consequence attached to the reader's own case, and a close that instructs where the decision should have been handed back.
 
+### 90. Experiments leave no trace: clean up the scratch you created before you finish
+
+Work that inspects or verifies a result produces scratch: browser screenshots, temporary HTML or JSON files, converted files, throwaway scripts, a local server started to view an artifact. Scratch is not a deliverable. Remove it before you end the turn.
+
+- Delete every scratch file and directory you created. Captures under a tool's working directory, temp renders placed next to the artifact, and one-off scripts all qualify.
+- Stop the background processes you started, local file servers included.
+- Run `git status` before finishing. Delete the untracked paths that are yours. Do not leave them for the user to clear, and never commit them.
+- Keep the files the user asked for, and the tracked artifacts the task legitimately changes. Only your scratch goes away.
+- When a scratch artifact is worth keeping, say so and leave it on purpose.
+
+Failure mode: the task and the commit are clean, but the tree still holds untracked screenshots and temp files, and a server is still listening.
+
+Stated 2026-09-30: "always cleanup after such experiments".
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
