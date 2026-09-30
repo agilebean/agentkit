@@ -1679,6 +1679,7 @@ A goal written as knowledge to be recalled — "students can name the five sprin
 - **The level.** Understand, apply, analyse, evaluate, create. A goal with no verb, or only "know / name / be aware of", is a topic list. Chaehan, 2026-09-27: "if they can only name the five phases of the sprint, this is just memorization, not understanding so this cannot be a learning goal".
 - **The assignment it enables.** "Each student can run the test interview so it yields what the user actually did rather than a compliment" is a goal because Sunday's test needs exactly that (Biggs' constructive alignment). A goal no task calls on is decoration.
 - **The reach.** It must be attainable and observable inside the session. "Can name every classmate's skill and strength" is neither at 27 people in 110 minutes; the honest version is "knows other classmates better for team building" (Bandura: an unattainable goal carries no signal). Chaehan, 2026-09-27: "this is impossible! maybe knows other classmates better for team building".
+- **The phrasing.** The student is the subject: "Students can run the test interview...", never a bare imperative ("Run the test interview..."). Chaehan, 2026-09-30: "Students can run, not run."
 
 Worked example: the KUBS DT design's eight goals climb the taxonomy deliberately (S1 understand, S2 apply, S3 analyse, S4 create, S5 analyse, S6 create, S7 evaluate, S8 evaluate and reflect). The design's session table owns them; every artifact that displays a goal reads it from there (rule 77) instead of holding a copy.
 
