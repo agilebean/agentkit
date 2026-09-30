@@ -981,6 +981,17 @@ should detect." On 2026-09-19 a reply ended "I have not committed; say the
 word and I will commit and push"; Chaehan: "change this wording - i cannot
 parse this quickly. always ask as a question!"
 
+The ask must reach the screen even when the tool call dies. An interrupted
+question call leaves nothing to answer and no record that anything was
+asked. On 2026-09-29 the deck work was verified and the commit ask lived
+only inside the question-tool call "Commit and push?"; the call was
+interrupted before it showed, the session ended with its own tracked-file
+changes uncommitted, and Chaehan asked the next day: "why didn't you
+commit?". So when the ask is made, it goes in two places: the question
+tool and the reply's closing line ("Commit and push?"). A later message
+that asks about the missing commit is itself the go-ahead — commit and
+push in that turn, no second ask.
+
 ### 47. Artifacts built on the user's own plan must add value beyond it
 
 When the user supplies the raw material (his plan, his reasoning, his own
@@ -1809,6 +1820,18 @@ Work that inspects or verifies a result produces scratch: browser screenshots, t
 Failure mode: the task and the commit are clean, but the tree still holds untracked screenshots and temp files, and a server is still listening.
 
 Stated 2026-09-30: "always cleanup after such experiments".
+
+### 91. The banned-token sweep is a step on the finished draft, not an intention
+
+The wording rules gather here: 2 (robot markers), 19 (notes voice), 21 (short answers), 37 (messages as the sender), 42 (bulleted summaries), 48 (readable without decoding), 54 (chat replies said the way a person would), 55 (expand terms on first use), 57 (reader-facing register), 59 (reports in the reader's order), 60 (explanations), 85 (letters), 87 (grant or refuse as a story). They recur because the check is left as an intention. Run the whole set once, on the finished text, immediately before sending, against this list:
+
+- Terms: every metric, abbreviation, band or domain word carries a plain expansion at its first use in the text ("effort zone (an effort band such as 60%)"). A quantity or band named without saying what it is is a hit.
+- Judgment words: clear, not clear, established, not established, significant, real, plausible, mixed, moderate confidence, and similar verdict labels. Replace each with the size of the effect and its uncertainty, or with the fact that would decide it ("8 s slower, inside the session-to-session spread").
+- Report shapes: a bolded lead-in in front of a paragraph, a heading over a paragraph, a premise announced as a label ("the hole:", "the key:"), a section per part of the question, a semicolon chain, an em dash. Strip the scaffolding and say the content in sentences.
+
+A draft with any hit is not a reply yet. The sweep covers chat replies as much as notes, artifacts and questions.
+
+Failure mode: a listed defect shipped because the sweep was an intention rather than a step.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
