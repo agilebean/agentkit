@@ -1563,7 +1563,9 @@ When the source of truth changes — a chart, a script, a design decision, a rea
 - A dependent that is an image inside another file (a slide, a note) does not follow the file on disk: it is a copy that must be replaced by hand, and "the file is updated" is not evidence that the copy is.
 - Close the turn by naming what was synced and, explicitly, what was not.
 
-Failure mode: a canonical change landed in one artifact while its dependents keep the older version.
+**A required sync is executed, never offered back as a question.** When the dependent set is fixed by a standing convention (the run sheet follows its script, the deck follows its slides md, a plan document's section and the memory file's state paragraph follow the change they describe), the dependent is updated as part of the change, in the same turn. The question tool is for decisions that are genuinely still open, not for handing the user a step his own conventions already require. Chaehan's standard: "all must be synced automatically."
+
+Failure mode: a canonical change landed in one artifact while its dependents keep the older version, or a required sync offered back as a question instead of executed.
 
 ### 73. Never wait more than 60 seconds for a tool call: 20, then 40, then 60
 
