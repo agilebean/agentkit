@@ -981,6 +981,17 @@ should detect." On 2026-09-19 a reply ended "I have not committed; say the
 word and I will commit and push"; Chaehan: "change this wording - i cannot
 parse this quickly. always ask as a question!"
 
+The ask must reach the screen even when the tool call dies. An interrupted
+question call leaves nothing to answer and no record that anything was
+asked. On 2026-09-29 the deck work was verified and the commit ask lived
+only inside the question-tool call "Commit and push?"; the call was
+interrupted before it showed, the session ended with its own tracked-file
+changes uncommitted, and Chaehan asked the next day: "why didn't you
+commit?". So when the ask is made, it goes in two places: the question
+tool and the reply's closing line ("Commit and push?"). A later message
+that asks about the missing commit is itself the go-ahead — commit and
+push in that turn, no second ask.
+
 ### 47. Artifacts built on the user's own plan must add value beyond it
 
 When the user supplies the raw material (his plan, his reasoning, his own
