@@ -28,6 +28,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 - **Semicolon chains.** Split into sentences.
 - **Three-item runs** ("faster, clearer, stronger"). Say the one thing that matters.
 - **Long sentences with embedded clauses.**
+- **A comma followed by an "-ing" clause that carries a second action** (", citrulline raising the supply and tadalafil slowing the breakdown"). Two sentences squeezed into one. Write them out in full.
 - **Cleverness that needs decoding.** If a line is clever and needs a pause to parse, the cleverness is the wrong trade. Test: could he ask "what does this mean?"
 
 *Document scaffolding*
@@ -1823,7 +1824,7 @@ Stated 2026-09-30: "always cleanup after such experiments".
 
 ### 91. The banned-token sweep is a step on the finished draft, not an intention
 
-The wording rules gather here: 2 (robot markers), 19 (notes voice), 21 (short answers), 37 (messages as the sender), 42 (bulleted summaries), 48 (readable without decoding), 54 (chat replies said the way a person would), 55 (expand terms on first use), 57 (reader-facing register), 59 (reports in the reader's order), 60 (explanations), 85 (letters), 87 (grant or refuse as a story). They recur because the check is left as an intention. Run the whole set once, on the finished text, immediately before sending, against this list:
+The wording rules gather here: 2 (robot markers), 19 (notes voice), 21 (short answers), 37 (messages as the sender), 42 (bulleted summaries), 48 (readable without decoding), 54 (chat replies said the way a person would), 55 (expand terms on first use), 57 (reader-facing register), 59 (reports in the reader's order), 60 (explanations), 85 (letters), 87 (grant or refuse as a story), 92 (study summaries). They recur because the check is left as an intention. Run the whole set once, on the finished text, immediately before sending, against this list:
 
 - Terms: every metric, abbreviation, band or domain word carries a plain expansion at its first use in the text ("effort zone (an effort band such as 60%)"). A quantity or band named without saying what it is is a hit.
 - Judgment words: clear, not clear, established, not established, significant, real, plausible, mixed, moderate confidence, and similar verdict labels. Replace each with the size of the effect and its uncertainty, or with the fact that would decide it ("8 s slower, inside the session-to-session spread").
@@ -1832,6 +1833,16 @@ The wording rules gather here: 2 (robot markers), 19 (notes voice), 21 (short an
 A draft with any hit is not a reply yet. The sweep covers chat replies as much as notes, artifacts and questions.
 
 Failure mode: a listed defect shipped because the sweep was an intention rather than a step.
+
+### 92. A study summary is one bullet per study, in plain words, with every detail kept
+
+A summary of research for Chaehan, in chat or in a note, tells the studies the way a person would: one bullet per study, with sub-bullets when a study needs more than one line. Every detail the studies carry stays in: dose, sample size, duration, effect numbers and caveats. The bullets carry the numbers, not adjectives. Several studies are never folded into one flowing analyst sentence, and no detail is dropped to make the summary shorter.
+
+Complements rule 42 (bulleted summaries) and rule 91's sweep.
+
+Failure mode: studies compressed into a combined sentence, or details trimmed to shorten the summary.
+
+Stated 2026-09-30: "the study results should be in bullet points or sub bullet points".
 
 ## Shell: `~/.bash_aliases` (user-global)
 
