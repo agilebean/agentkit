@@ -1906,6 +1906,14 @@ Failure mode: 2026-09-30, the E02 assessment block took about 35 minutes (roughl
 
 Stated 2026-09-30: "you took 30min for making these slides, why did it take so long? this is unacceptable fix it."
 
+### 99. A mutation ends installed and verified, and is built on a fresh read
+
+When a pass changes an artifact the user keeps or is reviewing (a deck, a document, a note): (1) build on a FRESH read - re-copy or re-read it at the start of the pass and compare its shape (element count, timestamps, size) with what the pass assumes; a shape that has moved means the user has been editing, so the pass adapts to the current state or stops and asks, never proceeds on the earlier assumption; (2) end installed - a change sitting in a staging copy is not a change: install it to the canonical location in the same pass, honoring the artifact's guards (e.g. "no document open in the app"), and verify it there with the artifact's own tooling. Placing content "after X" means a new element after X, never an overlay on X itself.
+
+Failure mode: 2026-10-01, the E02 assessment sheet, three passes: the first overlaid the sheet on the divider slide instead of adding it after; the next assumed slide 6 was the divider while the user had meanwhile inserted his own slide and saved; and neither pass finished with an install. Chaehan: "you again tried to put the slide before, not after the divider slide which is the blue one."
+
+Stated 2026-10-01: "why did you put the slide before not after the divider slide which is the blue one???"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
