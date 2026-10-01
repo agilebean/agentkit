@@ -1898,6 +1898,14 @@ Failure mode: 2026-09-30, asked for the grading criteria of a fixed 65:35 course
 
 Stated 2026-09-30: "what i want is a perfect set of criteria, the 65:35 split is set. the peers schemes are useless, don't you get that? a final exam is the opposite of the essay, the team presentation is the equivalent."
 
+### 98. Read the mechanism's limits before designing its content, and run each automated pass once
+
+When content is destined for a known mechanism — a deck, a template, a pipeline — establish its limits first (row counts, wrap widths, z-order, what each command verifies) and design to them before the content is written or split; a limit discovered mid-build forces re-splits and extra runs. Sequence multi-stage builds so every automated stage runs once: structure first, content second, the hand-set layers last, and clear a layer's leftovers before the command that checks for them runs again. When a render looks wrong, run one decisive test — blank the suspect, render once — and compare against a known-good sibling before any fix chain; check first whether normal typography (descenders, parentheses) is being misread. A build whose path had to be discovered belongs in the project memory file as a checklist, so the next instance is a recipe, not a rediscovery; when a build overruns the pattern's time, report the measured wall time against its machine time.
+
+Failure mode: 2026-09-30, the E02 assessment block took about 35 minutes (roughly a third of it machine time): the criteria were split 5/4/4 before the deck's three-row limit was read and had to be re-split mid-build; orphaned strips failed a whole regeneration pass; and a title's descenders were chased through five diagnostic renders before a known-good comparison showed they were normal typography.
+
+Stated 2026-09-30: "you took 30min for making these slides, why did it take so long? this is unacceptable fix it."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
