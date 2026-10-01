@@ -1914,6 +1914,14 @@ Failure mode: 2026-10-01, the E02 assessment sheet, three passes: the first over
 
 Stated 2026-10-01: "why did you put the slide before not after the divider slide which is the blue one???"
 
+### 100. A comparative visual spec is measured against the artifact before anything is drawn
+
+When a new element is specified relative to an existing one — thicker than the vertical lines, the same green as the bars, half the band height — measure the reference off the artifact itself at full resolution (pixel-scan its render) before drawing, and state the measured value with the result. A value recalled from notes or memory can belong to a different element entirely, and a stroke that misses the reference inverts the instruction ("more thickness" delivered thinner). Never ship a comparative spec on an unmeasured number.
+
+Failure mode: 2026-10-01, the green circles on the rules slide were drawn 4 px thick against a remembered "3 px" (the bar's vertical bleed); the deck's vertical lines measure 9 px wide, so the circles came out thinner than the lines they were to exceed. Measured and redrawn at 12 px.
+
+Stated 2026-10-01: "i told you to make the green circles with more thickness than the vertical lines!"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
