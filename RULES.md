@@ -1890,6 +1890,14 @@ Failure mode: 2026-09-30, twice. First, asked for options "from the research thr
 
 Stated 2026-09-30: "you shouldn't just play around with my criteria but present me options from the research you did through the syllabi! at least three based on that." and "you were supposed to make evaluation schemes based purely from the criteria of the syllabi."
 
+### 97. Adapt by function, never by slot; a frame the user has set stays set
+
+When material from a source set is adapted onto the user's artifact, map components by what they are, not by where they sit in a table. Equivalent pieces transfer their criteria (a graded team presentation is his graded team presentation); non-equivalents transfer nothing — a closed, timed examination is the opposite of a reflective essay, so the essay is built from its own nature, never from the exam that would fill its slot in a comparison. Weight architectures are not criteria: percentages transplant only when the components themselves match. And the frame the user has already set — a fixed split, an existing structure he did not ask to change — stays fixed; a request for criteria is not a license to re-weight, and a request on one axis is not a mandate to redesign the others.
+
+Failure mode: 2026-09-30, asked for the grading criteria of a fixed 65:35 course, the agent re-weighted the course into four peer-styled architectures and mapped each peer final exam onto the essay. Chaehan: "the peers schemes are useless ... a final exam is the opposite of the essay, the team presentation is the equivalent."
+
+Stated 2026-09-30: "what i want is a perfect set of criteria, the 65:35 split is set. the peers schemes are useless, don't you get that? a final exam is the opposite of the essay, the team presentation is the equivalent."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
