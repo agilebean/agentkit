@@ -1882,6 +1882,14 @@ Failure mode: 2026-09-30, the deck rebuild stalled behind a Keynote welcome/lice
 
 Stated 2026-09-30: "why did you wait for over 1h?"
 
+### 96. Options asked for "based on X" are built purely from X, and labeled by source
+
+When the user asks for options, versions or suggestions "based on" a named source — the research, a document set, data, a comparison he collected — re-read the source and construct each option purely from what it actually contains: extract the schemes, criteria and mechanics it uses, keep its structure and register (a grading scheme asked for "like those in the syllabi" is written as the syllabi write theirs, bullets and all), and label each option with the source it came from. The user's own criteria are never the generator: they are added only in the specific variants he names one by one ("one with my grid", "one hybrid"), on top of the extracted material, never in place of it. The count he names is part of the instruction: "at least three based on that" means three or more source-derived options, not fewer. A set that swaps in the agent's own design and wears the source as decoration is useless and is discarded wholesale.
+
+Failure mode: 2026-09-30, twice. First, asked for options "from the research through the syllabi", the agent produced four versions of its own design seeded by the user's criteria, none anchored to a shape in the syllabi themselves. Second, the rebuild still forced the options through the user's criteria instead of extracting the syllabi's own evaluation schemes: "discard all. start again from scratch."
+
+Stated 2026-09-30: "you shouldn't just play around with my criteria but present me options from the research you did through the syllabi! at least three based on that." and "you were supposed to make evaluation schemes based purely from the criteria of the syllabi."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
