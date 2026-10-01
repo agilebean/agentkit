@@ -51,6 +51,9 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 - **Narration about the message itself** ("this message completes my earlier request").
 - **Explanatory preambles** ("since we will book soon...") and **embedded justifications** ("the quote is two months old, so...").
 - **Conditionals built from the analyst's logic** instead of the reader's.
+- **Metaphor labels** ("the evidence trail"): name the thing - "what you found out".
+- **Rows built from the method's components** ("the interviews, the ratings, the score, the prototype"): a criterion names the quality being judged and the symptoms that show it, never the steps of the process.
+- **Collective voice where one person acts** ("tell us why", "we grade"): write the one actor ("I grade"), or the direct imperative ("explain why"). The professor is one person, not a team.
 
 *Vocabulary*
 
