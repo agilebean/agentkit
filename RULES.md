@@ -1922,6 +1922,14 @@ Failure mode: 2026-10-01, the green circles on the rules slide were drawn 4 px t
 
 Stated 2026-10-01: "i told you to make the green circles with more thickness than the vertical lines!"
 
+### 101. A change that needs the user's hands is a gate, not a half-state
+
+When the last step of a change to a live artifact can only be done by the user (the tooling cannot style it, flip it, or finish it), never install the intermediate state: the user sees the degradation, not the plan, and a half-applied change is worse than none. Make the manual step a gate - asked for before the artifact is touched, or the change waits until the completed result exists - or drop the change. Your own verification render showing the artifact worse than before is a stop signal, not a to-do note: do not report the work done. Where a full result and a hand-finished result both exist, deliver the one that preserves the appearance at install time.
+
+Failure mode: 2026-10-02, the E02 rules slide: the four green circle images were swapped for native shapes to make them resizable; Keynote cannot script shape styling, so the installed state showed theme-default white-filled rectangles with blue borders over the text, the styling left as a hand pass. The deck was restored from the pre-swap backup after Chaehan saw it.
+
+Stated 2026-10-02: "the edits were terrible. can't you see that the rectangles are blue now and overlay the text???"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
