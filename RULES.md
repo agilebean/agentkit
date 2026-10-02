@@ -1461,6 +1461,8 @@ Failure mode: an older vintage used while a newer one sits in the same data.
 
 A slide has one place for its title: the element the deck already uses for titles, whether that is a title placeholder, a coloured title bar, or a header text object. Writing the heading as the first line of the body content is the same as having no title: the deck's title element stays generic while the reader has to find the topic inside the text. Before building or editing a slide, read how the deck's existing slides carry their titles, position, size and styling, then put the new slide's title in that same element and start the body below it.
 
+**A title is left-aligned, and its box spans the slide.** A centred title drifts toward the middle of its box whenever the text is shorter than the box — "Team Challenge" landed at x 141 and "The dot vote" at x 202 in the same deck whose full-width titles sat correctly (the 2026-10-02 misalignment); the fix is the alignment itself, never nudging the box's x per title width, which works until the next, shorter title. Titles whose boxes hug their text hide the defect. Keynote's scripting cannot set alignment — it is a hand pass in the inspector, after which every title box sits at its standard x (E01/E02: 34) and the ink at 44.
+
 The same principle governs the layout inside a slide: each point's heading sits above its own body text with a visible gap, and body text that renders over its heading is a defect no matter how the paragraph styles were inherited. Resizing a text object can also move its text, because a box whose text is vertically centred re-centres when its height changes. After any size change, set the position explicitly and verify on a rendered slide, never on the coordinates alone.
 
 Failure mode: a slide title written into the body instead of the deck's own title element.
@@ -1915,6 +1917,8 @@ When a pass changes an artifact the user keeps or is reviewing (a deck, a docume
 
 Failure mode: 2026-10-01, the E02 assessment sheet, three passes: the first overlaid the sheet on the divider slide instead of adding it after; the next assumed slide 6 was the divider while the user had meanwhile inserted his own slide and saved; and neither pass finished with an install. Chaehan: "you again tried to put the slide before, not after the divider slide which is the blue one."
 
+A moved shape is a full stop, not a note: on 2026-10-02 the pre-install stat showed the E03 deck freshly saved by Chaehan (30.6 MB against the 3.5 MB expectation, timestamp one minute old) and the install ran anyway, overwriting his save — the recovery is the drive's version history. Seeing the moved timestamp and installing regardless is the failure; the check exists exactly so the pass stops and asks.
+
 Stated 2026-10-01: "why did you put the slide before not after the divider slide which is the blue one???"
 
 ### 100. A comparative visual spec is measured against the artifact before anything is drawn
@@ -2030,6 +2034,12 @@ left inline with its content.
 
 Stated 2026-10-02: "the lists 1,2,3 must be shown in real numbered lists."
 and "always make a new line for a subheader that ends with a colon".
+
+### 107. A rebuild is acceptance-tested against the standard, not against the copy it reproduces
+
+When regenerating or repairing an artifact inside a system that has a documented standard — row spacing, chip wording, sheet layout, chart geometry — the standard is the acceptance test; the source you copied from is only scaffolding. A pixel-perfect match to the immediate source proves fidelity to that source, and the source may itself be the deviation. Verify against the standard's measured numbers first; use the source only where no standard exists. When the check passes against the source but the result still reads wrong to the user, the untested standard is the suspect, not his eye.
+
+Failure mode: 2026-10-02, the E03 deck. The post-it craft and dot vote pages were rebuilt natively as duplicates of their E04 source pages and verified pixel-identical — while the deck family's row standard (grey sub-line at headline ink + 75, first row 0.16 H, row gaps ~99-110, off E01/E02) went unchecked; the source pages themselves carried the deviation (greys 4 px under the headlines, gaps 74-82). Chaehan: "you had very very clear instructions how to position the headers and subtext and e03 completely deviates in almost all slides."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
