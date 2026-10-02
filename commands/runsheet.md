@@ -20,7 +20,8 @@ python3 projects/kubs_dt/pipeline.py runsheet --session $1
   - `learning goal` — read from the course design's `| **Sn** | Topic >> Learning goal |` row at render time, so the sheet and the design cannot disagree. Never copy it into the block.
   - `minutes` — rule 77's one set of minutes: the run-of-show rows, the section headers' block minutes and the block's chips must agree, per card.
   - `ink` — the drawn text read back for markup written as an HTML entity (`&gt;` draws literally; the block writes the plain character with a backslash, `\>`).
-  - `fit` — the ink against the last card's bottom border and the render window's edge: a card's text taller than its box runs past the border, a sheet touching the window edge is clipped.
+  - `fit` — every card row's border: each bottom border is paired with the next row's top border and the gap between them is read, plus the space under the last row, so a middle-row overflow is caught, not only the bottom row's. The border test is blue-family, so a run of cream chips cannot read as a border.
+  - `wording` — the robot markers of RULES.md rule 2 in the script, as a note that never fails the sheet: `N flag(s), M warn(s)`, with `pipeline.py lint --session N` for the lines.
   - `budget` — free memory against the 3 GB floor (rule 75); informational once the render has run.
 
 **Exit codes.** `0`: the PNG is written, all checks passed. `2`: the PNG is written and checks flagged problems — report each failed check. Anything else: no PNG (the script or the block is missing) — report the error and stop.
