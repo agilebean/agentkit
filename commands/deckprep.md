@@ -1,0 +1,22 @@
+---
+description: Put the course slide at position 2 into a KUBS DT session deck and write its slides markdown
+---
+
+Prepare the KUBS DT session deck for session $1: the course slide at position 2, and a slides markdown that covers the whole deck. Run it for 3 and for every later session as its folder and deck appear.
+
+**The standing rule (Chaehan, 2026-10-02): every session deck carries the course slide at position 2, directly after the title slide, and the green marks show the day.** The slide is a full-bleed 1920x1080 render of the course chart: a rounded rectangle around the current session's week row and an ellipse around the session's own chip. The green is the deck's own green, rgb(62, 141, 39), stroke 12 px. E02's position-2 slide is the reference look; for a fresh render, take the chart from "KUBS DT Course Design/KUBS DT course overview.png", which `python3 projects/kubs_dt/pipeline.py runsheet --session 0` regenerates from "KUBS DT session 0 - overview.md" (do that first: E02's chart image is an older render and still says "10:30 Launch: process, rules, first topic" and "13:30 Intros, skills, games").
+
+**Job 1 - the course slide.**
+
+1. Render the marked chart. Measure the week band's box and the session's chip box from the render itself; never guess coordinates. The durable way is a mark switch in the chart generator (the highlight is drawn with the chart); the fallback is Pillow on the PNG.
+2. Put it in the deck. A slide cannot be copied between decks and a group cannot be copied, so the slide is built from a sibling: duplicate the title slide to position 2, clear the copy's cover and sub texts, leave the page-number item alone (the GillSans 24 item at the bottom right, x 1806, y 1030), clear its presenter notes, then add the render addressed to the slide - `tell s to make new image with properties {file: (POSIX file "<path>")}` - and `set position of image (count of images of s) of s to {0, 0}`. A document-level `make new image` fails with error -10024. Images land on top of text, so the render covers whatever the copy carried.
+3. To refresh an existing course slide instead, `delete every image of s` and add the new render the same way.
+4. Save, then export the deck's pages and look at the slide. Never report the slide as done from the script's exit code alone.
+
+**Job 2 - the slides markdown.** Write `KUBS DT Sn/KUBS DT WS2026 Enn.md` from the deck as it now stands, in the grammar of the E02 file: `## <n> · <type> [· <title>]` sections in deck order, `title` for the cover, `rows` with the three-column table for the numbered slides, `screen` for a navy divider, `image` for every rendered or hand-made slide, and a `Notes:` line where the slide's notes matter. The course slide is `## 2 · image · The course at a glance`. The md is the only source of the deck's text afterwards - never rebuild text from the deck or a render again.
+
+Then run `python3 projects/kubs_dt/pipeline.py slides --session $1` (shortcut `/slides $1`). It writes the md's text into the deck, re-lays the colour bars, verifies bar and text within 2 px, and stops with the slide named if the md and deck disagree on slide count, row count or pairs - a structure change is a Keynote job, do it before the run.
+
+**Guards.** A deck open in Keynote refuses the run: ask Chaehan to close its window (he works in these decks himself, often in a document named E03_surgery). Never overwrite a `.key` file while Keynote has it open. Back up before every install: copy the deck into the stage folder (`$TMPDIR/kubs_dt/`) first. If osascript hangs, Keynote is showing a modal alert - dismiss it, close the stray `slides_build_*` document, run again.
+
+**Close the pass.** An entry in the session folder's `_log.md`, dated, with the reason and the measured seconds, and the matching update in `memory/kubs.md` (the session's material bullet and the "Where everything lives" row). Report the session, the slide count, the bar offsets and the times; say plainly if the deck's slide was only verified by a render you looked at.
