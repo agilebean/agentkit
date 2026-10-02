@@ -24,7 +24,7 @@ From the socrates repo (`~/Software/Prototypes/socrates`):
 
     python3 projects/kubs_dt/pipeline.py printout --session <N>
 
-It re-renders the run sheet PNG first when the script is newer than the sheet (about 1.5 s fresh, about 4.5 s with the re-render), then prints three paths: the script PDF in the repo's `out/`, the run sheet PNG in the session folder, and the script PDF's copy in that same session folder on the Drive. The latter is the record a reader finds beside the script; the `out/` build is what Step 3 attaches. Read the output; stop and report on any error.
+It re-renders the run sheet PNG first when the script is newer than the sheet (about 2.7 s measured 2026-10-02; the PNG is written before its checks run — relay any failed check it prints), then prints three paths: the script PDF in the repo's `out/`, the run sheet PNG in the session folder, and the script PDF's copy in that same session folder on the Drive. The latter is the record a reader finds beside the script; the `out/` build is what Step 3 attaches. Read the output; stop and report on any error.
 
 ## Step 3 — send over Signal, as two messages
 
