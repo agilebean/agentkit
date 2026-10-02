@@ -1382,6 +1382,7 @@ much it matters to him, and group like items under headings he would use.
 - **No process narration.** The order in which you did things is irrelevant, and
   so are the tools you used and the checks you ran, unless a check is the
   evidence he asked for.
+- **A defect reads as the user will see it on the artifact.** "The check-in card's text hangs below the bottom edge of its card" — not the name of the check that missed it, or when the flaw crept in; the mechanism is named only where knowing it changes what he does next.
 - **Identifiers earn their place.** A commit hash, path, or file list appears
   when he needs it to act or verify, not as proof of effort.
 - **A file list is not a report.** Enumerating files he already knows is not
@@ -1567,6 +1568,8 @@ When the source of truth changes — a chart, a script, a design decision, a rea
 - Close the turn by naming what was synced and, explicitly, what was not.
 
 **A required sync is executed, never offered back as a question.** When the dependent set is fixed by a standing convention (the run sheet follows its script, the deck follows its slides md, a plan document's section and the memory file's state paragraph follow the change they describe), the dependent is updated as part of the change, in the same turn. The question tool is for decisions that are genuinely still open, not for handing the user a step his own conventions already require. Chaehan's standard: "all must be synced automatically."
+
+**A missing generator is not a missing sync.** When the dependent has no build command — a deck without a slides md, a hand-placed image, a note without a twin — the sync is still executed in the same turn by the artifact's own route (patch it, move it, replace it), and a real block is reported as blocked with its gate named. "No md yet, a later pass" is neither. 2026-10-02: the post-it craft and the dot vote moved from the S4 session to S3; scripts, sheets, logs, design rows and memory were swept while both decks kept the moved pages in their old sessions, filed as a separate deck pass — and the user had to order the move.
 
 Failure mode: a canonical change landed in one artifact while its dependents keep the older version, or a required sync offered back as a question instead of executed.
 
@@ -1947,6 +1950,86 @@ Any text the user will copy into another channel — a KakaoTalk or Signal messa
 Failure mode: 2026-10-02, the couple.net refund drafts were delivered inside `>` blockquotes.
 
 Stated 2026-10-02: "you must give the text without the > , just plain text. remember that in rules, always think of copy & paste !"
+
+### 104. Editability is a requirement: a living original is never flattened into a copy as the default
+
+When content moves between containers — a slide between decks, a chart between files, text between a document and a note — the move chooses a form: the editable original, or a flattened copy (an image, a render, a pasted screenshot). The flattened form is right for fixed artwork: photos, scans, pages that only ever existed as renders. For anything the user edits again, flattening is a loss nothing downstream undoes, and a verified install cannot see it: the render is pixel-perfect and the content is dead.
+
+- Compare the working form of both ends before the move. Pixels going into a deck whose neighbouring slides are native text — or a static render standing in for a live table — is a downgrade even when the arrangement is faithful.
+- A written recipe carries its preconditions. When a recipe was learned on case A ("foreign pages are already fixed exports"), check the current content is case A before applying it.
+- Find the editable route before settling: the user's own clipboard paste between apps, a native rebuild from the source's measured properties (font, size, colour, position), or regeneration from the source of truth.
+- When one route is fast-but-frozen and another slow-but-editable, the trade-off is the user's to make: name both options before installing, never as a footnote after.
+
+Failure mode: 2026-10-02, the KUBS decks. The post-it craft and dot vote slides moved from the S4 deck to the S3 deck; the agent applied the image-page import recipe (learned on fixed renders), installed two full-bleed image pages into a deck of native slides, and verified them at 0 px. Chaehan: "the new slides for postit and dot vote are images that is terrible!!! why would you do that not as an editable slide like everywhere else? what made you think that way, and why can't you apply common sense for that?"
+
+### 105. An effort retrospective accounts for the user's own labor and psychology, not the artifact inventory
+
+When the user asks what a project cost him ("analyze all the effort", "what went
+into organizing X", "why was this so time-intensive"), the files are evidence,
+not the analysis. Every artifact is the residue of human sessions, and
+reconstructing those sessions is the deliverable:
+
+- **Infer the human work behind each artifact before writing anything.** An
+  inventory note with photos, sizes, and weights means he stood in the storage
+  unit, opened the boxes, photographed every item, measured it, weighed it, and
+  wrote the rows himself. A quote table means he read every quote, chased the
+  ones that arrived in other channels, and re-derived numbers he had no reason
+  to trust. An agent runbook means he wrote the prompts, reviewed the outputs,
+  and corrected the agent's mistakes. Name these sessions and their kind
+  (physical work, waiting, re-checking, asking), never only the file that
+  records them.
+- **Enumerate the whole record before analyzing, and cover every layer.** A
+  retrospective built on a sample of the artifacts is defective: search every
+  related source by its topic terms (Evernote notes, local memory files,
+  working folders, git history), register each hit's role, and then work the
+  layers in order: the planning, the dependency chain that ordered the steps,
+  the difficulty of the market itself (finding, reaching, and comparing the
+  providers), the execution, and the records. The deliverables are the last
+  layer, not the whole account.
+- **Keep two ledgers and present both.** The technical side: files, notes,
+  tooling, machine actions, elapsed span. The human side: the hours that were
+  his, the reply gaps he waited through, the asks he made of family and
+  helpers, the rework after each restart, the upkeep of the records. An answer
+  with only the first ledger has answered a different question.
+- **The psychological cost is the core of this analysis, not a closing
+  flourish.** For each phase, infer what it cost in his experience: the
+  avoidance before starting, the social price of the asks, the weight of the
+  objects (heirlooms carry memory, not utility), the guilt of the open loop,
+  the morale tax of re-doing work a destination flip deleted, the relief at
+  closure. Ground every reading in his recorded patterns and his own words;
+  where a reading is speculative, mark it as a reading. General patterns go to
+  the psychological-observations file; the case detail stays in the topic file
+  and points to it. The person never disappears behind the files.
+- **Account for the split between what only he could do and what was
+  delegated.** Meaning decisions, family coordination, and final trust in the
+  numbers stayed with him by design; the legwork was delegated. Naming which
+  load was inherently his is where realistic time improvements live, because
+  the rest was already handed off.
+
+Failure mode: an effort analysis that reads as a project inventory, with the
+human hours and the psychological cost missing or flattened into one line; or
+one built on a sample of the record while related notes, files, and history
+went unread.
+
+Stated 2026-10-02: "you must separate the technical effort of deliverables from
+what I the human user had to go through ... you didn't infer any psychological
+aspects which is here the focus."
+
+### 106. Lists are real lists, and a colon subheader gets its own line
+
+When text contains enumerated items (1, 2, 3 or bullets), each item sits on
+its own line as a real list entry, never run together inside a paragraph.
+When a phrase ends with a colon and heads the content below it (a subheader,
+a lead-in), that phrase sits on its own line; joining it inline with the
+content that follows ("The chain that had to line up: item list, then quotes,
+then ...") hides the structure the reader scans for. This applies in chat
+replies, notes, and memory files.
+
+Failure mode: numbered items delivered as running prose, or a heading phrase
+left inline with its content.
+
+Stated 2026-10-02: "the lists 1,2,3 must be shown in real numbered lists."
+and "always make a new line for a subheader that ends with a colon".
 
 ## Shell: `~/.bash_aliases` (user-global)
 
