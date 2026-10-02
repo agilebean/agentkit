@@ -4,7 +4,7 @@ description: Build and send the KUBS DT printout files (session script PDF + run
 
 Send Yeonju the printout files for KUBS DT session $1.
 
-Step 1, build the two files (the script as a PDF without its "Run sheet cards" block, and the run sheet PNG; the sheet is re-rendered first when the script is newer). From the socrates repo root:
+Step 1, build the two files (the script as a PDF without its "Run sheet cards" block, and the run sheet PNG; the sheet is re-rendered first when the script is newer — the re-render writes the PNG before its checks run, so relay any failed check it prints). From the socrates repo root:
 
 ```
 python3 projects/kubs_dt/pipeline.py printout --session $1
