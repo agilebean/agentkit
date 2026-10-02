@@ -1930,6 +1930,16 @@ Failure mode: 2026-10-02, the E02 rules slide: the four green circle images were
 
 Stated 2026-10-02: "the edits were terrible. can't you see that the rectangles are blue now and overlay the text???"
 
+### 102. "X should have Y" is a directive: find the named content and change X; a mention of the subject is not the content
+
+When the user says an artifact should carry something — "the 7 card should have the bad interview relay" — he is stating the intended content, not asking whether it is there. Locate that content in the sources of truth (the script, the design, the logs, the deck), change the artifact in the same turn, render the derived view, and show the before and after. The failure is a token match: finding a phrase that merely touches the subject and reporting the artifact compliant while the named content is absent or still in its old frame.
+
+The same message usually carries a second tell — "the script got a wrong update" — which means the artifact's current content is the suspect: compare it against the sources and fix it. Do not swap in a different discrepancy you find easier to resolve, and do not re-assert the current state. When the user says you found the content but did not change it, the finding was an owed edit, not a report. "The wording is his" guards invented content; it never blocks applying the content he named. A question in the same message is answered; it does not discharge the directive.
+
+Failure mode: 2026-10-02, the KUBS S3 run sheet. Chaehan: "the script got a wrong update. the 7 card should have the bad interview relay. which session lost it and why?" The agent traced the relay correctly (session 2 did not run it; its text moved into session 3's interview block) but read "should have" as "confirm it is present", matched the card's old phrase ("the bad interview from session 2: ...") as proof, spent the turn on a different contradiction (the block vs body minutes), and left card 7 unchanged.
+
+Stated 2026-10-02: "you still have the old content for card 7! you found the bad interview relay but why didn't you change it? explain this clearly we must correct your agent rules and thinking. this is really really bad"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
