@@ -101,7 +101,7 @@ Not required for T1–T7 to land.
 
 **Q5 — T6 tag: use `v0.1.0` as written, no bump needed.** Verified:
 `pyproject.toml` version is `0.1.0`, and `git ls-remote --tags origin`
-(`SoHu-Labs/agentkit`) returns **no tags** — `v0.1.0` does not exist on the
+(`agilebean/agentkit`) returns **no tags** — `v0.1.0` does not exist on the
 remote. Tag and push `v0.1.0`; use `v0.1.0` in all three CI refs and the
 vendor-bump example. Only bump to `v0.1.1` if a tag collision appears at push
 time.
@@ -710,7 +710,7 @@ cd /Users/chaehan/Software/Prototypes/decisionmaker && python -m pytest -q
 
 ### T6 — Pin agentkit to a tag in consumer CI (B1)
 
-**Step 1: tag agentkit on its GitHub remote (`SoHu-Labs/agentkit`).** From the
+**Step 1: tag agentkit on its GitHub remote (`agilebean/agentkit`).** From the
 agentkit repo (whose remote is that GitHub repo):
 ```bash
 cd /Users/chaehan/Software/Prototypes/agentkit
@@ -725,7 +725,7 @@ file, the block currently is:
 ```yaml
       - uses: actions/checkout@v4
         with:
-          repository: SoHu-Labs/agentkit
+          repository: agilebean/agentkit
           path: vendor/agentkit
           token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -733,7 +733,7 @@ Add one line `          ref: v0.1.0` directly under `repository:` so it becomes:
 ```yaml
       - uses: actions/checkout@v4
         with:
-          repository: SoHu-Labs/agentkit
+          repository: agilebean/agentkit
           ref: v0.1.0
           path: vendor/agentkit
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -990,7 +990,7 @@ description: Bump the pinned agentkit ref in every consumer repo's CI after tagg
 """Set `ref: <new>` in each consumer's agentkit checkout block.
 
 Assumes the standard block shape:
-    repository: SoHu-Labs/agentkit
+    repository: agilebean/agentkit
     [ref: <old>]
     path: vendor/agentkit
 """
@@ -1015,7 +1015,7 @@ def bump(path: Path, new_ref: str) -> bool:
     i = 0
     while i < len(lines):
         out.append(lines[i])
-        if "repository: SoHu-Labs/agentkit" in lines[i]:
+        if "repository: agilebean/agentkit" in lines[i]:
             indent = lines[i][: len(lines[i]) - len(lines[i].lstrip())]
             # Does a ref: line follow within the block?
             if i + 1 < len(lines) and lines[i + 1].strip().startswith("ref:"):
@@ -1440,7 +1440,7 @@ agentkit.
   ```yaml
   jobs:
     ci:
-      uses: SoHu-Labs/agentkit/.github/workflows/reusable-ci.yml@v0.1.0
+      uses: agilebean/agentkit/.github/workflows/reusable-ci.yml@v0.1.0
       with:
         agentkit_ref: v0.1.0
         python_version: "3.12"
