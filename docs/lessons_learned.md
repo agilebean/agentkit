@@ -43,7 +43,7 @@ Also add to each repo's CI workflow:
 ```yaml
 - uses: actions/checkout@v4
   with:
-    repository: SoHu-Labs/agentkit
+    repository: agilebean/agentkit
     path: vendor/agentkit
 - run: pip install -e vendor/agentkit
 ```
