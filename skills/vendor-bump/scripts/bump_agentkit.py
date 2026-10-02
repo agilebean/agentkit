@@ -2,7 +2,7 @@
 """Set `ref: <new>` in each consumer's agentkit checkout block.
 
 Assumes the standard block shape:
-    repository: SoHu-Labs/agentkit
+    repository: agilebean/agentkit
     [ref: <old>]
     path: vendor/agentkit
 """
@@ -16,7 +16,7 @@ _PARENT = Path(__file__).resolve().parents[4]  # .../Prototypes
 _WORKFLOWS = [
     _PARENT / "email-digest/.github/workflows/test.yml",
     _PARENT / "invoice-admin/.github/workflows/ci.yml",
-    _PARENT / "decisionmaker/.github/workflows/ci.yml",
+    _PARENT / "socrates/.github/workflows/ci.yml",
 ]
 
 
@@ -27,7 +27,7 @@ def bump(path: Path, new_ref: str) -> bool:
     i = 0
     while i < len(lines):
         out.append(lines[i])
-        if "repository: SoHu-Labs/agentkit" in lines[i]:
+        if "repository: agilebean/agentkit" in lines[i]:
             indent = lines[i][: len(lines[i]) - len(lines[i].lstrip())]
             # Does a ref: line follow within the block?
             if i + 1 < len(lines) and lines[i + 1].strip().startswith("ref:"):
