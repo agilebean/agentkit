@@ -47,6 +47,40 @@ def _cdp_browser_major(address: str, timeout_s: float = 2.0) -> str | None:
         return None
 
 
+def _cdp_targets(address: str, timeout_s: float = 2.0) -> list | None:
+    """Target list from the CDP ``/json`` endpoint, or ``None`` when unreadable."""
+    try:
+        req = urllib.request.Request(f"http://{address}/json")
+        with urllib.request.urlopen(req, timeout=timeout_s) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+        return payload if isinstance(payload, list) else None
+    except Exception:
+        return None
+
+
+def _ensure_cdp_page(address: str, timeout_s: float = 2.0) -> None:
+    """Guarantee at least one page target exists on the running browser.
+
+    ChromeDriver's attach mode fails with "unable to discover open pages" when the
+    browser has no page targets (a browser still running with every window closed).
+    Creating an about:blank tab keeps the attach working. Best-effort: when the
+    browser cannot be reached, return silently and let the attach surface its error.
+    """
+    targets = _cdp_targets(address, timeout_s=timeout_s)
+    if targets is None:
+        return
+    if any(isinstance(t, dict) and t.get("type") == "page" for t in targets):
+        return
+    try:
+        req = urllib.request.Request(
+            f"http://{address}/json/new?about:blank", method="PUT"
+        )
+        with urllib.request.urlopen(req, timeout=timeout_s):
+            pass
+    except Exception:
+        pass
+
+
 def _brave_is_running() -> bool:
     """Check if process named 'Brave Browser' exists (with or without debug port)."""
     try:
@@ -182,6 +216,7 @@ def chrome_driver_attach(
         debugger_address=debugger_address,
         download_dir=download_dir,
     )
+    _ensure_cdp_page(debugger_address)
     # Resolve the chromedriver that matches the RUNNING browser instead of trusting
     # whatever chromedriver happens to be on PATH (brew-installed drivers lag Brave's
     # auto-updated Chromium and produce version-mismatch hangs).
