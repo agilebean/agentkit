@@ -1,11 +1,12 @@
 """Tests for agentkit.browser._browser (Brave/Chrome attach)."""
 from __future__ import annotations
 
+import urllib.request
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from agentkit.browser import chrome_driver_attach
-from agentkit.browser._browser import _cdp_browser_major
+from agentkit.browser._browser import _cdp_browser_major, _ensure_cdp_page
 
 
 class _FakeResponse:
@@ -62,6 +63,7 @@ class TestChromeDriverAttach:
                 "agentkit.browser._browser._cdp_browser_major",
                 return_value="152",
             ),
+            patch("agentkit.browser._browser._ensure_cdp_page"),
             patch("agentkit.browser._browser.SeleniumManager") as mock_mgr_cls,
             patch(
                 "agentkit.browser._browser.webdriver.Chrome",
@@ -110,6 +112,7 @@ class TestChromeDriverAttach:
                 "agentkit.browser._browser._cdp_browser_major",
                 return_value=None,
             ),
+            patch("agentkit.browser._browser._ensure_cdp_page"),
             patch("agentkit.browser._browser.SeleniumManager") as mock_mgr_cls,
             patch(
                 "agentkit.browser._browser.webdriver.Chrome",
@@ -132,3 +135,99 @@ class TestChromeDriverAttach:
                 brave,
             ]
         )
+
+
+class TestEnsureCdpPage:
+    """A page target must exist before ChromeDriver attaches (Brave with no windows)."""
+
+    def test_opens_blank_tab_when_no_page_target(self) -> None:
+        calls: list[urllib.request.Request] = []
+        responses = iter(
+            [
+                _FakeResponse(
+                    '[{"type": "service_worker", "url": "chrome-extension://x"}]'
+                ),
+                _FakeResponse('{"type": "page", "url": "about:blank"}'),
+            ]
+        )
+
+        def fake_urlopen(req: urllib.request.Request, timeout: float | None = None):
+            calls.append(req)
+            return next(responses)
+
+        with patch(
+            "agentkit.browser._browser.urllib.request.urlopen",
+            side_effect=fake_urlopen,
+        ):
+            _ensure_cdp_page("127.0.0.1:9222")
+
+        assert [c.get_method() for c in calls] == ["GET", "PUT"]
+        assert calls[0].full_url == "http://127.0.0.1:9222/json"
+        assert calls[1].full_url == "http://127.0.0.1:9222/json/new?about:blank"
+
+    def test_does_not_open_tab_when_page_exists(self) -> None:
+        calls: list[urllib.request.Request] = []
+
+        def fake_urlopen(req: urllib.request.Request, timeout: float | None = None):
+            calls.append(req)
+            return _FakeResponse('[{"type": "page", "url": "about:blank"}]')
+
+        with patch(
+            "agentkit.browser._browser.urllib.request.urlopen",
+            side_effect=fake_urlopen,
+        ):
+            _ensure_cdp_page("127.0.0.1:9222")
+
+        assert [c.get_method() for c in calls] == ["GET"]
+
+    def test_silent_when_cdp_unreachable(self) -> None:
+        with patch(
+            "agentkit.browser._browser.urllib.request.urlopen",
+            side_effect=OSError("connection refused"),
+        ):
+            _ensure_cdp_page("127.0.0.1:9222")
+
+    def test_silent_when_new_tab_creation_fails(self) -> None:
+        def fake_urlopen(req: urllib.request.Request, timeout: float | None = None):
+            if req.full_url.endswith("/json"):
+                return _FakeResponse("[]")
+            raise OSError("boom")
+
+        with patch(
+            "agentkit.browser._browser.urllib.request.urlopen",
+            side_effect=fake_urlopen,
+        ):
+            _ensure_cdp_page("127.0.0.1:9222")
+
+
+class TestChromeDriverAttachEnsuresPage:
+    def test_attach_ensures_page_exists_before_session(self) -> None:
+        fake_driver = MagicMock()
+        opts = MagicMock()
+        opts.capabilities = {"browserName": "chrome"}
+        opts.binary_location = None
+
+        with (
+            patch(
+                "agentkit.browser._browser.build_chrome_options_for_remote_debugging",
+                return_value=opts,
+            ),
+            patch(
+                "agentkit.browser._browser._cdp_browser_major",
+                return_value="152",
+            ),
+            patch("agentkit.browser._browser._ensure_cdp_page") as mock_ensure,
+            patch("agentkit.browser._browser.SeleniumManager") as mock_mgr_cls,
+            patch(
+                "agentkit.browser._browser.webdriver.Chrome",
+                return_value=fake_driver,
+            ),
+        ):
+            mock_mgr_cls.return_value.binary_paths.return_value = {
+                "driver_path": "/cache/chromedriver-152",
+            }
+
+            result = chrome_driver_attach(debugger_address="127.0.0.1:9222")
+
+        assert result is fake_driver
+        mock_ensure.assert_called_once_with("127.0.0.1:9222")
