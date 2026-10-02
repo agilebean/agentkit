@@ -1940,6 +1940,14 @@ Failure mode: 2026-10-02, the KUBS S3 run sheet. Chaehan: "the script got a wron
 
 Stated 2026-10-02: "you still have the old content for card 7! you found the bad interview relay but why didn't you change it? explain this clearly we must correct your agent rules and thinking. this is really really bad"
 
+### 103. Send-ready text is delivered copy-paste-ready: plain text, no markers
+
+Any text the user will copy into another channel — a KakaoTalk or Signal message, an email body, a form answer, a post — is shown as plain text. No blockquote markers (`>`), no code fences, no markdown emphasis, no leading bullets unless the message itself carries them: nothing that would have to be stripped after pasting. He copies from the reply straight into the app, so every decoration inside the draft is either copied along or costs him a cleanup step. Labels ("Version 1", "If she pushes back:") sit above or outside the text being copied, never as markers inside it.
+
+Failure mode: 2026-10-02, the couple.net refund drafts were delivered inside `>` blockquotes.
+
+Stated 2026-10-02: "you must give the text without the > , just plain text. remember that in rules, always think of copy & paste !"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
