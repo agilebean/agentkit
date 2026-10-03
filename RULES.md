@@ -86,6 +86,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 *Content claims*
 
 - **Goals a session cannot deliver:** a learning goal is a claim about what a student can do after the session, so it has to be possible and observable in that time. "can name every classmate's skill and strength" (27 people, one session) is neither; the honest version is "knows other classmates better for team building" (Bandura: an unattainable goal carries no signal). When a goal is corrected, sweep the same claim wherever the design states it, and re-render every artifact that reads it (rule 77).
+- **Invented content.** A step, rule or procedure the user never set - the card-move team formation ("you made up a lot of clutter like how we do it", 2026-10-03), a peer-evaluation criterion ("why did you make these up?", 2026-10-01) - is not written into his artifacts, and never into his script, where it would be read and spoken as his. The script carries what he will say and the facts he set; what is missing is asked, not filled.
 
 The list covers internal working artifacts too (run sheets, session cards, flow notes), and a re-render re-reads the text before it ships: phrasing an earlier pass left behind is swept, not shipped again.
 
@@ -1974,8 +1975,13 @@ When content moves between containers — a slide between decks, a chart between
 - A written recipe carries its preconditions. When a recipe was learned on case A ("foreign pages are already fixed exports"), check the current content is case A before applying it.
 - Find the editable route before settling: the user's own clipboard paste between apps, a native rebuild from the source's measured properties (font, size, colour, position), or regeneration from the source of truth.
 - When one route is fast-but-frozen and another slow-but-editable, the trade-off is the user's to make: name both options before installing, never as a footnote after.
+- **A composite is still a flattening when one of its layers is.** Live text laid over a full-bleed render whose art bakes the source's separate pieces (a movie, a symbol, a strip) reads to the user as "an image I cannot edit" even though the text edits. Probe the source slide's object list first (movie / shape / text / background fill) and rebuild that construction; where scripting cannot recreate a part — a slide-level background, a slide copied between documents — that part is a human step: ask for it up front, never substitute a flattened approximation.
 
 Failure mode: 2026-10-02, the KUBS decks. The post-it craft and dot vote slides moved from the S4 deck to the S3 deck; the agent applied the image-page import recipe (learned on fixed renders), installed two full-bleed image pages into a deck of native slides, and verified them at 0 px. The user: "the new slides for postit and dot vote are images that is terrible!!! why would you do that not as an editable slide like everywhere else? what made you think that way, and why can't you apply common sense for that?"
+
+Failure mode: 2026-10-03, the KUBS S3 "Design Challenge" divider. The slide was built as a text-free navy render at (0,0) plus live text — pixel-faithful, text editable — and the user: "you did it again the same mistake the divider slide is an image which i cannot edit! how many times do i have to say it again so you remember?? take it from e01. don't put the icon movie on." E01's dividers are a slide-level background + a red strip shape + the tiger as a movie object + a "?" text glyph + live text; the composite baked the pieces he wanted separate. The faithful rebuild lives in a copy of E01 and reaches the deck by the user's clipboard paste, because Keynote scripting can set neither a slide background nor copy a slide between documents.
+
+Stated 2026-10-03: "take it from e01. don't put the icon movie on." and "design it better, title up and the options apart and centered so they can it is a big option".
 
 ### 105. An effort retrospective accounts for the user's own labor and psychology, not the artifact inventory
 
@@ -2072,6 +2078,44 @@ When a script, document, or note states what another artifact says — a slide's
 Failure mode: 2026-10-03, the KUBS S3 script and course design row. The first design challenge — older adults stay in charge of their own day, the appointments, the errands, the calls they have always handled alone — was written as "the day of an older adult who lives alone": a property of the tasks moved onto the person.
 
 Stated 2026-10-03: "this is wrong, not live alone".
+
+### 110. A correction's negations are literal, and the rejected content is never offered back
+
+When the user rejects a wording, sentence, or design, their message names the
+surviving direction — often in rough grammar. Read the polarity literally: a
+"nor" or "neither" is a negation even when the sentence is ungrammatical, and
+"not good" removes the thing it names, it does not endorse it. Inverting the
+polarity turns a rejection into an approval and produces a fix that keeps
+everything the user just flagged.
+
+- **The rejected content is an exclusion.** When they reject "Design how older
+  adults stay in charge" and "makes a routine stick", no option, draft, or
+  recommendation may retain either phrase — not in the question tool, not as a
+  conservative fallback, and above all not as the recommended option. An option
+  that re-presents the flagged content is the same mistake with a button on it.
+- **"Made decisions" is a constraint about scope.** When the rejection says a
+  wording "made decisions" — it pre-decides a choice that belongs to the user
+  (or their students, or their audience) — the fix removes the decision: the
+  smallest formulation that states only the task, with the choice left open.
+  Replacing one decision with another is not the fix.
+- **"I already told you" points at the earlier message.** Re-read it before
+  replying; the specification is in that text, not in your reconstruction. If
+  the corrected direction still leaves the exact words open, build from the
+  user's own words at their level of generality, say which words you chose and
+  why, and expect their edit pass.
+
+Failure mode: 2026-10-03, the KUBS S3 team design challenge. The user rejected
+"Design how older adults stay in charge of their own day." / "Design how
+someone living alone makes a routine stick." because the wordings pre-decided
+the students' problem; the agent read "But how older adults stay in charge nor
+makes a routine stick is a good goal for a challenge" as approval of both
+phrases (treating "nor" as a typo for "or"), then offered three reformulations
+that all kept them. The user: "you mustn't decide if it's stay in charge or
+learning routines!!!!!" and "Why don't you get it but persist on that?"
+
+Stated 2026-10-03: "i already told you that you made decision by these current
+wordings! Why don't you get it but persist on that? you mustn't decide if it's
+stay in charge or learning routines!!!!!"
 
 ## Shell: `~/.bash_aliases` (user-global)
 
