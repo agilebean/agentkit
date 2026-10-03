@@ -7,15 +7,16 @@ Rebuild the KUBS DT run sheet for session $1.
 From the socrates repo root:
 
 ```
-python3 projects/kubs_dt/pipeline.py runsheet --session $1
+python3 projects/kubs_dt/pipeline.py runsheet --session $1            # render only, ~2.5 s
+python3 projects/kubs_dt/pipeline.py runsheet --session $1 --checks   # render, then validate
 ```
 
-**Run the command first — it is the verification.** Do not read the script, the block, the memory or an older render before it has run. The command renders first and checks second: the PNG is written to `KUBS DT Sn/KUBS DT session n - run sheet.png` in seconds, and only then does it validate. Never spend a minute on checks the command does itself.
+**Run the command first — it is the verification.** Do not read the script, the block, the memory or an older render before it has run. Plain, the command renders the PNG to `KUBS DT Sn/KUBS DT session n - run sheet.png` in about 2.5 s and does nothing else. The checks are opt-in: **pass `--checks` whenever the edit touched the block, the script's minutes, the learning goal or the card text** — that is the state in which the three minute places can disagree. A re-render of unchanged content can go plain. Never spend a minute on checks the command does itself with `--checks`.
 
 ## What the command prints
 
-- `png ready in Xs: <path> (WxH px; render Xs, crop Xs)` — the PNG is on disk. Relay this line and the pixel size. The command parsed the block best-effort (a broken row still renders), wrote the page to `projects/kubs_dt/run_sheets/rsn.html`, rendered it with headless Brave and cropped the ink.
-- One line per check, then a summary:
+- `png ready in Xs: <path> (WxH px; render Xs, crop Xs)` — the PNG is on disk. Relay this line and the pixel size. The command parsed the block best-effort (a broken row still renders), wrote the page to `projects/kubs_dt/run_sheets/rsn.html`, rendered it with headless Brave and cropped the ink. Plain runs then print `checks: skipped` and the timings: the render carries the command (measured 2026-10-03: render 2.28-2.67 s, crop 0.31-0.33 s, checks 0.22 s).
+- With `--checks`, one line per check, then a summary:
   - `block` — the block's irregularities, each with file and line: a row before the header, a wrong cell count, a missing `**Title.**` line, an `**Overrun.**` card with no row.
   - `learning goal` — read from the course design's `| **Sn** | Topic >> Learning goal |` row at render time, so the sheet and the design cannot disagree. Never copy it into the block.
   - `minutes` — rule 77's one set of minutes: the run-of-show rows, the section headers' block minutes and the block's chips must agree, per card.
@@ -24,7 +25,9 @@ python3 projects/kubs_dt/pipeline.py runsheet --session $1
   - `wording` — the robot markers of RULES.md rule 2 in the script, as a note that never fails the sheet: `N flag(s), M warn(s)`, with `pipeline.py lint --session N` for the lines.
   - `budget` — free memory against the 3 GB floor (rule 75); informational once the render has run.
 
-**Exit codes.** `0`: the PNG is written, all checks passed. `2`: the PNG is written and checks flagged problems — report each failed check. Anything else: no PNG (the script or the block is missing) — report the error and stop.
+**Exit codes.** Plain: `0` when the PNG is written. With `--checks`: `0` when the PNG is written and all checks passed, `2` when checks flagged problems — report each failed check. Anything else: no PNG (the script or the block is missing) — report the error and stop.
+
+The checks need only the script, the design and the rendered PNG; they can move to a command of their own if that is ever wanted. `printout` still re-renders with the checks when its PNG is stale, because that path is the gate before the TA prints.
 
 **A failed check is fixed in the source, never in the render.** The block is the script's own wording (rule 77: a plan and its derived view are one artifact): sweep the run of show, the section headers, the chips and the design row together, then re-run the command. The sheet is never hand-edited — the next render overwrites it. The checks cover what a machine can see; a card's wording and content are still Chaehan's.
 
