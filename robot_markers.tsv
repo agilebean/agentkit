@@ -1,0 +1,37 @@
+# The robot markers of RULES.md rule 2, machine-readable for the wording checker
+# (`scripts/wording_lint.py`). This is the shared list: every project consumes it,
+# and a project pipeline wraps the checker where useful (socrates:
+# `projects/kubs_dt/pipeline.py lint`). One copy lives here; project repos do not
+# keep their own.
+# Columns, tab-separated: level <TAB> pattern <TAB> fix <TAB> exception (optional).
+# level: flag = the lint fails on a hit; warn = reported only.
+# The pattern is a Python regex, matched case-insensitively, one hit per line.
+# The list is the checkable subset by design: three-item runs, embedded clauses,
+# headings over one sentence and colon-field blocks stay a writer's pass.
+flag	—	write periods and short sentences, not em-dashes
+flag	\s---\s	write periods and short sentences, not " --- " as a dash	^\s*\|
+flag	\bit'?s not (?:just|about)\b	say the one thing; drop the "not just" frame
+flag	\bthe key is\b	state the fact
+flag	\bat its core\b	state the fact
+flag	\bwhen it comes to\b	name the thing directly
+flag	\bin order to\b	write "to"
+flag	\bthe ability to\b	write "you can"
+flag	\b(?:catalogue|taxonomy|inventory|pipeline|lever|modality|protocol)\b	name the thing itself
+flag	\b(?:leverage[sd]?|utilize[sd]?|utilizing|ideate[sd]?|ideating|operationalize[sd]?|socialize[sd]?|unpack(?:ing|ed|s)?|double-click(?:ing|ed)?|front-load(?:ing|ed|s)?|back-load(?:ing|ed|s)?|align(?:ing|ed)? on)\b	use the plain verb
+flag	^\s*(?:[-*]\s+)?\*{0,2}(?:Status|Why|Context|The mechanism|The counter|Atmosphere)\*{0,2}:	drop the label; write the sentence
+flag	\b(?:plausible, not established|mixed evidence)\b	state the call and the fact that would change it
+flag	^\s*\*{0,2}Confidence\b	state the call; uncertainty is the fact that would change it
+flag	\bhigh confidence\b	state the fact that would change the call
+flag	\bthis message (?:completes|responds|follows|is)\b	drop the narration about the message
+flag	\bthe evidence trail\b	name what you found out
+flag	\blearnings\b	name what was learned
+flag	\bat the right altitude\b	name the detail level
+flag	\b(?:robust|holistic|seamless|comprehensive|cutting-edge|best-in-class|impactful)\b	cut the intensifier
+warn	;[^;\n]*;	a semicolon chain; consider splitting into sentences	^\s*\|
+warn	\b(?:framework|matrix|mechanism)\b	name the thing itself
+warn	\b(?:significant|meaningful|truly|deeply|arguably)\b	cut the hedge or give the measure
+warn	\b(?:facilitate[sd]?|facilitating|enable[sd]?|enabling|empower(?:s|ed|ing)?|surface[sd]?|surfacing)\b	use the plain verb
+warn	\b(?:artifact|artifacts|deliverable|deliverables|alignment|journey|touchpoint|granularity|end-to-end|needs-first)\b	name the thing or the action	learning journey
+warn	\binsight(?:s)?\b	name what was learned	biggest insight
+warn	\brun of show\b	write "the session plan"
+warn	\bin reading order\b	say where it starts and what follows
