@@ -1606,6 +1606,8 @@ Stated 2026-09-25: "why do you do such long timeouts of 600s? the max timeout sh
 - One verification read after the last write, not a read after every write.
 - Close a multi-artifact turn with the call count and the measured machine time, so the ratio stays visible.
 
+**The wait he asks about is the turn, not the command.** When something "takes too long", the number to quote and to cut is the wall clock of the whole request as he waits: his message to the reply, model steps, tool round trips and question waits included. The command's own seconds are the breakdown, never the headline. Read the turn from the session store (`~/.local/share/opencode/opencode.db`: `session_message.time_created` to the message's `data.time.completed`, in ms), or from `date` markers around the pass. The shape to expect: a pipeline command is seconds, a turn of a few model steps is minutes. A report that answers a waiting question with the command's seconds has answered the wrong question.
+
 ### 75. Heavy local work has a weight budget, a stated cost, and a one-element probe
 
 Rule 73 caps how long a call may wait. It says nothing about how much the call
