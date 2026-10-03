@@ -22,6 +22,8 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 
 **Robot markers.** Chaehan, 2026-09-26, on a session script: "sounds robotic! remember that". These read as machine-written in spoken scripts, student handouts, notes and drafts. This list is the reference for the word "robotic": when he says a text sounds robotic, the offending feature is in here, and the plain sentence beside the entry is the fix.
 
+**The instances are inventoried.** Every correction he gives is appended to `ROBOTIC_WORDING.md` (this folder) in the same turn: the flagged words, the source, and the repair he wanted. Text he will read or hear is checked against this list and that inventory before it ships. A new class becomes a bullet here. A class a project can check becomes a row in that project's lint list where one exists (KUBS: `socrates/projects/kubs_dt/robot_markers.tsv`, read by `pipeline.py lint --session N`).
+
 *Punctuation and rhythm*
 
 - **Em-dashes, and " --- " used as a substitute.** Write periods and short sentences.
@@ -69,7 +71,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 *Formulas*
 
 - **Fake-sentence patterns:** "It's not just X, it's Y"; "It's not about X, it's about Y"; "The key is..."; "At its core..."; "when it comes to"; "in order to" (write "to"); "the ability to" (write "you can").
-- **Contrasts built for sound:** "bias is watched, not switched off"; "the filters cost you more on Wednesday". Write the plain fact: "you cannot switch bias off"; "you get one hour with a stranger and no second chance".
+- **Contrasts built for sound:** "bias is watched, not switched off"; "the filters cost you more on Wednesday"; "this week is the sprint, not the book". Write the plain fact: "you cannot switch bias off"; "you get one hour with a stranger and no second chance"; "the reading comes Thursday, in the sketch session".
 - **Metaphors that give an abstraction agency, and absolutes about it:** "where bias enters an interview" claims one overall bias that is completely known. Write what the person does: "knows several biases in interviews".
 - **Formal greeting and closing formulas** in messages he sends (매니저님, 안녕하세요 / 검토 부탁드립니다, 감사합니다). The body only.
 
@@ -2042,6 +2044,16 @@ and "always make a new line for a subheader that ends with a colon".
 When regenerating or repairing an artifact inside a system that has a documented standard — row spacing, chip wording, sheet layout, chart geometry — the standard is the acceptance test; the source you copied from is only scaffolding. A pixel-perfect match to the immediate source proves fidelity to that source, and the source may itself be the deviation. Verify against the standard's measured numbers first; use the source only where no standard exists. When the check passes against the source but the result still reads wrong to the user, the untested standard is the suspect, not his eye.
 
 Failure mode: 2026-10-02, the E03 deck. The post-it craft and dot vote pages were rebuilt natively as duplicates of their E04 source pages and verified pixel-identical — while the deck family's row standard (grey sub-line at headline ink + 75, first row 0.16 H, row gaps ~99-110, off E01/E02) went unchecked; the source pages themselves carried the deviation (greys 4 px under the headlines, gaps 74-82). Chaehan: "you had very very clear instructions how to position the headers and subtext and e03 completely deviates in almost all slides."
+
+### 108. The command he names is what he types, and side effects are opt-in
+
+When Chaehan says "the X command" and the name exists at two layers — the entry point he invokes (the global `/X` command, a skill) and an internal script subcommand of the same name (`pipeline.py X`) — he means the entry point he types. The script subcommand is machinery: change it only when he says so. When the two are genuinely ambiguous, ask which; never silently pick the layer that is easier to edit.
+
+Commands default to the minimal job (build, render, make), and anything beyond it — sending a message, running heavy checks, writing outside the local tree — happens only when he passes the option or asks for it in the conversation. Never make a default run more effectful than it was, and never wire a side effect (a send above all) into an entry point unconditionally.
+
+Failure mode: 2026-10-03, the printout. He asked whether "the printout command" sends or just makes the files, and said he needed a send option; the agent added a `--send` flag to the pipeline subcommand and wired `/printout` to send unconditionally through it. The correction: the skill command must not send except with the send option, and the python command did not need the change at all.
+
+Stated 2026-10-03: "i need to have a send option in the latter case." and "i don't need the python command but the skill command should not send it except with the send option."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
