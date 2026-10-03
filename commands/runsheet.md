@@ -29,7 +29,7 @@ python3 projects/kubs_dt/pipeline.py runsheet --session $1 --checks   # render, 
 
 The checks need only the script, the design and the rendered PNG; they can move to a command of their own if that is ever wanted. `printout` still re-renders with the checks when its PNG is stale, because that path is the gate before the TA prints.
 
-**A failed check is fixed in the source, never in the render.** The block is the script's own wording (rule 77: a plan and its derived view are one artifact): sweep the run of show, the section headers, the chips and the design row together, then re-run the command. The sheet is never hand-edited — the next render overwrites it. The checks cover what a machine can see; a card's wording and content are still Chaehan's.
+**A failed check is fixed in the source, never in the render.** The block is the script's own wording (rule 77: a plan and its derived view are one artifact): sweep the run of show, the section headers, the chips and the design row together, then re-run the command. The sheet is never hand-edited — the next render overwrites it. The checks cover what a machine can see; a card's wording and content are still the user's.
 
 ## The block
 
@@ -39,4 +39,4 @@ The wording lives at the very bottom of `KUBS DT Sn/KUBS DT session n - script.m
 - **A chip in the block holds the plain minutes** ("40 min"). The drawn sheet adds the running total in brackets ("40 (45) min") and prints the session total, so never write a total into the block: it is derived, and one edited minute renumbers every chip after it.
 - **`Source`** names where a card's content comes from (a deck, an Evernote note, a book chapter), and it carries the sheet's one mark: `📖` for a card that needs a pre-read from the Kalbach book. The sheet lists those cards by chip number on the header line; a dash, or an empty cell, means no mark.
 - The block is the only source of the sheet's wording. Never rebuild a card's text from the PNG, the deck, or a previous render — if the block is missing, report the error the command prints (it names the file) and stop.
-- A script with no block yet: build the block from the current PNG or its `rsn.html`, then ask Chaehan before writing it into the script — the block wording is his.
+- A script with no block yet: build the block from the current PNG or its `rsn.html`, then ask the user before writing it into the script — the block wording is the user's.

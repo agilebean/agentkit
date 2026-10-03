@@ -1,6 +1,6 @@
 ---
 name: life-overview
-description: Create or refresh Chaehan's dated Life Overview — whole-life status snapshot with a timeline graphic, what-went-well section, and open tasks. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
+description: Create or refresh the user's dated Life Overview — whole-life status snapshot with a timeline graphic, what-went-well section, and open tasks. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
 ---
 
 # Life Overview

@@ -11,13 +11,13 @@ Run prefix: `mamba run -n socrates python -m projects.evernote.src.evernote_api`
 
 ## Which path to use
 
-The **Evernote MCP server is the only path.** It is configured in `~/.config/opencode/opencode.jsonc` under `mcp.evernote` (`type: remote`, `url: https://mcp.evernote.com/mcp`); opencode itself is the MCP client, and the tools reach the session's catalog as `tools.evernote.*` (27 tools: `search_notes`, `get_note`, `edit_note`, `create_note`, `delete_note`, attachments and tags). Use them through `execute` only. The shell CLI is not a fallback — Chaehan, 2026-09-26: "you never use the cli fallback that is too slow."
+The **Evernote MCP server is the only path.** It is configured in `~/.config/opencode/opencode.jsonc` under `mcp.evernote` (`type: remote`, `url: https://mcp.evernote.com/mcp`); opencode itself is the MCP client, and the tools reach the session's catalog as `tools.evernote.*` (27 tools: `search_notes`, `get_note`, `edit_note`, `create_note`, `delete_note`, attachments and tags). Use them through `execute` only. The shell CLI is not a fallback — the user, 2026-09-26: "you never use the cli fallback that is too slow."
 
 **When the tools are absent, it is a connection-state problem, not auth.** Read the opencode log (`~/.local/share/opencode/log/opencode.log`); never run the `opencode` CLI to diagnose it (it blocks while it starts or attaches to the service). The evernote MCP connects once per project directory when the service starts; if that first connect fails — on 2026-09-26 the Surfshark VPN blackholed `mcp.evernote.com` and the log showed `mcp connect failed ... ConnectionRefused` at 10:31 — that directory stays without the tools for the life of the service while others reconnect. Read `mcp connect failed` / `mcp connected ... directory=<dir>` for the session's directory. Fix: restart the service — in the OpenChamber app, that means restarting the app; it re-boots the service and re-attempts every directory connect (verified 2026-09-26: the evernote tools came back immediately). With a VPN in play, turn it off first. Re-check availability with `search({ query: "evernote", namespace: "evernote" })`. While it is down, report the outage instead of writing through the CLI.
 
 The shell CLI below is the fallback, and the only path outside an opencode session.
 
-**Batch MCP work into one visible call.** Fetch the note once inside a single `execute` call, apply every edit in that same call (await them in a loop), and read the note back once at the end for the report. Never read-modify-verify per edit: each MCP call is a remote round trip, and on 2026-09-25 thirteen edits became twenty calls while Chaehan watched it hang ("is that absolutely necessary? if yes, timeout early!!!!!"). One call for the changes, one for the verification; the execute runtime has no timers, so the only lever is fewer calls.
+**Batch MCP work into one visible call.** Fetch the note once inside a single `execute` call, apply every edit in that same call (await them in a loop), and read the note back once at the end for the report. Never read-modify-verify per edit: each MCP call is a remote round trip, and on 2026-09-25 thirteen edits became twenty calls while the user watched it hang ("is that absolutely necessary? if yes, timeout early!!!!!"). One call for the changes, one for the verification; the execute runtime has no timers, so the only lever is fewer calls.
 
 **Verify every write by re-reading, on both paths.** A write can report success and not persist. Observed 2026-09-25 on the note "2026-09-11 KUBS DT Course Design - Sprint and JTBD": `replace-section` and `insert-after-heading` returned `updated: true` six times in a row while a by-guid read kept returning byte-identical content, and a scratch note in the same notebook accepted a write in the same minute. After any `update-by-title`, `replace-section`, `insert-after-heading` or `update`, read the note back by guid and confirm the new text is in it; if it is not, report that instead of reporting the note as updated.
 
@@ -33,7 +33,7 @@ Alternatively: set `EVERNOTE_TOKEN` env var.
 - Order: graphic first, then TL;DR, then the body sections.
 - The TL;DR is an H2 heading (`## TL;DR`), never plain text or a bolded line. Its text follows on the next line(s).
 - Titles carry the date as the bare first word: `2026-08-16 Top Supplements`, never `Top Supplements (2026-08-16)`. Canonical rule: RULES.md rule 20.
-- The body is written the way you would say it to Chaehan in chat, not as a reference entry: no label prefixes ("Status:", "Why:"), no telegraphic fragments, no analyst third person. Canonical rule: RULES.md rule 19.
+- The body is written the way you would say it to the user in chat, not as a reference entry: no label prefixes ("Status:", "Why:"), no telegraphic fragments, no analyst third person. Canonical rule: RULES.md rule 19.
 
 ## Notebook placement
 

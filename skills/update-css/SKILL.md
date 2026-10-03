@@ -21,7 +21,7 @@ whole second.
 Example: 400 m 8:05 (485 s), 200 m 4:10 (250 s) gives (485-250)/2 = 117.5 s,
 rounded up to 118 s = 1:58.
 
-Zone rule (set by Chaehan), applied to the rounded CSS:
+Zone rule (set by the user), applied to the rounded CSS:
 
 | Zone | Rule | Example (CSS 1:58) |
 |------|------|--------------------|
