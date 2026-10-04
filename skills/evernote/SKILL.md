@@ -141,6 +141,33 @@ Risk set: notes whose markdown twin references images by path. In KUBS DT those
 are the course design overview (week grid at the top), the opener story (the BigP
 retrospective photo) and the diagram evolution document.
 
+## Cell edits must preserve the cell's markup; recover lost markup from note history
+
+Replacing a table cell's inner content with a rebuilt plain string destroys
+everything the cell's ENML carries beyond its words: richlinks to other notes
+(`<a type="inline-richlink" href="evernote:///…">`, share links), stacked
+`<div>` lines, coloured `<span>` runs, right-aligned number divs. A text read
+cannot see any of it — the stripped text looks the same before and after the
+loss — so it surfaces only when the user opens the note, and by then the
+markup is gone.
+
+- Before changing a cell, fetch the raw ENML (`get_note`) and treat the
+  existing inner markup as part of the content: substitute only the specific
+  words and numbers that were approved, keeping every tag around them.
+- When markup was already flattened, recover it from note history — Evernote
+  keeps per-sync versions (2026-10-04: 186 of them on "2026 Travel Itinerary
+  €20274"): `listNoteVersions(token, guid)`, pick the newest version from
+  before the loss, `getNoteVersion(token, guid, usn, False, False, False)`
+  via `projects/evernote/src/thrift_client.py`, transplant the cell's raw
+  inner, re-apply the approved text changes inside it, then write with the
+  MCP `edit_note` (surgical, keeps the note's resources).
+- Verify by markup markers (`href` fragments, `style=` runs), never by the
+  stripped text: the text check passes on both the rich and the flattened cell.
+
+Failure it prevents: on 2026-10-04 the Seoul row's details cell was rebuilt
+as plain text during a cost edit; four note links and the line and colour
+formatting vanished, and only the version history could bring them back.
+
 ## Surgical update commands (delta only, no read needed)
 
 These commands modify ENML server-side so the LLM sends only the delta.
