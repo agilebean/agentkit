@@ -69,6 +69,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 - **Domain shorthand outside its own trade:** SKU, COGS, BOM, SLA, arm (in a study, write "test group"). Say what the thing is.
 - **Analyst jargon in user-facing prose:** benign, sub-clinical, protocol signal, fictional payoff, eliminated by error analysis, tail (of a dose or an effect: write "some of it is still in the blood later").
 - **Trade slang kept out of speech:** "run of show" (write "the session plan"), "the block that stretches" (say what happens when it runs long), "shaded blocks" (say "after the break"), "in reading order", "on purpose" (write "deliberately").
+- **Japanese and other non-Latin names without their reading:** give the romanized reading first (Kawaramachi), and keep the characters only so the name can be pasted into a map or a search (京都河原町). A name the user cannot read carries no information. The user, 2026-10-04: "i can't read the hotel names in japanese."
 
 *Formulas*
 
