@@ -86,7 +86,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 *Content claims*
 
 - **Goals a session cannot deliver:** a learning goal is a claim about what a student can do after the session, so it has to be possible and observable in that time. "can name every classmate's skill and strength" (27 people, one session) is neither; the honest version is "knows other classmates better for team building" (Bandura: an unattainable goal carries no signal). When a goal is corrected, sweep the same claim wherever the design states it, and re-render every artifact that reads it (rule 77).
-- **Invented content.** A step, rule or procedure the user never set - the card-move team formation ("you made up a lot of clutter like how we do it", 2026-10-03), a peer-evaluation criterion ("why did you make these up?", 2026-10-01) - is not written into his artifacts, and never into his script, where it would be read and spoken as his. The script carries what he will say and the facts he set; what is missing is asked, not filled.
+- **Invented content.** A step, rule or procedure the user never set - the card-move team formation ("you made up a lot of clutter like how we do it", 2026-10-03), a peer-evaluation criterion ("why did you make these up?", 2026-10-01), the silent minute's invented "stand up, look at the wall" ("this is totally wrong", 2026-10-04) - is not written into his artifacts, and never into his script, where it would be read and spoken as his. The script carries what he will say and the facts he set; what is missing is asked, not filled.
 
 The list covers internal working artifacts too (run sheets, session cards, flow notes), and a re-render re-reads the text before it ships: phrasing an earlier pass left behind is swept, not shipped again.
 
@@ -2116,6 +2116,27 @@ learning routines!!!!!" and "Why don't you get it but persist on that?"
 Stated 2026-10-03: "i already told you that you made decision by these current
 wordings! Why don't you get it but persist on that? you mustn't decide if it's
 stay in charge or learning routines!!!!!"
+
+### 111. The user's voice carries only sourced content, and his spoken lines serve their audience
+
+Text written as the user's own words - a script he will speak, an announcement, a message he sends - passes two checks before it ships:
+
+- **Provenance.** Every instruction to another person (what students do, what a recipient must do), every number, every procedure traces to something the user supplied or approved. A slot he left empty stays empty or is marked to fill; the genre's plausible completion ("stand up, look at the wall" for a classroom silent minute) is fabrication even when it reads naturally. The review question is "which of these words came from him", never "does this read right": invented text is fluent by construction, so fluency cannot be the check.
+- **Audience value.** A spoken line carries something for its listeners. In a session script that is the students' learning experience: recitals of a schedule they can read elsewhere, rhetorical contrasts, and restatements of another artifact are cut. The sheet card keeps the plan; the speech keeps the value.
+
+When a spec lives in several carriers (a script, a sheet, a design row, a syllabus) and one carrier shows a value the others contradict, ask which stands; the change is then swept through every carrier in the same pass. A repair that lands in one artifact and not its siblings comes back as the same complaint.
+
+Failure mode: 2026-10-04, the KUBS S3 script. The silent minute carried the invented "stand up, look at the wall, no phones, no talking" (the students keep sitting, eyes closed); the close still carried "this week is the sprint, not the book", rejected the day before and repaired in the run sheet only, plus a week recital the students gain nothing from.
+
+Stated 2026-10-04: "why do you make up things? ... this is totally wrong, they will keep sitting, close their eyes" and "you must think what i say as the instructor which is of value to students learning experience."
+
+### 112. A submission record verifies the submission, never the delivery
+
+When an action leaves this machine for someone else - a Signal message, an email, an upload, a print - its send-side record (a send log, a queue write, a 200 response) proves the handoff, only. Read it that way and say so: never report the outcome as verified, and never conclude the far side has it. The outcome check reads the destination: the recipient's own view, a delivery receipt, the recipient's word. When only the handoff side is checkable, present it as the handoff and name the delivery as unverified.
+
+Failure mode: 2026-10-04, the KUBS printout. The send log carried both attachments (names, sizes, upload timestamps); the agent reported the send as verified and read the missing file as the far side's problem; the script had not reached the recipient and arrived only as a single-file re-send. A message carrying two files delivers the first only; the send form change lives in the kubs-printout skill.
+
+Stated 2026-10-04: "the pdf was not sent the first time but it went through now. your analysis shows technical info but not the verification you did the second time."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
