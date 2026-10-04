@@ -2139,6 +2139,14 @@ Failure mode: 2026-10-04, the KUBS printout. The send log carried both attachmen
 
 Stated 2026-10-04: "the pdf was not sent the first time but it went through now. your analysis shows technical info but not the verification you did the second time."
 
+### 113. A deliverable leads with the recommendation, not the comparison
+
+A note, plan or routing answer gives the user the pick that is being recommended in plain sentences: what to take, the time and the cost, and the one condition that changes it. A full comparison table enters only while the options are still live and the user is choosing, and then the recommendation is marked inside it. Once the pick exists, the exhaustive numbers stay in memory files and source research; the deliverable the user reads carries the call and its fallback.
+
+Failure mode: 2026-10-04, the Evernote "2026-10-04 Osaka trip" note. The first build was fares, airport runs and pools as full tables: useful data, no answer to "which train from the hotel". Rebuilt as picks: to Kyoto's inner city, Hankyu from Umeda (43 min, ¥410); to Kobe, JR to Sannomiya (21 min, ¥420); back until nearly midnight.
+
+Stated 2026-10-04: "this evernote is not useful yet. i need from now in the future a format which gives recommendations, not all comprehensive tables."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
