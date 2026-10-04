@@ -12,14 +12,15 @@ python3 projects/kubs_dt/pipeline.py printout --session $1
 
 It re-renders the run sheet first when the script is newer — the re-render writes the PNG before its checks run, so relay any failed check it prints — builds the script PDF in `out/`, and copies it into the session folder on the Drive. The `out/` build is what a send attaches; the Drive copy is the record beside the script. Stop here unless the send option was given or the user asked to send.
 
-Send (only as `/printout $1 send`, or an explicit ask), as two messages — the announce line on its own, then both files in one:
+Send (only as `/printout $1 send`, or an explicit ask), as separate messages — the announce line on its own, then each file as its own message, the sheet first, the script second:
 
 ```
 signal-cli -a +14244420206 send -m "Yeonju, here are my files to printout for the next lecture. Thank you!" +821031917815
-signal-cli -a +14244420206 send +821031917815 --attachment "<run sheet PNG>" "<script PDF>"
+signal-cli -a +14244420206 send +821031917815 --attachment "<run sheet PNG>"
+signal-cli -a +14244420206 send +821031917815 --attachment "<script PDF>"
 ```
 
-Both files ride under ONE `--attachment` flag (a second flag replaces the first and the sheet silently goes out nowhere), and the recipient goes before it (a positional after the `nargs='*'` option is swallowed: `No recipients given`, exit 1). After sending, read the newest `message_send_log_content` row's blob from `~/.local/share/signal-cli/data/755511.d/account.db` and check it carries `image/png` **and** `application/pdf` together with both file names — exit 0 plus a timestamp proves neither. (A send to the user's own number is not logged; a test to the user's account is read in the phone.)
+One file per message: a two-file message carries both in its record and delivers the first only (measured 2026-10-04: the script did not arrive until re-sent alone), and two `--attachment` flags keep only the last (measured 2026-09-30). The recipient goes before the attachment (a positional after the `nargs='*'` option is swallowed: `No recipients given`, exit 1). After sending, read the two newest `message_send_log_content` rows from `~/.local/share/signal-cli/data/755511.d/account.db` and check the sheet's row carries `image/png` + its file name and the script's row `application/pdf` + its file name — exit 0 plus a timestamp proves neither, and the row proves the handoff, not the delivery. (A send to the user's own number is not logged; a test to the user's account is read in the phone.)
 
 Then report the session, the two files with sizes, the recipient when sent, and the measured build (and send) seconds.
 

@@ -28,30 +28,33 @@ It re-renders the run sheet PNG first when the script is newer than the sheet (a
 
 ## Step 3 — send over Signal, only with the send option
 
-Send only when the user passes the send option (`/printout N send`) or asks for the send in the conversation. The announce line goes as a text message of its own; the two files follow as a second message:
+Send only when the user passes the send option (`/printout N send`) or asks for the send in the conversation. The announce line goes as a text message of its own; each file follows as its own message, the sheet first, the script second:
 
     signal-cli -a +14244420206 send -m "Yeonju, here are my files to printout for the next lecture. Thank you!" +821031917815
-    signal-cli -a +14244420206 send +821031917815 --attachment "<run sheet PNG>" "<script PDF>"
+    signal-cli -a +14244420206 send +821031917815 --attachment "<run sheet PNG>"
+    signal-cli -a +14244420206 send +821031917815 --attachment "<script PDF>"
 
 - Account: +14244420206, the device "socrates" linked 2026-09-30 (revocable from the phone: Signal, Settings, Linked devices). Recipient: +821031917815 (Yeonju Lee; verified registered, with an established identity in the linked account).
-- **Both files go under ONE `--attachment` flag.** `--attachment`/`-a` is a `store` option with `nargs='*'`, so two flags do not add up: the second replaces the first, and the send still exits 0 with a timestamp. Measured 2026-09-30 - the S2 printout reached Yeonju as the PDF alone (its send-log body carries `application/pdf` once and `image/png` not at all) because the command carried `--attachment PNG --attachment PDF`.
+- **One file per message.** A message carrying two files delivers only the first: measured 2026-10-04, the S3 printout's two-file message carried both pointers in its record (both uploaded) and reached Yeonju as the run sheet alone; the script arrived when re-sent as its own single-file message. Two flags are no better: `--attachment`/`-a` is a `store` option with `nargs='*'`, so the second replaces the first and the send still exits 0 with a timestamp (measured 2026-09-30: the S2 printout reached Yeonju as the PDF alone). Each file goes as its own message.
 - The text rides with the message it is sent in. Sent in the same message as the files it arrives as their caption, not as an announcement, so it goes on its own and first (the user, 2026-09-30: "you sent the message as a comment to the pdf but it should be a text message to announce the files").
 - The recipient goes **before** the attachments: a positional after a `nargs='*'` option is swallowed by it (`No recipients given`, exit 1, nothing sent).
 - Success prints the message timestamp; anything else is an error to report, never to retry blindly.
 
-## Step 4 — the record is the evidence
+## Step 4 — the record is the handoff evidence
 
-An exit code and a timestamp say nothing about the attachments. After sending, read the newest `message_send_log_content` row's blob from `~/.local/share/signal-cli/data/755511.d/account.db` and require `image/png` and `application/pdf` plus both file names — for a send to someone else the CLI logs the message it handed the server:
+An exit code and a timestamp say nothing about the attachments, and the record proves the handoff, not the delivery: a row carrying both files still delivered one (2026-10-04). After sending, read the two newest `message_send_log_content` rows — the script's message and the sheet's — and require the sheet's row to carry `image/png` plus its file name and the script's row `application/pdf` plus its file name; for a send to someone else the CLI logs the message it handed the server:
 
     db=~/.local/share/signal-cli/data/755511.d/account.db    # the +14244420206 account dir
-    sqlite3 "$db" "select writefile('/tmp/sent.bin', content) from message_send_log_content order by timestamp desc limit 1;" >/dev/null
-    strings -a /tmp/sent.bin | grep -E "image/png|application/pdf|\.pdf|\.png"
+    sqlite3 "$db" "select writefile('/tmp/sent_pdf.bin', content) from message_send_log_content order by timestamp desc limit 1;" >/dev/null
+    sqlite3 "$db" "select writefile('/tmp/sent_png.bin', content) from message_send_log_content order by timestamp desc limit 1 offset 1;" >/dev/null
+    strings -a /tmp/sent_pdf.bin | grep -E "application/pdf|\.pdf"
+    strings -a /tmp/sent_png.bin | grep -E "image/png|\.png"
 
 A send to the user's own number leaves no entry there — a self-send is a sync message, not a delivery to retry — so a test to the user's account is read in the phone, not in the log.
 
 ## Report
 
-Tell the user: the session, the two files with sizes, the recipient when sent, and the measured build (and send) seconds. Read Step 4's record before reporting a send as done — an exit code is not evidence. If the send failed, say what the error was and leave it there.
+Tell the user: the session, the two files with sizes, the recipient when sent, and the measured build (and send) seconds. Read Step 4's record before reporting a send as done — an exit code is not evidence, and the record covers the handoff, not the recipient's screen. If the send failed, say what the error was and leave it there.
 
 ## Guards
 
