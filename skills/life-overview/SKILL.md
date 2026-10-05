@@ -69,6 +69,17 @@ state changed. Record, do not cheerlead.
 
 ## 4. Evernote twin
 
+In-session, every Evernote operation goes through the MCP tools (the
+`evernote` skill is authoritative): `create_note` in the "Chaehan's Life"
+notebook; the body added with `edit_note` (`append`), converting the markdown
+locally first with `markdown_to_enml` from `projects/evernote/src/enml.py`
+(drop the image line and strip the `<en-note>` wrapper); the chart embedded
+with the upload bridge documented in the `evernote` skill
+(`start_attachment_upload`, GCS upload, `finalize_attachment`, then `edit_note`
+`prepend`); the old note removed with `delete_note` (to trash). The CLI
+commands below are the outside-session fallback; in a session they are not
+used (the user's "never use the cli fallback", 2026-09-26).
+
 1. Create (or update) the note with the markdown WITHOUT the image line — the
    `![...]` line converts to a dead `<img src>`. With the image as the first
    line, `tail -n +3` strips it:
