@@ -2147,6 +2147,14 @@ Failure mode: 2026-10-04, the Evernote "2026-10-04 Osaka trip" note. The first b
 
 Stated 2026-10-04: "this evernote is not useful yet. i need from now in the future a format which gives recommendations, not all comprehensive tables."
 
+### 114. A rejected version is discarded; a revert renews the named version in place
+
+When the user rejects versions of an artifact as wrong — "totally wrong", "never wanted" — and names the version to go back to, those rejected states are removed from the version history; keeping them and filing the fix as the next version number ignores the instruction. The revert restores the named version's state, renewing that version's file in place, and the change log records both the discard and the renewal. This is the one sanctioned exception to the rule against deleting versions: a state the user repudiates is not history to keep.
+
+Failure mode: 2026-10-05, the KUBS course chart. The user rejected the reading-note renders v10 and v11 ("i never wanted the additional text on this chart") and asked to revert to v9; the agent re-rendered without the reading notes but left v10 and v11 in the archive and filed the result as a new "week grid v12.png". The user: "what are you doing? i told you to discard v10 and v11 instead of making a v12!!!!"
+
+Stated 2026-10-05: "what are you doing? i told you to discard v10 and v11 instead of making a v12!!!!"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
