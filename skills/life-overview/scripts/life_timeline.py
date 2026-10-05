@@ -32,6 +32,9 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 W = 1700
+S = 4  # supersampling factor: everything is drawn at S× and downscaled once
+# at the end. PIL's 1× rasterizer breaks small Helvetica Neue joints (the 'r'
+# arm collapses into a stub - caught in the first post-Arial render, 2026-10-06).
 GUTTER = 330
 X0, X1 = 355, 1650
 ROW_H = 92
@@ -65,7 +68,7 @@ def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
         path, index = entry if isinstance(entry, tuple) else (entry, 0)
         if Path(path).exists():
             try:
-                return ImageFont.truetype(path, size=size, index=index)
+                return ImageFont.truetype(path, size=size * S, index=index)
             except Exception:
                 continue
     return ImageFont.load_default()
@@ -86,6 +89,44 @@ def blend(hex_color: str, alpha: float, bg: str = "#FFFFFF") -> str:
     return "#%02X%02X%02X" % tuple(
         round(f[i] * alpha + b[i] * (1 - alpha)) for i in range(3)
     )
+
+
+class ScaleDraw:
+    """ImageDraw proxy that scales coordinates, stroke widths and radii by S,
+    so the page rasterizes at S× and is downscaled once (supersampling)."""
+
+    def __init__(self, draw, s):
+        self._d, self._s = draw, s
+
+    def _xy(self, xy):
+        if isinstance(xy[0], (list, tuple)):
+            return [tuple(v * self._s for v in p) for p in xy]
+        return tuple(v * self._s for v in xy)
+
+    def _kw(self, kw):
+        for k in ("width", "radius"):
+            if isinstance(kw.get(k), (int, float)):
+                kw[k] = kw[k] * self._s
+        return kw
+
+    def text(self, xy, *a, **kw):
+        return self._d.text(self._xy(xy), *a, **kw)
+
+    def textbbox(self, xy, *a, **kw):
+        box = self._d.textbbox(self._xy(xy), *a, **kw)
+        return tuple(v / self._s for v in box)
+
+    def rectangle(self, xy, *a, **kw):
+        return self._d.rectangle(self._xy(xy), *a, **self._kw(kw))
+
+    def rounded_rectangle(self, xy, *a, **kw):
+        return self._d.rounded_rectangle(self._xy(xy), *a, **self._kw(kw))
+
+    def line(self, xy, *a, **kw):
+        return self._d.line(self._xy(xy), *a, **self._kw(kw))
+
+    def polygon(self, xy, *a, **kw):
+        return self._d.polygon(self._xy(xy), *a, **self._kw(kw))
 
 
 def text_w(draw: ImageDraw.ImageDraw, text: str, font) -> int:
@@ -115,12 +156,15 @@ def main() -> int:
     axis_y = HEADER_H + n * ROW_H + 8
     H = axis_y + 140
 
-    img = Image.new("RGB", (W, H), BG)
-    d = ImageDraw.Draw(img)
+    img = Image.new("RGB", (W * S, H * S), BG)
+    d = ScaleDraw(ImageDraw.Draw(img), S)
     f_title = load_font(32, True)
     f_sub = load_font(17)
     f_row = load_font(20, True)
-    f_bar = load_font(15, True)
+    # in-bar label size: the "JTBD interviews" reference from the KUBS course
+    # overview (21 px at its 1900 px width) scaled to this canvas:
+    # 21 * 1700/1900 ≈ 19 (Chaehan, 2026-10-06)
+    f_bar = load_font(19, True)
     f_bar2 = load_font(15)
     f_ms = load_font(14, True)
     f_axis = load_font(15)
@@ -260,6 +304,7 @@ def main() -> int:
         lx += text_w(d, label, f_leg) + 44
 
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+    img = img.resize((W, H), Image.LANCZOS)
     img.save(out_path)
     print(f"wrote {out_path} ({W}x{H})")
     return 0
