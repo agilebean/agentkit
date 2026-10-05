@@ -2155,6 +2155,14 @@ Failure mode: 2026-10-05, the KUBS course chart. The user rejected the reading-n
 
 Stated 2026-10-05: "what are you doing? i told you to discard v10 and v11 instead of making a v12!!!!"
 
+### 115. Arial is never used, not even as a fallback
+
+No artifact this system produces — HTML pages, PDFs, charts, decks, letters — names Arial in a font stack, not even parked behind Helvetica as a fallback, and no renderer picks it as a font file. Chaehan's call: Arial is "the ugliest font ever". Stacks go Helvetica Neue, Helvetica, then the generic sans-serif; the ban is standing and cross-project.
+
+Failure mode: 2026-10-05, the KUBS course overview chart and the life-overview timeline. The chart's frozen look spec recorded 'Helvetica Neue', Helvetica, Arial, sans-serif with Arial as an inert fallback, and the timeline's font list tried "Arial Bold.ttf" first; the user struck the font from the record, and every live stack and font list was swept the same day.
+
+Stated 2026-10-05: "remove under all cost EVER to use Arial which is the ugliest font ever, remember".
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
