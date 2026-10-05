@@ -141,6 +141,36 @@ Risk set: notes whose markdown twin references images by path. In KUBS DT those
 are the course design overview (week grid at the top), the opener story (the BigP
 retrospective photo) and the diagram evolution document.
 
+## Uploading an image into a note via MCP (the binary bridge)
+
+The MCP path for a new embedded image is `start_attachment_upload` then the
+GCS upload then `finalize_attachment` then `edit_note`. The sandbox cannot do
+the middle step itself: its `fetch` has no binary response (`arrayBuffer` is
+absent) and no binary request body, so the file bytes cannot be PUT from
+`execute`. Working bridge (verified 2026-10-06 on a 152227-byte PNG):
+
+1. `start_attachment_upload` in `execute` (note GUID, lowercase MD5 and exact
+   byte count of the file). The response carries `uploadUrl` and
+   `alreadyUploaded`; when `alreadyUploaded` is true the bytes are already in
+   storage, so skip the upload and go straight to `finalize_attachment`.
+2. Start `python3 -m http.server <port> --bind 127.0.0.1` in any folder (kill
+   it after), then emit the URL to the shell from `execute` with a GET:
+   `fetch("http://127.0.0.1:<port>/bridge?u=" + encodeURIComponent(uploadUrl))`.
+   A 404 response is expected; the request line lands in the server's access
+   log, which is the hand-off.
+3. In the shell, read the log line, `urllib.parse.unquote` the value, then the
+   two curl calls: `POST` with `x-goog-resumable: start` and
+   `x-upload-content-length: <size>` headers returns the session URI in the
+   `Location` header; `PUT` with `Content-Length` and `x-upload-content-length`
+   headers and `--data-binary @<file>` returns 200.
+4. `finalize_attachment` in `execute` (same GUID, hash, size, mimeType;
+   filename and width/height help the editor's first render). It returns
+   `enMediaTag`; insert it with `edit_note` (`prepend` for the top of a new
+   note, or `replace` against the old `<en-media ... />` tag for a swap; build
+   `find` from the string `get_note` returned).
+5. Verify by download: `get_attachment` returns a pre-signed URL; curl it and
+   MD5-compare against the local file.
+
 ## Cell edits must preserve the cell's markup; recover lost markup from note history
 
 Replacing a table cell's inner content with a rebuilt plain string destroys
