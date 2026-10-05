@@ -44,25 +44,28 @@ MUTED = "#6B7280"
 TODAY = "#E03131"
 DONE = "#2F9E44"
 
+# Font candidates in preference order; a tuple carries the TTC face index.
+# Arial never appears here - banned outright (RULES.md rule 115).
 FONTS = {
     True: [
-        "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-        "/System/Library/Fonts/HelveticaNeue.ttc",
+        ("/System/Library/Fonts/HelveticaNeue.ttc", 1),  # Helvetica Neue Bold
+        ("/System/Library/Fonts/Helvetica.ttc", 1),      # Helvetica Bold
         "/System/Library/Fonts/SFNS.ttf",
     ],
     False: [
-        "/System/Library/Fonts/Supplemental/Arial.ttf",
-        "/System/Library/Fonts/Helvetica.ttc",
+        ("/System/Library/Fonts/HelveticaNeue.ttc", 0),  # Helvetica Neue Regular
+        ("/System/Library/Fonts/Helvetica.ttc", 0),      # Helvetica Regular
         "/System/Library/Fonts/SFNS.ttf",
     ],
 }
 
 
 def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
-    for path in FONTS[bold]:
+    for entry in FONTS[bold]:
+        path, index = entry if isinstance(entry, tuple) else (entry, 0)
         if Path(path).exists():
             try:
-                return ImageFont.truetype(path, size=size)
+                return ImageFont.truetype(path, size=size, index=index)
             except Exception:
                 continue
     return ImageFont.load_default()
