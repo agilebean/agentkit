@@ -2171,6 +2171,14 @@ Failure mode: 2026-10-06, the S4 run sheet. Card 1's block carried `**follow ins
 
 Stated 2026-10-06: "now i wanna know why you could not understand that you didn't show the bold text but ** markers instead. also the same mistakes happen with the printout command. fix it, that's terrible".
 
+### 117. A call that produced no result is re-issued before the turn ends
+
+When a tool call fails to execute — malformed output, a parse error, an empty result where content was expected — the work it carries is not done, and the turn does not end there. Re-issue the call in the same turn, and compose the closing message only once every needed call has returned a result. A turn that ends on an unexecuted call reads to the user as the agent abandoning the task mid-sentence: he finds silence where a result was promised, and he is the one who has to ask what happened — never let that be the check.
+
+Failure mode: 2026-10-06, the couple.net contract fetch. A shell call was sent with a broken closing tag, so it never executed; the turn ended anyway and the user found a silent stop where the Gmail search was promised. Re-issued on his prompt, the same search found the signed agreement and its signing certificate.
+
+Stated 2026-10-06: "why did you stop?"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
