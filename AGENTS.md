@@ -44,3 +44,14 @@ read the whole file in one go.
 Why this line exists: opencode's `instructions` field does not load this file in v2.0.16. Probe of 2026-09-25 (config carried both `RULES.md` via a config-dir symlink and `$HOME/.../agentkit/RULES.md`): a freshly created session could confirm this file's text and the agent prompt, but not one sentence of RULES.md. A GitHub user who clones agentkit and symlinks this AGENTS.md into `~/.config/opencode/` gets the rules through this pointer, with no absolute path anywhere.
 
 Do not duplicate rule text here.
+
+## Session hygiene (wait times)
+
+- One task per session. A new task starts a fresh session; a session is not a
+  workspace carried across days.
+- The context compacts automatically at ~300k tokens. Don't grow a session
+  past that with accumulated file dumps; read big files by section.
+- When a session's work continues as a new task, close it with the handoff
+  skill and continue in a fresh session.
+- Long jobs (GUI automation, exports, CI waits) run in the background with a
+  progress log; no foreground call blocks beyond 60 s.
