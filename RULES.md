@@ -92,7 +92,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 The list covers internal working artifacts too (run sheets, session cards, flow notes), and a re-render re-reads the text before it ships: phrasing an earlier pass left behind is swept, not shipped again.
 
 ### 3. Do not commit or push unless explicitly told to
-Never run `git commit` or `git push` unless the user says "commit", "push", or "commit and push". "Commit" alone authorizes both commit and push. Git commit amend is allowed. When fixing an error, do not push until the user confirms the fix works. Trigger extension (2026-09-15): detected user satisfaction also authorizes the commit; see rule 46.
+Never run `git commit` or `git push` unless the user says "commit", "push", or "commit and push". "Commit" alone authorizes both commit and push. Git commit amend is allowed. When fixing an error, do not push until the user confirms the fix works. Trigger extension (2026-09-15): detected user satisfaction also authorizes the commit; see rule 46. Trigger extension (2026-10-06): a work item converged to minor corrections commits without an ask; see rule 119.
 
 ### 4. Detect when a task evolves into a parallel task touching the same files
 A task starts with one goal. If you find yourself modifying the same file for a DIFFERENT reason than the original task, stop and ask. Example: you are fixing a parsing error in `invoice_pdf.py` but also want to apply an extraction shim to `browser_download.py`. These are not the same task — the shim change is a separate goal that happens to touch shared dependencies. Continuing both simultaneously creates a loop where every fix to one undoes progress on the other. Ask the user: "I need to change browser_download.py for two reasons — the CLI refactor and the module extraction. Which should I complete first?"
@@ -961,7 +961,9 @@ The session that produced a change owns getting it committed. This extends
 rule 3's trigger: waiting for the user to type "commit" is a defect, and
 detecting satisfaction is the agent's job. Rule 3's mechanics still apply:
 commit and push together, stage by name, and write a message that covers
-the change.
+the change. A second extension covers converged threads: when the last two
+rounds of feedback consist only of minor modifications, the commit fires
+without the satisfaction signal and without an ask; see rule 119.
 
 Detect satisfaction: the user confirms the result ("yes", "correct",
 "good", "perfect"), accepts it and builds on it, or moves on to another
@@ -2178,6 +2180,24 @@ When a tool call fails to execute — malformed output, a parse error, an empty 
 Failure mode: 2026-10-06, the couple.net contract fetch. A shell call was sent with a broken closing tag, so it never executed; the turn ended anyway and the user found a silent stop where the Gmail search was promised. Re-issued on his prompt, the same search found the signed agreement and its signing certificate.
 
 Stated 2026-10-06: "why did you stop?"
+
+### 118. Knowledge goes to the most specific memory file; hubs link, never carry
+
+When the user says a piece of knowledge belongs in a topic file ("there must be memory files on those two topics", "something more specific"), create or update exactly the file the domain names — a dedicated `email.md` for email facts — and put the content there. A broad hub (`optimize-my-life.md`) receives a one-line cross-reference to the specific file, never the detail. If the file does not exist, create it in the canonical memory structure (lean form) in the same turn. Do not answer with a weaker generic home or ask the user to ratify one where he has already named the domain: offering `_misc.md` or a hub instead of the named file reads as ignoring the instruction.
+
+Failure mode: 2026-10-06, the Gmail storage audit. The agent first proposed parking the audit summary in `_misc.md`; told that was too unspecific ("it is a kind of optimization and computer related"), it then wrote the entry into optimize-my-life.md and asked to ratify placement. The user: "i told you to not use _misc.md but something more specific why did you ignore it?" Resolution: dedicated `memory/email.md`, linked from `optimize-my-life.md`.
+
+Stated 2026-10-06: "email.md should suffice but link from optimize md".
+
+### 119. A work item that has converged to minor corrections commits without an ask
+
+Rule 3's trigger extends again. When the last two rounds of the user's corrections on the same work item consist only of minor modifications (a wording, a number, a date, a small fix, a line added or removed), the work has converged: apply the round, verify it the way the artifact admits (re-render and look, re-run the check or test suite, read the file back), then run `git status`, stage this session's files by name, commit and push, and report in one line what was committed. The commit happens when the round is applied, not at session end, and without asking: in a converged thread the ask is the round trip this trigger exists to save, and waiting for the user to type "commit" is a defect.
+
+Not converged, and rule 46's ask applies as usual: any round that changes structure, approach or scope, reverses an earlier correction, or adds a new requirement; any doubt or open question about the work; or any case where the read is unclear, since uncertainty resolves to not converged.
+
+Mechanics follow rules 10 and 46: other sessions' dirty files stay unstaged and are named in the report; when the item already sits in the tip commit, fold the round into it (rule 10's amend clause) rather than stacking a repair commit.
+
+Stated 2026-10-06: "you can commit when i gave several times feedback and my agreement is converging and only giving minor modifications. i feel that this would at least cover 50% of all runs where we can save another llm call and finish faster"
 
 ## Shell: `~/.bash_aliases` (user-global)
 
