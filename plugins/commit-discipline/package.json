@@ -1,0 +1,7 @@
+{
+  "name": "agentkit-commit-discipline",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./index.ts" },
+  "dependencies": { "@opencode/plugin": "^2.0.24" }
+}
