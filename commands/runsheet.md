@@ -15,7 +15,7 @@ python3 projects/kubs_dt/pipeline.py runsheet --session $1 --checks   # render, 
 
 ## What the command prints
 
-- `png ready in Xs: <path> (WxH px; render Xs, crop Xs)` — the PNG is on disk. Relay this line and the pixel size. The command parsed the block best-effort (a broken row still renders), wrote the page to `projects/kubs_dt/run_sheets/rsn.html`, rendered it with headless Brave and cropped the ink. Plain runs then print `checks: skipped` and the timings: the render carries the command (measured 2026-10-03: render 2.28-2.67 s, crop 0.31-0.33 s, checks 0.22 s).
+- `png ready in Xs: <path> (WxH px; render Xs, save Xs)` — the PNG is on disk. Relay this line and the pixel size. The sheet is one A4 landscape page (1900x1343 CSS px at scale 2 = 3800x2686 px, rendered uncropped so it prints 1:1 on A4 landscape), four cards in every row, the card rows stretched to fill the page. The command parsed the block best-effort (a broken row still renders) and wrote the page to `projects/kubs_dt/run_sheets/rsn.html`, rendered it with headless Brave and saved the page. Plain runs then print `checks: skipped` and the timings: the render carries the command (measured 2026-10-06: render 1.7-3.3 s, save 0.2-0.3 s, checks 0.5 s).
 - With `--checks`, one line per check, then a summary:
   - `block` — the block's irregularities, each with file and line: a row before the header, a wrong cell count, a missing `**Title.**` line, an `**Overrun.**` card with no row.
   - `learning goal` — read from the course design's `| **Sn** | Topic >> Learning goal |` row at render time, so the sheet and the design cannot disagree. Never copy it into the block.
@@ -33,7 +33,7 @@ The checks need only the script, the design and the rendered PNG; they can move 
 
 ## The block
 
-The wording lives at the very bottom of `KUBS DT Sn/KUBS DT session n - script.md` in Google Drive, below a `---` line, as a "## Run sheet cards" block: a title line, a layout line, a shaded-cards line, an overrun line, then one table row per card (`#`, Card, Chip, Body, Source).
+The wording lives at the very bottom of `KUBS DT Sn/KUBS DT session n - script.md` in Google Drive, below a `---` line, as a "## Run sheet cards" block: a title line, a layout line (`**Layout.** A4 landscape, 4 columns, filled cards` — the one string for every sheet since the 2026-10-06 redesign; a line that still carries a column count, a px card height or `body N` renders anyway and flags in the block check, so sweep it), a shaded-cards line, an overrun line, then one table row per card (`#`, Card, Chip, Body, Source).
 
 - **Nothing on the two header lines is prose.** The sub-line is composed from the data: `⚠ 3 Team formation` lists the cards named in `**Overrun.**` (the cards whose minutes can move; chip number plus the card's own keyword), `📖 5 The bad interview` lists the cards whose `Source` cell carries the pre-read mark (a card whose content needs a pre-read from the Kalbach book). No elastic card and no pre-read means no header line at all — never invent one.
 - **A chip in the block holds the plain minutes** ("40 min"). The drawn sheet adds the running total in brackets ("40 (45) min") and prints the session total, so never write a total into the block: it is derived, and one edited minute renumbers every chip after it.
