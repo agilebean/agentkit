@@ -2163,6 +2163,14 @@ Failure mode: 2026-10-05, the KUBS course overview chart and the life-overview t
 
 Stated 2026-10-05: "remove under all cost EVER to use Arial which is the ugliest font ever, remember".
 
+### 116. A source's markup is drawn as its formatting, never as its characters
+
+When a source that reaches a rendered artifact carries markdown — a run sheet card, a script line, a note — the renderer converts it: `**bold**` draws as bold text, `<br>` as a line break. Markers reaching the ink are a defect, never a style choice: do not offer "leave as is" for a marker the user has just flagged, and do not read `**x**` as plain characters. A check is only as wide as its own scan — an ink check that reads HTML entities will pass a sheet drawing four asterisks, so a green check line is not evidence the drawn text is right. And after editing a renderer, confirm the artifact changed: re-read the edited file from disk and re-render the artifact before reporting the fix — an uncommitted edit erased by another writer's revert will otherwise be reported as done while the defect stands.
+
+Failure mode: 2026-10-06, the S4 run sheet. Card 1's block carried `**follow instructions →**` and `**intuitively**`; the renderer drew both pairs as literal asterisks, the ink check (entities only) reported "ok", and the agent asked the user whether to keep the markers. The user: "the runsheet still contains the preceding **. don't you get that you didn't escape them??" The agent then fixed the renderer, but the working tree was reverted before the render ran, and the same defect turned up in the printout the TA receives.
+
+Stated 2026-10-06: "now i wanna know why you could not understand that you didn't show the bold text but ** markers instead. also the same mistakes happen with the printout command. fix it, that's terrible".
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
