@@ -37,6 +37,10 @@ Agent definitions in `.opencode/agents/` are project-specific. Cross-project age
 
 **Read `RULES.md` in this folder before you start a task, and treat it as binding.** It is the canonical rule text. At minimum read the section that governs what you are about to do, and follow the pointers to it from the agent definition.
 
+**Consult RULES.md by section.** Read `rules.index.md` first, then open only
+the line range for the rules the task needs (`sed -n 'A,Bp' RULES.md`). Never
+read the whole file in one go.
+
 Why this line exists: opencode's `instructions` field does not load this file in v2.0.16. Probe of 2026-09-25 (config carried both `RULES.md` via a config-dir symlink and `$HOME/.../agentkit/RULES.md`): a freshly created session could confirm this file's text and the agent prompt, but not one sentence of RULES.md. A GitHub user who clones agentkit and symlinks this AGENTS.md into `~/.config/opencode/` gets the rules through this pointer, with no absolute path anywhere.
 
 Do not duplicate rule text here.
