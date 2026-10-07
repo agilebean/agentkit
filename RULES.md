@@ -44,6 +44,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 - **Colon-field blocks in prose** ("Taxpayer: ... SSN: ... Return: ..."), a form pasted into a narrative. In a text that stands alone as a submission, the labeled identifier line is the format, not the marker (rule 85).
 - **Numbered or bulleted asks inside a letter.**
 - **Telegraphic fragments instead of sentences.**
+- **Vague readiness instructions** ("have the itinerary open", "keep that at hand"). Name the document, where it is kept, and the moment it is shown: "the e-ticket for the 11 December Osaka-Melbourne flight, saved as a screenshot on your phone, to show at the check-in counter if the return date is questioned." The user, 2026-10-07: "too robotic to use the word open, be specific."
 - **Third-person summary voice** about the person being written for.
 
 *Report and rubric language*
