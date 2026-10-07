@@ -25,16 +25,41 @@ rule), then the facts.
 1. **Get the source.** Find the confirmation email or document. The Gmail read
    path is the OAuth CLI (`agentkit.gmail.cli`) or, when the token is expired,
    IMAP with the app password (`~/.gmail/gmail-smtp-app-password`). Read the
-   *whole* message: the price lines, the reference numbers, the cancellation
-   terms and the room or fare class usually sit in different blocks.
+   *whole* message, to its last line, and read the property's own messages
+   too: Booking.com confirmations end with an **Important details** block, and
+   the hotel or airline often writes again separately. The shuttle timetable,
+   the facility fees, the accommodation tax, the breakfast price, the
+   maintenance closures and the check-in conditions all live in those blocks,
+   and a dump cut at the first screen misses them.
+   (2026-10-07: the Imperial Hotel Osaka's pool fee, its COMPLIMENTARY shuttle
+   timetable and the Osaka accommodation tax were all missed because the email
+   body was truncated; the hotel's own message to the guest carried the exact
+   fees. Read to the end, and read every message in the thread.)
 
 2. **Collect the fields the user searches by later.** At minimum the date, the
    provider, the price, and the reference or booking number. Then the fields
    that decide the stay: room type, nights, timing, baggage, seat, address,
    phone, cancellation deadline. Keep the confirmation's own wording for the
-   room or fare name.
+   room or fare name. Then the terms that cost money or change the plan: what
+   the price excludes (taxes), what closes and when, and what the property
+   offers free.
 
-3. **Build the card.**
+3. **Make the image the source itself, not a rebuild.** When the confirmation
+   is an HTML email, screenshot the email:
+   ```
+   python3 ~/.agents/skills/receipt-note/email_shot.py --eml mail.eml --out shot.png --width 760
+   ```
+   The PNG then carries everything the email carries: the airline card, the
+   seat, the baggage table, the price breakdown. `--html page.html` does the
+   same for a saved web page. The browser panel is not the way in — it is
+   usually signed out of Gmail — so pull the message over IMAP into an `.eml`
+   file first. A note whose card summarised an email the user could have seen
+   in full will be sent back (2026-10-07: the flight card lacked the seat and
+   baggage detail that sat in the confirmation, and the note was rebuilt around
+   the email itself).
+
+   Use the card renderer where there is no renderable source: a PDF, a
+   plain-text confirmation, a receipt photo.
    ```
    python3 ~/.agents/skills/receipt-note/render_card.py --spec card.json --out card.png
    ```
@@ -50,14 +75,10 @@ rule), then the facts.
    ```
    Every row is `[label, value]`; a row with an empty label runs full width.
    The card is tight-cropped, so the PNG is the card and nothing else.
-   Look at the PNG before uploading it (the read tool renders images): a
-   wrong figure on the card is the one error the user cannot miss.
 
-   **A real screenshot of the email** is only for when it is already open and
-   readable — the browser panel reports whether it can drive the page, and
-   Gmail in that panel is usually signed out. Rendering from the message's own
-   text is the reliable path, and it must be labelled honestly: the subtitle
-   names the confirmation it came from. Never present a card as the email.
+   Never present a card as the email. Look at the PNG before uploading it (the
+   read tool renders images): a wrong figure on the image is the one error the
+   user cannot miss.
 
 4. **Write the note.**
    - Title: date first, then the entity and the number that matters
