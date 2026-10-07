@@ -173,14 +173,36 @@ absent) and no binary request body, so the file bytes cannot be PUT from
    two curl calls: `POST` with `x-goog-resumable: start` and
    `x-upload-content-length: <size>` headers returns the session URI in the
    `Location` header; `PUT` with `Content-Length` and `x-upload-content-length`
-   headers and `--data-binary @<file>` returns 200.
-4. `finalize_attachment` in `execute` (same GUID, hash, size, mimeType;
-   filename and width/height help the editor's first render). It returns
-   `enMediaTag`; insert it with `edit_note` (`prepend` for the top of a new
-   note, or `replace` against the old `<en-media ... />` tag for a swap; build
-   `find` from the string `get_note` returned).
-5. Verify by download: `get_attachment` returns a pre-signed URL; curl it and
-   MD5-compare against the local file.
+   headers and `--data-binary @<file>` returns 200. Match the line with
+   `/bridge\?k=(\w+)&u=(\S+) HTTP`: the access log writes ` HTTP/1.1` after the
+   query, so a pattern ending in a quote matches nothing and the URL silently
+   looks missing.
+4. Put the `en-media` tag into the body FIRST, then finalize. Case the tag
+   with `edit_note` (`prepend` for the top of the note, or `replace` against
+   the old `<en-media ... />` for a swap; build `find` from the `get_note`
+   string), then call `finalize_attachment` (same GUID, hash, size, mimeType;
+   filename and width/height help the editor's first render). The binding
+   takes only when the tag is already in the body: on 2026-10-07 both images
+   were finalized before insertion, finalize returned a tag and a
+   `resourceGuid` for each, and `get_attachment` still answered "No
+   attachment with hash ... on note ..."; the same two files bound as soon as
+   the tags were in the body and finalize ran again (`alreadyUploaded: true`,
+   so no second PUT).
+5. Verify by download, and re-verify later. `get_attachment` returns a
+   pre-signed URL whose bucket is now `en-production-resources` (a
+   `...-resources-temporary` URL means the bytes are still staging); curl it
+   and MD5-compare against the local file. Then read the note again a few
+   minutes later: a client holding the note open saves its own copy and can
+   revert the note to its own resource list, leaving the body tags pointing at
+   nothing and the note carrying broken images. On 2026-10-07 the binding was
+   intact at t0 and gone two minutes later, after which the desktop app's tab
+   was switched away with `close-note` and the re-bound resources survived.
+   When the image has to survive a client that has the note open, prefer the
+   Thrift CLI `embed-image`: it binds the resource in the same `updateNote`,
+   but it fails with "Note is locked by another editing session (RTE room
+   open)" while the app holds the note — `close-note` releases the app's tab
+   (bring the Evernote window to the current Space first, or its helper
+   reports "evernote window not visible on current Space").
 
 ## Cell edits must preserve the cell's markup; recover lost markup from note history
 
