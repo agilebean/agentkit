@@ -2212,6 +2212,12 @@ When a document, email or page is read in order to take facts out of it, read th
 
 Failure mode, 2026-10-07: the Imperial Hotel Osaka confirmation email was dumped as `body[:1800]`, so the pool fees, the COMPLIMENTARY shuttle timetable and the Osaka accommodation tax never reached the note. The user: "the hotel confirmation email had important info which you should extract: the price for the pool and the COMPLIMENTARY SHUTTLE BUS info." The exact fees sat in the hotel's own message, a separate email in the same thread that was never opened. Resolution: the full text of every message in the booking thread was read, and the facts went into the note and the travel memory.
 
+### 122. A sweeping claim is tested against the data it summarizes, row by row
+
+Before a sentence says *nothing*, *no one*, *only* or *never* about a set that the same document lists, walk the rows and try to falsify it. The quantifier is the promise and the rows are the evidence — and they sit in the same table the claim introduces, so the check costs one pass.
+
+Failure mode, 2026-10-07: the Kobe beef block said "nothing rated 3.5 or higher near Sannomiya serves at 15:00" while the second row of its own table — 神戸ビーフ焼肉 お加虎 はなれ, Tabelog 3.58, open 11:00-23:00 daily — was rated above 3.5 and served at 15:00. The user: "you wrote nothing opens at 15:00 but the second restaurant does." The true statement was narrower: the rated steakhouses stop lunch with a last order at 13:30-14:00 and reopen at 17:00-17:30, and among the all-day rooms checked only the annex clears 3.5. When a claim cannot be made exhaustive, write the scope into it ("among those checked") rather than the universal.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
