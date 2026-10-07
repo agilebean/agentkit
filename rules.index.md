@@ -136,4 +136,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2185–2192 | ### 118. Knowledge goes to the most specific memory file; hubs link, never carry |
 | 2193–2202 | ### 119. A work item that has converged to minor corrections commits without an ask |
 | 2203–2208 | ### 120. A rule of thumb the user states in passing is the payload — store it in the domain's memory file that turn |
-| 2209–2215 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2209–2214 | ### 121. A source read for extraction is read to its end, and every message in it |
+| 2215–2221 | ## Shell: `~/.bash_aliases` (user-global) |

@@ -2206,6 +2206,12 @@ When the user explains a past event and attaches a generalization to it — "so 
 
 Failure mode, 2026-10-07: told that the Imperial Hotel Osaka week had jumped from €727 to €964, the agent recorded the booking and the price move and did not record the rule the user was teaching — that the best hotel price can be got exactly 2 months before the travel date, with at most 1-2 days of contingency. The user: "why i told you about the price hike is that it is about 8w 2d before the travel date. so as a rule of thumb, the best hotel price can be get exactly 2m before with max 1-2d contingency. THAT is what you must remember!" Resolution: the rule and its 2026-10-06/07 datapoint went into `memory/travel.md` under Booking tactics.
 
+### 121. A source read for extraction is read to its end, and every message in it
+
+When a document, email or page is read in order to take facts out of it, read the whole thing: truncating the body at a convenient length is the read-side version of guessing. Confirmation-style documents put their operative block at the foot — the fees, the taxes, the timetable, the conditions — exactly where a truncated dump stops, and a thread puts the decisive answer in a later message than the first. If a read has to stop early, say where it stopped and what remains unread, and treat the extraction as incomplete until it is finished.
+
+Failure mode, 2026-10-07: the Imperial Hotel Osaka confirmation email was dumped as `body[:1800]`, so the pool fees, the COMPLIMENTARY shuttle timetable and the Osaka accommodation tax never reached the note. The user: "the hotel confirmation email had important info which you should extract: the price for the pool and the COMPLIMENTARY SHUTTLE BUS info." The exact fees sat in the hotel's own message, a separate email in the same thread that was never opened. Resolution: the full text of every message in the booking thread was read, and the facts went into the note and the travel memory.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
