@@ -37,6 +37,14 @@ Alternatively: set `EVERNOTE_TOKEN` env var.
 - **Options with attributes become a table below the bullets.** When a note compares named options — restaurants, hotels, vendors, pools — the bullets above the table carry the rules of the search and the finding as sentences, the table carries the comparable fields (distance, rating, hours, price, and a Verdict column saying why the row is in the list), and one bullet below the table carries the rejected names, each with the reason it was dropped. A nested bullet blob of attributes is not readable: the reader cannot scan a column. Stated 2026-10-07 on the Kobe beef picks: "the info is horribly formatted! you must understand this is not humanly readable ... for info structured like restaurants make a table below the bullet points". Canonical rule: RULES.md rule 67. ENML to copy: `<table width="829px" style="border-collapse:collapse;width:829px;">` with a `<colgroup>`, and every `<th>`/`<td>` styled `border-color:#d4d4d4;border-width:1.5px;border-style:solid;padding:10px;` with its content wrapped in `<div>`.
 - The body is written the way you would say it to the user in chat, not as a reference entry: no label prefixes ("Status:", "Why:"), no telegraphic fragments, no analyst third person. Canonical rule: RULES.md rule 19.
 
+## A note write is verified against the reader's view, not the stored bytes
+
+Reading the ENML back proves storage; it does not prove the client renders the block or that the user can read it. Learned 2026-10-07, when the Kobe beef table was reported missing after two writes that each "verified" by re-reading the note:
+
+1. **Build tables with the pipeline, never by hand-writing ENML `<table>` markup.** A markdown table through the converter, or `create-table`, is the shape this project's notes are known to render. Hand-assembling `<table width="…"><colgroup>…` copied out of another note is not a guarantee, and a storage read cannot tell the two apart.
+2. **Verify the shape by converting the note back through the project's own converter** — `get <guid> --markdown` — and reading that output. A table that does not come back as a markdown table, or a bullet whose text comes back as a bare `-`, is a defect the byte check cannot see: the same day, a `<li>` containing a nested `<ul>` converted to an empty `-` with its parent's text gone. Keep list nesting to one level in notes.
+3. **When the user says a note is unreadable or a block is missing, do not answer with the stored content.** Ask what he sees — a screenshot settles it — and check whether the note is open in the desktop app, where the client's own copy can be written back over an API write. Never claim a note is fixed on the strength of an API read: that is the claim he has to disprove.
+
 ## Notebook placement
 
 Every note must be created in its topic's notebook, never the default.
