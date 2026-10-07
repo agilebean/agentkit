@@ -2200,6 +2200,12 @@ Mechanics follow rules 10 and 46: other sessions' dirty files stay unstaged and 
 
 Stated 2026-10-06: "you can commit when i gave several times feedback and my agreement is converging and only giving minor modifications. i feel that this would at least cover 50% of all runs where we can save another llm call and finish faster"
 
+### 120. A rule of thumb the user states in passing is the payload — store it in the domain's memory file that turn
+
+When the user explains a past event and attaches a generalization to it — "so as a rule of thumb …", "that's what you must remember", "which means in general" — the generalization is why the story was told. Do not treat the story as background for the decision at hand: write the rule, in the user's own terms, into the domain's memory file in the same turn, and put the dated observation that produced it beside it so the rule carries its evidence. The event (the price, the reading, the date) is context for the rule, never a substitute for it.
+
+Failure mode, 2026-10-07: told that the Imperial Hotel Osaka week had jumped from €727 to €964, the agent recorded the booking and the price move and did not record the rule the user was teaching — that the best hotel price can be got exactly 2 months before the travel date, with at most 1-2 days of contingency. The user: "why i told you about the price hike is that it is about 8w 2d before the travel date. so as a rule of thumb, the best hotel price can be get exactly 2m before with max 1-2d contingency. THAT is what you must remember!" Resolution: the rule and its 2026-10-06/07 datapoint went into `memory/travel.md` under Booking tactics.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
