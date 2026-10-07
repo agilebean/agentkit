@@ -33,6 +33,7 @@ Alternatively: set `EVERNOTE_TOKEN` env var.
 - Order: graphic first, then the body sections. A TL;DR is added only for a meeting summary or an analysis of the user's results — for those, it sits after the graphic. **A note made from a receipt or confirmation has no TL;DR at all** (stated 2026-10-07): it opens with the card image and states the facts, and nothing restates them above. The same note-making workflow is in the `receipt-note` skill.
 - The TL;DR is an H2 heading (`## TL;DR`), never plain text or a bolded line. Its text follows on the next line(s).
 - Titles carry the date as the bare first word: `2026-08-16 Top Supplements`, never `Top Supplements (2026-08-16)`. Canonical rule: RULES.md rule 20.
+- **Every note about a booking is a bulleted hierarchy, not prose.** Flight and hotel details go into bullet points, with the sub-facts indented under their parent so the shape of the record is visible at a glance: the entity, then its dates, its price, its references as sub-bullets. Stated 2026-10-07: "just put all the info for flights and hotel into bullet points and tab them to see the hierarchy". A paragraph that runs the same facts together hides the hierarchy and is the wrong shape.
 - The body is written the way you would say it to the user in chat, not as a reference entry: no label prefixes ("Status:", "Why:"), no telegraphic fragments, no analyst third person. Canonical rule: RULES.md rule 19.
 
 ## Notebook placement
