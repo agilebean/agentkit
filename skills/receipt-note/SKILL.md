@@ -65,7 +65,10 @@ rule), then the facts.
      `2026-12-04 Flugticket ICN-UKB Asiana OZ1163 KRW154344`).
    - Notebook: the topic's notebook (travel → that year's `... Travel & Logistics`;
      health → Health; finance → Chaehan Financials). Ask when no notebook matches.
-   - Body: no TL;DR, no label prefixes. Say it the way it would be said in chat.
+   - Body: no TL;DR, no label prefixes. Write it as a **bulleted hierarchy** with the
+     sub-facts indented under their parent, so the shape is visible at a glance:
+     the entity, then its dates, its price, its references as sub-bullets. Say it
+     the way it would be said in chat.
    - The card goes in at the top, and the facts sit below with the exact
      references (booking reference, e-ticket, PIN only when the user needs it).
 
