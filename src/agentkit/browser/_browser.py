@@ -2,13 +2,16 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
+import platform
 import re
 import subprocess
 import sys
 import time
 import urllib.error
 import urllib.request
+import zipfile
 from pathlib import Path
 
 from selenium import webdriver
@@ -16,10 +19,33 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.selenium_manager import SeleniumManager
 
+logger = logging.getLogger(__name__)
+
 _BRAVE_PATH_MACOS = "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
 _IS_MACOS = sys.platform == "darwin"
 
 _CDP_BROWSER_VERSION_RE = re.compile(r"(?:Chrome|Chromium)/(\d+)")
+_DRIVER_VERSION_RE = re.compile(r"ChromeDriver\s+(\d+)")
+
+_CfT_LAST_KNOWN_GOOD_URL = (
+    "https://googlechromelabs.github.io/chrome-for-testing/"
+    "last-known-good-versions-with-downloads.json"
+)
+_CfT_ALL_VERSIONS_URL = (
+    "https://googlechromelabs.github.io/chrome-for-testing/"
+    "known-good-versions-with-downloads.json"
+)
+_SELENIUM_CACHE_DEFAULT = Path.home() / ".cache" / "selenium"
+
+# Bounds for the one-time driver download after a browser upgrade. Selenium
+# Manager's own network timeout defaults to 300 s per request, which is why a
+# stalled download blocked the attach for minutes with no output (the reported
+# "hang"). The metadata fetch is quick; the zip is a few megabytes and a slow link
+# can legitimately need minutes, so its budget is generous but finite and progress
+# is logged so the wait is never silent. Override with
+# ``AGENTKIT_DRIVER_DOWNLOAD_TIMEOUT_S``.
+_CFT_METADATA_TIMEOUT_S = 60.0
+_CFT_DOWNLOAD_TIMEOUT_S = 600.0
 
 
 def _brave_cdp_ready(address: str, timeout_s: float = 2.0) -> bool:
@@ -207,6 +233,207 @@ def build_chrome_options_for_remote_debugging(
     return opts
 
 
+def _driver_major(path: str, timeout_s: float = 10.0) -> str | None:
+    """Major version of the chromedriver at ``path``, or ``None`` when unusable.
+
+    Selenium Manager's offline mode returns *some* cached driver even when it does
+    not match the requested version, so the resolved binary must be checked before
+    ChromeDriver is handed a browser it cannot drive.
+    """
+    try:
+        proc = subprocess.run(
+            [path, "--version"], capture_output=True, text=True, timeout=timeout_s
+        )
+    except Exception:
+        return None
+    match = _DRIVER_VERSION_RE.search(proc.stdout or "")
+    return match.group(1) if match else None
+
+
+def _selenium_manager_driver_path(args: list[str], *, timeout_s: float) -> str:
+    """Resolve a driver path via Selenium Manager, capped at ``timeout_s``.
+
+    Selenium's own wrapper runs the manager with :func:`subprocess.run` and no
+    timeout, so a stalled network request keeps the caller blocked for the
+    manager's full retry window. Invoking the binary ourselves lets us bound it.
+    """
+    binary = SeleniumManager._get_binary()
+    cmd = [str(binary), *args, "--language-binding", "python", "--output", "json"]
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_s)
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(
+            f"Selenium Manager did not resolve a chromedriver within {timeout_s:.0f}s"
+        ) from exc
+    try:
+        result = json.loads(proc.stdout)["result"]
+    except Exception as exc:
+        raise RuntimeError(
+            proc.stderr.strip() or "Selenium Manager returned no usable output"
+        ) from exc
+    driver_path = result.get("driver_path")
+    if proc.returncode != 0 or not driver_path:
+        raise RuntimeError(
+            result.get("message")
+            or proc.stderr.strip()
+            or "Selenium Manager found no chromedriver"
+        )
+    return driver_path
+
+
+def _selenium_cache_root() -> Path:
+    return Path(os.environ.get("SE_CACHE_PATH") or _SELENIUM_CACHE_DEFAULT)
+
+
+def _cft_platform_key() -> str | None:
+    """Chrome for Testing download platform for this machine, or ``None``."""
+    machine = platform.machine().lower()
+    if sys.platform == "darwin":
+        return "mac-arm64" if machine == "arm64" else "mac-x64"
+    if sys.platform.startswith("linux"):
+        return "linux-arm64" if machine in ("aarch64", "arm64") else "linux64"
+    if sys.platform == "win32":
+        return "win64" if sys.maxsize > 2**32 else "win32"
+    return None
+
+
+def _cft_driver_url(entry: dict, platform_key: str) -> str | None:
+    for download in entry.get("downloads", {}).get("chromedriver", []):
+        if download.get("platform") == platform_key:
+            return download.get("url")
+    return None
+
+
+def _fetch_json(url: str, timeout_s: float) -> dict:
+    request = urllib.request.Request(url)
+    with urllib.request.urlopen(request, timeout=timeout_s) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def _http_download(url: str, dest: Path, timeout_s: float) -> None:
+    """Stream ``url`` to ``dest``, failing once ``timeout_s`` elapses in total.
+
+    ``urllib``'s socket timeout is per read, so a slow but steady transfer would
+    otherwise run past the budget; the loop enforces a wall-clock deadline and logs
+    progress so a long download never looks like a hang.
+    """
+    start = time.monotonic()
+    deadline = start + timeout_s
+    last_log = start
+    received = 0
+    request = urllib.request.Request(url)
+    with (
+        urllib.request.urlopen(request, timeout=min(timeout_s, 30.0)) as response,
+        open(dest, "wb") as target,
+    ):
+        while True:
+            now = time.monotonic()
+            if now >= deadline:
+                raise TimeoutError(
+                    f"download from {url} exceeded {timeout_s:.0f}s"
+                )
+            chunk = response.read(1 << 16)
+            if not chunk:
+                break
+            target.write(chunk)
+            received += len(chunk)
+            if now - last_log >= 15:
+                last_log = now
+                logger.info(
+                    "chromedriver download: %.1f MB so far (%.0fs elapsed)",
+                    received / 1_000_000,
+                    now - start,
+                )
+
+
+def _chromedriver_download(major: str, timeout_s: float) -> tuple[str, str] | None:
+    """Return ``(version, url)`` of a Chrome for Testing chromedriver for ``major``.
+
+    The small last-known-good file covers the stable/beta/dev/canary heads, which is
+    where a just-updated browser lands; the full list is a fallback for older majors.
+    """
+    platform_key = _cft_platform_key()
+    if platform_key is None:
+        return None
+    try:
+        channels = _fetch_json(_CfT_LAST_KNOWN_GOOD_URL, timeout_s).get("channels", {})
+        for channel in ("Stable", "Beta", "Dev", "Canary"):
+            entry = channels.get(channel) or {}
+            version = str(entry.get("version", ""))
+            url = _cft_driver_url(entry, platform_key)
+            if version.split(".")[0] == major and url:
+                return version, url
+    except Exception:
+        pass
+    try:
+        versions = _fetch_json(_CfT_ALL_VERSIONS_URL, timeout_s).get("versions", [])
+        for entry in reversed(versions):
+            version = str(entry.get("version", ""))
+            url = _cft_driver_url(entry, platform_key)
+            if version.split(".")[0] == major and url:
+                return version, url
+    except Exception:
+        pass
+    return None
+
+
+def _install_chromedriver(version: str, url: str, timeout_s: float) -> str:
+    """Download a chromedriver zip into the Selenium cache and return its path."""
+    platform_key = _cft_platform_key() or ""
+    binary_name = "chromedriver.exe" if sys.platform == "win32" else "chromedriver"
+    dest_dir = _selenium_cache_root() / "chromedriver" / platform_key / version
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    dest = dest_dir / binary_name
+    archive_path = dest_dir / f".{binary_name}.download"
+    try:
+        _http_download(url, archive_path, timeout_s)
+        with zipfile.ZipFile(archive_path) as archive:
+            member = next(
+                (
+                    name
+                    for name in archive.namelist()
+                    if name.endswith(f"/{binary_name}") or name == binary_name
+                ),
+                None,
+            )
+            if member is None:
+                raise RuntimeError(
+                    f"chromedriver binary not found in archive from {url}"
+                )
+            with archive.open(member) as source, open(dest, "wb") as target:
+                target.write(source.read())
+    finally:
+        archive_path.unlink(missing_ok=True)
+    dest.chmod(0o755)
+    if _IS_MACOS:
+        subprocess.run(
+            ["xattr", "-d", "com.apple.quarantine", str(dest)],
+            capture_output=True,
+        )
+    return str(dest)
+
+
+def _download_budget_s() -> float:
+    raw = os.environ.get("AGENTKIT_DRIVER_DOWNLOAD_TIMEOUT_S")
+    if raw:
+        try:
+            return max(1.0, float(raw))
+        except ValueError:
+            pass
+    return _CFT_DOWNLOAD_TIMEOUT_S
+
+
+def _download_matching_driver(major: str, timeout_s: float) -> str:
+    """Fetch the chromedriver matching ``major`` from Chrome for Testing."""
+    found = _chromedriver_download(major, _CFT_METADATA_TIMEOUT_S)
+    if found is None:
+        raise RuntimeError(
+            f"No Chrome for Testing chromedriver found for browser major {major}"
+        )
+    version, url = found
+    return _install_chromedriver(version, url, timeout_s)
+
+
 def chrome_driver_attach(
     *,
     debugger_address: str,
@@ -233,6 +460,37 @@ def chrome_driver_attach(
         args += ["--browser-version", major]
     elif binary:
         args += ["--browser-path", str(binary)]
-    paths = SeleniumManager().binary_paths(args)
-    service = ChromeService(executable_path=paths["driver_path"])
+
+    def matching(path: str) -> bool:
+        return major is None or _driver_major(path) == major
+
+    # Offline first: Selenium Manager answers from its cache in about two seconds and
+    # makes no network calls. It returns *some* cached driver regardless of the
+    # requested version, so accept it only when its major matches the running browser.
+    driver_path: str | None = None
+    try:
+        candidate = _selenium_manager_driver_path(args + ["--offline"], timeout_s=15.0)
+        if matching(candidate):
+            driver_path = candidate
+    except RuntimeError:
+        pass
+
+    # Otherwise fetch the matching driver straight from Chrome for Testing. Selenium
+    # Manager's online path is not used: its 300 s default network timeout (and its
+    # fallback to a mismatched cached driver) is what produced the silent hang.
+    if driver_path is None:
+        if major is None:
+            raise RuntimeError(
+                "No cached chromedriver found and the running browser version is "
+                "unknown; cannot pick a matching driver to download."
+            )
+        budget = _download_budget_s()
+        logger.warning(
+            "No cached chromedriver for browser %s; downloading from Chrome for "
+            "Testing (up to %.0fs, once per browser upgrade)…",
+            major,
+            budget,
+        )
+        driver_path = _download_matching_driver(major, budget)
+    service = ChromeService(executable_path=driver_path)
     return webdriver.Chrome(options=opts, service=service)
