@@ -2272,6 +2272,12 @@ Failure mode, 2026-10-09: the E05 "Reading for S6" row's rewrite (the four force
 
 Stated 2026-10-09: "you still didn't fix the homework slide in e05 for the kalbach reading for s6: it must clearly say that four forces/switch interview is optional, and emphasize the other parts which help students more, did you forget?"
 
+### 130. A named artifact is built to the user's specification, not to invented content
+
+When the user names an artifact to build — a slide, a note, a table — gather every specification he has already given for it before the build: the folder log, the memory file, the earlier messages. His specification governs the build: an image he named is placed as that image, a construction he pointed at ("like the boxes on X") is built from that construction's own objects, and the accompanying text goes where he said it goes — a figure page's explanation into the presenter notes when the figure takes the page. Writing agent-authored text, or a fresh layout, into the artifact he described is a defect even when the content is correct: it discards his decision and silently replaces it. When the record does not settle the artifact's form, ask before the build; when it does, build that.
+
+Failure mode, 2026-10-09: asked for "a single slide for that, right after the slide for Job types", the agent built "The job types" as a rows page of its own writing and "Two meanings of need" as stacked rows, while the book's figure and the Formulate-the-Job boxes were the forms the user had named. The user: "you didn't listen: i said for the job types the image from the kalbach book. but the text on that slide into the Notes before deleting them. the needs slide should show the two opposing definitions side by side like the boxes on the formulate the job slide."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
