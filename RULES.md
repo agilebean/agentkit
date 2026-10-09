@@ -2234,6 +2234,14 @@ The capture side of the same rule: feedback is filed in the turn it is given, an
 
 Failure mode, 2026-10-05 and 2026-10-08: the S3 feedback (20 minutes over on the presentations, the quality read, the few who stood out) arrived with a grading-analysis request and never reached "KUBS DT Course Design/KUBS DT session feedback.md". On 2026-10-08, adding the S4 section, the agent saw the file read S4, S2, S1 and asked the user for the S3 notes — which he had given three days earlier. The user: "why did you not show my feedback kubs dt s3? i gave detailed feedback, search for it."
 
+### 125. A placed object is verified as the whole slide, not by its own metrics
+
+Cropping, scaling and edge checks describe the object; they say nothing about the slide it lands on. After any placement, look at the rendered slide the way a viewer sees it: the air above the object, below it, to its sides, and whether the object sits where the reader expects it inside the deck's own frame. A figure that is perfectly trimmed, perfectly colour-matched and perfectly measured can still float 231 px below the title band with the whole lower half of the slide empty, and none of the object's own numbers will say so.
+
+The anchor is the deck's geometry - the band's bottom edge, the page-number box, the slide's margins - never the object's habit. An object that does not fill its axis is centred in the space it leaves, not pushed to one edge. When the user names a placement in one phrase ("centred", "at the bottom", "as large as it goes"), that phrase governs the whole slide, and the proof delivered is a render of the full slide rather than a measurement of the object.
+
+Failure mode, 2026-10-09 (E05 slides 10-13): four book diagrams were re-rendered, cropped tight, colour-matched to the slide background and verified by ink extent, invisible image edge and uniform scale - then bottom-anchored at y 1036, because an earlier request on the same slides had said "more to the bottom". The two short figures were left with 231 px and 205 px of empty slide above them. The user: "you left an incredible large space above the image. it should be centered below the title line of course. why can't you see that?"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:

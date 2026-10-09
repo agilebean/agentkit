@@ -140,4 +140,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2215–2222 | ### 122. A sweeping claim is tested against the data it summarizes, row by row |
 | 2223–2228 | ### 123. Anything the user reads is written in a language he reads; a Japanese-only artifact is unreadable |
 | 2229–2236 | ### 124. Before asking the user to supply something, search the record — he may already have given it |
-| 2237–2243 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2237–2244 | ### 125. A placed object is verified as the whole slide, not by its own metrics |
+| 2245–2251 | ## Shell: `~/.bash_aliases` (user-global) |
