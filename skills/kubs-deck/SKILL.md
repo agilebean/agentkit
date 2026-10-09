@@ -25,7 +25,7 @@ Read `deck_reference.json`. The essentials:
 
 | Element | Value |
 | --- | --- |
-| Band and title | band image (0,12) 1920x112; title box (38,34) 1859x73; white ink starts x 38-40, top at y 44 |
+| Band and title | band image (0,12) 1920x112; title box (38,34) 1859x73; the deck's titles share one column within 10 px (E05 measured x 38-40), ink top at y 44 |
 | Overview page (slide 2) | one image: the session's `chart_v9/chart_S<n>_v9.png` composited onto a 1920x1080 white sheet, placed at (0,0); the chart itself sits at (121,0) |
 | Chart marks | green (62,141,39), inset 2 px, stroke 12 px, radius 34; the session's week row and, inside it, the session's own cell |
 | Figure slot | 1662 px wide at x 129 (Fig 2.4 page y 137 h 930; the tip page y 222 h 759) |
@@ -42,7 +42,7 @@ A page whose title was re-created, whose figure was redrawn, or whose chart was 
 
 ## Step 3 - the gate (before installing)
 
-1. Run `mamba run -n socrates python3 projects/kubs_dt/pipeline.py deckcheck --session N`. It exports the deck and checks: every page fully opaque, every banded title's ink at x 38-40 / y 44, and the session's chart marks against the session's own chart file. Exit 2 means do not install; report the flagged lines.
+1. Run `mamba run -n socrates python3 projects/kubs_dt/pipeline.py deckcheck --session N`. It exports the deck and checks: every page fully opaque; the band titles' column (one column per deck, spread <= 10 px; E05 measures x 38-40) with their ink top at y 44; and the session's chart marks against the session's own chart file. Exit 2 means do not install; report the flagged lines.
 2. Look at every changed page, magnified at the changed region - not fitted. A fitted view hid a 6 px overhang while three measurements passed (rule 137).
 3. Compare each changed page against the page it copies (the reference instance), not against your intent. "It looks right" is not a check; "its ink sits at the same coordinates as the tip page's" is.
 
