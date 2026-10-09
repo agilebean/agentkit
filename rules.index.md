@@ -150,4 +150,7 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2290–2297 | ### 132. An observation carries only to the conditions its mechanism depends on |
 | 2298–2301 | ### 133. A deck slide's page is white and full-page; art narrower than the page leaves transparent margins |
 | 2302–2307 | ### 134. A rebuild copies the deck's own reference geometry; the source material supplies content only |
-| 2308–2314 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2308–2311 | ### 135. A standing requirement survives every new instruction |
+| 2312–2315 | ### 136. A specification applies to its class |
+| 2316–2319 | ### 137. Verification must be differential and able to fail |
+| 2320–2326 | ## Shell: `~/.bash_aliases` (user-global) |
