@@ -143,4 +143,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2239–2246 | ### 125. A placed object is verified as the whole slide, not by its own metrics |
 | 2247–2252 | ### 126. A change carries its landing into the next step, computed, not flagged |
 | 2253–2260 | ### 127. Shared attributes become a table, and a summary relates its parts |
-| 2261–2267 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2261–2266 | ### 128. A clarification lands in the artifact that teaches it |
+| 2267–2273 | ## Shell: `~/.bash_aliases` (user-global) |
