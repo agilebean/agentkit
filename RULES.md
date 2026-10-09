@@ -2264,6 +2264,14 @@ When a term, definition or distinction is clarified - in research, in a source c
 
 Failure mode, 2026-10-09: the JTBD terminology resolution (a job is a task that is a goal-oriented activity, reconciling the goal and task definitions) was researched, written into the Evernote note and recorded in memory/kubs.md, and the S5 script - the session that teaches the job definition - was not touched. The user: "now you again made the same mistake to not think about where this new clarification has its place in the kubs dt lecture. this must be an agent rule! of course the script should contain the summary sentence of reconciliation."
 
+### 129. A change that waits on the user's word is a live ask, never a log note
+
+When a directed change to an artifact is settled in direction but still needs the user's wording, choice or sign-off, the ask goes out with the question tool in the same turn, options laid out, and it stays live until answered. A log line ("recommended, waits on his word") is a record, not a request: the artifact stays stale, and the next thing that happens is the user discovering the fix missing. Apply the decided part of the direction at once; only the genuinely open part waits, and it waits with a question on his screen. This is rule 95's ask applied to a pending decision, and rule 126's "put it to him as a short decision" outside a build.
+
+Failure mode, 2026-10-09: the E05 "Reading for S6" row's rewrite (the four forces and the switch interview no longer pronounced, the reading toward the canvas) sat as "waits on his word" in the S5 log and the memory while the slide kept its old text. The user: "you still didn't fix the homework slide in e05 ... did you forget?"
+
+Stated 2026-10-09: "you still didn't fix the homework slide in e05 for the kalbach reading for s6: it must clearly say that four forces/switch interview is optional, and emphasize the other parts which help students more, did you forget?"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
