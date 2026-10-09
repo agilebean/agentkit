@@ -2242,6 +2242,12 @@ The anchor is the deck's geometry - the band's bottom edge, the page-number box,
 
 Failure mode, 2026-10-09 (E05 slides 10-13): four book diagrams were re-rendered, cropped tight, colour-matched to the slide background and verified by ink extent, invisible image edge and uniform scale - then bottom-anchored at y 1036, because an earlier request on the same slides had said "more to the bottom". The two short figures were left with 231 px and 205 px of empty slide above them. The user: "you left an incredible large space above the image. it should be centered below the title line of course. why can't you see that?"
 
+### 126. A change carries its landing into the next step, computed, not flagged
+
+When the user sets something up that lands in a later step - homework due at the next session, a deliverable due later in a plan, a booking that moves an itinerary - the later step's live artifacts are rebuilt in the same pass: the block it adds, where it sits, and the minutes it moves, worked to the number. A note, a log line or an "open item" that observes the consequence is not the work; the user does not want to discover the landing missing. When the fit is a genuine choice, put it to him as a short decision before the build, not as an inferred cut.
+
+Failure mode, 2026-10-09: the S4 homework's Monday presentations (2 people per team, 1 minute each) were filed into S4's script, sheet and feedback, and the fact that S5 had no slot for them sat as an open item. The user: "i expected you to think about the consequences it has on the script and runsheet for s5. you didn't at all, that's terrible! you must have realized: the homework presentations will take a long time, so they must be before the jtbd lecture and much longer 20min. I also must conceive a new and short warmup. maybe as as part of the welcome which will extend to 10min." Resolution: S5's script and run sheet were rebuilt the same day - the 20-minute presentations block before the JTBD lecture, the welcome at 10 minutes with a new warmup, and the retrospective giving the minutes to fit the 110-minute slot (35); the fit question went to him before the build.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
