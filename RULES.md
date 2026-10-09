@@ -2295,6 +2295,10 @@ When the named mechanism is a property of a tissue or a movement (a muscle's act
 
 Failure mode, 2026-10-09: asked whether an evening max-strength session would boost or tire a next-day threshold swim, the agent first cited the 2026-10-05 strength session and the 2026-10-06 swim as supporting evidence, and the user flagged the mismatch ("robotic and very misleading ... the difference to 10-05 was that the next day was an aerobic swim so very easy"). The agent then excluded the instance by session type while still naming lats activation as the plausible reason the 10-06 swim felt easy. The two statements cannot both stand, because lats activation is a property of the muscle. The user: "you are going back to extemely: if lats activation explains 10-05 aerobic set then it would also for the treshold session."
 
+### 133. A deck slide's page is white and full-page; art narrower than the page leaves transparent margins
+
+A slide built or pasted into a deck covers its whole page: the pasted image is the full-page render, or the page carries a full-page white backing, and the result is verified by exporting the page and checking that no corner is transparent. The theme does not guarantee it — a slide's background is a per-slide setting, not readable or writable from AppleScript — so art narrower than the page (a chart on a 1678 px canvas, a figure on a white field) exports with transparent margins and reads as "not on a white background", however white it looks on the app's canvas. A full-page backing also covers everything below it in the z-stack, the page-number field included, and a covered live field cannot be raised (text items cannot be copied). Record the fact the user states about a slide's construction in the deck's own record the turn he states it. KUBS decks: `memory/kubs.md`, "Slide pages carry their own white background".
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:

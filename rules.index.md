@@ -148,4 +148,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2278–2283 | ### 130. A named artifact is built to the user's specification, not to invented content |
 | 2284–2289 | ### 131. A page's title names it; a headline that restates the body is cut |
 | 2290–2297 | ### 132. An observation carries only to the conditions its mechanism depends on |
-| 2298–2304 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2298–2301 | ### 133. A deck slide's page is white and full-page; art narrower than the page leaves transparent margins |
+| 2302–2308 | ## Shell: `~/.bash_aliases` (user-global) |
