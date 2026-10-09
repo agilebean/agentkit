@@ -2305,6 +2305,18 @@ When a pass creates or replaces an element that already exists in the deck — a
 
 Where the deck's other pages already carry the element as a finished asset, that asset is reused whole. The KUBS overview page carries the session's own marked chart (`chart_v9/chart_S<n>_v9.png`) composited onto the white sheet, not a clean chart with marks redrawn on top; the marked chart for a session exists as a file and is not rebuilt from another session's pixels. Assembling an element from another instance is a re-derivation with a seam: on 2026-10-09 a cell ring taken from E06's chart carried that chart's row strokes with it, and they stuck out of the rounded rectangle. The user saw it in the render before any of my measurements did.
 
+### 135. A standing requirement survives every new instruction
+
+An artifact carries requirements: its page backgrounds, its anchors, its marks, its numbering, its construction. A new instruction constrains them or adds to them; it replaces one only when it says so. Before acting on an instruction that touches an artifact, list what must stay, and open a sibling artifact - the sibling is the reference for what a valid instance looks like. 2026-10-09: "the course overview - i said it 100 times - should not be an image including the green circles" was read as a replacement of the chart construction, and the deck's own convention (the course chart with the session's week row and its chip circled, carried since the deck was created) was dropped silently; restoring it took three reports: "why is the course overview missing the circle around the session?", "why can't you just do what you did for the other sessions?", "the rectangle on the session has two horizontal lines sticking out of the rounded rectangle". When half of an instruction is ambiguous (which circles?), surface it in the same turn instead of resolving it narrowly.
+
+### 136. A specification applies to its class
+
+A specification the user states governs every instance of the class it names, not the instance at hand. Enumerate the class before acting, apply it to all of it in the same pass, and name the sweep in the report ("all 21 pages", "every carrier of the reading"). When the class is ambiguous, name the class you inferred and the count you are acting on; a question costs one turn, a half-applied spec costs a repeat report. 2026-10-09: "all pasted slides should be on a white background" was applied to the named slide while another stayed transparent - "why didn't you register that all pasted slides should be on a white background?"
+
+### 137. Verification must be differential and able to fail
+
+A check that compares the result against the pass's own intent cannot fail and proves nothing. The check compares the result against the reference instance (its pixels, its measured geometry) or against an independently derived expectation, and where it is mechanical it lives in a script the project runs, not in prose. Before trusting a check, run it against the defect it exists for and see it flag. Visual reads are evidence only at a zoom that can show the defect class: 2026-10-09, three passing measurements missed a 6 px overhang the user saw at once, and a fitted render "showed" a defect that was not in the pixels.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
