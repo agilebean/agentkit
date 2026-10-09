@@ -76,7 +76,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 
 - **Fake-sentence patterns:** "It's not just X, it's Y"; "It's not about X, it's about Y"; "The key is..."; "At its core..."; "when it comes to"; "in order to" (write "to"); "the ability to" (write "you can").
 - **Contrasts built for sound:** "bias is watched, not switched off"; "the filters cost you more on Wednesday"; "this week is the sprint, not the book". Write the plain fact: "you cannot switch bias off"; "you get one hour with a stranger and no second chance"; "the reading comes Thursday, in the sketch session".
-- **Metaphors that give an abstraction agency, and absolutes about it:** "where bias enters an interview" claims one overall bias that is completely known. Write what the person does: "knows several biases in interviews".
+- **Metaphors that give an abstraction agency, and absolutes about it:** "where bias enters an interview" claims one overall bias that is completely known. Write what the person does: "knows several biases in interviews". Same shape: "the session only reaches tomorrow's set" hides a harm behind a movement, and the reader inverts it; write "it would only hurt tomorrow's set" (2026-10-09).
 - **Formal greeting and closing formulas** in messages the user sends (매니저님, 안녕하세요 / 검토 부탁드립니다, 감사합니다). The body only.
 
 *Voice in first-person text*
@@ -2283,6 +2283,14 @@ Failure mode, 2026-10-09: asked for "a single slide for that, right after the sl
 A page's title names the page. For a comparison, the title names the two sides — "Need: Design Thinking vs. JTBD" — never the fact that there is a comparison ("Two meanings of need" says nothing). The body then carries the content: boxes, rows, a figure. A headline above the body that restates what the body says is cut; it adds no information and frames nothing the title has not. The same holds in a note: a lead sentence that repeats the table under it goes. Say it once, in the element that owns it.
 
 Failure mode, 2026-10-09: the needs page carried the title "Two meanings of need" and the headline "A need is either a human motivation or the criteria for doing the job" over the two boxes that say exactly that. The user: "the two meanings of need headline is saying nothing, and the header 'A need is either a human motivation or the criteria for doing the job' is redundant with the content. learn that. remove header and say: Need: Design Thinking vs. JTBD".
+
+### 132. An observation is evidence only for the condition it was observed in
+
+A past result carries to a new case only when the conditions that could change it match. Before using an instance — the user's own, a study's, a stored measurement — as support for a decision now, name the condition it was measured under and the condition now, and check that the two agree: session type and intensity, distance, dose, time of day, person, setup. When they differ in a way that could move the result, the instance is not evidence. Say what differs, and let the answer stand on evidence that does match; if none matches, say so.
+
+The condition to check is the one the outcome depends on, not surface similarity. A strength session before an easy aerobic swim and the same session before a threshold set are not the same case, however alike the two swims look on a calendar.
+
+Failure mode, 2026-10-09: asked whether an evening max-strength session would boost or tire a next-day threshold swim, the agent cited the 2026-10-05 strength session and the 2026-10-06 swim as supporting evidence. That swim was aerobic, and the swim in question is a threshold set at CSS. The user: "robotic and very misleading ... the difference to 10-05 was that the next day was an aerobic swim so very easy."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
