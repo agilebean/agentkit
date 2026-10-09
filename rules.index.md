@@ -141,4 +141,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2223–2228 | ### 123. Anything the user reads is written in a language he reads; a Japanese-only artifact is unreadable |
 | 2229–2236 | ### 124. Before asking the user to supply something, search the record — he may already have given it |
 | 2237–2244 | ### 125. A placed object is verified as the whole slide, not by its own metrics |
-| 2245–2251 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2245–2250 | ### 126. A change carries its landing into the next step, computed, not flagged |
+| 2251–2257 | ## Shell: `~/.bash_aliases` (user-global) |
