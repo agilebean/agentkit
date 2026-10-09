@@ -30,7 +30,7 @@ Maintenance: a new defect is classified against these classes in the same turn. 
 
 **Why the guard failed.** The values existed only as narrative in past log entries and in the user's head. Every pass that re-created an element invented its box, because nothing in the working path carried the value to copy and no check could contradict it. A prose rule ("look for the master") depends on the agent remembering it at the exact moment it writes a box; a file the pass must read and a check that runs on the export do not.
 
-**Enforced now.** `deck_reference.json` holds the values; the `band` check measures every banded page's title ink against x 38-40 / y 44 on every pass; rule 134 names the class.
+**Enforced now.** `deck_reference.json` holds the values; the `band` check measures every banded page's title ink against the deck's measured column and the 10 px spread rule on every pass (E05 measures x 38-40; the E02-E04 lineage anchors at x 44, so the check spans both and the spread rule carries the class); rule 134 names the class.
 
 ---
 
