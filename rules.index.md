@@ -149,5 +149,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2284–2289 | ### 131. A page's title names it; a headline that restates the body is cut |
 | 2290–2297 | ### 132. An observation carries only to the conditions its mechanism depends on |
 | 2298–2301 | ### 133. A deck slide's page is white and full-page; art narrower than the page leaves transparent margins |
-| 2302–2305 | ### 134. A rebuild copies the deck's own reference geometry; the source material supplies content only |
-| 2306–2312 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2302–2307 | ### 134. A rebuild copies the deck's own reference geometry; the source material supplies content only |
+| 2308–2314 | ## Shell: `~/.bash_aliases` (user-global) |
