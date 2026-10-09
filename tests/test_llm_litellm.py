@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 import pytest
 
+from agentkit.core import LLMError
 from agentkit.llm import (
     DEFAULT_MODEL_ALIASES,
     complete,
@@ -19,6 +20,7 @@ from agentkit.llm import (
 )
 from agentkit.llm._litellm import (
     _build_completion_kwargs,
+    _build_headers,
     _get_go_api_key,
     _get_personal_deepseek_key,
 )
@@ -201,7 +203,7 @@ class TestCompleteMocked:
             )
             assert resp is fake
 
-    def test_complete_falls_back_on_go_api_failure(
+    def test_complete_raises_on_go_api_failure_without_fallback(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ):
         monkeypatch.delenv("OPENCODE_API_KEY", raising=False)
@@ -219,23 +221,52 @@ class TestCompleteMocked:
 
         call_kwargs: list[dict] = []
 
-        def fail_then_succeed(**kwargs: Any) -> Any:
+        def fail(**kwargs: Any) -> Any:
             call_kwargs.append(dict(kwargs))
-            if len(call_kwargs) == 1:
-                raise RuntimeError("Go API unavailable")
-            return _mock_response("fallback-ok", prompt_tokens=0, completion_tokens=0, total_tokens=0)
+            raise RuntimeError("Go API unavailable")
 
-        with patch("agentkit.llm._litellm._post_completion", side_effect=fail_then_succeed):
-            result = complete([{"role": "user", "content": "hi"}], alias="fast")
-            assert result == "fallback-ok"
+        with patch("agentkit.llm._litellm._post_completion", side_effect=fail):
+            with pytest.raises(LLMError):
+                complete([{"role": "user", "content": "hi"}], alias="fast")
 
-        assert len(call_kwargs) == 2
-        # First call: Go API with subscription key
+        # One Go attempt only: the failure is raised, never retried against the personal key.
+        assert len(call_kwargs) == 1
         assert call_kwargs[0]["api_key"] == "sk-go-sub"
         assert "go/v1" in call_kwargs[0]["api_base"]
-        # Second call: direct DeepSeek with personal key
-        assert call_kwargs[1]["api_key"] == "sk-personal-fallback"
-        assert "api.deepseek.com/v1" in call_kwargs[1]["api_base"]
+
+    def test_complete_raises_on_empty_content(self, monkeypatch: pytest.MonkeyPatch):
+        monkeypatch.setenv("OPENCODE_API_KEY", "sk-test")
+        empty = SimpleNamespace(
+            choices=[
+                SimpleNamespace(
+                    message=SimpleNamespace(role="assistant", content="", tool_calls=[]),
+                    finish_reason="length",
+                    index=0,
+                )
+            ],
+            usage=SimpleNamespace(prompt_tokens=1, completion_tokens=4096, total_tokens=4097),
+            model="test/model",
+            id="x",
+        )
+        with patch("agentkit.llm._litellm._post_completion", return_value=empty):
+            with pytest.raises(LLMError, match="no content"):
+                complete(
+                    [{"role": "user", "content": "x"}],
+                    alias="fast",
+                    aliases={"fast": "test/model"},
+                )
+
+
+class TestRequestHeaders:
+    def test_headers_identify_client_and_session(self):
+        headers = _build_headers("sk-test")
+        assert headers["Authorization"] == "Bearer sk-test"
+        assert headers["User-Agent"].startswith("agentkit/")
+        assert headers["x-opencode-session"].startswith("ses_")
+
+    def test_session_id_honours_env_override(self, monkeypatch: pytest.MonkeyPatch):
+        monkeypatch.setenv("OPENCODE_SESSION_ID", "ses_custom")
+        assert _build_headers("sk")["x-opencode-session"] == "ses_custom"
 
 
 class TestBuildCompletionKwargs:
