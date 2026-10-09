@@ -146,4 +146,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2261–2266 | ### 128. A clarification lands in the artifact that teaches it |
 | 2267–2274 | ### 129. A change that waits on the user's word is a live ask, never a log note |
 | 2275–2280 | ### 130. A named artifact is built to the user's specification, not to invented content |
-| 2281–2287 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2281–2286 | ### 131. A page's title names it; a headline that restates the body is cut |
+| 2287–2293 | ## Shell: `~/.bash_aliases` (user-global) |

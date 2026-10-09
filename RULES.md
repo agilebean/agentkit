@@ -2278,6 +2278,12 @@ When the user names an artifact to build — a slide, a note, a table — gather
 
 Failure mode, 2026-10-09: asked for "a single slide for that, right after the slide for Job types", the agent built "The job types" as a rows page of its own writing and "Two meanings of need" as stacked rows, while the book's figure and the Formulate-the-Job boxes were the forms the user had named. The user: "you didn't listen: i said for the job types the image from the kalbach book. but the text on that slide into the Notes before deleting them. the needs slide should show the two opposing definitions side by side like the boxes on the formulate the job slide."
 
+### 131. A page's title names it; a headline that restates the body is cut
+
+A page's title names the page. For a comparison, the title names the two sides — "Need: Design Thinking vs. JTBD" — never the fact that there is a comparison ("Two meanings of need" says nothing). The body then carries the content: boxes, rows, a figure. A headline above the body that restates what the body says is cut; it adds no information and frames nothing the title has not. The same holds in a note: a lead sentence that repeats the table under it goes. Say it once, in the element that owns it.
+
+Failure mode, 2026-10-09: the needs page carried the title "Two meanings of need" and the headline "A need is either a human motivation or the criteria for doing the job" over the two boxes that say exactly that. The user: "the two meanings of need headline is saying nothing, and the header 'A need is either a human motivation or the criteria for doing the job' is redundant with the content. learn that. remove header and say: Need: Design Thinking vs. JTBD".
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
