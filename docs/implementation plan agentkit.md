@@ -46,7 +46,7 @@ Analysis across 5 repos under `~/Software/Prototypes/`. Purpose: identify code t
 | **Priority** | **Highest** — duplicated 3× with diverging features |
 
 ### Features common to all three
-- `MODEL_ALIASES` dict: `fast`/`smart`/`local`/`local_smart`/`cheap` → provider model IDs
+- `MODEL_ALIASES` dict: `fast`/`smart`/`local`/`local_smart` → provider model IDs
 - `complete(messages, alias, max_tokens, temperature)` → `str`
 - `resolve_model_alias(alias)` with env var overrides
 - API key resolution from `~/.local/share/opencode/auth.json` (DeepSeek)

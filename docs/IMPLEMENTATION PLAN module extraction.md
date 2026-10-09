@@ -112,7 +112,7 @@ Priority 3: Environment variable
     Reason: Explicit override
 
 Print to console: "DeepSeek auth: using [opencode subscription | personal API key | env var]"
-On fallback: "OpenCode subscription key failed, falling back to personal DeepSeek API key"
+A failed OpenCode Go request is not retried: it raises `LLMError` so the failure is visible (the silent request-level fallback was removed 2026-10-09).
 ```
 
 All three sources are checked by a single utility function. The subscription key and personal key both live in `auth.json` — no env var setup required for either.
@@ -391,7 +391,7 @@ DeepSeek auth: using personal API key
 | **Target** | `src/agentkit/llm/_litellm.py`, re-exported via `src/agentkit/llm/__init__.py` |
 
 **What ships:**
-- `DEFAULT_MODEL_ALIASES` — `fast`/`smart`/`local`/`local_smart`/`cheap` → provider model IDs
+- `DEFAULT_MODEL_ALIASES` — `fast`/`smart`/`local`/`local_smart` → provider model IDs
 - `resolve_model(alias, *, aliases=None)` — resolve alias to provider model string; overridable per project
 - `complete(messages, alias, *, max_tokens, temperature, json_mode, log_fn, **kwargs) → str`
 - `complete_with_tools(messages, tools, tool_choice, alias, *, max_tokens, temperature, log_fn) → litellm response`

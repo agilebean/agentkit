@@ -10,10 +10,10 @@ from __future__ import annotations
 
 import json
 import os
-import sys
 import time
 import urllib.error
 import urllib.request
+import uuid
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, Callable
@@ -29,11 +29,10 @@ DEFAULT_MODEL_ALIASES: dict[str, str] = {
     "smart": "deepseek/deepseek-v4-pro",
     "local": "openai/local-model",
     "local_smart": "openai/local-model",
-    "cheap": "openai/minimax-m2.5",
 }
 
 # Aliases routed through OpenCode Go API (OpenAI-compatible endpoint)
-_GO_API_ALIASES = frozenset({"fast", "smart", "cheap"})
+_GO_API_ALIASES = frozenset({"fast", "smart"})
 
 # LM Studio defaults for local aliases
 _LM_STUDIO_BASE_URL = os.environ.get("LM_STUDIO_BASE_URL", "http://localhost:1234/v1")
@@ -129,6 +128,33 @@ def resolve_model(
 
 _HTTP_TIMEOUT_S = 120
 
+# OpenCode Go (https://opencode.ai/docs/go/) sits behind Cloudflare and rejects
+# generic HTTP-library user agents (urllib's default yields ``403 error code: 1010``).
+# The docs require a self-identifying client UA plus a stable ``x-opencode-session``
+# per conversation for routing and prompt caching.
+_USER_AGENT = "agentkit/1.0"
+_PROCESS_SESSION_ID = "ses_" + uuid.uuid4().hex[:24]
+
+
+def _session_id() -> str:
+    """Return a stable OpenCode session id.
+
+    Honours ``OPENCODE_SESSION_ID`` when set; otherwise uses a per-process id so
+    all calls from one run share a session without a caller-managed conversation.
+    """
+    sid = os.environ.get("OPENCODE_SESSION_ID", "").strip()
+    return sid or _PROCESS_SESSION_ID
+
+
+def _build_headers(api_key: str) -> dict[str, str]:
+    """Build request headers, including the Go-required UA and session id."""
+    return {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}",
+        "User-Agent": _USER_AGENT,
+        "x-opencode-session": _session_id(),
+    }
+
 
 def _strip_provider_prefix(model: str) -> str:
     """Strip litellm-style provider prefix (e.g. 'deepseek/deepseek-v4-flash' -> 'deepseek-v4-flash')."""
@@ -197,10 +223,7 @@ def _post_completion(**kwargs: Any) -> SimpleNamespace:
 
     url = f"{api_base.rstrip('/')}/chat/completions"
     body = json.dumps(kwargs).encode("utf-8")
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {api_key}",
-    }
+    headers = _build_headers(api_key)
 
     req = urllib.request.Request(url, data=body, headers=headers, method="POST")
 
@@ -264,12 +287,12 @@ def complete(
 ) -> str:
     """Send a chat completion request. Returns the response text.
 
-    Auth is resolved automatically with fallback: opencode subscription
-    key first, then personal DeepSeek API key. The source is printed to stdout.
+    Auth is resolved automatically: the opencode subscription key first, then
+    the personal DeepSeek API key.
 
     Args:
         messages: Chat messages in OpenAI format.
-        alias: Model alias (``fast``, ``smart``, ``cheap``, ``local``, etc.).
+        alias: Model alias (``fast``, ``smart``, ``local``, etc.).
         max_tokens: Maximum tokens to generate.
         temperature: Sampling temperature (0.0-1.0).
         json_mode: If True, request JSON object response format.
@@ -297,26 +320,15 @@ def complete(
             json_mode=json_mode,
             **extra_kwargs,
         )
-        try:
-            resp = _post_completion(**kwargs)
-        except Exception:
-            if kwargs.get("api_base") and "go/v1" in str(kwargs.get("api_base", "")):
-                fallback_key = _get_personal_deepseek_key()
-                if fallback_key and fallback_key != kwargs.get("api_key"):
-                    print(
-                        "Go API request failed, falling back to direct DeepSeek API.",
-                        file=sys.stderr,
-                    )
-                    kwargs.pop("api_base", None)
-                    kwargs["api_key"] = fallback_key
-                    kwargs["api_base"] = os.environ.get(
-                        "DEEPSEEK_API_BASE", "https://api.deepseek.com/v1"
-                    )
-                    resp = _post_completion(**kwargs)
-                else:
-                    raise
-            else:
-                raise
+        resp = _post_completion(**kwargs)
+        content = str(resp.choices[0].message.content or "")
+        if not content.strip():
+            finish = getattr(resp.choices[0], "finish_reason", None)
+            raise LLMError(
+                f"LLM returned no content (finish_reason={finish!r}). "
+                "If the model is a reasoning model, raise max_tokens so reasoning "
+                "and the answer both fit in the output budget."
+            )
     except Exception as e:
         error_msg = str(e)
         raise LLMError(error_msg) from e
@@ -350,7 +362,7 @@ def complete(
                 }
             )
 
-    return str(resp.choices[0].message.content or "")
+    return content
 
 
 def complete_with_tools(
