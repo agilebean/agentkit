@@ -36,3 +36,4 @@ warn	\binsight(?:s)?\b	name what was learned	biggest insight
 warn	\brun of show\b	write "the session plan"
 warn	\bin reading order\b	say where it starts and what follows
 warn	\b(?:have|keep|hold)\s+(?:the|your|that|it)\s+[^.,\n]{0,35}\b(?:open|at hand|handy|ready)\b	name the document, where it is kept, and the moment it is shown
+flag	\b(?:contrast|conflict|tension|split|difference|gap)\s+(?:reconciles|resolves)\b	write "can be reconciled by" or "we can reconcile ... by"
