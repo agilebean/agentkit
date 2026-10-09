@@ -2258,6 +2258,12 @@ A summary's structure is the relation, not the enumeration. The finding comes fi
 
 Failure mode, 2026-10-09: a JTBD terminology answer and its Evernote note were written as nine paragraph sections - the three source definitions told one after another, the job ladder as prose bullets, the job types as a list - with no table joining the definitions, the ladder or the types, and the reconciliation left implicit. The user: "i told you 1000 times to use tables if you can make info especially comparisons more concise. why is this still not in agent rules?" and "the summary must be much more concise without losing any detail. instead of different paragraphs you must relate all info to each other."
 
+### 128. A clarification lands in the artifact that teaches it
+
+When a term, definition or distinction is clarified - in research, in a source check, in a note - the clarification is placed, in the same pass, in the artifact that teaches or uses it. A note or a memory file records it; it does not place it. This is rule 126's move applied to knowledge: a clarification is not finished while the artifact that teaches it is untouched. For a course topic that artifact is the session script that teaches it, and the script carries the summary sentence of the clarification, not the analysis behind it.
+
+Failure mode, 2026-10-09: the JTBD terminology resolution (a job is a task that is a goal-oriented activity, reconciling the goal and task definitions) was researched, written into the Evernote note and recorded in memory/kubs.md, and the S5 script - the session that teaches the job definition - was not touched. The user: "now you again made the same mistake to not think about where this new clarification has its place in the kubs dt lecture. this must be an agent rule! of course the script should contain the summary sentence of reconciliation."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
