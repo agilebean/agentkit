@@ -2299,6 +2299,10 @@ Failure mode, 2026-10-09: asked whether an evening max-strength session would bo
 
 A slide built or pasted into a deck covers its whole page: the pasted image is the full-page render, or the page carries a full-page white backing, and the result is verified by exporting the page and checking that no corner is transparent. The theme does not guarantee it — a slide's background is a per-slide setting, not readable or writable from AppleScript — so art narrower than the page (a chart on a 1678 px canvas, a figure on a white field) exports with transparent margins and reads as "not on a white background", however white it looks on the app's canvas. A full-page backing also covers everything below it in the z-stack, the page-number field included, and a covered live field cannot be raised (text items cannot be copied). Record the fact the user states about a slide's construction in the deck's own record the turn he states it. KUBS decks: `memory/kubs.md`, "Slide pages carry their own white background".
 
+### 134. A rebuild copies the deck's own reference geometry; the source material supplies content only
+
+When a pass creates or replaces an element that already exists in the deck — a band title, a figure slot, a chart mark, a divider box — the geometry comes from the deck's own measured instance, never from a fresh drawing and never from the source the content came from. A rebuilt title takes the reference box; a redrawn mark takes the render's own pixels, inset and stroke; a figure takes the slot the other figure pages use. The reference values live in one block in the domain record (KUBS: `memory/kubs.md`, "The deck's reference geometry") and are read before the pass. Two reports that kept recurring — a title not aligned like its siblings, a chart mark missing or drawn with the wrong inset — were both re-derivations: each pass invented the geometry again and nothing in the record held the values to compare against.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
