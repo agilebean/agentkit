@@ -1,6 +1,6 @@
 # Rebuild defects inventory
 
-The instances behind RULES.md rules 133 to 137, in one file. Compiled 2026-10-10 from the KUBS DT folder logs (Course Design, S1 to S5), the session record of 2026-10-09 and 2026-10-10, and the deck backups in the stage.
+The instances behind RULES.md rules 104 and 133 to 137, in one file. Compiled 2026-10-10 from the KUBS DT folder logs (Course Design, S1 to S5), the session record of 2026-10-09 and 2026-10-10, and the deck backups in the stage.
 
 The user, 2026-10-10: "i'm sick and tired of soo many mistakes you repeat despite instructions. investigate each where i complained that it happened repeatedly. i want a stronger, deeper, more thorough and clear analysis what the root causes were and improvement of the agent instructions which seemed to handle the specs superficially or too narrowly or not clearly."
 
@@ -8,7 +8,7 @@ The user, 2026-10-10: "i'm sick and tired of soo many mistakes you repeat despit
 
 ## The system
 
-- `RULES.md` 133 to 137: the standing classes, each with the plain rule. 133 the page is white and full-page; 134 a rebuild copies the deck's own reference geometry and reuses finished assets; 135 a standing requirement survives every new instruction; 136 a specification applies to its class; 137 verification must be differential and able to fail.
+- `RULES.md` 104 and 133 to 137: the standing classes, each with the plain rule. 104 an element the user edits is never flattened: a living original stays editable, and a new element he will edit or animate is built from the artifact's native objects; 133 the page is white and full-page; 134 a rebuild copies the deck's own reference geometry and reuses finished assets; 135 a standing requirement survives every new instruction; 136 a specification applies to its class; 137 verification must be differential and able to fail.
 - This file: one section per class: the trigger, the instances with the user's own words, why the guard failed, and where it is enforced now.
 - The values, machine-readable: `projects/kubs_dt/deck_reference.json` (the deck's measured geometry and asset locations). The single source of truth; nothing rebuilds from memory.
 - The checks, executable: `projects/kubs_dt/deckcheck.py`, wrapped by `pipeline.py deckcheck --session N`. Differential against the reference; exits 2 on a flag. Each check has been run against the export of the exact defect it exists for (the stage keeps them) and shown to flag.
@@ -88,3 +88,18 @@ Maintenance: a new defect is classified against these classes in the same turn. 
 **Why the guard failed.** The source was at hand and authoritative-looking; the deliverable's own spec (its title, its teaching chain, its sibling pages) was not read as the spec. The same shape appeared with the needs page ("the two opposing definitions side by side like the boxes on the formulate the job slide") and the chicken page: the deck had a construction, and the pass used the source's.
 
 **Enforced now.** Rule 134's second sentence: the source material supplies content only; geometry, grouping and construction come from the deck. The skill's preflight asks which existing page the new element copies.
+
+---
+
+## Class 6. A live element installed as a flattening
+
+**Trigger.** A new element the user must edit or animate later — a diagram, a row of boxes, a table — composed directly as an image.
+
+**The instances.** The complaint recurs; the user's words when it does:
+- 2026-10-02, the S3/S4 post-it and dot-vote slides: "the new slides for postit and dot vote are images that is terrible!!! why would you do that not as an editable slide like everywhere else?"
+- 2026-10-03, the S3 "Design Challenge" divider: "you did it again the same mistake the divider slide is an image which i cannot edit! how many times do i have to say it again so you remember??"
+- 2026-10-10, E05 "Formulate the Job": "i said this so many times but you still didn't get it: i need every slide in elements that are editable! you did again just one image which i cannot edit nor make animation effects! why didn't you get this still not?"
+
+**Why the guard failed.** RULES.md 104 framed the choice around content *moving between containers*; here nothing moved — a brand-new diagram was drawn straight to a render, so the move question never fired. The deck's accepted drawn figures read as house style, and the deck's own box construction was not opened as the model.
+
+**Enforced now.** Rule 104's drawn-element bullet; the skill's build step: a new element is native objects first (shapes, text items), a render only for content that is itself a render, and the styling the script cannot reach (fill, stroke, corner radius — `background color` fails at runtime, probed 2026-10-10) is a hand pass named in the report. No deckcheck check: the difference between a book facsimile (right as a render) and drawn content (wrong as a render) lives in the source, not in the pixels.

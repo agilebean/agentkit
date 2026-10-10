@@ -119,38 +119,38 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 1953–1960 | ### 101. A change that needs the user's hands is a gate, not a half-state |
 | 1961–1970 | ### 102. "X should have Y" is a directive: find the named content and change X; a mention of the subject is not the content |
 | 1971–1978 | ### 103. Send-ready text is delivered copy-paste-ready: plain text, no markers |
-| 1979–1994 | ### 104. Editability is a requirement: a living original is never flattened into a copy as the default |
-| 1995–2047 | ### 105. An effort retrospective accounts for the user's own labor and psychology, not the artifact inventory |
-| 2048–2063 | ### 106. Lists are real lists, and a colon subheader gets its own line |
-| 2064–2069 | ### 107. A rebuild is acceptance-tested against the standard, not against the copy it reproduces |
-| 2070–2079 | ### 108. The command the user names is what the user types, and side effects are opt-in |
-| 2080–2090 | ### 109. A description of a source is written from the source, and its attributes are checked against it |
-| 2091–2128 | ### 110. A correction's negations are literal, and the rejected content is never offered back |
-| 2129–2141 | ### 111. The user's voice carries only sourced content, and his spoken lines serve their audience |
-| 2142–2149 | ### 112. A submission record verifies the submission, never the delivery |
-| 2150–2157 | ### 113. A deliverable leads with the recommendation, not the comparison |
-| 2158–2165 | ### 114. A rejected version is discarded; a revert renews the named version in place |
-| 2166–2173 | ### 115. Arial is never used, not even as a fallback |
-| 2174–2181 | ### 116. A source's markup is drawn as its formatting, never as its characters |
-| 2182–2189 | ### 117. A call that produced no result is re-issued before the turn ends |
-| 2190–2197 | ### 118. Knowledge goes to the most specific memory file; hubs link, never carry |
-| 2198–2207 | ### 119. A work item that has converged to minor corrections commits without an ask |
-| 2208–2213 | ### 120. A rule of thumb the user states in passing is the payload — store it in the domain's memory file that turn |
-| 2214–2219 | ### 121. A source read for extraction is read to its end, and every message in it |
-| 2220–2227 | ### 122. A sweeping claim is tested against the data it summarizes, row by row |
-| 2228–2233 | ### 123. Anything the user reads is written in a language he reads; a Japanese-only artifact is unreadable |
-| 2234–2241 | ### 124. Before asking the user to supply something, search the record — he may already have given it |
-| 2242–2249 | ### 125. A placed object is verified as the whole slide, not by its own metrics |
-| 2250–2255 | ### 126. A change carries its landing into the next step, computed, not flagged |
-| 2256–2263 | ### 127. Shared attributes become a table, and a summary relates its parts |
-| 2264–2269 | ### 128. A clarification lands in the artifact that teaches it |
-| 2270–2277 | ### 129. A change that waits on the user's word is a live ask, never a log note |
-| 2278–2283 | ### 130. A named artifact is built to the user's specification, not to invented content |
-| 2284–2289 | ### 131. A page's title names it; a headline that restates the body is cut |
-| 2290–2297 | ### 132. An observation carries only to the conditions its mechanism depends on |
-| 2298–2301 | ### 133. A deck slide's page is white and full-page; art narrower than the page leaves transparent margins |
-| 2302–2307 | ### 134. A rebuild copies the deck's own reference geometry; the source material supplies content only |
-| 2308–2311 | ### 135. A standing requirement survives every new instruction |
-| 2312–2315 | ### 136. A specification applies to its class |
-| 2316–2319 | ### 137. Verification must be differential and able to fail |
-| 2320–2326 | ## Shell: `~/.bash_aliases` (user-global) |
+| 1979–1997 | ### 104. Editability is a requirement: a living original is never flattened into a copy as the default |
+| 1998–2050 | ### 105. An effort retrospective accounts for the user's own labor and psychology, not the artifact inventory |
+| 2051–2066 | ### 106. Lists are real lists, and a colon subheader gets its own line |
+| 2067–2072 | ### 107. A rebuild is acceptance-tested against the standard, not against the copy it reproduces |
+| 2073–2082 | ### 108. The command the user names is what the user types, and side effects are opt-in |
+| 2083–2093 | ### 109. A description of a source is written from the source, and its attributes are checked against it |
+| 2094–2131 | ### 110. A correction's negations are literal, and the rejected content is never offered back |
+| 2132–2144 | ### 111. The user's voice carries only sourced content, and his spoken lines serve their audience |
+| 2145–2152 | ### 112. A submission record verifies the submission, never the delivery |
+| 2153–2160 | ### 113. A deliverable leads with the recommendation, not the comparison |
+| 2161–2168 | ### 114. A rejected version is discarded; a revert renews the named version in place |
+| 2169–2176 | ### 115. Arial is never used, not even as a fallback |
+| 2177–2184 | ### 116. A source's markup is drawn as its formatting, never as its characters |
+| 2185–2192 | ### 117. A call that produced no result is re-issued before the turn ends |
+| 2193–2200 | ### 118. Knowledge goes to the most specific memory file; hubs link, never carry |
+| 2201–2210 | ### 119. A work item that has converged to minor corrections commits without an ask |
+| 2211–2216 | ### 120. A rule of thumb the user states in passing is the payload — store it in the domain's memory file that turn |
+| 2217–2222 | ### 121. A source read for extraction is read to its end, and every message in it |
+| 2223–2230 | ### 122. A sweeping claim is tested against the data it summarizes, row by row |
+| 2231–2236 | ### 123. Anything the user reads is written in a language he reads; a Japanese-only artifact is unreadable |
+| 2237–2244 | ### 124. Before asking the user to supply something, search the record — he may already have given it |
+| 2245–2252 | ### 125. A placed object is verified as the whole slide, not by its own metrics |
+| 2253–2258 | ### 126. A change carries its landing into the next step, computed, not flagged |
+| 2259–2266 | ### 127. Shared attributes become a table, and a summary relates its parts |
+| 2267–2272 | ### 128. A clarification lands in the artifact that teaches it |
+| 2273–2280 | ### 129. A change that waits on the user's word is a live ask, never a log note |
+| 2281–2286 | ### 130. A named artifact is built to the user's specification, not to invented content |
+| 2287–2292 | ### 131. A page's title names it; a headline that restates the body is cut |
+| 2293–2300 | ### 132. An observation carries only to the conditions its mechanism depends on |
+| 2301–2304 | ### 133. A deck slide's page is white and full-page; art narrower than the page leaves transparent margins |
+| 2305–2310 | ### 134. A rebuild copies the deck's own reference geometry; the source material supplies content only |
+| 2311–2314 | ### 135. A standing requirement survives every new instruction |
+| 2315–2318 | ### 136. A specification applies to its class |
+| 2319–2322 | ### 137. Verification must be differential and able to fail |
+| 2323–2329 | ## Shell: `~/.bash_aliases` (user-global) |

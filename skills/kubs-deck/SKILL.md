@@ -11,7 +11,7 @@ The three artifacts this skill runs on:
 
 - `projects/kubs_dt/deck_reference.json` - the deck's measured reference (the values). Read it before creating or replacing any element.
 - `projects/kubs_dt/deckcheck.py`, wrapped as `pipeline.py deckcheck --session N` - the differential checks.
-- `agentkit/rebuild_defects.md` - the five failure classes with their instances and the user's words; read it when a report smells like a repeat.
+- `agentkit/rebuild_defects.md` - the failure classes with their instances and the user's words; read it when a report smells like a repeat.
 
 ## Step 0 - the preflight (before any write; its answers go in the report)
 
@@ -36,9 +36,11 @@ A page whose title was re-created, whose figure was redrawn, or whose chart was 
 ## Step 2 - the build
 
 - Work on a build copy in the stage; install with Keynote closed (rule 88). Never write a file Keynote holds open.
+- A pass that only reads works against Chaehan's open document directly - no `open`, no `close`, no save in the script (a hand-rolled open is the abandoned 2026-10-09 class; a `close` of a document the pass did not open is the 2026-10-03 class), and it proves no-touch by the file's mtime before and after - an md5 proves nothing while he edits. Fills, strokes and builds read nowhere; those come from the exported page's pixels (2026-10-10).
 - A slide's page carries its own full 1920x1080 white background; the theme is never relied on, and the exported page is the test (rule 133).
 - Keynote facts that bite (from the deck's log): `make new image` must sit inside `tell slide N` (`at slide N` fails -10000); reading `position` inside a `tell slide` block throws a `sipo` coercion error (-1700), so compute the arithmetic in Python, set positions last, and verify from the export; paragraph alignment is not scriptable, so a centred title is aligned by its box; a new image appends last in the enumeration.
 - When an element's text or construction comes from a source (a book figure, a paper), the source supplies the content only. Grouping, geometry and construction come from the deck - the slide's own title teaches the structure it wants (rule 134; the tip figure's INTERPRETATIONS header was the counterexample).
+- A new element the user will edit or animate later - a diagram, a row of boxes, a table - is built from the slide's own objects (shapes, text items, the deck's own fonts), never rasterised: a render is right only for content that is itself a render (a book figure, a photo). Shape fill, stroke and corner radius are not scriptable (probed 2026-10-10: `background color` fails at runtime), so a created box carries the theme's default look - that styling remainder is the user's hand pass, named in the report, never traded for a flattened image (rule 104; `rebuild_defects.md` class 6). The settled look for this chart family - per-semantic colours, semantic groups with a centre-out build, line-broken boxes, middle-aligned texts, all hand-set - is measured in `memory/kubs.md` (Tooling, 2026-10-10).
 
 ## Step 3 - the gate (before installing)
 
@@ -59,6 +61,7 @@ Backup to the stage, quit Keynote, copy the build to the session folder, reopen,
 | A spec applied to one instance | "all", "every", or a scope the user can see | preflight 1; the pages check |
 | Verification that cannot fail | any correctness claim | deckcheck; magnified reads |
 | Source structure as the spec | a figure or page built from a book or earlier deck | preflight 3; rule 134 |
+| A live element installed as a flattening | a new element the user must edit or animate (a diagram, boxes, a table) | the build step's form rule; rule 104 |
 
 ## Report
 
