@@ -67,7 +67,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 - **Consultant verbs:** leverage, utilize, facilitate, ideate, operationalize, socialize, surface (a need), unpack, double-click on, align on, drive (a change), enable, empower, front-load, back-load ("front-loads quality": say what comes first, "the hard sessions come first in the week").
 - **Nominalizations:** "the collection of", "the utilization of", "the implementation of", "an improvement in". Use the verb: "we collect", "you improve".
 - **Empty intensifiers and hedges:** robust, holistic, seamless, comprehensive, cutting-edge, best-in-class, impactful, meaningful, significant, truly, deeply, arguably.
-- **Domain shorthand outside its own trade:** SKU, COGS, BOM, SLA, arm (in a study, write "test group"). Say what the thing is.
+- **Domain shorthand outside its own trade:** SKU, COGS, BOM, SLA, arm (in a study, write "test group"), agent (of an illness, write "cause"). Say what the thing is.
 - **Analyst jargon in user-facing prose:** benign, sub-clinical, protocol signal, fictional payoff, eliminated by error analysis, tail (of a dose or an effect: write "some of it is still in the blood later").
 - **Trade slang kept out of speech:** "run of show" (write "the session plan"), "the block that stretches" (say what happens when it runs long), "shaded blocks" (say "after the break"), "in reading order", "on purpose" (write "deliberately").
 - **Japanese and other non-Latin names without their reading:** give the romanized reading first (Kawaramachi), and keep the characters only so the name can be pasted into a map or a search (京都河原町). A name the user cannot read carries no information. The user, 2026-10-04: "i can't read the hotel names in japanese."
@@ -2319,6 +2319,15 @@ A specification the user states governs every instance of the class it names, no
 ### 137. Verification must be differential and able to fail
 
 A check that compares the result against the pass's own intent cannot fail and proves nothing. The check compares the result against the reference instance (its pixels, its measured geometry) or against an independently derived expectation, and where it is mechanical it lives in a script the project runs, not in prose. Before trusting a check, run it against the defect it exists for and see it flag. Visual reads are evidence only at a zoom that can show the defect class: 2026-10-09, three passing measurements missed a 6 px overhang the user saw at once, and a fitted render "showed" a defect that was not in the pixels.
+
+### 138. The user's own practice is read from his record, never filled in from the default
+
+A fact about the user's own practice comes from his record, not from the ordinary version of that habit. Before a recommendation hooks onto something he does ("your morning coffee", "your usual milk", "the car you drive"), search the domain memory file for the entry that carries it and write what it says. When nothing is recorded, ask or leave the assumption out; the general case is not his case. A record that exists and is not applied is a data-skip failure, not an ignorance failure: the wrong sentence is contradicted by a line already in context.
+
+- Same family as rules 22 (user-stated facts are facts), 51 (a reported practice is reconciled, not corrected) and 124 (search the record before asking him for content).
+- The sweep covers the whole advice, not the one sentence: when the assumption is corrected, every carrier of it in the same turn is checked, including the record entry the correction touches.
+
+Instruction basis: 2026-10-11, on a latte. The recovery advice for a one-day gut episode warned about cow's milk in a cafe latte and closed with "the daily latte becomes decaf with oat milk". The user: "no i always have lactose-free, soy or currently oat milk with my latte." `memory/health.md`, already loaded in that turn, carried the 2026-09-21 entry on his milk.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
