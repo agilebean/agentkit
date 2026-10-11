@@ -3,8 +3,9 @@
 The list lives in robot_markers.tsv at the repo root; the checker ships here so
 every project runs one list. These tests hold the contract: flag hits fail the
 command, warn hits report only, an exception keeps its line out (the feedback
-grid's "my biggest insight" is the case). The KUBS pipeline in the socrates repo
-consumes the same list through this module.
+grid's "my biggest insight" is the case), and a declared quoted excerpt is
+skipped whole. The KUBS pipeline in the socrates repo consumes the same list
+through this module.
 """
 from __future__ import annotations
 
@@ -52,6 +53,26 @@ def test_the_feedback_grids_insight_is_exempt() -> None:
 def test_the_session_plan_word_warns_but_does_not_flag() -> None:
     hits = wording.lint_text("## Run of show", _rules())
     assert [level for _l, level, _m, _f in hits] == ["warn"]
+
+
+def test_a_quoted_excerpt_is_left_alone() -> None:
+    text = ("The job types, verbatim from Kalbach:\n"
+            "<!-- verbatim -->\n"
+            "It's an act that will be performed \u2014 the done part of jobs to be done.\n"
+            "<!-- end verbatim -->\n"
+            "The filters cost you more on Wednesday.\n")
+    assert wording.lint_text(text, _rules()) == []
+
+
+def test_the_excerpt_range_ends_at_its_marker() -> None:
+    text = ("<!-- verbatim -->\nquoted\u2014theirs\n<!-- end verbatim -->\nmine\u2014not theirs\n")
+    hits = wording.lint_text(text, _rules())
+    assert [line for line, _l, _m, _f in hits] == [4]
+
+
+def test_the_journey_map_name_is_exempt() -> None:
+    hits = wording.lint_text("the riddle, the journey map, the service blueprint", _rules())
+    assert not any("journey" in match for _line, _level, match, _fix in hits)
 
 
 def test_the_matched_span_is_reported_once() -> None:
