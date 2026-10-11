@@ -2342,6 +2342,26 @@ Work the user will iterate - a design, a note, a plan under review - gets a quic
 
 Instruction basis: 2026-10-11, on the S6 workshop documents: "also the processing takes endless time. first produce a quick draft, but early. then think about my comments."
 
+### 140. A specified edit lands before any investigation
+
+When the user hands settled text and names where it goes, the edit is the first action: open the named carriers, apply the given text, verify each landed, then report and commit. Research, record sweeps, adjacent defects and process questions wait behind it - they are the next turn's work, never conditions of this one. A pass that ends with a long analysis but not the named change is a defect however much valid work it carried.
+
+- The user's strings are content, not pointers (rule 76): they go in verbatim, to every carrier he named, in the first turn that can reach them.
+- When one carrier needs a heavier pass (a Keynote deck, a rebuild, a gate), the light carriers land first anyway; the heavy pass follows and never blocks them.
+- Sibling of rule 139: 139 covers work he will iterate, 140 covers a change he has already specified.
+
+Instruction basis: 2026-10-11, E05: "you must change the slide in e05 and script! why didn't you get that? ... then commit" - the message carried the finished text; two hours of recon, definitions and summaries followed, and the edits took two tool calls when they finally ran. "you wrote a long summary of other errors instead."
+
+### 141. A file that moves under a pass is re-read at its changed lines, never from the top of the world
+
+The user runs several sessions over the same folders, so a target file can change mid-pass. The response is a protocol, not a restart:
+
+1. Re-read the changed lines only, and proceed when the target text still matches - an edit whose oldString no longer matches fails loudly, so attempting the local edit is safe.
+2. When the change collides with the target, or the artifact has one writer (a deck open in Keynote), find the writer - `openchamber` `session.list` with status on the directory, the stage's fresh files - then park that step or put one question to the user. The deck has one writer; the text carriers (md, script, notes) do not, so a sibling pass on the deck never blocks your text edits.
+3. Never answer a foreign write with full recon: re-reading the whole world at every mtime change is how the 2026-10-11 change never landed.
+
+Instruction basis: 2026-10-11, E05: "i stopped the session named E05 Need - Job Statement bec it took forever and without any progress writing the damn slide. investigate why. we must improve how the agent works and loses so much endless time."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
