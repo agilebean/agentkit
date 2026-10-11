@@ -155,4 +155,6 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2323–2326 | ### 137. Verification must be differential and able to fail |
 | 2327–2335 | ### 138. The user's own practice is read from his record, never filled in from the default |
 | 2336–2344 | ### 139. Iterative work ships a quick draft early |
-| 2345–2351 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2345–2354 | ### 140. A specified edit lands before any investigation |
+| 2355–2364 | ### 141. A file that moves under a pass is re-read at its changed lines, never from the top of the world |
+| 2365–2371 | ## Shell: `~/.bash_aliases` (user-global) |
