@@ -12,6 +12,15 @@ over one sentence and colon-field blocks stay a writer's pass.
 
 Every project runs this same list. A project pipeline may wrap the checker for
 its own files (socrates: `projects/kubs_dt/pipeline.py lint --session N`).
+
+A quoted excerpt is the source's own text, kept verbatim, and the checker
+leaves it alone: its lines sit between `<!-- verbatim -->` and
+`<!-- end verbatim -->`. Another author's punctuation, word choices and
+sentence shapes are not the writer's to repair, and flagging them trains the
+reader to ignore the list. The two marker lines are comments, so a renderer
+that shows raw HTML as text would print them; the path that renders an
+artifact drops them first (socrates: `script_html` in
+`projects/kubs_dt/pipeline.py`, held by its printout test).
 """
 from __future__ import annotations
 
@@ -22,6 +31,11 @@ import sys
 
 DEFAULT_MARKERS = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "robot_markers.tsv")
+
+# A declared quoted excerpt: the lines between these two markers are another
+# author's text, and the checker does not read them.
+EXCERPT_OPEN = re.compile(r"^\s*<!--\s*verbatim\s*-->\s*$")
+EXCERPT_CLOSE = re.compile(r"^\s*<!--\s*end verbatim\s*-->\s*$")
 
 
 def load_robot_markers(path: str = DEFAULT_MARKERS) -> list[tuple[str, re.Pattern, str, re.Pattern | None]]:
@@ -44,11 +58,21 @@ def lint_text(text: str, rules) -> list[tuple[int, str, str, str]]:
 
     One hit per line and span: a phrase caught by two rules is reported once.
     Inline code (`pipeline.py`) is stripped before matching: a command's own
-    name is not prose.
+    name is not prose. A declared quoted excerpt is skipped whole - the
+    checker reads the writer's words, not the source's.
     """
     hits = []
     seen = set()
+    in_excerpt = False
     for lineno, line in enumerate(text.splitlines(), 1):
+        if EXCERPT_OPEN.match(line):
+            in_excerpt = True
+            continue
+        if EXCERPT_CLOSE.match(line):
+            in_excerpt = False
+            continue
+        if in_excerpt:
+            continue
         clean = re.sub(r"`[^`]*`", "", line)
         for level, pattern, fix, except_ in rules:
             m = pattern.search(clean)
