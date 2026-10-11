@@ -6,6 +6,8 @@
 # Columns, tab-separated: level <TAB> pattern <TAB> fix <TAB> exception (optional).
 # level: flag = the lint fails on a hit; warn = reported only.
 # The pattern is a Python regex, matched case-insensitively, one hit per line.
+# A quoted excerpt is declared by `<!-- verbatim -->` ... `<!-- end verbatim -->`
+# and its lines are skipped whole: the source's text is not the writer's.
 # The list is the checkable subset by design: three-item runs, embedded clauses,
 # headings over one sentence and colon-field blocks stay a writer's pass.
 flag	—	write periods and short sentences, not em-dashes
@@ -31,9 +33,10 @@ warn	;[^;\n]*;	a semicolon chain; consider splitting into sentences	^\s*\|
 warn	\b(?:framework|matrix|mechanism)\b	name the thing itself
 warn	\b(?:significant|meaningful|truly|deeply|arguably)\b	cut the hedge or give the measure
 warn	\b(?:facilitate[sd]?|facilitating|enable[sd]?|enabling|empower(?:s|ed|ing)?|surface[sd]?|surfacing)\b	use the plain verb
-warn	\b(?:artifact|artifacts|deliverable|deliverables|alignment|journey|touchpoint|granularity|end-to-end|needs-first)\b	name the thing or the action	learning journey
+warn	\b(?:artifact|artifacts|deliverable|deliverables|alignment|journey|touchpoint|granularity|end-to-end|needs-first)\b	name the thing or the action	learning journey|journey map
 warn	\binsight(?:s)?\b	name what was learned	biggest insight
 warn	\brun of show\b	write "the session plan"
 warn	\bin reading order\b	say where it starts and what follows
 warn	\b(?:have|keep|hold)\s+(?:the|your|that|it)\s+[^.,\n]{0,35}\b(?:open|at hand|handy|ready)\b	name the document, where it is kept, and the moment it is shown
 flag	\b(?:contrast|conflict|tension|split|difference|gap)\s+(?:reconciles|resolves)\b	write "can be reconciled by" or "we can reconcile ... by"
+flag	\bcarries\b	write "has" or name the actor
