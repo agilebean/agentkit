@@ -157,4 +157,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2340–2348 | ### 139. Iterative work ships a quick draft early |
 | 2349–2358 | ### 140. A specified edit lands before any investigation |
 | 2359–2368 | ### 141. A file that moves under a pass is re-read at its changed lines, never from the top of the world |
-| 2369–2375 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2369–2377 | ### 142. The session works on the object the user named; an excluded target stays out |
+| 2378–2384 | ## Shell: `~/.bash_aliases` (user-global) |
