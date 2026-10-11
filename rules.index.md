@@ -153,4 +153,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2311–2314 | ### 135. A standing requirement survives every new instruction |
 | 2315–2318 | ### 136. A specification applies to its class |
 | 2319–2322 | ### 137. Verification must be differential and able to fail |
-| 2323–2329 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2323–2331 | ### 138. The user's own practice is read from his record, never filled in from the default |
+| 2332–2338 | ## Shell: `~/.bash_aliases` (user-global) |
