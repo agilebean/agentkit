@@ -1551,7 +1551,11 @@ Five shapes of the failure to watch for:
 
 When one artifact supersedes another, delete the superseded file in the same turn and name the deletion in the report. When content changes — an order, a name, a procedure — sweep every artifact that carries it in the same turn, or state which artifact now leads; a corrected copy beside a stale copy is a defect the user discovers by reading the wrong one first. Proliferation is invisible while it is cheap for the agent and expensive for the user, which is exactly why it needs the check.
 
+A settled change propagates in the same pass. When the user fixes the content a design turns on - his blocks, his mechanic, a pick - every derived artifact that carries it (the script, the run sheet, the deck) is rebuilt then. Derived is not new: propagation is not a decision awaiting approval, and holding it back for a draft read leaves the user with two states of the same day. Rule 139's quick draft covers what waits on his comments; the sweep of what his fixed inputs already determine does not wait with it.
+
 Failure mode: parallel artifacts multiplying, each a copy of the same content under another name.
+
+Failure mode, 2026-10-11: the KUBS S6 workshop was re-designed and its design doc delivered while the script and the run sheet still carried the old seven cards. The user: "the runsheet is still old and the script. why did you stupidly create the workshop .md and not work it into the script? isn't this common sense?" The script and the sheet were re-cut in the same pass.
 
 ### 70. File names stay short enough to read in Finder
 
