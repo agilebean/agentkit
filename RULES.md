@@ -2264,6 +2264,10 @@ A summary's structure is the relation, not the enumeration. The finding comes fi
 
 Failure mode, 2026-10-09: a JTBD terminology answer and its Evernote note were written as nine paragraph sections - the three source definitions told one after another, the job ladder as prose bullets, the job types as a list - with no table joining the definitions, the ladder or the types, and the reconciliation left implicit. The user: "i told you 1000 times to use tables if you can make info especially comparisons more concise. why is this still not in agent rules?" and "the summary must be much more concise without losing any detail. instead of different paragraphs you must relate all info to each other."
 
+Alternatives offered for a decision are mutually exclusive, and the table carries each option's overall idea in its own column. If two alternatives can be combined - the teams present and still collect cards from each other - they are features of one option, not two: collapse them, or find the axis on which the options truly differ and let the pick exclude the rest. The overall-idea column is the one line that says what the option IS; with it, the reader can answer "what differs" from the table alone, without assembling the picture from separate rundowns. A comparison of whole designs - plans, methods, session shapes - is still one table: the parts every alternative shares are stated once above it, and only the genuinely alternative-specific detail sits below, compact.
+
+Failure mode, 2026-10-11: the workshop methods for KUBS session 6 were four full sections - idea, run of show, mechanics, build cost each - whose options could be combined, and the summary table lacked the overall-idea column. The user: "very bad is that the options are not mutually exclusive ... this severely destroys readability and viability of these options" and "i had told you countless times to use tables for comparison, still not recorded?"
+
 ### 128. A clarification lands in the artifact that teaches it
 
 When a term, definition or distinction is clarified - in research, in a source check, in a note - the clarification is placed, in the same pass, in the artifact that teaches or uses it. A note or a memory file records it; it does not place it. This is rule 126's move applied to knowledge: a clarification is not finished while the artifact that teaches it is untouched. For a course topic that artifact is the session script that teaches it, and the script carries the summary sentence of the clarification, not the analysis behind it.
@@ -2328,6 +2332,15 @@ A fact about the user's own practice comes from his record, not from the ordinar
 - The sweep covers the whole advice, not the one sentence: when the assumption is corrected, every carrier of it in the same turn is checked, including the record entry the correction touches.
 
 Instruction basis: 2026-10-11, on a latte. The recovery advice for a one-day gut episode warned about cow's milk in a cafe latte and closed with "the daily latte becomes decaf with oat milk". The user: "no i always have lactose-free, soy or currently oat milk with my latte." `memory/health.md`, already loaded in that turn, carried the 2026-09-21 entry on his milk.
+
+### 139. Iterative work ships a quick draft early
+
+Work the user will iterate - a design, a note, a plan under review - gets a quick, complete-enough draft delivered early, for his comment. The draft exists so he can react; processing that delays the first look is itself a defect, and polishing parts he may redirect is wasted work. Produce the draft fast, then refine against the comments step by step.
+
+- Complete-enough, not partial: the whole shape is visible in the draft so his comments can land anywhere; depth on any part waits for the second pass.
+- Verification gates (lint, deckcheck, installs, sends) gate the final version - never the draft he is about to comment on.
+
+Instruction basis: 2026-10-11, on the S6 workshop documents: "also the processing takes endless time. first produce a quick draft, but early. then think about my comments."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
