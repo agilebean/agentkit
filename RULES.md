@@ -2366,6 +2366,15 @@ The user runs several sessions over the same folders, so a target file can chang
 
 Instruction basis: 2026-10-11, E05: "i stopped the session named E05 Need - Job Statement bec it took forever and without any progress writing the damn slide. investigate why. we must improve how the agent works and loses so much endless time."
 
+### 142. The session works on the object the user named; an excluded target stays out
+
+When the user assigns work and rules a target out - "not the keynote", "don't fix X", "X is not the task" - the session's work stays on the assigned object. The excluded target is not repaired, not swept, not asked about, and not carried into the report, the questions or the commits; an offer of excluded-target work is itself the violation, the "recommended" option included.
+
+- The exclusion outranks proximity and convenience: quick, useful or already in reach does not make the excluded work the session's.
+- When the assigned object is a diagnosis ("investigate why X happened"), the reasons are the deliverable: the answer leads with the causes, each with its measurement; repairs are not the session's work unless the user asks for them.
+
+Instruction basis: 2026-10-11, E05: the task after the stalled session was the agent's own system architecture; the session still ran a full pass over the slide material (md rows, script bullets, notes, log, printout) and closed on it. The user: "you didn't solve the task i gave ... you need to look into the system architecture of the agent to improve the performance instead of trying to fix the keynote which i told you not to do at all! i want the reasons for the endless session!!!"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
