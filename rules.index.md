@@ -142,16 +142,17 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2237–2244 | ### 124. Before asking the user to supply something, search the record — he may already have given it |
 | 2245–2252 | ### 125. A placed object is verified as the whole slide, not by its own metrics |
 | 2253–2258 | ### 126. A change carries its landing into the next step, computed, not flagged |
-| 2259–2266 | ### 127. Shared attributes become a table, and a summary relates its parts |
-| 2267–2272 | ### 128. A clarification lands in the artifact that teaches it |
-| 2273–2280 | ### 129. A change that waits on the user's word is a live ask, never a log note |
-| 2281–2286 | ### 130. A named artifact is built to the user's specification, not to invented content |
-| 2287–2292 | ### 131. A page's title names it; a headline that restates the body is cut |
-| 2293–2300 | ### 132. An observation carries only to the conditions its mechanism depends on |
-| 2301–2304 | ### 133. A deck slide's page is white and full-page; art narrower than the page leaves transparent margins |
-| 2305–2310 | ### 134. A rebuild copies the deck's own reference geometry; the source material supplies content only |
-| 2311–2314 | ### 135. A standing requirement survives every new instruction |
-| 2315–2318 | ### 136. A specification applies to its class |
-| 2319–2322 | ### 137. Verification must be differential and able to fail |
-| 2323–2331 | ### 138. The user's own practice is read from his record, never filled in from the default |
-| 2332–2338 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2259–2270 | ### 127. Shared attributes become a table, and a summary relates its parts |
+| 2271–2276 | ### 128. A clarification lands in the artifact that teaches it |
+| 2277–2284 | ### 129. A change that waits on the user's word is a live ask, never a log note |
+| 2285–2290 | ### 130. A named artifact is built to the user's specification, not to invented content |
+| 2291–2296 | ### 131. A page's title names it; a headline that restates the body is cut |
+| 2297–2304 | ### 132. An observation carries only to the conditions its mechanism depends on |
+| 2305–2308 | ### 133. A deck slide's page is white and full-page; art narrower than the page leaves transparent margins |
+| 2309–2314 | ### 134. A rebuild copies the deck's own reference geometry; the source material supplies content only |
+| 2315–2318 | ### 135. A standing requirement survives every new instruction |
+| 2319–2322 | ### 136. A specification applies to its class |
+| 2323–2326 | ### 137. Verification must be differential and able to fail |
+| 2327–2335 | ### 138. The user's own practice is read from his record, never filled in from the default |
+| 2336–2344 | ### 139. Iterative work ships a quick draft early |
+| 2345–2351 | ## Shell: `~/.bash_aliases` (user-global) |
