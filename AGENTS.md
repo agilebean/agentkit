@@ -55,3 +55,9 @@ Do not duplicate rule text here.
   skill and continue in a fresh session.
 - Long jobs (GUI automation, exports, CI waits) run in the background with a
   progress log; no foreground call blocks beyond 60 s.
+- A session compacted twice does not start anything new: hand it off (the
+  handoff skill) and continue in a fresh session. Every task after a compaction
+  re-derives its world from disk, and the pile-up is measured - on 2026-10-11
+  the E05 session ran two days, 12 compactions and 405 turns, and a one-slide
+  wording change that carried its own text took two hours and ended with the
+  user finishing it himself.
