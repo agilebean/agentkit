@@ -2434,6 +2434,16 @@ A consolidation is not a sweep target. A later pass that propagates content into
 
 Instruction basis: 2026-10-11, the KUBS S6 workshop. A re-designed workshop was written as its own document, and the re-cut of the script was framed as a later build pass waiting on the user's read. He asked why the document had not been worked into the script; the pass re-cut the script and the run sheet in the same turn and left the document in place. Every pass after that maintained the duplicate: the file was renamed, its Evernote twin resynced twice, and a 13-rule sweep on 2026-10-12 landed 8 of its hits in it. On 2026-10-12: "find out why the 'KUBS DT session 6 - workshop design.md' is still there, find the session where i asked you to integrate it into the s6 script and then remove it, and why you didn't."
 
+### 149. Width is spent where it removes height, and nowhere else
+
+A layout dimension is spent only where it buys the value the layout is for. In a table, width buys height, and a column stops shortening the artifact the moment another column is already that tall: the width past that point is waste, and the table ends narrower than the ceiling rather than stretched across it. Two or three lines in a column cost nothing when a neighbouring column already carries three. The same holds for any layout axis: the ceiling of a dimension is not a target, and an artifact with few elements reaches it only when its content asks for it.
+
+- The test, before spending more of a dimension on an element: give it the extra and ask whether the artifact got smaller, shorter or clearer. If it did not, the dimension belongs elsewhere or is not needed.
+- A question that offers a trade which the artifact does not actually contain ("keep this column on one line, or give the room to that one") is the signal that the value of the dimension has not been worked out. Answer it with the artifact's own geometry, not with the choice.
+- Same family as rule 147 (a model, not a constant), rule 48 (readable without decoding) and rule 139.
+
+Instruction basis: 2026-10-12, on the KUBS DT S6 note's workshop table. The fitting had stretched a four-column table to the 939 px ceiling and the question put to him was whether the narrow "Block" column should take 250 px so its titles keep one line. Chaehan: "can't you apply common sense? it doesn't matter if there is a second or third line if another column already has 3 lines!!!! record this in rules, this is really basic!!!! keep 130 but shorten the text line bec the goal is not to use max width with so few cols!" The fitting now trims the wrapping column back to the point where its content stops saving the table a line: the S6 table lands at 907 px, the Peer Syllabi table at 891, neither at the ceiling.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
