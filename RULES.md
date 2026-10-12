@@ -2375,6 +2375,35 @@ When the user assigns work and rules a target out - "not the keynote", "don't fi
 
 Instruction basis: 2026-10-11, E05: the task after the stalled session was the agent's own system architecture; the session still ran a full pass over the slide material (md rows, script bullets, notes, log, printout) and closed on it. The user: "you didn't solve the task i gave ... you need to look into the system architecture of the agent to improve the performance instead of trying to fix the keynote which i told you not to do at all! i want the reasons for the endless session!!!"
 
+### 143. An element's presence in the file is not proof it is live — check the record that produced it before putting it to a vote
+
+When an artifact under edit carries an element the user has not mentioned this turn, its presence is not evidence that it is still required. Before asking him anything about it, establish whether it is live: which session produced it, when it was last touched, and whether the current plan still names it anywhere.
+
+- Dead element (it belongs to an earlier, finished pass, or to the version of this file that a redesign replaced): it is a sweep item. Remove it, say so in the log, ask nothing.
+- Live element whose home has moved: that is a real decision and goes to him, with the options laid out (rule 62).
+- The test is cheap and the failure is expensive: a question about a finished item costs a turn and reads to him as not knowing his own course.
+
+Instruction basis: 2026-10-12, S6. The pre-redesign plan's leftovers ("the red check over the How-Might-We's" in the harvest card, the How-Might-We line in the build) were carried into the new 90-minute plan as if live, and the How-Might-We's were put to him as a decision. They are S4's work, finished the previous week. Chaehan: "the HMWs are long gone, done in previous week. why don't you know that?"
+
+### 144. A terse instruction is read in the artifact's own domain, and an artifact's own fields are never the instruction
+
+Three clauses, one class: meaning that belongs to the user is never supplied by anything else.
+
+- **A number or short phrase binds to the nearest referent in the artifact being edited**, not to the frame of the conversation. Session numbers, dates and schedules are not the default reading of a number that sits inside a description of the thing being corrected: "warmup: shakedown from 6" on a card whose own text counts "7, then 6, and down to 1" means the count starts at 6.
+- **The record's own copy of the phrase is the answer, not a candidate to offer.** When his earlier wording or another session's file already carries it, that settles the reading; offering it as one of several options hands him back work the record had already done.
+- **An artifact's own fields are layout, not instruction.** A template's rows, boxes, checkboxes and columns say what the sheet looks like, never what the session does. The task comes from the user's words; a field nobody was asked to fill is filled by nobody.
+
+Instruction basis: 2026-10-12, S6. Card 1 was corrected with "warmup: shakedown from 6"; the pass read the 6 as a session index, planned it as a course-level convention, and put three readings to him - his S3 run sheet, in the same folder since 2026-10-02, already read "Warmup Shakedown 6 in two groups". Chaehan: "why is your attention not on what i say with 'shakedown from 6'?" The same pass had read the "job statement template.png" sheet's three rows and its PRIORITY checkbox as the day's task - "three rows, three statements at priority 1, 2, 3" - and was corrected: "you are totally wrong on 'three rows, three statements at priority 1, 2, 3;' read again what i said. i let students bring all their jtbd notes, so i didn't say anything about priority. they work each statement, and then vote the 3 favorites to present."
+
+### 145. A claim keeps its owner, and a test meant to separate two things must exclude one of them
+
+Two clauses about evidence prepared for someone else to read or hear:
+
+- **A sentence that names a method, a school, or another author is that owner's claim, not the source's.** Inside a section that describes a named method ("In ODI, ..."), or in a sentence that credits another writer ("Bettencourt and Ulwick have developed ... what they call ..."), the statement is reported. Only a sentence in the author's own voice — no method and no other name in the frame — may be presented unsourced as his. When the user needs a line to show an audience, the own-voice sentences are the candidates and the attributed ones go beside them with their owner named.
+- **A test offered to tell two categories apart must match one of them and exclude the other.** Run the proposed rule against the other category before presenting it: if the same form, syntax, or attribute also describes it, the test separates nothing and leaves the audience exactly as confused as before. The test that works names the attribute that exists on one side only — a need statement carries a unit of measure with a direction of change (time, effort, likelihood, skill), a job statement carries none — not the shape the two share.
+
+Instruction basis: 2026-10-12, the Kalbach need-versus-outcome question. The agent led with "Kalbach says so in one sentence" over p. 101's "In ODI, 'needs' are synonymous with 'desired outcomes'" — a sentence inside the Outcome-Driven Innovation play, reporting that method's vocabulary — and then offered a shared syntax as the relation between job statements and needs, a shape both carry. Chaehan: "your research doesn't exactly show that kalbach sees needs synonymous with outcomes. he merely points to ODI where this exists." and "you must make it clearer not covering all details but showing exactly what relates to what and why."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
