@@ -2484,6 +2484,18 @@ Before reporting on, repairing or scheduling a deliverable, open the carrier tha
 
 Instruction basis: 2026-10-12, the Part 2 Annex repair. The reading was framed as S5's ("the file the students are assigned at the end of S5", "S5 ran today") from the course design's reading-rhythm line, and a re-share was put to the user on that premise. Chaehan: "you're wrong, part 2 annex was never part of e5 but e6!" - its carrier is E06's Reading slide, which hands it to S6 on 2026-10-15, and no distribution question was on the table at all.
 
+### 154. The column of interest sits within the first three after the identifier
+
+A table wider than the pane is clipped in the output, so the columns past roughly the third are invisible to the reader: a complete, correct table whose value column is fifth is useless. Order the columns by what the reader scans for — the identifier first, then the value that answers the question (hours, price, count), then the explanation (rule 68's Why, dates, what the row holds). Where rule 68 asks for a Why column, it takes its place after the value, not before it.
+
+Instruction basis: 2026-10-12, the prep-hours per-lecture table in chat (Lecture | Taught | What it holds | Hours). Chaehan: "put hours as second column. remember in agent rules that the output of such a table with max width cannot be seen in the UI output. so it is useless if you don't put the column of interest within the first 3 after the identifier column(s)."
+
+### 155. A copied page is not a reference: its construction is checked against the values file, and the leftovers it carries are removed
+
+A page duplicated from another page is a source of pixels, not a valid instance: it brings objects the values file does not describe - a band shape whose outline shows as a hairline outside the band image, the source's own text copies - and they arrive silently, because copying is not creating and no write step looks at them. When an artifact is made by copying rather than building, its construction is read from the values file, the inherited objects are checked against it and removed, and the values file itself states what the element is made of, not only where it sits - a reference of placement alone cannot fail the object it should not have. The object dump of a copied page is part of the verification, beside the export's pixels.
+
+Instruction basis: 2026-10-12, E06's two banded pages. Pages 5 and 6 carried the band as an image over a band shape at the same rect, whose red outline showed as a full-width hairline at y 11 and y 124-125; both bands came from duplicated pages (slide 5 rebuilt from the blue Yes-and slide, the Tips page from slide 5's frame). The same hairline sat on 17 pages of the family (E01 4,5,6,7,11,20; E02 3,4,5,6; E03 61; E06 5,6; E07 3,4; E08 3,4), in two constructions: where the shape sits under a band image it is a leftover and is deleted (10 pages, swept that day), and where the band IS the shape its blue fill is the band and the red outline is its border, so the removal would take the band with it and the fix is a build instead (E01's six pages). E05's nine shapes were deleted on 2026-10-09 under an instruction the record kept as E05's slide numbers, so the class was never swept. Chaehan: "KUBS DT WS2026 E06.key has two title bars which have a red line border - how is that possible and why don't you get the reference from the deck preferences?" `deck_reference.json`'s `band` block now carries the construction and the defect's signature, and `deckcheck`'s `stroke` check flags it.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:

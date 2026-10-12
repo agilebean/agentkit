@@ -169,4 +169,6 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2458–2467 | ### 151. A learner handout is written in the course's own register, and only what is meant to be read |
 | 2468–2477 | ### 152. An artifact cut from a source is verified page by page against the source, and its own declared spec is the check's input |
 | 2478–2486 | ### 153. An artifact's owner is the carrier that lists it, not the session whose end announces it |
-| 2487–2493 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2487–2492 | ### 154. The column of interest sits within the first three after the identifier |
+| 2493–2498 | ### 155. A copied page is not a reference: its construction is checked against the values file, and the leftovers it carries are removed |
+| 2499–2505 | ## Shell: `~/.bash_aliases` (user-global) |
