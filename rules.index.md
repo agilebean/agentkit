@@ -158,4 +158,7 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2349–2358 | ### 140. A specified edit lands before any investigation |
 | 2359–2368 | ### 141. A file that moves under a pass is re-read at its changed lines, never from the top of the world |
 | 2369–2377 | ### 142. The session works on the object the user named; an excluded target stays out |
-| 2378–2384 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2378–2387 | ### 143. An element's presence in the file is not proof it is live — check the record that produced it before putting it to a vote |
+| 2388–2397 | ### 144. A terse instruction is read in the artifact's own domain, and an artifact's own fields are never the instruction |
+| 2398–2406 | ### 145. A claim keeps its owner, and a test meant to separate two things must exclude one of them |
+| 2407–2413 | ## Shell: `~/.bash_aliases` (user-global) |
