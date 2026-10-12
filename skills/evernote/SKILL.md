@@ -156,12 +156,29 @@ Procedure when the note carries (or should carry) a graphic:
    `embed-image "<title>" "<file>" --after-heading "<heading the graphic sat under>"`
    or `--top` when it sits above everything. The returned hash must equal the
    hash recorded in step 1; a different hash means the wrong file.
-4. Verify: the raw content holds one `<en-media>` per graphic with the recorded
-   hash and no relative-path `<img>` tag.
+4. **Delete every leftover `<img src="...">` tag.** The re-upload restores the
+   resource; it does not remove the tag the body replacement wrote, and that tag
+   stays in the body pointing at a path Evernote cannot resolve, drawing a broken
+   image beside the graphic it duplicates. Remove each one surgically
+   (`edit_note`, `mode: "replace"`, the tag as `find`, empty `content`), one tag
+   per picture. Verified 2026-10-12 on "2026-09-11 KUBS DT Course Design": two
+   tags had survived the recovery since 2026-10-05 - the course chart's under the
+   title, the JTBD diagram's under Reading - each next to the resource it
+   duplicated, and the user reported it as "the second image is broken now".
+5. Verify: the raw content holds one `<en-media>` per graphic with the recorded
+   hash and **no relative-path `<img>` tag**. Read it with `get_note`, never with
+   the markdown conversion: the converter drops an unknown `<img>` on the way
+   out, so the markdown read shows the graphics and hides the broken tag - that
+   check passes on a note the client draws as broken. A notebook sweep is one
+   `get_note` per note counting `<img` against `<en-media` and `resources`
+   (2026-10-12, 25 KUBS DT notes, all clean after this repair).
 
 Risk set: notes whose markdown twin references images by path. In KUBS DT those
 are the course design overview (week grid at the top), the opener story (the BigP
-retrospective photo) and the diagram evolution document.
+retrospective photo) and the diagram evolution document. The opener story's photo
+was lost the same way and is recoverable from its note history
+(`listNoteVersions` / `getNoteVersion`, the 2026-09-21 version carries it as
+`31eb7c3deb7877e81a2d4569e00b3efb`, 1037895 bytes, image/jpeg).
 
 ## Uploading an image into a note via MCP (the binary bridge)
 
