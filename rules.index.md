@@ -165,4 +165,8 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2419–2426 | ### 147. A correction about how something should look becomes a per-instance computation, never a constant |
 | 2427–2438 | ### 148. An instruction to consolidate is a move: the source artifact retires in the same turn |
 | 2439–2448 | ### 149. Width is spent where it removes height, and nowhere else |
-| 2449–2455 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2449–2457 | ### 150. Deliverable content is created in its home folder from the first write |
+| 2458–2467 | ### 151. A learner handout is written in the course's own register, and only what is meant to be read |
+| 2468–2477 | ### 152. An artifact cut from a source is verified page by page against the source, and its own declared spec is the check's input |
+| 2478–2486 | ### 153. An artifact's owner is the carrier that lists it, not the session whose end announces it |
+| 2487–2493 | ## Shell: `~/.bash_aliases` (user-global) |

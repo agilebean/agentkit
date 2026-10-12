@@ -2446,6 +2446,44 @@ A layout dimension is spent only where it buys the value the layout is for. In a
 
 Instruction basis: 2026-10-12, on the KUBS DT S6 note's workshop table. The fitting had stretched a four-column table to the 939 px ceiling and the question put to him was whether the narrow "Block" column should take 250 px so its titles keep one line. Chaehan: "can't you apply common sense? it doesn't matter if there is a second or third line if another column already has 3 lines!!!! record this in rules, this is really basic!!!! keep 130 but shorten the text line bec the goal is not to use max width with so few cols!" The fitting now trims the wrapping column back to the point where its content stops saving the table a line: the S6 table lands at 907 px, the Peer Syllabi table at 891, neither at the ceiling.
 
+### 150. Deliverable content is created in its home folder from the first write
+
+A file the user asks for (a draft, a handout, a document he will read, upload or iterate) is written into the folder the content belongs to, at the moment it is first written. Scratch and build areas (a repo's `out/`, a temp tree, a stage folder) hold only intermediates the agent itself consumes; they are never the parking place for content the user asked to see. The home of an artifact is the folder whose log or index will name it later, and "the content is still moving" is not a reason for scratch: the user iterates in the artifact's home, and so does the agent.
+
+- The test before writing any file for the user: which folder will record this artifact? Write it there.
+- Same family as rule 69 (artifacts are scarce), rule 79 (history lives in one log per folder), and rule 139 (iterative work ships a quick draft early).
+
+Instruction basis: 2026-10-12, the S6 tips draft, parked in the socrates repo's git-ignored `out/` while its content was still moving. Chaehan: "why didn't you put the s6_quality_page.md into the s6 folder, isn't this common sense? rename to tips final deliverables.md" The file moved into `KUBS DT S6` as "tips final deliverables.md" the same day.
+
+### 151. A learner handout is written in the course's own register, and only what is meant to be read
+
+A text students will read (a handout, a tips sheet, an announcement) is written the way the course writes to its students: plain, direct, easy to follow; the course's terminology and examples ride in parentheses; quality claims reference the feedback the course itself gave, naming the session and what was observed. Material the instructor delivers orally (illustrative stories, framing words, a recording he screens in class) stays oral; writing it down is not completeness. The user's given wording is used verbatim, and the text is checked against the wording inventory before it ships.
+
+- Before writing, read the course's own student-facing texts (syllabus, overviews, announcements, the user's earlier instructions to students) and the session feedback file; the new text matches their voice and reuses their names for things.
+- When the user says "I will tell that", the material right there is what stays out of the written text.
+- Same family as rule 57 (reader-facing text) and rule 2 (robotic wording); the instances are rows in `common_sense.md`.
+
+Instruction basis: 2026-10-12, the S6 tips sheet. The first draft explained everything, wrote the trivial story and the recording reference, used "shines", "heart" and "carry", and labeled the points "rules". Chaehan: "no you wrote the text too literally without thinking for the students ... these are tips, so they must easy to understand and follow, reference to terminology and examples in parentheses, and reference the problems surfaced during the presentations and my feedback on sessions?"
+
+### 152. An artifact cut from a source is verified page by page against the source, and its own declared spec is the check's input
+
+When a deliverable is an extract of a source (page ranges of a book, selected records, a subset of a folder), the check compares the artifact against the source itself: every carried page is one of the source's own pages, no source page appears twice, the order is ascending, and the count the artifact's own name declares is the count it has. The name is the spec, so a naming convention that carries the ranges ("18p (ch3 p.66, 76-88, 95-98)") makes the file self-describing and the check mechanical. Run it when the extract is built, re-cut or renamed, and run it against the defect it exists for before trusting it. A file assembled by hand from a page list that no check reads is exactly the artifact that ships with five pages missing.
+
+- The check lives in the project's pipeline (KUBS: `pipeline.py readingcheck`), not in prose.
+- A note is not a flag: a page absent from a declared range may belong to a sibling extract; a page carried twice, an out-of-order page, a page that is not in the source and a count the name does not declare cannot.
+- Same family as rule 137 (verification must be differential and able to fail), rule 13 (verify the output on real data) and rules 133-137 (the deck family's values, checks and gates).
+
+Instruction basis: 2026-10-12, the KUBS DT Part 2 Annex reading, the extract E06's Reading slide hands to the class for S6. It had been cut on 2026-10-05 and carried 18 pages of which 11 were its declared set: pages 77-81 (the whole switch-interview technique - the timeline and its six phases, Figure 3.2, the variations, customer case research) were absent and pages 83-87 appeared twice, so the switch-interview part stopped one page after it began. Chaehan: "kubs dt Reading Kalbach part 2 annex is wrong! the part for switch interviews is cutoff after the first page!!!" No pass since the build had read the file's pages; the renames of 2026-10-09 and 2026-10-12 both touched its name and never its contents.
+
+### 153. An artifact's owner is the carrier that lists it, not the session whose end announces it
+
+Before reporting on, repairing or scheduling a deliverable, open the carrier that hands it out (the slide, the note, the table, the folder index) and name that carrier as its owner. A schedule line elsewhere ("the S6 reading is assigned at the end of S5") says when the item is announced; it does not say which artifact family it belongs to, and it is never the source for "the SX reading", "the SX item" or a question about whether the item has already reached the reader. The ownership decides the timing that matters - an item carried by Thursday's deck reaches its readers on Thursday, whatever the end of an earlier session announced.
+
+- The test before writing "the X reading" or "has this gone out yet": open the carrier and read which session it names, then state that session.
+- Same family as rule 109 (a description is written from the source and its attributes are checked against it) and rule 143 (an element's presence is not proof it is live - check the record that produced it).
+
+Instruction basis: 2026-10-12, the Part 2 Annex repair. The reading was framed as S5's ("the file the students are assigned at the end of S5", "S5 ran today") from the course design's reading-rhythm line, and a re-share was put to the user on that premise. Chaehan: "you're wrong, part 2 annex was never part of e5 but e6!" - its carrier is E06's Reading slide, which hands it to S6 on 2026-10-15, and no distribution question was on the table at all.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
