@@ -163,6 +163,6 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2398–2406 | ### 145. A claim keeps its owner, and a test meant to separate two things must exclude one of them |
 | 2407–2418 | ### 146. A missing integration is reconnected through the service's own API, before it is reported as a blocker |
 | 2419–2426 | ### 147. A correction about how something should look becomes a per-instance computation, never a constant |
-| 2427–2436 | ### 148. An instruction to consolidate is a move: the source artifact retires in the same turn |
-| 2437–2446 | ### 149. Width is spent where it removes height, and nowhere else |
-| 2447–2453 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2427–2438 | ### 148. An instruction to consolidate is a move: the source artifact retires in the same turn |
+| 2439–2448 | ### 149. Width is spent where it removes height, and nowhere else |
+| 2449–2455 | ## Shell: `~/.bash_aliases` (user-global) |
