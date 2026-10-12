@@ -2404,6 +2404,18 @@ Two clauses about evidence prepared for someone else to read or hear:
 
 Instruction basis: 2026-10-12, the Kalbach need-versus-outcome question. The agent led with "Kalbach says so in one sentence" over p. 101's "In ODI, 'needs' are synonymous with 'desired outcomes'" — a sentence inside the Outcome-Driven Innovation play, reporting that method's vocabulary — and then offered a shared syntax as the relation between job statements and needs, a shape both carry. Chaehan: "your research doesn't exactly show that kalbach sees needs synonymous with outcomes. he merely points to ODI where this exists." and "you must make it clearer not covering all details but showing exactly what relates to what and why."
 
+### 146. A missing integration is reconnected through the service's own API, before it is reported as a blocker
+
+When a tool that should be in the catalog is absent (an MCP server, a provider, a plugin), read the service's live state and repair it. Do not write a message about the outage first.
+
+- `GET /api/mcp?location[directory]=<dir>` returns every server's status for that directory: `connected`, `failed` (with the error), `needs authentication`, `disabled`.
+- `POST /api/experimental/mcp/{server}/connect?location[directory]=<dir>` reconnects it. A connect made here surfaces that server's tools in the running session at once, with no restart of the app or the service.
+- The address and the password are already in the session. The port sits in `~/.config/openchamber/managed-opencode/<ownerPid>.json`, and the basic-auth password is the environment variable `OPENCODE_PASSWORD`: `curl -u "opencode:$OPENCODE_PASSWORD" ...`.
+
+A connection that fails while its location boots stays `failed` for the life of that location, so one project keeps missing the tools while the neighbouring projects reconnect. Report an outage only after the lever has been tried, and then name the failure class (DNS, connect timeout, socket reset) rather than "it is down".
+
+Instruction basis: 2026-10-12, the KUBS prep-hours count. The `evernote` tools were absent from the catalog, the log held `mcp connect failed ... getaddrinfo ENOTFOUND mcp.evernote.com` from 06:03 that morning, and the agent reported the outage and asked the user how to proceed. The status endpoint showed `failed` for the socrates directory while the same server was `connected` for another directory, and one POST moved it to `connected` with the 27 tools live in the same session. Chaehan: "tell me why this happens all the time. what has to be done reconnect the evernote mcp server and why can't you do that programmatically?"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:

@@ -161,4 +161,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2378–2387 | ### 143. An element's presence in the file is not proof it is live — check the record that produced it before putting it to a vote |
 | 2388–2397 | ### 144. A terse instruction is read in the artifact's own domain, and an artifact's own fields are never the instruction |
 | 2398–2406 | ### 145. A claim keeps its owner, and a test meant to separate two things must exclude one of them |
-| 2407–2413 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2407–2418 | ### 146. A missing integration is reconnected through the service's own API, before it is reported as a blocker |
+| 2419–2425 | ## Shell: `~/.bash_aliases` (user-global) |
