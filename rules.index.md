@@ -171,4 +171,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2478–2486 | ### 153. An artifact's owner is the carrier that lists it, not the session whose end announces it |
 | 2487–2492 | ### 154. The column of interest sits within the first three after the identifier |
 | 2493–2498 | ### 155. A copied page is not a reference: its construction is checked against the values file, and the leftovers it carries are removed |
-| 2499–2505 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2499–2504 | ### 156. A probe box must bound the object, and a rebuild is verified on the element that changed |
+| 2505–2511 | ## Shell: `~/.bash_aliases` (user-global) |
