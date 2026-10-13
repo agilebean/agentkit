@@ -172,4 +172,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2487–2492 | ### 154. The column of interest sits within the first three after the identifier |
 | 2493–2498 | ### 155. A copied page is not a reference: its construction is checked against the values file, and the leftovers it carries are removed |
 | 2499–2504 | ### 156. A probe box must bound the object, and a rebuild is verified on the element that changed |
-| 2505–2511 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2505–2526 | ### 157. A label already in the line keeps its place; the value is appended after it |
+| 2527–2533 | ## Shell: `~/.bash_aliases` (user-global) |
