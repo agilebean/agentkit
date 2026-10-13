@@ -2502,6 +2502,28 @@ A value read off a render is only as good as the window it was read in: a box th
 
 Instruction basis: 2026-10-13, the JTBD integration diagram v5. The five flow-pill labels were drawn condensed (scaleX 0.765) off an ink width read in a window that began inside the word - "UNDERSTAND" measured 172.5 px where the run is 226.5 - and the pass reported the diagram as matching v4 within 1-3 px, because its probes covered the title, the panels, the band and the boxes and not the labels. Chaehan: "unfortunately you changed the layout of the 5 sprint phases terribly, revert!" Re-measured with a box that bounds the run, the labels are Helvetica Neue Bold 33 (cap height 23.5) and the render's ink boxes match v4's (UNDERSTAND 111.5-335.5 against 106.0-332.5). Instance: `memory/agentic_ai.md` failure 45.
 
+### 157. A label already in the line keeps its place; the value is appended after it
+
+A field that already carries a token carries the place the missing value goes.
+`400m 2:05/2:04 DPS` asks for its numbers after `DPS`, so the editing pass
+appends them there and never re-cuts the line into `2:05/2:04 0.99/0.97 DPS`:
+inserting text before an existing token reinterprets it (the label becomes a
+trailing unit) and rewrites wording the user typed himself. The rule binds the
+question that precedes the write as much as the write: where the target's own
+text holds the label, the option text offered to the user quotes the artifact's
+order word for word, because an invented order in the option becomes the
+specification the user approves without reading the difference. The note's
+older rows and its markdown twin are not the authority on the order — the row
+being edited is.
+
+Instruction basis: 2026-10-13, the Evernote note "Swim Training Times". The
+sweep added per-rep DPS to the ten rows since 2026-08-11; those rows ended in a
+bare `DPS` token, and the pass produced `400m 2:05/2:04 0.99/0.97 DPS` and put
+that order to him as the choice. Chaehan: "no i wanted the DPS before the
+values!" The rows now read `400m 2:05/2:04 DPS 0.99/0.97`. Instance:
+`memory/agentic_ai.md` failure 46; the evernote skill's cell-edit section
+carries the note-level form.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:

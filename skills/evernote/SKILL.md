@@ -242,6 +242,13 @@ cannot see any of it — the stripped text looks the same before and after the
 loss — so it surfaces only when the user opens the note, and by then the
 markup is gone.
 
+- A label the cell already carries keeps its place: append the value after it,
+  never before. A cell reading `400m 2:05/2:04 DPS` is finished as
+  `400m 2:05/2:04 DPS 0.99/0.97`, not `400m 2:05/2:04 0.99/0.97 DPS` —
+  inserting text ahead of the token reinterprets it as a trailing unit and
+  rewrites wording the user typed. The row being edited is the authority on
+  the order; the note's older rows are not (2026-10-13, "Swim Training Times":
+  "no i wanted the DPS before the values!"; rule 157, agentic_ai failure 46).
 - Before changing a cell, fetch the raw ENML (`get_note`) and treat the
   existing inner markup as part of the content: substitute only the specific
   words and numbers that were approved, keeping every tag around them.
