@@ -937,6 +937,12 @@ mechanism's own trigger - an address routes no report, a self-certification
 does - and not from the part of the arrangement the agent happens to have in
 view.
 
+A published list of served countries is not the signup's condition either. The
+list says where the provider operates; the signup asks its own questions, and
+they can be answered from a different country than the phone number, the
+document or the address suggests. "They do not serve your country" is a claim
+about the company, and the user's question is whether he can open the account.
+
 Instruction basis: 2026-10-14, the Wise question. The answer said a German Wise
 account would be "honest only if you are a German tax resident", reading Wise's
 eligibility off German tax law. Wise's own requirements are an address in the
@@ -950,6 +956,15 @@ on rental income does not make you a German tax resident, so it does not open
 the German Wise route' i am german citizen so should be allowed to open a wise
 account in germany independent from it. check this." Instance:
 `memory/agentic_ai.md` failure 49.
+
+Same day, the served-country list: the answer said "Revolut cannot take a
+Korean address, since Korea is not a country it serves", from Revolut's
+published list of countries where an account can be opened. Chaehan opened the
+account that evening with a Korean mobile number and Germany as the country of
+residence, identity and the German tax ID included, no address document
+requested: "i just created a revolut account with a korean number and it asks
+me if residence country is korea and i selected german, and the verification
+just ran through without problems". Instance: `memory/agentic_ai.md` failure 51.
 
 ### 45. Choice questions get the objective answer, never validation of the user's leaning
 
