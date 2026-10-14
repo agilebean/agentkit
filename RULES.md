@@ -2524,6 +2524,32 @@ values!" The rows now read `400m 2:05/2:04 DPS 0.99/0.97`. Instance:
 `memory/agentic_ai.md` failure 46; the evernote skill's cell-edit section
 carries the note-level form.
 
+### 158. A multi-limb test is stated limb by limb; a negation of the whole rule is a false claim
+
+When an answer turns on a legal, procedural or regulatory test that has several
+independent triggers, name the triggers and say which one the user's facts meet
+or miss. Never compress the test into a denial of the rule itself: "the 183-day
+rule is not the residency test in any of your three countries" reads as though
+the days were irrelevant, when in each of those countries the days are one
+resident-making trigger and a second limb sits beside it. The compressed form
+also destroys the consequence the user needs from the answer - that a person
+under the threshold everywhere can still be resident somewhere, and that a
+"resident nowhere" claim has to be built against every limb separately. Where
+the domain memory file already states the limbs, the answer restates them from
+that file, not from a summary of it; a sentence that contradicts a line the
+pass itself loaded is the defect, not an acceptable simplification.
+
+Instruction basis: 2026-10-14, the Wise Canada interest question. Asked what
+happens if he declares Canadian tax residency he does not hold, "and no tax
+residency anywhere as I don't comply to any country's 183d rule", the answer
+said the 183-day rule "is not the residency test in any of your three
+countries". Korea's test (주소, or 183 days of 거소 - plus, since 2026-01-01,
+183 consecutive days spanning two tax years) stood in `memory/finance.md`,
+loaded for the answer, and Germany's 183-day limb is `gewöhnlicher Aufenthalt`
+(§9 AO). Chaehan: "this is wrong: the 183-day rule is not the residency test in
+any of your three countries - korea clearly has the 183d rule according to my
+tax accountant." Instance: `memory/agentic_ai.md` failure 47.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
