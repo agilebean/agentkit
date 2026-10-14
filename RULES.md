@@ -937,6 +937,12 @@ mechanism's own trigger - an address routes no report, a self-certification
 does - and not from the part of the arrangement the agent happens to have in
 view.
 
+A published list of served countries is not the signup's condition either. The
+list says where the provider operates; the signup asks its own questions, and
+they can be answered from a different country than the phone number, the
+document or the address suggests. "They do not serve your country" is a claim
+about the company, and the user's question is whether he can open the account.
+
 Instruction basis: 2026-10-14, the Bank question. The answer said a German Bank
 account would be "honest only if you are a German status", reading Bank's
 eligibility off German tax law. Bank's own requirements are an address in the
@@ -950,6 +956,15 @@ country, in its own §3.1. (private)
 
  Instance:
 `memory/agentic_ai.md` failure 49.
+
+Same day, the served-country list: the answer said "Bank cannot take a
+Korean address, since Korea is not a country it serves", from Bank's
+published list of countries where an account can be opened. (private)
+
+
+
+
+ Instance: `memory/agentic_ai.md` failure 51.
 
 ### 45. Choice questions get the objective answer, never validation of the user's leaning
 
