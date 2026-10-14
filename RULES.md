@@ -924,6 +924,33 @@ of rule 30: a named source is a referent to resolve, not prose to skim.
 
 Failure mode: an availability or licensing barrier assumed from a file's appearance instead of verified at the source.
 
+The same discipline covers eligibility: who a provider will serve is read
+from the provider's own criteria and its own agreement, never inferred from a
+neighbouring legal status. A tax status, a residency concept or a regulatory
+rule says how a product is taxed; it does not say who may hold it, and a
+provider may require no tax status at all beyond a self-certification it
+collects afterwards. Reading the requirement off the adjacent concept invents a
+barrier the provider never set and sends the user hunting for a condition that
+does not exist. The same holds for consequences: where the answer is a report
+to an authority, a closure right or a withholding, it is read from the
+mechanism's own trigger - an address routes no report, a self-certification
+does - and not from the part of the arrangement the agent happens to have in
+view.
+
+Instruction basis: 2026-10-14, the Bank question. The answer said a German Bank
+account would be "honest only if you are a German status", reading Bank's
+eligibility off German tax law. Bank's own requirements are an address in the
+account's country, a right-to-reside document, and a verified address document;
+the EEA investment agreement (Bank Assets Europe, section 5) requires only that
+the customer already holds a Bank account, is 18+ and is not a U.S. Person, and
+it handles tax through a CRS self-certification with reporting to the Estonian
+tax board. The Canadian program is the one that requires status in its
+country, in its own §3.1. (private)
+
+
+ Instance:
+`memory/agentic_ai.md` failure 49.
+
 ### 45. Choice questions get the objective answer, never validation of the user's leaning
 
 When the user asks a choice question ("should I do X", "would it be better
