@@ -174,4 +174,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2526–2531 | ### 156. A probe box must bound the object, and a rebuild is verified on the element that changed |
 | 2532–2553 | ### 157. A label already in the line keeps its place; the value is appended after it |
 | 2554–2579 | ### 158. A multi-limb test is stated limb by limb; a negation of the whole rule is a false claim |
-| 2580–2586 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2580–2611 | ### 159. A service procedure is presented only after its first branch is tested, and a contract change is read in the governing agreement |
+| 2612–2618 | ## Shell: `~/.bash_aliases` (user-global) |
