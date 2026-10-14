@@ -2577,6 +2577,38 @@ loaded for the answer, and Germany's 183-day limb is `gewöhnlicher Aufenthalt`
 any of your three countries - korea clearly has the 183d rule according to my
 tax accountant." Instance: `memory/agentic_ai.md` failure 47.
 
+### 159. A service procedure is presented only after its first branch is tested, and a contract change is read in the governing agreement
+
+A help page describes the flow for the reader who has the feature. Before it
+becomes numbered steps in an answer, test the branch that the page itself names:
+is this option present for this user, on this profile, for this country pair?
+The provider's own caveat ("if you do not see this option, it means the feature
+is not yet available") states a precondition, not a footnote, and the branch it
+names is the one to research first, because that is the branch the user is
+likely standing in. Where the procedure would change the contract, the governing
+agreement is read before the recommendation is written: its scope clause (who
+the agreement is written for), its duplicate-account clause, its
+information-accuracy clause and its termination clause are the text that decides
+what the attempt costs. Steps first and the caveat last inverts the decision
+the user is making: he tries the thing that does not exist, and the real path,
+usually a support review or a new relationship, is the part he was not told.
+
+Instruction basis: 2026-10-14, the Wise country change. The answer carried six
+numbered UI steps plus the support fallback, taken from "How do I update my
+country of residence?", whose opening line says the option appears only "if you
+have recently moved to another country" and is absent where the feature is not
+available. Chaehan's account offers no such option at all: "there is no option
+Change country of residence. i knew it - this is not supported. the change may
+be a hassle by creating a new account and a risk ... you must read the Wise
+regulations and the UI more thoroughly". The Wise Canada Customer Agreement,
+not read before that answer, settles what the alternatives cost: it is scoped to
+"customers residing in Canada"; it refuses duplicates ("Wise reserves the right
+to refuse the creation of duplicate accounts for the same user ... Wise reserves
+the right to close or merge these duplicate accounts without notification to
+you"); it requires all information to be "complete, accurate and truthful"; and
+it permits suspension or termination for breach. Instance:
+`memory/agentic_ai.md` failure 50.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
