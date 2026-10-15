@@ -77,6 +77,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 - **Fake-sentence patterns:** "It's not just X, it's Y"; "It's not about X, it's about Y"; "The key is..."; "At its core..."; "when it comes to"; "in order to" (write "to"); "the ability to" (write "you can").
 - **Contrasts built for sound:** "bias is watched, not switched off"; "the filters cost you more on Wednesday"; "this week is the sprint, not the book". Write the plain fact: "you cannot switch bias off"; "you get one hour with a stranger and no second chance"; "the reading comes Thursday, in the sketch session".
 - **Metaphors that give an abstraction agency, and absolutes about it:** "where bias enters an interview" claims one overall bias that is completely known. Write what the person does: "knows several biases in interviews". Same shape: "the session only reaches tomorrow's set" hides a harm behind a movement, and the reader inverts it; write "it would only hurt tomorrow's set" (2026-10-09).
+- **Pointing back at the conversation** ("The second question is the subtle one you name", "the point you raise", "as you said"): state the content. The sentence's job is the subject, never the exchange it arrived in.
 - **Formal greeting and closing formulas** in messages the user sends (매니저님, 안녕하세요 / 검토 부탁드립니다, 감사합니다). The body only.
 
 *Voice in first-person text*
@@ -2623,6 +2624,62 @@ the right to close or merge these duplicate accounts without notification to
 you"); it requires all information to be "complete, accurate and truthful"; and
 it permits suspension or termination for breach. Instance:
 `memory/agentic_ai.md` failure 50.
+
+### 160. A framing the user names is researched before it is judged, and a criterion is run against the cases it must separate
+
+Four clauses about a definition or a test the agent hands to the user for him to
+teach from:
+
+- **When the user names a framing, a source or an analogy and asks for its definitions, the lookup is the work.** Setting it aside because it "will not land with the audience" is an assumption standing where evidence belongs: the definitions are read first, quoted, and then judged on what they say. A pointer to a body of knowledge the user already works from ("the best way I know is X") is a request for X, not a preference to be weighed against the agent's own framing; the retrieval half of such a sentence is the instruction, and the clause that follows it ("but that won't help ...") is a claim about the audience, never a licence to skip the retrieval.
+- **A criterion offered as a discriminator is run against every neighbouring case before it is presented.** Give it the cases it must separate, not the case it was coined for. "A functional goal has a clear end state" also describes the outcome statements on the same sheet (minimize time is an end state reached) and the emotional and social goals beside them, so it separates nothing; that criterion was reaching for a rule against aspirations and wore a definition's clothes. A test that fails on the page it governs is not a definition. Enumerate that page's own cases first - the columns, rows and cells the sheet or document under discussion has, not the pair the criterion was coined for - and run the test down that list before writing it down. Rule 145's second clause gives the positive form - the test that works names the attribute that exists on one side only.
+- **A claim presented with worked examples is read back against its own terms before it is sent.** The examples are part of the claim, not decoration: each row is checked for whether its cells are of the kind the criterion names. A definition of the functional goal as "the change of state of a thing" shipped with a table whose first row set the *parcel* against the states *unbought and undelivered* - states of the buying, not of the parcel, which is the same parcel before and after - and a row for Ulwick's "stay awake" whose thing was the body, a referent the source never named. Examples filled to fit a criterion certify it falsely.
+- **A criterion the user has already settled is held, not re-derived.** Where his record or his words hold a definition of the object under discussion, that definition is the frame the answer works in; a fresh criterion that competes with it is a defect even when it tests clean, and where it disagrees it is checked against his material before it is offered.
+
+This applies to a quoted source line as much as to the agent's own phrasing: a
+sentence is not exempt from the counterexample test because its author is
+famous.
+
+Instruction basis: 2026-10-14, the KUBS S6 functional goal. The agent answered
+"what is a functional goal in simple terms and what are intuitive examples"
+with Kalbach's end-state sentence and, in the same reply, set aside the route
+the user had named - functional versus non-functional requirements in software -
+without reading its definitions. Chaehan: "can/t you see that kalbach's
+definition is very vague and doesn't explain at all the nature of the
+functional goal by pointing to an end state? this is also not true bec the
+outcome statements for needs and emotional social goals would also have an end
+state if they are defined by minimize/maximize or decrease/increase. we need a
+better definition that serves as help. i told you to look at functional
+requirements in software you didn't do it". The lookup he asked for holds the
+working answer: Sommerville's functional requirements are the services the
+system provides and how it behaves in particular situations, and non-functional
+requirements are constraints on those services; ISO/IEC 25010 lists the
+qualities; and the requirements-ontology test makes a requirement
+non-functional exactly when it refers to a quality and functional when it
+refers to a function, with one sentence able to hold both. Ulwick's glossary -
+the author the session's own slide credits - defines the functional job as "the
+underlying process an end user is trying to get done in a given situation", a
+criterion with a testable consequence: a job map can be drawn for it, and no
+steps can be written for an emotional job. The retrieval above stands as
+evidence; the definition the session runs on is his, not the agent's: functional
+job = what gets done, a goal-oriented activity (a task with an objective), and
+functional goal = the intended improvement on it. Chaehan: "better is
+functional job as what gets done as goal-oriented activity (task with
+objective) and functional goal as the intended improvement", after two
+further agent definitions failed on his own material ("definition changes a
+thing is not good, bec buying something doesn't change that thing, it is still
+the same!!! bec body is not a thing!!! this is common sense, don't you get
+it??"). Instance: `memory/agentic_ai.md` failure 52.
+
+### 161. A definition supplies the term's content; a format is not a definition, and a term is never defined by itself
+
+Four clauses about what an answer owes when the user asks what a term means:
+
+- **A grammar is not a definition.** When the question is "what is meant by X", the answer names what kind of thing X denotes and what it is contrasted with. A template for writing statements of that kind (verb + object + clarifier) is a specification for producing them; offered as the answer it leaves the term exactly as unexplained as before.
+- **A definition that reuses the term being defined is not a definition.** "An obligation to perform some function" explains nothing about function. Where every candidate phrasing is circular, the content is recovered from two places: the root of the word and the term's contrast partner. *Functio* is Latin for the performance or execution of something (from *fungor*, to perform or discharge), so "functional" means of the performance - and it is a relational term, so it is only defined with the other side of its pair named: in IT, what the system does against how well it does it; in JTBD, what the user performs against what is felt or seen while it is performed.
+- **Testable terms are defined by what they exclude in the user's own material.** A definition of "functional" earns its place only if it says which of his statements fail it and why, in his domain's own words.
+- **A term shared by two fields is translated by keeping the root's core and swapping the field's performer.** Latin *functio* is a performance; who performs is the field's business - in IT the performer is the system, in JTBD it is the person - so the neighbouring field's vocabulary does not fit the person's side ("execution" reads as a system being run), and using it there is a defect, not a paraphrase. The user's own composition keeps the core intact when it names the performer: an activity is performed by the user, so "goal-oriented activity" holds both halves, the performance and the objective, and the objection that it is "a level, not a kind" misses that the performance is the kind.
+
+Instruction basis: 2026-10-15, the KUBS S6 functional goal. The answers had offered Kalbach's end-state sentence, a check of the agent's own making, and the verb-object grammar, and the user had asked three times for the semantics. Chaehan: "i need an explanation of the term functional - what is meant by that in IT vs JTBD? the definition you gave is circular referencing some function! the other definitions are just structural not semantic!" The same turn's second question carried the criterion the semantics gives - how to show students that "i want to be healthy" is not a job when it is an objective and can be described as progress - whose answer is performance, not objective: a job's steps are steps, an aspiration's steps are other jobs. Chaehan, the same day: "avoid execution as this implies a system, not a user. i still disagree that a task does not comply with the etimology, as my definition is goal oriented activity and activity is performed by the user. you cannot \"DO\" be healthy, as this is only a goal, but you do activities to reach this goal. this must be explained to students. it is difficult to apply the same to relieve stress, as you can say that. reconcilation is only possible by saying that you can't do this directly but do some activity to relieve stress. this is a subtle difference but important to point out." Instance: `memory/agentic_ai.md` failure 52, rounds four and five.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
