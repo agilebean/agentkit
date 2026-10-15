@@ -1502,6 +1502,8 @@ When a decision belongs to the user, the question goes through the question tool
 
 The tool is not only for ambiguity. Feeling certain is not a reason to skip it: certainty that a value is stale, that a reading is right, or that the user will agree is the state in which the question gets skipped and the damage happens. When the agent is about to write a sentence that asks the user to decide or provide something ("Tell me which table is yours", "Which should it be?"), that question goes into the question tool instead of the reply. Asking is the next step of the work, never an interruption of it.
 
+An option states every effect it will have, including where content it replaces goes. An option that fixes one thing while silently replacing something else asks the user to ratify a rider the decision does not cover: the answer he gives is about the thing asked, and the rider's loss is his to discover later. When an option's execution would move or drop content, the option names the destination, or the rider becomes its own question in the same call.
+
 Failure mode: a decision taken without the question tool, or a question asked in prose at the end of a reply.
 
 **Batch: one call per change set, not one question per turn.** The tool takes several questions at once, so when a change set opens more than one decision, they all go into a single call — the deliverable's unknown numbers, its order, the scope of the sweep, the wording of a title. Each separate call ends the turn, waits for the user to read and answer, and starts a fresh turn: on 2026-09-26 the S2 run sheet needed three question rounds for one edit set, and the session ran 76 minutes of wall clock over about 15 seconds of machine time. A later round is justified only when an earlier answer opened a fork that did not exist before.
@@ -2105,11 +2107,19 @@ content that follows ("The chain that had to line up: item list, then quotes,
 then ...") hides the structure the reader scans for. This applies in chat
 replies, notes, and memory files.
 
-Failure mode: numbered items delivered as running prose, or a heading phrase
-left inline with its content.
+A list the user counts is numbered. When the points are referred to by their
+number ("the four points", "the three steps", a run of show the room follows
+in order), the items are numbered 1, 2, 3, so the count is visible where the
+text is read; a chain of clauses separated by semicolons reads as one
+sentence and hides both the count and the borders between the points.
+
+Failure mode: numbered items delivered as running prose, points the user
+counts left unnumbered, or a heading phrase left inline with its content.
 
 Stated 2026-10-02: "the lists 1,2,3 must be shown in real numbered lists."
-and "always make a new line for a subheader that ends with a colon".
+and "always make a new line for a subheader that ends with a colon". Stated
+2026-10-15: "isn't it common sense that the run of show containing four points
+must be a numbered list?"
 
 ### 107. A rebuild is acceptance-tested against the standard, not against the copy it reproduces
 
@@ -2684,6 +2694,22 @@ Four clauses about what an answer owes when the user asks what a term means:
 - **A term shared by two fields is translated by keeping the root's core and swapping the field's performer.** Latin *functio* is a performance; who performs is the field's business - in IT the performer is the system, in JTBD it is the person - so the neighbouring field's vocabulary does not fit the person's side ("execution" reads as a system being run), and using it there is a defect, not a paraphrase. The user's own composition keeps the core intact when it names the performer: an activity is performed by the user, so "goal-oriented activity" holds both halves, the performance and the objective, and the objection that it is "a level, not a kind" misses that the performance is the kind.
 
 Instruction basis: 2026-10-15, the KUBS S6 functional goal. The answers had offered Kalbach's end-state sentence, a check of the agent's own making, and the verb-object grammar, and the user had asked three times for the semantics. Chaehan: "i need an explanation of the term functional - what is meant by that in IT vs JTBD? the definition you gave is circular referencing some function! the other definitions are just structural not semantic!" The same turn's second question carried the criterion the semantics gives - how to show students that "i want to be healthy" is not a job when it is an objective and can be described as progress - whose answer is performance, not objective: a job's steps are steps, an aspiration's steps are other jobs. Chaehan, the same day: "avoid execution as this implies a system, not a user. i still disagree that a task does not comply with the etimology, as my definition is goal oriented activity and activity is performed by the user. you cannot \"DO\" be healthy, as this is only a goal, but you do activities to reach this goal. this must be explained to students. it is difficult to apply the same to relieve stress, as you can say that. reconcilation is only possible by saying that you can't do this directly but do some activity to relieve stress. this is a subtle difference but important to point out." Instance: `memory/agentic_ai.md` failure 52, rounds four and five.
+
+### 162. A complaint about the agent's own change is resolved by that change's diff, not by a question
+
+When the user refers to content by a count or a property ("the 4 points", "the two rows", "the line you added"), and the agent's own last edit is what touched that content, the referent is recovered from the edit itself: the before and after in the agent's own write, and in the agent's own last message, read as a diff of insertions and deletions. Content the agent removed in the last pass is the first candidate for anything the user says is missing, hidden or put away; lists the world happens to contain are the second. A question whose answer is computable from the agent's own actions, or from the conversation's own text, is not asked: putting it to him spends one of his turns on work the agent has already done, and he answers it by pointing back at the agent's own message.
+
+The frame matters as much as the search. An edit filed under its intention ("shorten the card", "trim the note") does not report its own effect: where the intention is compression, the deletions it made are filed as prose rather than as content, and no candidate match for the user's complaint can come out of a frame in which nothing was removed. The check is the diff of the last write (what the edit deleted, added or moved), not the label the agent gave the edit.
+
+Rule 62's duty to ask begins where the record stops answering; rule 124's search-the-record clause is not satisfied by searching everything except the agent's own last edit. The two are read with this one: search the record first, and the record starts with the change the agent just made.
+
+**The thread's diff is the diff.** A restore does not compare against the last edit; it compares against the artifact's state before the thread touched it. Every edit this session has made to that artifact is in frame, and content an earlier edit removed is as missing as content removed a minute ago. The session's own messages are part of the record: the text an edit displaced, quoted in the report that announced it, is the wording the restore puts back.
+
+**Shorten compresses wording; it never removes content.** Where the instruction is a length goal ("shorten the card", "trim the note"), the unit that shrinks is the phrasing, and content that no longer fits the short carrier moves to its full home (the script, the note) and is named in the report. A replacement names its destination: text an edit takes off one carrier is placed on another in the same pass, and an option or a plan that replaces content states where the replaced text goes. A replacement with no destination is a deletion, and it is not offered or performed.
+
+**A shortening keeps each element's own property.** Compressing a text moves words, never roles. The element that does something stays the subject that does it, and the thing that sits somewhere stays the thing that sits there: from "I will ask teams which order (last to first), TA puts on whiteboard" comes "the order of presentations last to first on the whiteboard", never "the TA on the whiteboard". A summary that reattaches a property to its neighbour reads as noise to the reader who knows the source. And a card keeps the points it was given: lines brought in from elsewhere are not part of it.
+
+Failure mode, 2026-10-15, the KUBS S7 run sheet: the card was shortened by deleting four pieces of content ("the 4-hour", "every member takes part", "tonight: the strongest improvement into your journal", "1500 words, personal, your own writing"), the before/after sat in the agent's own message, and "the 4 points" was searched for in the course design, the S6 tips sheet, the sibling session folders and the memory files before it was read in the diff. Chaehan: "look which four points you put away. this is really bad: a question you can answer from your own actions and chat history." The draft that followed still carried the wrapup's later bullets, which he does not count among the points, and its summary said "the TA on the whiteboard" where the order goes on the whiteboard: "your summaries of the four points are useless"; "why do you still invent things like 'tonight: ...; the essay: ...'?" Instance: `memory/agentic_ai.md` failure 55.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
