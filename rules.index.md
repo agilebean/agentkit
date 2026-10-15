@@ -77,104 +77,105 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 1417–1454 | ### 59. A completion report follows the user's order of relevance, not the agent's process order |
 | 1455–1490 | ### 60. Explanations teach the mechanism and take the shape of the reader's questions |
 | 1491–1498 | ### 61. Reference data is user-owned; never rewrite it by inference |
-| 1499–1508 | ### 62. Ask with the question tool, before acting, not in prose |
-| 1509–1516 | ### 63. Under uncertainty, always take the latest observation |
-| 1517–1526 | ### 64. A slide's title lives in the deck's title element, never as a line of body text |
-| 1527–1540 | ### 65. Every reply ends with the artifact list, in two parts: their set first, the complete set second |
-| 1541–1546 | ### 66. A simile reports degree, never a symptom |
-| 1547–1572 | ### 67. Options are columns, never separate lists |
-| 1573–1582 | ### 68. Every row states why it is there, in a column of its own |
-| 1583–1602 | ### 69. Artifacts are scarce: each one earns its place |
-| 1603–1613 | ### 70. File names stay short enough to read in Finder |
-| 1614–1624 | ### 71. A rename, move, merge or deletion sweeps every pointer to it |
-| 1625–1638 | ### 72. A canonical artifact's change fans out to every dependent artifact in the same turn |
-| 1639–1657 | ### 73. Never wait more than 60 seconds for a tool call: 20, then 40, then 60 |
-| 1658–1671 | ### 74. Time every artifact, report the measurement, and spend the round trips |
-| 1672–1726 | ### 75. Heavy local work has a weight budget, a stated cost, and a one-element probe |
-| 1727–1732 | ### 76. A user-quoted string is content to use, not a pointer to a place |
-| 1733–1745 | ### 77. A plan and its derived view are one artifact: edit either, render the other in the same turn |
-| 1746–1756 | ### 78. A learning goal says what the student can do with it: name the level, tie it to the assignment, keep it attainable |
-| 1757–1764 | ### 79. History lives in one `_log.md` per folder; documents carry content, logs carry reasons |
-| 1765–1768 | ### 80. Content handed over for a block goes where that block already lives |
-| 1769–1779 | ### 81. Name a thing so the user can look it up; never invent a reference |
-| 1780–1783 | ### 82. When a block is removed, the lines that exist only to serve it go in the same pass |
-| 1784–1793 | ### 83. A line about the user names where it came from, and an untraceable requirement is checked, not obeyed |
-| 1794–1804 | ### 84. Nothing goes out that the user has not read in its final form, with every field its recipient needs |
-| 1805–1828 | ### 85. A letter to an authority is prose to one reader: short, with the duty and the amount stated plainly |
-| 1829–1840 | ### 86. An official address, fax or phone number is verified before it goes into anything the user will use |
-| 1841–1856 | ### 87. A reply that grants or refuses something is a story that returns the decision |
-| 1857–1874 | ### 88. App automation addresses documents by name or path, never by index, and never writes a file the app has open |
-| 1875–1889 | ### 89. A difference between two averages is a finding only when it clears the noise in the data |
-| 1890–1903 | ### 90. Experiments leave no trace: clean up the scratch you created before you finish |
-| 1904–1915 | ### 91. The banned-token sweep is a step on the finished draft, not an intention |
-| 1916–1925 | ### 92. A study summary is one bullet per study, in plain words, with every detail kept |
-| 1926–1933 | ### 93. A restructure carries the user's own lines verbatim: cut and place, never regenerate |
-| 1934–1943 | ### 94. An outbound message is verified by its sent record, not by the send command's exit code |
-| 1944–1957 | ### 95. A block only the user can clear is asked about within minutes, never worked around for an hour |
-| 1958–1965 | ### 96. Options asked for "based on X" are built purely from X, and labeled by source |
-| 1966–1973 | ### 97. Adapt by function, never by slot; a frame the user has set stays set |
-| 1974–1981 | ### 98. Read the mechanism's limits before designing its content, and run each automated pass once |
-| 1982–1991 | ### 99. A mutation ends installed and verified, and is built on a fresh read |
-| 1992–1999 | ### 100. A comparative visual spec is measured against the artifact before anything is drawn |
-| 2000–2007 | ### 101. A change that needs the user's hands is a gate, not a half-state |
-| 2008–2017 | ### 102. "X should have Y" is a directive: find the named content and change X; a mention of the subject is not the content |
-| 2018–2025 | ### 103. Send-ready text is delivered copy-paste-ready: plain text, no markers |
-| 2026–2044 | ### 104. Editability is a requirement: a living original is never flattened into a copy as the default |
-| 2045–2097 | ### 105. An effort retrospective accounts for the user's own labor and psychology, not the artifact inventory |
-| 2098–2113 | ### 106. Lists are real lists, and a colon subheader gets its own line |
-| 2114–2119 | ### 107. A rebuild is acceptance-tested against the standard, not against the copy it reproduces |
-| 2120–2129 | ### 108. The command the user names is what the user types, and side effects are opt-in |
-| 2130–2140 | ### 109. A description of a source is written from the source, and its attributes are checked against it |
-| 2141–2178 | ### 110. A correction's negations are literal, and the rejected content is never offered back |
-| 2179–2191 | ### 111. The user's voice carries only sourced content, and his spoken lines serve their audience |
-| 2192–2199 | ### 112. A submission record verifies the submission, never the delivery |
-| 2200–2207 | ### 113. A deliverable leads with the recommendation, not the comparison |
-| 2208–2215 | ### 114. A rejected version is discarded; a revert renews the named version in place |
-| 2216–2223 | ### 115. Arial is never used, not even as a fallback |
-| 2224–2231 | ### 116. A source's markup is drawn as its formatting, never as its characters |
-| 2232–2239 | ### 117. A call that produced no result is re-issued before the turn ends |
-| 2240–2247 | ### 118. Knowledge goes to the most specific memory file; hubs link, never carry |
-| 2248–2257 | ### 119. A work item that has converged to minor corrections commits without an ask |
-| 2258–2263 | ### 120. A rule of thumb the user states in passing is the payload — store it in the domain's memory file that turn |
-| 2264–2269 | ### 121. A source read for extraction is read to its end, and every message in it |
-| 2270–2277 | ### 122. A sweeping claim is tested against the data it summarizes, row by row |
-| 2278–2283 | ### 123. Anything the user reads is written in a language he reads; a Japanese-only artifact is unreadable |
-| 2284–2291 | ### 124. Before asking the user to supply something, search the record — he may already have given it |
-| 2292–2299 | ### 125. A placed object is verified as the whole slide, not by its own metrics |
-| 2300–2305 | ### 126. A change carries its landing into the next step, computed, not flagged |
-| 2306–2317 | ### 127. Shared attributes become a table, and a summary relates its parts |
-| 2318–2323 | ### 128. A clarification lands in the artifact that teaches it |
-| 2324–2331 | ### 129. A change that waits on the user's word is a live ask, never a log note |
-| 2332–2337 | ### 130. A named artifact is built to the user's specification, not to invented content |
-| 2338–2343 | ### 131. A page's title names it; a headline that restates the body is cut |
-| 2344–2351 | ### 132. An observation carries only to the conditions its mechanism depends on |
-| 2352–2355 | ### 133. A deck slide's page is white and full-page; art narrower than the page leaves transparent margins |
-| 2356–2361 | ### 134. A rebuild copies the deck's own reference geometry; the source material supplies content only |
-| 2362–2365 | ### 135. A standing requirement survives every new instruction |
-| 2366–2369 | ### 136. A specification applies to its class |
-| 2370–2373 | ### 137. Verification must be differential and able to fail |
-| 2374–2382 | ### 138. The user's own practice is read from his record, never filled in from the default |
-| 2383–2391 | ### 139. Iterative work ships a quick draft early |
-| 2392–2401 | ### 140. A specified edit lands before any investigation |
-| 2402–2411 | ### 141. A file that moves under a pass is re-read at its changed lines, never from the top of the world |
-| 2412–2420 | ### 142. The session works on the object the user named; an excluded target stays out |
-| 2421–2430 | ### 143. An element's presence in the file is not proof it is live — check the record that produced it before putting it to a vote |
-| 2431–2440 | ### 144. A terse instruction is read in the artifact's own domain, and an artifact's own fields are never the instruction |
-| 2441–2449 | ### 145. A claim keeps its owner, and a test meant to separate two things must exclude one of them |
-| 2450–2461 | ### 146. A missing integration is reconnected through the service's own API, before it is reported as a blocker |
-| 2462–2469 | ### 147. A correction about how something should look becomes a per-instance computation, never a constant |
-| 2470–2481 | ### 148. An instruction to consolidate is a move: the source artifact retires in the same turn |
-| 2482–2491 | ### 149. Width is spent where it removes height, and nowhere else |
-| 2492–2500 | ### 150. Deliverable content is created in its home folder from the first write |
-| 2501–2510 | ### 151. A learner handout is written in the course's own register, and only what is meant to be read |
-| 2511–2520 | ### 152. An artifact cut from a source is verified page by page against the source, and its own declared spec is the check's input |
-| 2521–2529 | ### 153. An artifact's owner is the carrier that lists it, not the session whose end announces it |
-| 2530–2535 | ### 154. The column of interest sits within the first three after the identifier |
-| 2536–2541 | ### 155. A copied page is not a reference: its construction is checked against the values file, and the leftovers it carries are removed |
-| 2542–2547 | ### 156. A probe box must bound the object, and a rebuild is verified on the element that changed |
-| 2548–2569 | ### 157. A label already in the line keeps its place; the value is appended after it |
-| 2570–2595 | ### 158. A multi-limb test is stated limb by limb; a negation of the whole rule is a false claim |
-| 2596–2627 | ### 159. A service procedure is presented only after its first branch is tested, and a contract change is read in the governing agreement |
-| 2628–2672 | ### 160. A framing the user names is researched before it is judged, and a criterion is run against the cases it must separate |
-| 2673–2683 | ### 161. A definition supplies the term's content; a format is not a definition, and a term is never defined by itself |
-| 2684–2690 | ## Shell: `~/.bash_aliases` (user-global) |
+| 1499–1510 | ### 62. Ask with the question tool, before acting, not in prose |
+| 1511–1518 | ### 63. Under uncertainty, always take the latest observation |
+| 1519–1528 | ### 64. A slide's title lives in the deck's title element, never as a line of body text |
+| 1529–1542 | ### 65. Every reply ends with the artifact list, in two parts: their set first, the complete set second |
+| 1543–1548 | ### 66. A simile reports degree, never a symptom |
+| 1549–1574 | ### 67. Options are columns, never separate lists |
+| 1575–1584 | ### 68. Every row states why it is there, in a column of its own |
+| 1585–1604 | ### 69. Artifacts are scarce: each one earns its place |
+| 1605–1615 | ### 70. File names stay short enough to read in Finder |
+| 1616–1626 | ### 71. A rename, move, merge or deletion sweeps every pointer to it |
+| 1627–1640 | ### 72. A canonical artifact's change fans out to every dependent artifact in the same turn |
+| 1641–1659 | ### 73. Never wait more than 60 seconds for a tool call: 20, then 40, then 60 |
+| 1660–1673 | ### 74. Time every artifact, report the measurement, and spend the round trips |
+| 1674–1728 | ### 75. Heavy local work has a weight budget, a stated cost, and a one-element probe |
+| 1729–1734 | ### 76. A user-quoted string is content to use, not a pointer to a place |
+| 1735–1747 | ### 77. A plan and its derived view are one artifact: edit either, render the other in the same turn |
+| 1748–1758 | ### 78. A learning goal says what the student can do with it: name the level, tie it to the assignment, keep it attainable |
+| 1759–1766 | ### 79. History lives in one `_log.md` per folder; documents carry content, logs carry reasons |
+| 1767–1770 | ### 80. Content handed over for a block goes where that block already lives |
+| 1771–1781 | ### 81. Name a thing so the user can look it up; never invent a reference |
+| 1782–1785 | ### 82. When a block is removed, the lines that exist only to serve it go in the same pass |
+| 1786–1795 | ### 83. A line about the user names where it came from, and an untraceable requirement is checked, not obeyed |
+| 1796–1806 | ### 84. Nothing goes out that the user has not read in its final form, with every field its recipient needs |
+| 1807–1830 | ### 85. A letter to an authority is prose to one reader: short, with the duty and the amount stated plainly |
+| 1831–1842 | ### 86. An official address, fax or phone number is verified before it goes into anything the user will use |
+| 1843–1858 | ### 87. A reply that grants or refuses something is a story that returns the decision |
+| 1859–1876 | ### 88. App automation addresses documents by name or path, never by index, and never writes a file the app has open |
+| 1877–1891 | ### 89. A difference between two averages is a finding only when it clears the noise in the data |
+| 1892–1905 | ### 90. Experiments leave no trace: clean up the scratch you created before you finish |
+| 1906–1917 | ### 91. The banned-token sweep is a step on the finished draft, not an intention |
+| 1918–1927 | ### 92. A study summary is one bullet per study, in plain words, with every detail kept |
+| 1928–1935 | ### 93. A restructure carries the user's own lines verbatim: cut and place, never regenerate |
+| 1936–1945 | ### 94. An outbound message is verified by its sent record, not by the send command's exit code |
+| 1946–1959 | ### 95. A block only the user can clear is asked about within minutes, never worked around for an hour |
+| 1960–1967 | ### 96. Options asked for "based on X" are built purely from X, and labeled by source |
+| 1968–1975 | ### 97. Adapt by function, never by slot; a frame the user has set stays set |
+| 1976–1983 | ### 98. Read the mechanism's limits before designing its content, and run each automated pass once |
+| 1984–1993 | ### 99. A mutation ends installed and verified, and is built on a fresh read |
+| 1994–2001 | ### 100. A comparative visual spec is measured against the artifact before anything is drawn |
+| 2002–2009 | ### 101. A change that needs the user's hands is a gate, not a half-state |
+| 2010–2019 | ### 102. "X should have Y" is a directive: find the named content and change X; a mention of the subject is not the content |
+| 2020–2027 | ### 103. Send-ready text is delivered copy-paste-ready: plain text, no markers |
+| 2028–2046 | ### 104. Editability is a requirement: a living original is never flattened into a copy as the default |
+| 2047–2099 | ### 105. An effort retrospective accounts for the user's own labor and psychology, not the artifact inventory |
+| 2100–2123 | ### 106. Lists are real lists, and a colon subheader gets its own line |
+| 2124–2129 | ### 107. A rebuild is acceptance-tested against the standard, not against the copy it reproduces |
+| 2130–2139 | ### 108. The command the user names is what the user types, and side effects are opt-in |
+| 2140–2150 | ### 109. A description of a source is written from the source, and its attributes are checked against it |
+| 2151–2188 | ### 110. A correction's negations are literal, and the rejected content is never offered back |
+| 2189–2201 | ### 111. The user's voice carries only sourced content, and his spoken lines serve their audience |
+| 2202–2209 | ### 112. A submission record verifies the submission, never the delivery |
+| 2210–2217 | ### 113. A deliverable leads with the recommendation, not the comparison |
+| 2218–2225 | ### 114. A rejected version is discarded; a revert renews the named version in place |
+| 2226–2233 | ### 115. Arial is never used, not even as a fallback |
+| 2234–2241 | ### 116. A source's markup is drawn as its formatting, never as its characters |
+| 2242–2249 | ### 117. A call that produced no result is re-issued before the turn ends |
+| 2250–2257 | ### 118. Knowledge goes to the most specific memory file; hubs link, never carry |
+| 2258–2267 | ### 119. A work item that has converged to minor corrections commits without an ask |
+| 2268–2273 | ### 120. A rule of thumb the user states in passing is the payload — store it in the domain's memory file that turn |
+| 2274–2279 | ### 121. A source read for extraction is read to its end, and every message in it |
+| 2280–2287 | ### 122. A sweeping claim is tested against the data it summarizes, row by row |
+| 2288–2293 | ### 123. Anything the user reads is written in a language he reads; a Japanese-only artifact is unreadable |
+| 2294–2305 | ### 124. Before asking the user to supply something, search the record — he may already have given it |
+| 2306–2313 | ### 125. A placed object is verified as the whole slide, not by its own metrics |
+| 2314–2319 | ### 126. A change carries its landing into the next step, computed, not flagged |
+| 2320–2331 | ### 127. Shared attributes become a table, and a summary relates its parts |
+| 2332–2337 | ### 128. A clarification lands in the artifact that teaches it |
+| 2338–2345 | ### 129. A change that waits on the user's word is a live ask, never a log note |
+| 2346–2351 | ### 130. A named artifact is built to the user's specification, not to invented content |
+| 2352–2357 | ### 131. A page's title names it; a headline that restates the body is cut |
+| 2358–2365 | ### 132. An observation carries only to the conditions its mechanism depends on |
+| 2366–2369 | ### 133. A deck slide's page is white and full-page; art narrower than the page leaves transparent margins |
+| 2370–2375 | ### 134. A rebuild copies the deck's own reference geometry; the source material supplies content only |
+| 2376–2379 | ### 135. A standing requirement survives every new instruction |
+| 2380–2383 | ### 136. A specification applies to its class |
+| 2384–2387 | ### 137. Verification must be differential and able to fail |
+| 2388–2396 | ### 138. The user's own practice is read from his record, never filled in from the default |
+| 2397–2405 | ### 139. Iterative work ships a quick draft early |
+| 2406–2415 | ### 140. A specified edit lands before any investigation |
+| 2416–2425 | ### 141. A file that moves under a pass is re-read at its changed lines, never from the top of the world |
+| 2426–2434 | ### 142. The session works on the object the user named; an excluded target stays out |
+| 2435–2444 | ### 143. An element's presence in the file is not proof it is live — check the record that produced it before putting it to a vote |
+| 2445–2454 | ### 144. A terse instruction is read in the artifact's own domain, and an artifact's own fields are never the instruction |
+| 2455–2463 | ### 145. A claim keeps its owner, and a test meant to separate two things must exclude one of them |
+| 2464–2475 | ### 146. A missing integration is reconnected through the service's own API, before it is reported as a blocker |
+| 2476–2483 | ### 147. A correction about how something should look becomes a per-instance computation, never a constant |
+| 2484–2495 | ### 148. An instruction to consolidate is a move: the source artifact retires in the same turn |
+| 2496–2505 | ### 149. Width is spent where it removes height, and nowhere else |
+| 2506–2514 | ### 150. Deliverable content is created in its home folder from the first write |
+| 2515–2524 | ### 151. A learner handout is written in the course's own register, and only what is meant to be read |
+| 2525–2534 | ### 152. An artifact cut from a source is verified page by page against the source, and its own declared spec is the check's input |
+| 2535–2543 | ### 153. An artifact's owner is the carrier that lists it, not the session whose end announces it |
+| 2544–2549 | ### 154. The column of interest sits within the first three after the identifier |
+| 2550–2555 | ### 155. A copied page is not a reference: its construction is checked against the values file, and the leftovers it carries are removed |
+| 2556–2561 | ### 156. A probe box must bound the object, and a rebuild is verified on the element that changed |
+| 2562–2583 | ### 157. A label already in the line keeps its place; the value is appended after it |
+| 2584–2609 | ### 158. A multi-limb test is stated limb by limb; a negation of the whole rule is a false claim |
+| 2610–2641 | ### 159. A service procedure is presented only after its first branch is tested, and a contract change is read in the governing agreement |
+| 2642–2686 | ### 160. A framing the user names is researched before it is judged, and a criterion is run against the cases it must separate |
+| 2687–2697 | ### 161. A definition supplies the term's content; a format is not a definition, and a term is never defined by itself |
+| 2698–2713 | ### 162. A complaint about the agent's own change is resolved by that change's diff, not by a question |
+| 2714–2720 | ## Shell: `~/.bash_aliases` (user-global) |
