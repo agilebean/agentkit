@@ -178,4 +178,6 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2642–2686 | ### 160. A framing the user names is researched before it is judged, and a criterion is run against the cases it must separate |
 | 2687–2697 | ### 161. A definition supplies the term's content; a format is not a definition, and a term is never defined by itself |
 | 2698–2713 | ### 162. A complaint about the agent's own change is resolved by that change's diff, not by a question |
-| 2714–2720 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2714–2723 | ### 163. Nothing unreferenced is left behind; a removal sweeps the code only it reached |
+| 2724–2731 | ### 164. Uncommitted work found in the checkout is raised as a commit ask |
+| 2732–2738 | ## Shell: `~/.bash_aliases` (user-global) |
