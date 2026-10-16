@@ -105,3 +105,14 @@ Maintenance: a new defect is classified against these classes in the same turn. 
 **Why the guard failed.** RULES.md 104 framed the choice around content *moving between containers*; here nothing moved — a brand-new diagram was drawn straight to a render, so the move question never fired. The deck's accepted drawn figures read as house style, and the deck's own box construction was not opened as the model.
 
 **Enforced now.** Rule 104's drawn-element bullet; the skill's build step: a new element is native objects first (shapes, text items), a render only for content that is itself a render, and the styling the script cannot reach (fill, stroke, corner radius — `background color` fails at runtime, probed 2026-10-10) is a hand pass named in the report. No deckcheck check: the difference between a book facsimile (right as a render) and drawn content (wrong as a render) lives in the source, not in the pixels.
+
+## Class 7. An install verified only where it wrote
+
+**Trigger.** Slides or objects are added to an EXISTING deck — a deck that already has pages of its own — and the pass's check covers the added pages alone. Keynote's `save` is not local: it writes the whole document, and an object elsewhere whose image data was not in the file (an unresolved link, a placeholder) can be re-linked at that moment and appear, changed, on a page nobody touched.
+
+**The instances.**
+- 2026-10-16, E08: seven story slides appended (deck pages 4-10) after the deck's page 3. The added pages verified byte-exact against the composed tiles; the save had also re-linked an object on page 12 — a 1280x1600 watermarked stock illustration that had no image data in the file before the save — which surfaced and covered the Wiley screenshot of that Yes-and page. Caught only because every page of the deck was compared against a pre-install export; the repair then had to be scripted on an 8 MB deck, where each Apple event ran past the 55 s cap.
+
+**Why the guard failed.** The gate's language is "every changed page": the changed pages were the added ones, so a pre-install baseline of the whole deck was not part of the pass, and the page the save rewrote was outside the range the pass had declared.
+
+**Enforced now.** The skill's Step 3 gains point 4: an install into an existing deck exports the whole deck BEFORE the write and compares EVERY page after it — the added pages against the tiles, the rest against that baseline; a page that differs is reported, never passed over as "not touched". (Values: the pre-install export is the baseline; the comparison is the render, page by page.)

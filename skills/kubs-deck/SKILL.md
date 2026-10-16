@@ -52,6 +52,7 @@ A page whose title was re-created, whose figure was redrawn, or whose chart was 
 1. Run `mamba run -n socrates python3 projects/kubs_dt/pipeline.py deckcheck --session N`. It exports the deck and checks: every page fully opaque; the band titles' column (one column per deck, spread <= 10 px; E05 measures x 38-40) with their ink top at y 44; no stroke row outside the band image (the leftover band shape); and the session's chart marks against the session's own chart file. Exit 2 means do not install; report the flagged lines.
 2. Look at every changed page, magnified at the changed region - not fitted. A fitted view hid a 6 px overhang while three measurements passed (rule 137).
 3. Compare each changed page against the page it copies (the reference instance), not against your intent. "It looks right" is not a check; "its ink sits at the same coordinates as the tip page's" is.
+4. An install into an EXISTING deck (slides added to a deck that has its own pages) exports the WHOLE deck before the write and compares every page after it: the added pages against their tiles, the rest against that baseline. Keynote's `save` writes the whole document, and an object outside the range you touched can be re-linked by it and appear changed — 2026-10-16, E08: the seven story slides landed byte-exact while the same save surfaced a stock illustration that covered a screenshot on page 12 (`rebuild_defects.md` class 7). A page you did not touch is not a page the save did not touch.
 
 ## Step 4 - install and record
 
@@ -67,6 +68,7 @@ Backup to the stage, quit Keynote, copy the build to the session folder, reopen,
 | Verification that cannot fail | any correctness claim | deckcheck; magnified reads |
 | Source structure as the spec | a figure or page built from a book or earlier deck | preflight 3; rule 134 |
 | A live element installed as a flattening | a new element the user must edit or animate (a diagram, boxes, a table) | the build step's form rule; rule 104 |
+| An install checked only where it wrote | slides added to an existing deck; the pass compares the added pages alone | Step 3.4 — the whole-deck export before the write, every page compared after it (class 7) |
 
 ## Report
 
