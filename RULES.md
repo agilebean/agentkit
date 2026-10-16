@@ -2711,6 +2711,24 @@ Rule 62's duty to ask begins where the record stops answering; rule 124's search
 
 Failure mode, 2026-10-15, the KUBS S7 run sheet: the card was shortened by deleting four pieces of content ("the 4-hour", "every member takes part", "tonight: the strongest improvement into your journal", "1500 words, personal, your own writing"), the before/after sat in the agent's own message, and "the 4 points" was searched for in the course design, the S6 tips sheet, the sibling session folders and the memory files before it was read in the diff. Chaehan: "look which four points you put away. this is really bad: a question you can answer from your own actions and chat history." The draft that followed still carried the wrapup's later bullets, which he does not count among the points, and its summary said "the TA on the whiteboard" where the order goes on the whiteboard: "your summaries of the four points are useless"; "why do you still invent things like 'tonight: ...; the essay: ...'?" Instance: `memory/agentic_ai.md` failure 55.
 
+### 163. Nothing unreferenced is left behind; a removal sweeps the code only it reached
+
+When a change deletes or replaces a block, every symbol that only that block reached goes in the same pass: the functions, helpers, constants, imports, tests and doc lines that had it as their sole caller. Rule 82's prose sweep and this code sweep are one pass. The block, the lines that describe it, and the code only it used all leave together.
+
+The check is a reachability sweep, not an intention. After the edit, search for each symbol the removal orphaned and delete what nothing else calls. A helper reached only by dead code is itself dead, so the sweep runs until it closes. A pre-existing orphan the change exposes is cleared in the same pass: unreferenced code is a defect whether this change made it an orphan or found it one.
+
+Report what was swept, by name.
+
+Instruction basis: 2026-10-16, the swim dashboard Panel 3 SWOLF removal. The agent removed the trace and its builder, then offered the orphaned `_build_workout_swolf_points` as "say the word and I will sweep it too". Chaehan: "yes sweep and git amend, don't leave unreferenced work ever!"
+
+### 164. Uncommitted work found in the checkout is raised as a commit ask
+
+A repository that carries uncommitted changes is named and asked about, never left sitting and never committed silently. The ask is a question ("Commit the uncommitted work?"), placed in the question tool and in the reply's closing line (rule 46), and it goes up as soon as the changes are seen: at the task's start when `git status` runs, or the moment the agent notices them.
+
+Rules 46 and 119 cover the session's own accepted work. This rule covers work the agent finds already dirty, whether another session's, an earlier task's, or its own from a previous run, and the case where it should have been committed then. When one file mixes the session's edits with another's, rule 46's clause applies: commit the file and name both sets in the message. A checkout left dirty with accepted work is the failure rule 46 records.
+
+Instruction basis: 2026-10-16, the swim session. The checkout carried an uncommitted classic-set feature and a fresh ingest next to the agent's panel-3 work; the agent reported them and asked only about moving to a worktree. Chaehan: "wait there should not be uncommit swim work, commit all."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
