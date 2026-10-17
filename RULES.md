@@ -2191,6 +2191,14 @@ everything the user just flagged.
   the corrected direction still leaves the exact words open, build from the
   user's own words at their level of generality, say which words you chose and
   why, and expect their edit pass.
+- **A retired phrase is not quoted back.** When the correction replaces a
+  wording, the reply's own text carries only the replacement. The retired
+  phrase does not return as a quote, as a change note, or in a "replaced by"
+  aside, and never in the opening line: the user reads a reply from the top,
+  and a preamble that still shows the retired words reads as the instruction
+  unapplied, whatever the artifact below does. The change is applied and shown
+  in the artifact; it is never narrated back. Instance: `memory/agentic_ai.md`
+  failure 65.
 
 Failure mode: 2026-10-03, the KUBS S3 team design challenge. The user rejected
 "Design how older adults stay in charge of their own day." / "Design how
