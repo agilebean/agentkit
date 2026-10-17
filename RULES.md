@@ -2418,8 +2418,10 @@ Work the user will iterate - a design, a note, a plan under review - gets a quic
 
 - Complete-enough, not partial: the whole shape is visible in the draft so his comments can land anywhere; depth on any part waits for the second pass.
 - Verification gates (lint, deckcheck, installs, sends) gate the final version - never the draft he is about to comment on.
+- A plan is not the artifact. When he asks for an artifact - a deck, a page, a note, a diagram - the artifact is what the turn produces; an OpenChamber plan, a design document, a staged script or a list of next moves standing where the thing itself should be is this rule's failure, however long the pass that produced it and however sound its analysis. What he asks for *alongside* it (an archive of the version being replaced, a backup, a log entry) is part of the same turn, not a later step.
+- The plan is a tool for work that spans turns or sessions (rule 108), and it is shown in addition to the artifact, never instead of it.
 
-Instruction basis: 2026-10-11, on the S6 workshop documents: "also the processing takes endless time. first produce a quick draft, but early. then think about my comments."
+Instruction basis: 2026-10-11, on the S6 workshop documents: "also the processing takes endless time. first produce a quick draft, but early. then think about my comments." 2026-10-17, E05: "i told you to archive the existing e5 and then make the new one! yes appendix with divider" - the archive was made and the deck revision had been saved as a plan for a later session, so the turn delivered a plan where the build belonged.
 
 ### 140. A specified edit lands before any investigation
 
@@ -2756,6 +2758,16 @@ Where the marks can be located by measurement, do that rather than by eye (the c
 When the user gives the values himself, his readings are the record: they are applied, and only the cells where the ink still reads differently to the agent are named, without arguing the mark. A number he states from what he *instructed* is not the delivered value - where the two can differ (a block's planned or ordered length against the one that ran), the delivered value is what the record takes, and the instruction is named beside it.
 
 Instruction basis: 2026-10-17, the KUBS S5 run sheet (`KUBS DT S5/e5 runsheet.jpeg`). Asked whether the minutes written in pen on the annotated sheet were in the session feedback, the agent magnified the crops to 12-16x and reported three mismatches against the record - the homework presentations 25 against 35, the homework sprint 5 against 10, the break 8 against 10 - and a card it read as carrying no mark. Chaehan: "card 2 was 35, card 3 was 25, card 4 was 10 with Q&A, card 5 was 5 card 6 20 card 7 5m. so all in all +10 overrun which is marked." Two readings were wrong (cards 2 and 4); the break's 8 was right, and his "5" for that card was the figure he had instructed - corrected at once: "no the 8 was correct, i just named 5 as this was what i instructed." Instance: `memory/agentic_ai.md` failure 58.
+
+### 166. A shared GUI application is claimed before a run and released after it, and a run that dies inside `open` is a handoff failure
+
+Keynote, a browser, a mail client: the application is one instance on this machine, and Apple events to it do not queue. Two sessions that open, export or install into the same running app take each other's runs down - whichever script is second never returns - and a hard reset written into one pass's script (`killall Keynote`) is safe only while that pass owns the app. Claim the application before a run and announce the release after it, in a place the other sessions read (the session's own log, or the log the pass writes); a session that needs it says so and waits for the other's release line.
+
+A run that dies inside `open` - silently, with an empty log, or as -609 "Connection is invalid" - is read as a handoff problem first: who else is holding the app. The file, its copy, its metadata and the document's identity are the second question; chasing them spends arbitrary time on a defect that is not in the artifact. `killall` is not a repair while another session holds the application.
+
+A copy of a deck taken off the Google Drive mount carries `com.apple.quarantine` (and `com.apple.provenance`), and Keynote's `open` of such a copy does not return - strip the attributes before opening one: `xattr -d com.apple.quarantine <copy>`. The KUBS pipeline does this in its own deck copy (`_strip_quarantine`).
+
+Instruction basis: 2026-10-17, the E08 story pass and the E05 next-year pass driving one Keynote. The E05 session: "We are both driving the single Keynote instance and have broken each other's runs several times in the last hour: your E08 rebuild sits at the 'open' phase for ten minutes at a time, and when your deck is open my E05 build dies with 'Connection is invalid (-609)'. Two opens cannot be queued against one Keynote; whichever script is second never returns." An hour of the E08 pass went into misdiagnosing that symptom as a quarantine flag, a duplicate document identity and a cold start. Instance: `memory/agentic_ai.md` failure 62.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
