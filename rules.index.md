@@ -154,31 +154,32 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2398–2401 | ### 136. A specification applies to its class |
 | 2402–2405 | ### 137. Verification must be differential and able to fail |
 | 2406–2414 | ### 138. The user's own practice is read from his record, never filled in from the default |
-| 2415–2423 | ### 139. Iterative work ships a quick draft early |
-| 2424–2433 | ### 140. A specified edit lands before any investigation |
-| 2434–2443 | ### 141. A file that moves under a pass is re-read at its changed lines, never from the top of the world |
-| 2444–2452 | ### 142. The session works on the object the user named; an excluded target stays out |
-| 2453–2462 | ### 143. An element's presence in the file is not proof it is live — check the record that produced it before putting it to a vote |
-| 2463–2472 | ### 144. A terse instruction is read in the artifact's own domain, and an artifact's own fields are never the instruction |
-| 2473–2481 | ### 145. A claim keeps its owner, and a test meant to separate two things must exclude one of them |
-| 2482–2493 | ### 146. A missing integration is reconnected through the service's own API, before it is reported as a blocker |
-| 2494–2501 | ### 147. A correction about how something should look becomes a per-instance computation, never a constant |
-| 2502–2513 | ### 148. An instruction to consolidate is a move: the source artifact retires in the same turn |
-| 2514–2523 | ### 149. Width is spent where it removes height, and nowhere else |
-| 2524–2532 | ### 150. Deliverable content is created in its home folder from the first write |
-| 2533–2542 | ### 151. A learner handout is written in the course's own register, and only what is meant to be read |
-| 2543–2552 | ### 152. An artifact cut from a source is verified page by page against the source, and its own declared spec is the check's input |
-| 2553–2561 | ### 153. An artifact's owner is the carrier that lists it, not the session whose end announces it |
-| 2562–2567 | ### 154. The column of interest sits within the first three after the identifier |
-| 2568–2573 | ### 155. A copied page is not a reference: its construction is checked against the values file, and the leftovers it carries are removed |
-| 2574–2579 | ### 156. A probe box must bound the object, and a rebuild is verified on the element that changed |
-| 2580–2601 | ### 157. A label already in the line keeps its place; the value is appended after it |
-| 2602–2627 | ### 158. A multi-limb test is stated limb by limb; a negation of the whole rule is a false claim |
-| 2628–2659 | ### 159. A service procedure is presented only after its first branch is tested, and a contract change is read in the governing agreement |
-| 2660–2704 | ### 160. A framing the user names is researched before it is judged, and a criterion is run against the cases it must separate |
-| 2705–2715 | ### 161. A definition supplies the term's content; a format is not a definition, and a term is never defined by itself |
-| 2716–2731 | ### 162. A complaint about the agent's own change is resolved by that change's diff, not by a question |
-| 2732–2741 | ### 163. Nothing unreferenced is left behind; a removal sweeps the code only it reached |
-| 2742–2749 | ### 164. Uncommitted work found in the checkout is raised as a commit ask |
-| 2750–2759 | ### 165. A reading off a low-fidelity source is a reading, and it is confirmed before it judges a record |
-| 2760–2766 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2415–2425 | ### 139. Iterative work ships a quick draft early |
+| 2426–2435 | ### 140. A specified edit lands before any investigation |
+| 2436–2445 | ### 141. A file that moves under a pass is re-read at its changed lines, never from the top of the world |
+| 2446–2454 | ### 142. The session works on the object the user named; an excluded target stays out |
+| 2455–2464 | ### 143. An element's presence in the file is not proof it is live — check the record that produced it before putting it to a vote |
+| 2465–2474 | ### 144. A terse instruction is read in the artifact's own domain, and an artifact's own fields are never the instruction |
+| 2475–2483 | ### 145. A claim keeps its owner, and a test meant to separate two things must exclude one of them |
+| 2484–2495 | ### 146. A missing integration is reconnected through the service's own API, before it is reported as a blocker |
+| 2496–2503 | ### 147. A correction about how something should look becomes a per-instance computation, never a constant |
+| 2504–2515 | ### 148. An instruction to consolidate is a move: the source artifact retires in the same turn |
+| 2516–2525 | ### 149. Width is spent where it removes height, and nowhere else |
+| 2526–2534 | ### 150. Deliverable content is created in its home folder from the first write |
+| 2535–2544 | ### 151. A learner handout is written in the course's own register, and only what is meant to be read |
+| 2545–2554 | ### 152. An artifact cut from a source is verified page by page against the source, and its own declared spec is the check's input |
+| 2555–2563 | ### 153. An artifact's owner is the carrier that lists it, not the session whose end announces it |
+| 2564–2569 | ### 154. The column of interest sits within the first three after the identifier |
+| 2570–2575 | ### 155. A copied page is not a reference: its construction is checked against the values file, and the leftovers it carries are removed |
+| 2576–2581 | ### 156. A probe box must bound the object, and a rebuild is verified on the element that changed |
+| 2582–2603 | ### 157. A label already in the line keeps its place; the value is appended after it |
+| 2604–2629 | ### 158. A multi-limb test is stated limb by limb; a negation of the whole rule is a false claim |
+| 2630–2661 | ### 159. A service procedure is presented only after its first branch is tested, and a contract change is read in the governing agreement |
+| 2662–2706 | ### 160. A framing the user names is researched before it is judged, and a criterion is run against the cases it must separate |
+| 2707–2717 | ### 161. A definition supplies the term's content; a format is not a definition, and a term is never defined by itself |
+| 2718–2733 | ### 162. A complaint about the agent's own change is resolved by that change's diff, not by a question |
+| 2734–2743 | ### 163. Nothing unreferenced is left behind; a removal sweeps the code only it reached |
+| 2744–2751 | ### 164. Uncommitted work found in the checkout is raised as a commit ask |
+| 2752–2761 | ### 165. A reading off a low-fidelity source is a reading, and it is confirmed before it judges a record |
+| 2762–2771 | ### 166. A shared GUI application is claimed before a run and released after it, and a run that dies inside `open` is a handoff failure |
+| 2772–2778 | ## Shell: `~/.bash_aliases` (user-global) |
