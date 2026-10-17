@@ -1602,6 +1602,8 @@ Failure mode: parallel artifacts multiplying, each a copy of the same content un
 
 Failure mode, 2026-10-11: the KUBS S6 workshop was re-designed and its design doc delivered while the script and the run sheet still carried the old seven cards. The user: "the runsheet is still old and the script. why did you stupidly create the workshop .md and not work it into the script? isn't this common sense?" The script and the sheet were re-cut in the same pass.
 
+Failure mode, 2026-10-16 (across sessions): the KUBS S7 wrapup's card handed Thursday its running order — the tables, the order of presentations, the wall posters, 9-10 min with timekeeping graded and 5 min of questions — while the S8 script and run sheet still carried their 2026-10-02 starter template. The user: "the card in s7 before wrapup defines 4 steps of the agenda of final presentations in s8 - why didn't you sweep them to the s8 runsheet? isn't that common sense?" A finished session's card that hands work to a later session is that session's source: the later session's script and sheet carry the handover in the pass that writes the card, the source card stays where it is because it is what the room was told, and a later session is not "still to be written" once its predecessor has named its agenda.
+
 ### 70. File names stay short enough to read in Finder
 
 A file name has to identify the file in the visible part of a Finder row, roughly the first 30 to 40 characters. The date plus a short descriptive stem carries the identity; everything else the document contains belongs inside it, in the title line or the status paragraph, never appended to the name.
@@ -2113,13 +2115,27 @@ in order), the items are numbered 1, 2, 3, so the count is visible where the
 text is read; a chain of clauses separated by semicolons reads as one
 sentence and hides both the count and the borders between the points.
 
+A second level inside a list carries its own mark, indented under its parent:
+a letter with a closing parenthesis, a), b), c), never a bare letter, and
+never the parent's mark again. Where a session script carries many points -
+the four parts of a presentation, the run of show the room follows, the tips a
+team picks from - each one sits on its own indented line, not merged into the
+sentence that introduces it; a list inside a list is indented so the nesting
+is visible at a glance.
+
 Failure mode: numbered items delivered as running prose, points the user
-counts left unnumbered, or a heading phrase left inline with its content.
+counts left unnumbered, a heading phrase left inline with its content, or a
+second level marked with a bare letter ("**a the Peizhi deck**" for
+"**a) the Peizhi deck**").
 
 Stated 2026-10-02: "the lists 1,2,3 must be shown in real numbered lists."
 and "always make a new line for a subheader that ends with a colon". Stated
 2026-10-15: "isn't it common sense that the run of show containing four points
-must be a numbered list?"
+must be a numbered list?" Stated 2026-10-16: "if there is list, enumerate it
+... you can use a,b,c on the second indent but with a), b) not just the
+letter ... this enumeration is especially important in the script where there
+are many points, e.g. Thursday's run of show - that should tell exactly what
+the four parts are in a list! and use indents!"
 
 ### 107. A rebuild is acceptance-tested against the standard, not against the copy it reproduces
 
@@ -2190,12 +2206,14 @@ stay in charge or learning routines!!!!!"
 
 Text written as the user's own words - a script he will speak, an announcement, a message he sends - passes two checks before it ships:
 
-- **Provenance.** Every instruction to another person (what students do, what a recipient must do), every number, every procedure traces to something the user supplied or approved. A slot he left empty stays empty or is marked to fill; the genre's plausible completion ("stand up, look at the wall" for a classroom silent minute) is fabrication even when it reads naturally. The review question is "which of these words came from him", never "does this read right": invented text is fluent by construction, so fluency cannot be the check.
+- **Provenance.** Every instruction to another person (what students do, what a recipient must do), every number, every procedure traces to something the user supplied or approved. A slot he left empty stays empty or is marked to fill; the genre's plausible completion ("stand up, look at the wall" for a classroom silent minute) is fabrication even when it reads naturally. The review question is "which of these words came from him", never "does this read right": invented text is fluent by construction, so fluency cannot be the check. The same holds for what a step leads to: an instruction the user never gave ("never write above someone else's line" in a brainwriting round) and a consequence nobody stated (a vote "that one is tonight's journal entry", the strongest improvement "into your journal - the essay is built from the journal") are fabrications even when the method would allow them, and a deliverable the syllabus already defines (the essay's word count, its due date, its being personal writing) is not restated in a session's wrapup.
 - **Audience value.** A spoken line carries something for its listeners. In a session script that is the students' learning experience: recitals of a schedule they can read elsewhere, rhetorical contrasts, and restatements of another artifact are cut. The sheet card keeps the plan; the speech keeps the value.
 
 When a spec lives in several carriers (a script, a sheet, a design row, a syllabus) and one carrier shows a value the others contradict, ask which stands; the change is then swept through every carrier in the same pass. A repair that lands in one artifact and not its siblings comes back as the same complaint.
 
 Failure mode: 2026-10-04, the KUBS S3 script. The silent minute carried the invented "stand up, look at the wall, no phones, no talking" (the students keep sitting, eyes closed); the close still carried "this week is the sprint, not the book", rejected the day before and repaired in the run sheet only, plus a week recital the students gain nothing from.
+
+Failure mode, 2026-10-15 and 2026-10-16, the same script family (KUBS S7). §4's brainwriting round carried "never write above someone else's line" and the dot vote carried "That one is tonight's journal entry"; §6's wrapup closed on "Tonight: the strongest improvement into your journal - the essay is built from the journal." and "The essay: 1500 words, personal, your own writing, due Friday 2026-10-23."; and the workshop's purpose read "the strongest improvement to your final deliverable, judged by the tips". Chaehan, 2026-10-15: "why do you still invent things like 'tonight: ...; the essay: ...'?"; 2026-10-16: "it happened again many times, so enforce the rule not to invent stupid things like: ... The essay: 1500 words, personal, your own writing, due Friday 2026-10-23." The complaint had been answered by keeping the lines (the log recorded "the wrapup's other lines stay in section 6"), and the workshop's real design was his: the team picks one of the three tips for the final deliverables and works that tip in the standard rounds, brainwriting, sharing, silent dot voting.
 
 Stated 2026-10-04: "why do you make up things? ... this is totally wrong, they will keep sitting, close their eyes" and "you must think what i say as the instructor which is of value to students learning experience."
 
@@ -2728,6 +2746,16 @@ A repository that carries uncommitted changes is named and asked about, never le
 Rules 46 and 119 cover the session's own accepted work. This rule covers work the agent finds already dirty, whether another session's, an earlier task's, or its own from a previous run, and the case where it should have been committed then. When one file mixes the session's edits with another's, rule 46's clause applies: commit the file and name both sets in the message. A checkout left dirty with accepted work is the failure rule 46 records.
 
 Instruction basis: 2026-10-16, the swim session. The checkout carried an uncommitted classic-set feature and a fresh ingest next to the agent's panel-3 work; the agent reported them and asked only about moving to a worktree. Chaehan: "wait there should not be uncommit swim work, commit all."
+
+### 165. A reading off a low-fidelity source is a reading, and it is confirmed before it judges a record
+
+Handwriting in a photo, a scan, a whiteboard shot, a small render: what the agent reads there is a guess at the marks, not the marks. Report it as a reading - what the mark appears to say, and the cell it appears to sit in - and have the user confirm it before the reading is used to judge anything he supplied. A magnified crop raises the agent's confidence, not the source's fidelity, and a negative finding (a value that is missing, an entry that is wrong) is never written on an unconfirmed read.
+
+Where the marks can be located by measurement, do that rather than by eye (the card borders, the row, the column), and name the location in the report so the user can look at the same place.
+
+When the user gives the values himself, his readings are the record: they are applied, and only the cells where the ink still reads differently to the agent are named, without arguing the mark.
+
+Instruction basis: 2026-10-17, the KUBS S5 run sheet (`KUBS DT S5/e5 runsheet.jpeg`). Asked whether the minutes written in pen on the annotated sheet were in the session feedback, the agent magnified the crops to 12-16x and reported three mismatches against the record - the homework presentations 25 against 35, the homework sprint 5 against 10, the break 8 against 10 - and a card it read as carrying no mark. Chaehan: "card 2 was 35, card 3 was 25, card 4 was 10 with Q&A, card 5 was 5 card 6 20 card 7 5m. so all in all +10 overrun which is marked." Only the break differed. Instance: `memory/agentic_ai.md` failure 58.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
