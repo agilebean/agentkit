@@ -2925,6 +2925,33 @@ searched); it surfaced as "you forgot that i'm glutenintolerant so the first
 is out of question". `memory/health.md` now carries the constraint entry, and
 the socrates research prompt's Phase 2 points at it.
 
+### 178. A consumable's cost and benefit are computed at the user's serving size, never per litre, per package or per 100 ml
+
+A price per litre and a nutrition line per 100 ml are inputs, not findings.
+Before either is used to justify spending more, it is divided by the number of
+servings the user actually draws, the spoon of milk in his coffee, the 50 ml
+splash, the one glass a day, and the delta is stated per serving. A 39%
+per-litre premium and a 1.3 g protein gap per 200 ml become 115 won and 0.33 g
+per 50 ml splash: below any perceptible threshold, and not a reason to pay.
+The serving size is established first, from his own statement or by asking; a
+comparison built on an assumed full cup is a comparison built for someone else.
+
+Two failure shapes this prevents: quoting a per-package or per-litre percentage
+as if the user consumes the package, and treating a per-100 ml nutrient delta as
+decision-relevant without scaling it to the dose. A product's differentiator
+must also be checked for whether it operates at that dose: a barista carton's
+foam behaviour is bought for a pitcher of 200 ml, not for a 50 ml splash that is
+never steamed. The pack-size consequence often outweighs the product choice, so
+it is stated with the numbers: a carton with a three-day post-opening life is a
+poor buy for a 50 ml-a-day user whatever its per-litre price.
+
+Instruction basis: 2026-10-19, the Kikkoman latte-base comparison. The answer
+recommended the barista carton over the cheaper original on a 39% per-litre
+premium and a 1.3 g protein per 200 ml gap, and framed the premium as "about
+15% of the cup". Chaehan: "you advised wrongly. the more protein and carbs is
+tiny, if perceptable at all. for that the higher price? also, i use much less
+milk as i don't do a full latte, only max 50ml. so the difference is even less."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
