@@ -192,4 +192,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2843–2855 | ### 174. The second correction on a subject stores the learning in that turn |
 | 2856–2899 | ### 175. A comparison the user names is researched at its own products, and a blocked tool stops the answer instead of licensing a constructed one |
 | 2900–2907 | ### 176. A pending action is executed when the tool channel returns; only the user's editor is handed over |
-| 2908–2914 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2908–2927 | ### 177. A standing constraint of the user's is loaded before options are compared, and an option that breaks it is not an option |
+| 2928–2934 | ## Shell: `~/.bash_aliases` (user-global) |
