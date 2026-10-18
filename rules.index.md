@@ -191,4 +191,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2837–2842 | ### 173. One command, then the user's editor |
 | 2843–2855 | ### 174. The second correction on a subject stores the learning in that turn |
 | 2856–2899 | ### 175. A comparison the user names is researched at its own products, and a blocked tool stops the answer instead of licensing a constructed one |
-| 2900–2906 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2900–2907 | ### 176. A pending action is executed when the tool channel returns; only the user's editor is handed over |
+| 2908–2914 | ## Shell: `~/.bash_aliases` (user-global) |
