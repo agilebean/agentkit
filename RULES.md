@@ -57,6 +57,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 - **Explanatory preambles** ("since we will book soon...") and **embedded justifications** ("the quote is two months old, so...").
 - **Conditionals built from the analyst's logic** instead of the reader's.
 - **Metaphor labels** ("the evidence trail"): name the thing - "what you found out".
+- **Stand-in phrases that name no object** ("that ends it", "wording settles it", "a picture built on a file", "words the same failure", "the mechanism was retired"): name the object, the operation and the result - "the check that disproves each", "the file was not opened at startup". The user, 2026-10-18: "the wording is too imprecise, you use a clear technical and logical language, not vague and robotic wordings like 'that ends it', 'wrong paths', 'a picture built on a file'".
 - **Rows built from the method's components** ("the interviews, the ratings, the score, the prototype"): a criterion names the quality being judged and the symptoms that show it, never the steps of the process.
 - **Collective voice where one person acts** ("tell us why", "we grade"): write the one actor ("I grade"), or the direct imperative ("explain why"). The professor is one person, not a team.
 
@@ -2784,6 +2785,73 @@ A run that dies inside `open` - silently, with an empty log, or as -609 "Connect
 A copy of a deck taken off the Google Drive mount carries `com.apple.quarantine` (and `com.apple.provenance`), and Keynote's `open` of such a copy does not return - strip the attributes before opening one: `xattr -d com.apple.quarantine <copy>`. The KUBS pipeline does this in its own deck copy (`_strip_quarantine`).
 
 Instruction basis: 2026-10-17, the E08 story pass and the E05 next-year pass driving one Keynote. The E05 session: "We are both driving the single Keynote instance and have broken each other's runs several times in the last hour: your E08 rebuild sits at the 'open' phase for ten minutes at a time, and when your deck is open my E05 build dies with 'Connection is invalid (-609)'. Two opens cannot be queued against one Keynote; whichever script is second never returns." An hour of the E08 pass went into misdiagnosing that symptom as a quarantine flag, a duplicate document identity and a cold start. Instance: `memory/agentic_ai.md` failure 63.
+
+### 167. On a recurring symptom, the register, the log and the process are read before any hypothesis
+
+A symptom that has been seen before is looked up first: the work's own failure register (`memory/agentic_ai.md` in the socrates repo, the equivalent file elsewhere) by the symptom's own text, and the newest server log by the failure's own words. Both answer what the agent is about to theorise, and both answer in the system's language rather than the agent's.
+
+The order is fixed: the register for the same symptom, the log for the failure's message, the running process for its paths, and only then a hypothesis. A hypothesis formed before those three reads is not a diagnosis; the repairs built on it (a version comparison, a provider switch, a reinstall) leave the cause untouched, because none of them touches what was never read.
+
+Where the failure message carries an instruction - create a new key, re-authorise, restart - that instruction is executed before any mechanism is constructed.
+
+Instruction basis: 2026-10-18, the OpenCode Go key expiry. Four hypotheses (a version mismatch between opencode servers, a key-switching mechanism retired by a release, the application window as the thrower of the tool error, one cause behind both symptoms) preceded the log line `~/.local/share/opencode/log/opencode.log` 121841, "This API key has expired. Create a new API key in OpenCode Console and replace it in your client or secret store. Signing in again will not renew this key.", which named the cause; and the tool-channel symptom of the same session was already recorded as failure 67 with its cause and its fix. Chaehan: "the opencode authentication failed. find out why and fix it"; "you still don't get it: the bash alias switched the api keys."
+
+### 168. Configuration paths come from the running process, never from an assumed filename
+
+The file a service reads is named by the process that is running, not by the default the agent remembers. Read the values in that process's environment (`ps eww -p <pid> | tr ' ' '\n' | grep -E '^(OPENCODE|OPENCHAMBER)_'`), take the files it holds from `lsof -p <pid>`, and list a directory (`ls -la`) instead of testing for one guessed name.
+
+Suffixes differ, and a test for one name is not evidence of absence: `opencode.jsonc` is not `opencode.json`, and a relative path run from a different working directory reports "not found" for a file that exists. A file is reported absent only after the directory that holds it has been listed.
+
+Instruction basis: 2026-10-18. `OPENCODE_CONFIG` in the running server's environment named the managed config, and the alias's files sat in `~/.config/opencode/`; the agent tested `~/.config/opencode/opencode.json` and relative `.opencode/...` paths from another directory, and reported both absent. Chaehan: "you still don't have the correct location or name of the opencode config file!"
+
+### 169. An error string identifies the process that raised it
+
+A JavaScript error's wording names the engine, and the engine names the process: "undefined is not an object (evaluating '...')" is JavaScriptCore, which runs the opencode server (Bun); "Cannot read properties of undefined" is Chromium, which renders the application window. An error is attributed to a process only when that process's engine can produce its string.
+
+Where a plugin is loaded into the failing process, that process's own configuration names it: the `plugins` list in the config file the server was started with, and the plugin's own files. Those files are the suspect list, not every layer of the stack.
+
+Instruction basis: 2026-10-18. The tool-call error was first attributed to the application window, whose engine cannot produce that string; the throw site was `shell-guard`, an agentkit plugin the OpenChamber server loads (failure 67).
+
+### 170. Two errors are independent until something links them
+
+Errors that appear together are counted separately until a log line, an action or a version number shows they share a cause. The same session, the same minute and the same screen are not links.
+
+Instruction basis: 2026-10-18. The key expiry and the tool-channel failure were read as one cause; after the new key, model replies resumed while every tool call still failed.
+
+### 171. A statement by the user about his own system is ground truth
+
+What the user says his own machinery does - which file his alias writes, which key is in use, what he changed by hand - is the record, and a hypothesis that conflicts with it is discarded rather than held beside it. Where the agent's picture rests on files it has not read, the picture is what goes.
+
+Instruction basis: 2026-10-18. The agent's theory that a release had retired the key-switching mechanism rested on files it had never opened. Chaehan: "you still don't get it: the bash alias switched the api keys. so first find out the location of the file that contains these keys."
+
+### 172. Whether a release changed a mechanism is answered by three checks, in order
+
+1. Read the mechanism as the installed version documents it: `--help` for the command that owns it, and the release notes between the last version that worked and the running one, filtered for the relevant nouns (auth, config, credential).
+2. Observe which files the process opens while it starts: `sudo opensnoop -p <pid>`, or `sudo fs_usage -w -f filesys <binary>`; `lsof -p <pid>` lists what it holds afterwards.
+3. Run a controlled comparison: change one value in the file, restart, and read whether the value in use changed - compare the stored value's length or hash in the service's own store before and after.
+
+A change confirms the file is still the source; no change shows the mechanism moved, and check 1 names its replacement. Asserting that a release retired a mechanism without one of those three results is not a finding.
+
+Instruction basis: 2026-10-18. The agent asserted that the key-switching mechanism had been overwritten by a release, from the absence of a file it had never listed; opencode read the file at startup, and the cause was the expired key.
+
+### 173. One command, then the user's editor
+
+When the fix is a value in a settings file, the agent gives the single command that reveals or triggers the write and leaves the edit to the user. A multi-step shell procedure for an edit he will make by hand costs him reading time and replaces his editor with the agent's script.
+
+Instruction basis: 2026-10-18, the four-command install procedure for the new key. Chaehan: "the write procedure was too complicated, i just entered the key with nano."
+
+### 174. The second correction on a subject stores the learning in that turn
+
+Two corrections on one subject - wording (how something is written) or precision (how exactly a thing is stated or diagnosed) - and the storage is the agent's own step, taken in the turn that carries the second one, without a request. A correction of a fact the agent could not have known does not count toward the two.
+
+- Wording: the accepted version verbatim, the rejected version beside it, and the reason the accepted one is better - one row in `common_sense.md`; a new class also becomes a bullet in rule 2.
+- Procedure: a numbered entry in the failure register with the rule that would have prevented it, the instance and the user's exact words, the cause, and the fix.
+- The accepted wording is stored word for word; a later correction adds a second version rather than replacing the first.
+- The records are committed in the same session.
+
+"Store this" and "remember this" are then unnecessary.
+
+Instruction basis: 2026-10-18. "now i want an automatic detection after i corrected 2x or more your response wording or your precision that you store automatically the learning from that using exactly the previous wording I found good ... so in the future i shouldn't tell you that any more."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
