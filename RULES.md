@@ -2897,6 +2897,14 @@ should do your research not base on assumption, remember that. it is for
 basis proof from the same label's sodium line, and the validation that the
 compilation reproduced the figure he had read off his own bottle.
 
+### 176. A pending action is executed when the tool channel returns; only the user's editor is handed over
+
+While the tool channel is down, the agent's only product is a command list, and that list is for the user. The moment a tool runs again, the list belongs to the agent: every action it can perform itself - the log read, the process check, the kill, the uninstall, the query - is run in that turn. What is handed over is the edit that belongs to the user: entering a secret, or a change he prefers to make in his own editor.
+
+Carrying the down-hours form past the repair is the failure. The command is then run twice, once by each side, or by neither, and the user spends a turn asking why the agent did not run it.
+
+Instruction basis: 2026-10-18, the session after the key repair. With the tool channel restored, the agent's closing report still read "Still open on your side" beside the log search for the second key's failure and the duplicate-server cleanup. Chaehan: "why didn't you do the cleanup and key failure search?"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
