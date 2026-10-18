@@ -2198,7 +2198,7 @@ everything the user just flagged.
   and a preamble that still shows the retired words reads as the instruction
   unapplied, whatever the artifact below does. The change is applied and shown
   in the artifact; it is never narrated back. Instance: `memory/agentic_ai.md`
-  failure 65.
+  failure 66.
 
 Failure mode: 2026-10-03, the KUBS S3 team design challenge. The user rejected
 "Design how older adults stay in charge of their own day." / "Design how
@@ -2768,7 +2768,7 @@ Where the marks can be located by measurement, do that rather than by eye (the c
 
 When the user gives the values himself, his readings are the record: they are applied, and only the cells where the ink still reads differently to the agent are named, without arguing the mark. A number he states from what he *instructed* is not the delivered value - where the two can differ (a block's planned or ordered length against the one that ran), the delivered value is what the record takes, and the instruction is named beside it.
 
-Instruction basis: 2026-10-17, the KUBS S5 run sheet (`KUBS DT S5/e5 runsheet.jpeg`). Asked whether the minutes written in pen on the annotated sheet were in the session feedback, the agent magnified the crops to 12-16x and reported three mismatches against the record - the homework presentations 25 against 35, the homework sprint 5 against 10, the break 8 against 10 - and a card it read as carrying no mark. Chaehan: "card 2 was 35, card 3 was 25, card 4 was 10 with Q&A, card 5 was 5 card 6 20 card 7 5m. so all in all +10 overrun which is marked." Two readings were wrong (cards 2 and 4); the break's 8 was right, and his "5" for that card was the figure he had instructed - corrected at once: "no the 8 was correct, i just named 5 as this was what i instructed." Instance: `memory/agentic_ai.md` failure 58.
+Instruction basis: 2026-10-17, the KUBS S5 run sheet (`KUBS DT S5/e5 runsheet.jpeg`). Asked whether the minutes written in pen on the annotated sheet were in the session feedback, the agent magnified the crops to 12-16x and reported three mismatches against the record - the homework presentations 25 against 35, the homework sprint 5 against 10, the break 8 against 10 - and a card it read as carrying no mark. Chaehan: "card 2 was 35, card 3 was 25, card 4 was 10 with Q&A, card 5 was 5 card 6 20 card 7 5m. so all in all +10 overrun which is marked." Two readings were wrong (cards 2 and 4); the break's 8 was right, and his "5" for that card was the figure he had instructed - corrected at once: "no the 8 was correct, i just named 5 as this was what i instructed." Instance: `memory/agentic_ai.md` failure 60.
 
 ### 166. A shared GUI application is claimed before a run and released after it, and a run that dies inside `open` is a handoff failure
 
@@ -2778,7 +2778,7 @@ A run that dies inside `open` - silently, with an empty log, or as -609 "Connect
 
 A copy of a deck taken off the Google Drive mount carries `com.apple.quarantine` (and `com.apple.provenance`), and Keynote's `open` of such a copy does not return - strip the attributes before opening one: `xattr -d com.apple.quarantine <copy>`. The KUBS pipeline does this in its own deck copy (`_strip_quarantine`).
 
-Instruction basis: 2026-10-17, the E08 story pass and the E05 next-year pass driving one Keynote. The E05 session: "We are both driving the single Keynote instance and have broken each other's runs several times in the last hour: your E08 rebuild sits at the 'open' phase for ten minutes at a time, and when your deck is open my E05 build dies with 'Connection is invalid (-609)'. Two opens cannot be queued against one Keynote; whichever script is second never returns." An hour of the E08 pass went into misdiagnosing that symptom as a quarantine flag, a duplicate document identity and a cold start. Instance: `memory/agentic_ai.md` failure 62.
+Instruction basis: 2026-10-17, the E08 story pass and the E05 next-year pass driving one Keynote. The E05 session: "We are both driving the single Keynote instance and have broken each other's runs several times in the last hour: your E08 rebuild sits at the 'open' phase for ten minutes at a time, and when your deck is open my E05 build dies with 'Connection is invalid (-609)'. Two opens cannot be queued against one Keynote; whichever script is second never returns." An hour of the E08 pass went into misdiagnosing that symptom as a quarantine flag, a duplicate document identity and a cold start. Instance: `memory/agentic_ai.md` failure 63.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
