@@ -1506,6 +1506,8 @@ An option states every effect it will have, including where content it replaces 
 
 Failure mode: a decision taken without the question tool, or a question asked in prose at the end of a reply.
 
+**A stop is not a suspension.** A pass that ends early - the cost gate of rule 75, a blocked tool, a handoff - still puts its questions into the question tool in that same turn. Stopping to report and stopping to ask are one act: the reply carries the cost line and the findings, the tool carries the decisions. The stop feels different enough to be read as a report-only turn, and that is when the questions come out as a numbered list at the bottom of the findings; 2026-10-18, E08: the pass stopped at the cost gate with four decisions in prose, and the user: "you should ask the questions with the question tool as always".
+
 **Batch: one call per change set, not one question per turn.** The tool takes several questions at once, so when a change set opens more than one decision, they all go into a single call — the deliverable's unknown numbers, its order, the scope of the sweep, the wording of a title. Each separate call ends the turn, waits for the user to read and answer, and starts a fresh turn: on 2026-09-26 the S2 run sheet needed three question rounds for one edit set, and the session ran 76 minutes of wall clock over about 15 seconds of machine time. A later round is justified only when an earlier answer opened a fork that did not exist before.
 
 ### 63. Under uncertainty, always take the latest observation
@@ -1715,7 +1717,10 @@ coming. The user: "the agent rules are not good enough for the timing."
   go: "this pass is N calls, about X s of machine time, N app launch(es)". Small
   passes (a read, a text edit, one render) run through and report the cost
   afterwards. Count the whole pass, not the single command, and count per
-  deliverable: a second pass makes its own count.
+  deliverable: a second pass makes its own count. The stop does not suspend
+  rule 62: whatever the pass needs the user to decide goes into the question
+  tool in that same turn, alongside the cost line - a decision list in the
+  stopping reply costs him a whole extra round trip.
 - **Reuse the project's pipeline; never re-derive the recipe.** When a repeated
   pass has a script in the project, the pass is one command. A new recipe is
   written only when the pass is genuinely new, and it lands in the project, not
