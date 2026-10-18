@@ -193,5 +193,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2856–2899 | ### 175. A comparison the user names is researched at its own products, and a blocked tool stops the answer instead of licensing a constructed one |
 | 2900–2907 | ### 176. A pending action is executed when the tool channel returns; only the user's editor is handed over |
 | 2908–2927 | ### 177. A standing constraint of the user's is loaded before options are compared, and an option that breaks it is not an option |
-| 2928–2954 | ### 178. A consumable's cost and benefit are computed at the user's serving size, never per litre, per package or per 100 ml |
-| 2955–2961 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2928–2962 | ### 178. A consumable's cost and benefit are computed at the user's serving size, never per litre, per package or per 100 ml |
+| 2963–2969 | ## Shell: `~/.bash_aliases` (user-global) |

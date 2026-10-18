@@ -2941,9 +2941,12 @@ as if the user consumes the package, and treating a per-100 ml nutrient delta as
 decision-relevant without scaling it to the dose. A product's differentiator
 must also be checked for whether it operates at that dose: a barista carton's
 foam behaviour is bought for a pitcher of 200 ml, not for a 50 ml splash that is
-never steamed. The pack-size consequence often outweighs the product choice, so
-it is stated with the numbers: a carton with a three-day post-opening life is a
-poor buy for a 50 ml-a-day user whatever its per-litre price.
+never steamed. A label's limit is checked against his practice before anything
+is built on it: he reported that an opened carton keeps 5-7 days against the
+printed 3, which made a carton-size and freshness calculation complexity on a
+constraint he does not have. Once the product is settled, the record carries the
+product, its price per serve and the reason the alternative lost, not a lattice
+of pack sizes he never asked to optimize.
 
 Instruction basis: 2026-10-19, the Kikkoman latte-base comparison. The answer
 recommended the barista carton over the cheaper original on a 39% per-litre
@@ -2951,6 +2954,11 @@ premium and a 1.3 g protein per 200 ml gap, and framed the premium as "about
 15% of the cup". Chaehan: "you advised wrongly. the more protein and carbs is
 tiny, if perceptable at all. for that the higher price? also, i use much less
 milk as i don't do a full latte, only max 50ml. so the difference is even less."
+The corrected answer then added a 200 ml carton option to work around the
+carton's printed three-day life; his practice contradicts it: "you put in too
+much complexity, remove the 200ml and the optimization of the 3days which is not
+important as soy milk stays ok for 5-7d and i use it also for overnight oats
+where it provides more protein than oat milk."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
