@@ -27,6 +27,7 @@ Maintenance: every new correction is appended at the end of its table in the sam
 - Plain short form: "team exercise", "the three filters", "how it works", "the drawing is not what counts".
 - One voice, the user's: "tell us (i am the prof, not we)" (2026-10-01).
 - The instructor script carries what the user will say and when; it is a reminder for the user, not a report. Rules already announced elsewhere are not reiterated (2026-10-02, 2026-10-03).
+- Two corrections on one subject store the learning (2026-10-18): "now i want an automatic detection after i corrected 2x or more your response wording or your precision that you store automatically the learning from that using exactly the previous wording I found good ... so in the future i shouldn't tell you that any more". Wording goes to table one with the accepted version verbatim, a procedural miss to the socrates register, and the records commit in the same session (rule 174).
 
 ## The wording instances
 
