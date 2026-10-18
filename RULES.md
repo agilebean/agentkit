@@ -2853,6 +2853,50 @@ Two corrections on one subject - wording (how something is written) or precision
 
 Instruction basis: 2026-10-18. "now i want an automatic detection after i corrected 2x or more your response wording or your precision that you store automatically the learning from that using exactly the previous wording I found good ... so in the future i shouldn't tell you that any more."
 
+### 175. A comparison the user names is researched at its own products, and a blocked tool stops the answer instead of licensing a constructed one
+
+Five clauses for a question about a product, its figures or a comparison between
+products:
+
+- **Both sides come from the market and the products he named.** "Compare
+  potassium on regular 게토레이" is a question about that brand in that market.
+  A label from another market (the US bottle, a global brand page) is not a
+  substitute for it, and presenting it as the baseline answers a different
+  question than the one asked.
+- **A table of hypothetical readings is not research.** One figure in hand plus
+  arithmetic over unverified bases ("if it is per 100 mL ... if it is per
+  bottle") puts constructed scenarios exactly where a sourced value belongs. A
+  guessed number and a scenario built to cover the guess are the same defect,
+  and saying "I will not fill the gap with a guess" while printing the scenarios
+  does not change what the table is.
+- **Convert the unit, then fix the basis from the label's own second figure.**
+  mEq is not self-describing. Potassium mg = mEq × 39.1, sodium × 23, magnesium
+  × 12.2, calcium × 20. Which volume the mEq is per (100 mL, the container, a
+  litre) is settled by cross-checking a figure on the same label whose mg value
+  is printed — sodium usually is — and by running a compiled table's other rows
+  against those labels. Where two readings survive, give both and the invariant
+  between them: a ratio between two products of the same brand holds under
+  either basis.
+- **A failed tool stops the answer; it never licenses a substitute.** When
+  search, fetch or read fails, retry once, then say so and report only the
+  arithmetic that does not depend on the missing data, naming exactly what is
+  missing. A comparison whose two sides cannot both be sourced is not delivered
+  in halves.
+- **His own container is a primary source and outranks every compilation.** When
+  he can read a label, the figure he reads is the reference; a compiled table is
+  accepted once it reproduces a figure he has read himself.
+
+Instruction basis: 2026-10-18, the Korean 게토레이 potassium comparison. The
+agent answered with US Gatorade and US Gatorade Zero figures; Chaehan: "you
+should compare not the us baselines but korean gatorades." Told the label read
+2.4 mEq, the agent converted it and then offered three possible bases with three
+different verdicts instead of fetching the two Korean labels; Chaehan: "you
+should do your research not base on assumption, remember that. it is for
+600ml". With the tools back, four queries produced the figures (regular
+게토레이 레몬 3.7 mEq against 게토레이 제로 2.4 mEq per 600 mL bottle), the
+basis proof from the same label's sodium line, and the validation that the
+compilation reproduced the figure he had read off his own bottle.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
