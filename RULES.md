@@ -2905,6 +2905,26 @@ Carrying the down-hours form past the repair is the failure. The command is then
 
 Instruction basis: 2026-10-18, the session after the key repair. With the tool channel restored, the agent's closing report still read "Still open on your side" beside the log search for the second key's failure and the duplicate-server cleanup. Chaehan: "why didn't you do the cleanup and key failure search?"
 
+### 177. A standing constraint of the user's is loaded before options are compared, and an option that breaks it is not an option
+
+His constraints — dietary (gluten-free), medical, regulatory, account and
+platform limits — are properties of his situation, not preferences to weigh.
+Before an option set is built for him, the constraint entries his record
+carries are read, and an option that violates one is dropped without being
+costed, ranked or compared; a benefit it offers (a nutrient, a price, a
+feature) is never a reason to keep it in the running. The failure this
+prevents is the reverse of rules 22 and 138: not a preference turned into a
+filter, but a constraint that was never read, so the answer is built for a
+generic adult.
+
+Instruction basis: 2026-10-19, a comparison of two CJ 햇반 instant-rice packs.
+The answer recommended the barley-bearing 잡곡밥 over 찰잡곡밥 on the strength
+of barley's soluble fibre; barley is gluten, and Chaehan is gluten intolerant.
+The constraint was in no memory file and no Evernote note at the time (both
+searched); it surfaced as "you forgot that i'm glutenintolerant so the first
+is out of question". `memory/health.md` now carries the constraint entry, and
+the socrates research prompt's Phase 2 points at it.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
