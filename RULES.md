@@ -95,7 +95,11 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 The list covers internal working artifacts too (run sheets, session cards, flow notes), and a re-render re-reads the text before it ships: phrasing an earlier pass left behind is swept, not shipped again.
 
 ### 3. Do not commit or push unless explicitly told to
-Never run `git commit` or `git push` unless the user says "commit", "push", or "commit and push". "Commit" alone authorizes both commit and push. Git commit amend is allowed. When fixing an error, do not push until the user confirms the fix works. Trigger extension (2026-09-15): detected user satisfaction also authorizes the commit; see rule 46. Trigger extension (2026-10-06): a work item converged to minor corrections commits without an ask; see rule 119.
+Never run `git commit` or `git push` unless the user says "commit", "push", or "commit and push". "Commit" alone authorizes both commit and push. Git commit amend is allowed.
+
+The word is not a halfway permission. A run that ends on `git commit` is an unfinished run: the push happens in the same turn, and the report states the remote and the range it moved (`main -> main`, `7d83b19..e0999ec`). A report that ends "not pushed, since you said commit" misreads the authorization clause above as a bare boundary and is a defect in its own right.
+
+When fixing an error, do not push until the user confirms the fix works. Trigger extension (2026-09-15): detected user satisfaction also authorizes the commit; see rule 46. Trigger extension (2026-10-06): a work item converged to minor corrections commits without an ask; see rule 119.
 
 ### 4. Detect when a task evolves into a parallel task touching the same files
 A task starts with one goal. If you find yourself modifying the same file for a DIFFERENT reason than the original task, stop and ask. Example: you are fixing a parsing error in `invoice_pdf.py` but also want to apply an extraction shim to `browser_download.py`. These are not the same task — the shim change is a separate goal that happens to touch shared dependencies. Continuing both simultaneously creates a loop where every fix to one undoes progress on the other. Ask the user: "I need to change browser_download.py for two reasons — the CLI refactor and the module extraction. Which should I complete first?"
