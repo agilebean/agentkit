@@ -3133,6 +3133,15 @@ When the thing already exists upstream — a deck's shape, an icon, a chart, a p
 
 Instruction basis: 2026-10-19/20, the E08 cover. Its speech bubble sat at x 1923 on a 1920-wide slide, so no export contained it; I approximated it twice (a rounded box, then an ellipse) and Chaehan rejected both: "the bubble is still no bubble it is just an ellipse! just copy the bubble from the keynote damn it. make the border thinner, it still looks shitty". He moved it onto the slide in Keynote, one action, and the next export gave the exact shape: an ellipse body with the pointer joined into the same thin grey line, which is now cut as `assets/bubble.png` at 670x464 and placed at (1560,102).
 
+### 192. An image paints its own rectangle, background included
+
+Every image on a page covers the full rect it is given, not just the ink inside it. A screenshot, a scan or a diagram exported on a white canvas therefore erases whatever it is stacked over — even when its visible content is far from the overlap and even when the overlap looks like empty space. Two consequences follow, and both are checked before the page is called done:
+
+1. **Stacking.** When two elements' rects intersect, say which paints last and what that element carries. A layer whose background is opaque must never be the upper one over another page element; either the lower element is raised above it, or the opaque background is removed.
+2. **The tell.** A word that stops mid-letter, a shape with a straight cut edge, an icon missing its corner: these are not cropping artefacts, they are something painted on top. Read the render at the overlap region itself rather than comparing the two images' content bounds.
+
+Instruction basis: 2026-10-20, the E08 fast feedback loop, the second time this page lost an element to an overlapping image. The small d.school diagram and its caption "DT process from d.school" sit at x 291-614; the loop diagram's rect starts at x 574 and its white canvas covered the caption from x ~624, cutting it to "DT process from d.scho". Chaehan: "the fast feedback slide again overlaps the white background of the big onto the small image. again!!! i said that this is common sense!!"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
