@@ -3121,6 +3121,12 @@ written by the first full run, replaced with `--bless`). The export remains only
 where it is genuinely the source of a value -- the ink providers measuring a shape
 off a page.
 
+### 191. An element that exists in the source is cut from the source, never redrawn
+
+When the thing already exists upstream — a deck's shape, an icon, a chart, a photograph — the deliverable takes that element's own geometry and its own outline. A redrawn approximation is a different object: a corner radius tuned three times is still not the shape, and the reader rejects it on sight however close the numbers look. Two outcomes are acceptable: the element is cut from an export of the source at its own coordinates, or the element is reproduced as an exact path measured off that export. If the element cannot be reached — it sits outside the page, inside a group, behind a clip — the report names that and asks for the one action that makes it reachable, instead of substituting a drawing.
+
+Instruction basis: 2026-10-19/20, the E08 cover. Its speech bubble sat at x 1923 on a 1920-wide slide, so no export contained it; I approximated it twice (a rounded box, then an ellipse) and Chaehan rejected both: "the bubble is still no bubble it is just an ellipse! just copy the bubble from the keynote damn it. make the border thinner, it still looks shitty". He moved it onto the slide in Keynote, one action, and the next export gave the exact shape: an ellipse body with the pointer joined into the same thin grey line, which is now cut as `assets/bubble.png` at 670x464 and placed at (1560,102).
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
