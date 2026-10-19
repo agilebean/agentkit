@@ -194,4 +194,10 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2900–2907 | ### 176. A pending action is executed when the tool channel returns; only the user's editor is handed over |
 | 2908–2927 | ### 177. A standing constraint of the user's is loaded before options are compared, and an option that breaks it is not an option |
 | 2928–2962 | ### 178. A consumable's cost and benefit are computed at the user's serving size, never per litre, per package or per 100 ml |
-| 2963–2969 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2963–2988 | ### 179. An artifact named as a kind carries that kind's affordances, not only its content |
+| 2989–2996 | ### 180. An artifact is delivered where its kind lives, not where the tool that made it lives |
+| 2997–3008 | ### 181. Every layer of a ported artifact is read or observed, and each layer's provenance is stated |
+| 3009–3014 | ### 182. A shared folder's change log is the cross-session channel |
+| 3015–3020 | ### 183. A delivery is stated where the reader looks, with the path, the time, and a check that it opens |
+| 3021–3045 | ### 184. A summary of a change names the movers, where they moved to, and what explains each one |
+| 3046–3052 | ## Shell: `~/.bash_aliases` (user-global) |
