@@ -193,6 +193,8 @@ One row per correction whose complaint was that the agent failed at something or
 
 | the E08 cover bubble, 2026-10-19 | the bubble drawn twice as a rounded rectangle, then again with a triangle tail | "it is still terrible, why can't you see that you still made a rectangle with rounded corners? isn't that common sense?? make an ellipse ... can't you use standard shapes for that?" | a speech bubble is an ellipse; a rounded box is a box whatever its corner radius | rule 185's standard-shape clause; the bubble set as `border-radius:50%` |
 
+| the E08 cover bubble, 2026-10-19/20 | the bubble approximated twice from the deck, the second time as a plain ellipse | "the bubble is still no bubble it is just an ellipse! just copy the bubble from the keynote damn it. make the border thinner, it still looks shitty" | an element the source already carries is cut from the source, never redrawn; when it sits where an export cannot reach it, that is stated and the one unblocking action is asked for | rule 191; the bubble is the deck's own outline, cut at 670x464 and placed at (1560,102) |
+
 ### The neighbouring family: "can't you see X"
 
 Nine further instances between 2026-09-29 and 2026-10-12 carry the same complaint shape and are listed here rather than tabled, because each is already carried by a rule of its own: the user had the answer in front of the agent, and the agent had not read it.
