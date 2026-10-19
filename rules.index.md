@@ -204,4 +204,6 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3065–3072 | ### 186. An image is drawn at its own aspect; a box of another shape crops its ink |
 | 3073–3078 | ### 187. A z-index is scoped to its stacking context, and a page's build layers are separate contexts |
 | 3079–3084 | ### 188. An element that animates on entry starts when the page appears; a click is not its trigger, and its duration parameter is honoured |
-| 3050–3056 | ## Shell: `~/.bash_aliases` (user-global) |
+| 3085–3099 | ### 189. A change to a documented system is recorded in the memory file in the same pass, never offered as a question |
+| 3100–3116 | ### 190. A check keys off the artifact in use, not an upstream source that has to be produced for it |
+| 3117–3123 | ## Shell: `~/.bash_aliases` (user-global) |

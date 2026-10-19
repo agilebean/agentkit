@@ -3082,6 +3082,38 @@ A page's entrance animation -- a figure that walks in, a title that builds -- be
 
 Instruction basis: 2026-10-19, the E08 cover. Homer was one `.buildable` step of the cover, so the page appeared without him and needed a click; the walk-in also had a `?sec=` duration that never applied to a page that was not yet shown. Chaehan: "why did you get rid of holmer on title slide, i told you to create a url parameter of ?sec to set the time for the moving animation!" The walk is now a plain `.layer` that animates while its slide is `.current`, reading `--movein-dur`, which `?sec=` sets.
 
+### 189. A change to a documented system is recorded in the memory file in the same pass, never offered as a question
+
+When the work changes something the memory file describes -- a tool's home, its
+commands, an artifact's arrangement, a state the record calls current -- the memory
+entry is part of that change. It is written in the same pass and named in the
+report's artifact list; it is not a question put to the user afterwards. The
+end-of-conversation knowledge prompt covers new facts and psychological
+observations; a documented system that just moved is not knowledge to ask about,
+it is the record catching up with the work.
+
+Instruction basis: 2026-10-19, the E08 HTML deck. The deck's builder moved out of
+`out/`, the deck became a spec, the asset step became providers -- and the memory
+bullet still described the old arrangement while the report offered to fix it.
+Chaehan: "update kubs this should be common sense!!!!"
+
+### 190. A check keys off the artifact in use, not an upstream source that has to be produced for it
+
+When a check compares a derived artifact against its source, the check is only as
+available as that source is. If the artifact in use no longer needs the source --
+the deck is the deliverable, the render is the record -- the check re-keys onto the
+artifact's own last accepted state, which answers the question the check exists for:
+did this change move anything? A gate that asks the user to re-produce an input he
+has no other reason to produce is a gate that will be skipped.
+
+Instruction basis: 2026-10-19, the E08 page check. It diffed every page against an
+export from Keynote, so the report asked for a fresh export after the page order
+changed. Chaehan: "i don't need an export of e08. why? i have the html." The gate
+now diffs the deck against its own baseline (`out/html_deck/<deck>/baseline/`,
+written by the first full run, replaced with `--bless`). The export remains only
+where it is genuinely the source of a value -- the ink providers measuring a shape
+off a page.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
