@@ -206,4 +206,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3086–3091 | ### 188. An element that animates on entry starts when the page appears; a click is not its trigger, and its duration parameter is honoured |
 | 3092–3106 | ### 189. A change to a documented system is recorded in the memory file in the same pass, never offered as a question |
 | 3107–3123 | ### 190. A check keys off the artifact in use, not an upstream source that has to be produced for it |
-| 3124–3130 | ## Shell: `~/.bash_aliases` (user-global) |
+| 3124–3129 | ### 191. An element that exists in the source is cut from the source, never redrawn |
+| 3130–3136 | ## Shell: `~/.bash_aliases` (user-global) |
