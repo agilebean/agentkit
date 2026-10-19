@@ -3047,6 +3047,19 @@ This applies to every kind of summary an agent writes: a grading pass, a diff, a
 
 Instruction basis: 2026-10-19, the KUBS grading tables. Chaehan, on the habits recalibration summary: "i really like the summary of your habits recalibration: can you remember exactly this style, as it is concise but also points to changes like Hanbit and Maiko and what their characteristics were. this is informative, and i want you to learn and apply this in other summaries across agents. point this as high prio".
 
+### 185. A list on a page is composed to its own width, in one typeface at one size, with no explanatory tails
+
+A projected list or table is not flowed text. Before it is rendered, four checks:
+
+- **Width follows content.** A block of short parallel labels is set to the width its longest line needs and centred in the space it leaves; it is never stretched to the page margin. Rows that reach both edges read as a spreadsheet, not as a slide.
+- **One typeface, one size.** Parallel items share one family and one size; colour alone distinguishes the columns (a time, a name, a duration). Two families in one table, or three sizes (44 / 40 / 34 px), is a defect even when each value was measured off a reference.
+- **No explanatory tails.** A projected label carries the name of the thing, not a note about it or about who it is for: "Welcome", not "Welcome: the room and the guests"; "Course in review", not "Intro: the semester, for the guests". The explanation belongs in the script he speaks from, and an inaccurate name ("Intro" for a review block) is replaced by the accurate one.
+- **Capitals follow the sentence.** Capitalize after a colon ("The mindset: Break habits, try new things"), and use a capital for a designation built on a common noun ("Presentation Team Alex").
+
+The test is one glance from a step back: does the block read as a single object sitting in its own space? A row that touches a margin the content does not need, or two cells in different type, fails at that glance and is fixed before the page is shown.
+
+Instruction basis: 2026-10-19, the E08 agenda page. It was built from correct values -- ten blocks at the right times, the right durations -- with the table set left at 120 px and stretched to 1680 px, `.b{flex:1}`, and three sizes (Georgia 44 for the time, Helvetica 40 for the label, Helvetica 34 for the duration). Chaehan: "the agenda is not good, it should be centered and the rows should not be stretched to max width, also you mix 3 different fonts which is terrible stick to georgia, same font size (but color change ok). isn't that all common sense visually?" With it, the label edits his reading had already settled: "write team as Team. capitalize after colons, remove words after welcome and Intro like for the guests. replace intro by Course in review." Nothing in the page required measuring the deck again; the defect was composition, which is decided before any value is read.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
