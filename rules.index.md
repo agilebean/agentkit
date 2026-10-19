@@ -200,6 +200,8 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3013–3018 | ### 182. A shared folder's change log is the cross-session channel |
 | 3019–3024 | ### 183. A delivery is stated where the reader looks, with the path, the time, and a check that it opens |
 | 3025–3049 | ### 184. A summary of a change names the movers, where they moved to, and what explains each one |
-| 3050–3063 | ### 185. A list on a page is composed to its own width, in one typeface at one size, with no explanatory tails |
-| 3064–3071 | ### 186. An image is drawn at its own aspect; a box of another shape crops its ink |
+| 3050–3064 | ### 185. A list on a page is composed to its own width, in one typeface at one size, with no explanatory tails |
+| 3065–3072 | ### 186. An image is drawn at its own aspect; a box of another shape crops its ink |
+| 3073–3078 | ### 187. A z-index is scoped to its stacking context, and a page's build layers are separate contexts |
+| 3079–3084 | ### 188. An element that animates on entry starts when the page appears; a click is not its trigger, and its duration parameter is honoured |
 | 3050–3056 | ## Shell: `~/.bash_aliases` (user-global) |
