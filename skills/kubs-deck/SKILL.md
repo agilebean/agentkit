@@ -84,6 +84,43 @@ Log entry in the session's `_log.md`: the instruction in the user's words, the c
 | An install checked only where it wrote | slides added to an existing deck; the pass compares the added pages alone | Step 3.4 — the whole-deck export before the write, every page compared after it (class 7) |
 | A Keynote pass that leaves the app's state behind | a hand-rolled `open` of a stage copy, or a run that ends with a popup or a stray document on Chaehan's screen | Step 4 — the state check, the Escape recipe at the first refusal, and the drop of hand-rolled opens (socrates failure 58, 2026-10-16) |
 
+## The same deck as a web page (`projects/kubs_dt/html_deck/`)
+
+The sessions also run as HTML decks - one page per slide, the deck's own builds and
+transitions, a single self-contained file in the session folder for presenting from
+any machine. Since 2026-10-19 the deck is **data**: a spec file plus a theme, and one
+renderer. Nothing in the renderer knows a session number.
+
+| What | Where |
+| --- | --- |
+| The deck | `decks/e08.json` - pages, content, geometry, builds, transitions, outputs |
+| A new deck | copy `decks/_template.json`; its `_howto` lists the commands |
+| The theme | `themes/kubs-dt.json` - palette, named text styles, band, footer, transition |
+| The renderer | `render.py` (`--fast`, `--pages`, `--html-only`, `--no-drive`, `--assets`) |
+| The assets | `assets_build.py --deck N`, from the spec's `assets` block and its providers |
+| The runtime | `runtime.js` - arrows advance, `f` full screen, `?n=<k>` one page, `?sheet=1` for captures |
+| Page types | cover, chart, tiles, rows, divider, figure, screen, agenda, panel, image, shot |
+| The page-type reference | `t1`-`t8.html`, and `decks/probe.json` is those same pages through the renderer |
+
+- **Geometry is data and is never invented.** A rect is the deck's own 1920x1080 frame;
+  `"@ring"` takes the rect the asset step measured off the deck's export
+  (`asset_boxes.json`). A page drawn from the deck's measurements keeps those numbers.
+- **A render is one browser launch.** `?sheet=1` stacks every page and the PNGs are cut
+  on the page geometry: 15 pages in ~4 s against ~2 s a page for separate launches, and
+  byte-identical on every static page. The cover's GIF is stilled for captures.
+- **The gate is the deck's own export.** `render.py` diffs every page against
+  `$TMPDIR/kubs_dt/<deck>_ref` (tolerance 0.1% of pixels, max channel difference 64) and
+  exits non-zero when a page is over it or when the reference is missing. The reference
+  goes stale the moment the page order changes - after adding or moving a page, export
+  the deck again before running the gate.
+- **The templates and the renderer must agree.** `decks/probe.json` reproduces
+  `t3_rows`, `t4_divider`, `t6_figure` and `t5_screen`; `bash render.sh` renders the
+  templates and the two are compared pixel for pixel. A change to `deck.css` that breaks
+  a page type shows up there, not in the session folder.
+- **`tests/test_html_deck.py`** holds the palette's parity with `deck.css`'s `:root`
+  block, the band values against `deck_reference.json`, every spec's page types, and the
+  shared-asset path.
+
 ## Report
 
 State what is now true (the fixed pages, the sweep, the measured exports), then what waits on the user, then the detail - never the process order. Name the class when the report answers a defect that had recurred, and name the check that would have caught it. The complete inventory is `agentkit/rebuild_defects.md`.
