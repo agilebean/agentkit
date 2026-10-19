@@ -9,9 +9,13 @@ Everything lives in the Drive folder "1 Projects/KUBS/KUBS DT/KUBS DT Grading":
 
 - the LMS export csv (registered names, student IDs, section; Olesia Forkulitsa and Deepti Gupta sit in it but are off the course),
 - "KUBS DT solo presentations grading.md" - the table: scheme on top, criteria scores (Skill, Insight, Method; 1-5, 5 best), weighted averages with class SDs, cluster column (A to E, legend in the file), grade column (A+ to C+), one evidence line per student,
-- "KUBS DT solo presentations grading curve.png" - the rendered curve.
+- "KUBS DT solo presentations grading curve.png" - the rendered curve,
+- "2026-10-19 KUBS DT S7 presentations grading.md" - the calibration file of 2026-10-19: S3 Solo, S6 Habits and S7 Jobs in one place, with the criteria, weights and bands the later reads use,
+- "2026-10-22 KUBS DT S8 final presentations grading.md" - the final of 2026-10-22: the five teams in the E08 agenda slide's order with the members' registered names and student numbers, and the per-team read table that is filled in after the session. This is the graded team project, 65 percent of the course grade.
 
-The spoken forms of the names and the speaker-segmented transcript live in "KUBS DT S3/KUBS DT session 3 - solo presentations.md".
+The grading files carry a date in the name, the day the presentations happened (solo 2026-10-05, S7 2026-10-19, the S8 final 2026-10-22); the earlier half of this skill's "no date in file names" guard is superseded for this folder on Chaehan's word of 2026-10-19.
+
+The spoken forms of the names and the speaker-segmented transcript live in "KUBS DT S3/KUBS DT session 3 - solo presentations.md". The S8 script names the five teams after their S7 presenter (Alex, Mojmir, Malea, Bea, Maiko), which is the same order the E08 agenda slide carries.
 
 ## Regenerate the curve (the usual job)
 
@@ -35,7 +39,7 @@ The scores live in two places: the md table and the `ROWS` list at the top of `g
 ## Guards
 
 - An edit to `grade_curve.py` is a .py edit and triggers the full test suite (RULES.md rule 6): run `mamba run -n socrates python3 -m pytest -q` from the repo root before reporting.
-- No date in file names (Chaehan's rule). A document change is logged in the folder's `_log.md` in the same pass.
+- Dates in file names: the grading files are named after the day their presentations happened ("2026-10-05 KUBS DT solo presentations grading.md", "2026-10-19 KUBS DT S7 presentations grading.md", "2026-10-22 KUBS DT S8 final presentations grading.md") - Chaehan's word, 2026-10-19, after the S7 rebuild first landed undated. A document change is logged in the folder's `_log.md` in the same pass.
 - Text the user will read goes through the robot-marker check: `mamba run -n socrates python3 ~/Software/Prototypes/agentkit/scripts/wording_lint.py FILE`. The word "Insight" as the criterion's own name is a known warn.
 
 ## Report
