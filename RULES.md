@@ -3057,6 +3057,7 @@ A projected list or table is not flowed text. Before it is rendered, four checks
 - **No explanatory tails.** A projected label carries the name of the thing, not a note about it or about who it is for: "Welcome", not "Welcome: the room and the guests"; "Course in review", not "Intro: the semester, for the guests". The explanation belongs in the script he speaks from, and an inaccurate name ("Intro" for a review block) is replaced by the accurate one.
 - **Capitals follow the sentence.** Capitalize after a colon ("The mindset: Break habits, try new things"), and use a capital for a designation built on a common noun ("Presentation Team Alex").
 - **A caption sits at its object.** A label under a picture is placed at the picture's own box and directly beneath it, a line or two below, never at the foot of the page where it has to be matched back to the image across a field of white.
+- **A standard shape is drawn as that shape.** A speech bubble is an ellipse (or the app's own bubble shape), an arrow is an arrow, a circle is a circle. A rounded rectangle with a triangle stuck on its edge is not a bubble, and two rounded-corner passes on it do not make it one; the failure reads instantly as "still a rectangle" to anyone looking at it.
 
 The test is one glance from a step back: does the block read as a single object sitting in its own space? A row that touches a margin the content does not need, or two cells in different type, fails at that glance and is fixed before the page is shown.
 
