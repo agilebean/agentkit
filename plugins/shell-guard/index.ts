@@ -1,6 +1,102 @@
 import { Plugin } from "@opencode/plugin"
+import { readFileSync } from "node:fs"
 
-const MAX_TIMEOUT_MS = 60_000
+// --- detection -------------------------------------------------------------
+//
+// One flat ceiling is not detection. On 2026-10-20 an osascript that opened a
+// quarantined deck copy sat silent for 120 s (AppleScript's per-event default),
+// was cut at the 60 s cap, and the harness's own words -- "Retry with a larger
+// timeout" -- sent the pass back with 180 s, then to a background relaunch and a
+// sleep-poll: three sends of one event to one file. A ceiling bounds how long
+// the agent waits; it says nothing about what class of work is running, whether
+// the script can block at all, or whether this is the same target as the last
+// attempt. So the guard now carries four things instead:
+//
+//   1. a class ladder -- the cap is the class's own measured p90, not 60 s;
+//   2. an in-script per-event bound for any script that opens or writes a
+//      document (15 s instead of the app's 120 s default);
+//   3. a supervisor -- app automation and renders run as a watched child that
+//      is killed at the cap and answers with a stop message, not a retry hint;
+//   4. a target-identity repeat guard -- the same file or app addressed by a
+//      rewritten command is still the same attempt.
+//
+// Measured over 4007 shell calls (2026-10-13 to 2026-10-20): osascript p50
+// 0.6 s / p90 20.3 s; python and renders p90 9.0 s / p99 55 s; builds p99
+// 4.5 s; inspection p90 0.5 s. 42 calls hit their timeout.
+
+const WATCHDOG_SLACK_MS = 5_000
+const APP_EVENT_MS = 15_000
+const APP_EVENT_CEILING_MS = 60_000
+const DEFAULT_TIMEOUT_MS = 20_000
+
+interface CmdClass {
+  name: string
+  ms: number
+  supervise: boolean
+}
+
+const CLASS_RULES: Array<{ name: string; re: RegExp; ms: number; supervise: boolean; firstLineOnly?: boolean }> = [
+  { name: "app automation", re: /\bosascript\b|\bopen\s+-a\b/, ms: 20_000, supervise: true },
+  {
+    name: "render/pipeline",
+    re: /render\.py|pipeline\.py|\bmamba run\b|\bpython3?\b|\bbrave\b|\bplaywright\b/,
+    ms: 60_000,
+    supervise: true,
+  },
+  { name: "build/install", re: /\b(npm|bun|git|ditto|rsync|pip3?|pytest|make|cargo|go)\b/, ms: 30_000, supervise: false },
+  {
+    name: "inspection",
+    re: /^\s*(ls|cat|rg|fd|sed|grep|file|xattr|du|head|tail|wc|stat|date|pwd|echo|printf|test|mkdir|cp|mv|rm|unzip|zip)\b/,
+    ms: 10_000,
+    supervise: false,
+    firstLineOnly: true,
+  },
+]
+
+function classify(cmd: string): CmdClass {
+  const first = cmd.split("\n").find((l) => l.trim()) ?? ""
+  for (const c of CLASS_RULES) {
+    if (c.re.test(c.firstLineOnly ? first : cmd)) return { name: c.name, ms: c.ms, supervise: c.supervise }
+  }
+  return { name: "default", ms: DEFAULT_TIMEOUT_MS, supervise: false }
+}
+
+/** Quoted text is data: a command that merely prints or seds a string naming
+ * osascript is not app automation. Classification runs on the unquoted part. */
+function stripQuoted(cmd: string, spans: Array<[number, number]>): string {
+  if (!spans.length) return cmd
+  let out = ""
+  let i = 0
+  for (const [s, e] of spans) {
+    out += cmd.slice(i, s) + " "
+    i = e
+  }
+  return out + cmd.slice(i)
+}
+
+// A script handed to osascript is data inside quotes, so a bound it carries in a
+// file on disk is invisible to a regex run over the command. Read the payloads
+// a command names, and skip the ones that are not files.
+function scriptsOnDisk(cmd: string): string {
+  let text = ""
+  for (const m of cmd.matchAll(/([^\s'"`;|&()<>]+\.(?:applescript|scpt|applescript\.txt))/g)) {
+    try {
+      text += "\n" + readFileSync(m[1], "utf8")
+    } catch {
+      // not a path, or unreadable: the command text is all we have
+    }
+  }
+  return text
+}
+
+const APP_WRITE_RE = /\b(open|export|save|close|print|duplicate|delete|make\s+new)\b/
+const BOUND_RE = /with timeout of\s+(\d+)/g
+
+function bounds(text: string): number[] {
+  const out: number[] = []
+  for (const m of text.matchAll(BOUND_RE)) out.push(Number(m[1]))
+  return out
+}
 
 const BLOCKS: Array<{ re: RegExp; invocation?: RegExp; msg: string }> = [
   {
@@ -17,12 +113,12 @@ const BLOCKS: Array<{ re: RegExp; invocation?: RegExp; msg: string }> = [
       "Drive. Use `rg` (300x faster on the Drive mount, RULES 73).",
   },
   {
-    re: /with timeout of\s+(?:\d{3,})/,
+    re: /with timeout of\s+(?:[6-9]\d|\d{3,})/,
     invocation: /\bosascript\b/,
     msg:
-      "Blocked by agentkit.shell-guard: `with timeout of` above 60 s. Cap at " +
-      "60 s and run long app automation in the background with a progress log " +
-      "(RULES 73).",
+      "Blocked by agentkit.shell-guard: `with timeout of` above 60 s. An app " +
+      "event that needs more than 15 s is wedged, not slow: cap it at 15 and run " +
+      "long app automation in the background with a progress log (RULES 73/166).",
   },
 ]
 
@@ -125,6 +221,7 @@ interface Ledger {
   toolMs: number
   warned: Set<number>
   seen: Map<string, number>
+  appTargets: Map<string, number>
   pending: Map<string, number>
 }
 
@@ -145,6 +242,7 @@ function ledger(sid: string): Ledger {
       toolMs: 0,
       warned: new Set(),
       seen: new Map(),
+      appTargets: new Map(),
       pending: new Map(),
     }
     ledgers.set(sid, led)
@@ -180,6 +278,64 @@ function withLedger(cmd: string, line: string): string {
   const esc = line.replace(/'/g, `'\\''`)
   return `${cmd}\n__agentkit_rc=$?\nprintf '\\n%s\\n' '${esc}' >&2\nexit $__agentkit_rc`
 }
+
+/** The supervisor: the class's cap is enforced here, by us, not by the harness.
+ * Output is buffered into a temp file and replayed at the end, which is where a
+ * foreground call puts it anyway. A kill answers with what to do next, never
+ * with "retry with a larger timeout" -- that sentence is what sent the
+ * 2026-10-20 pass back into the same wedged event three times. */
+function withWatchdog(cmd: string, line: string, cls: CmdClass): string {
+  const ticks = Math.max(2, Math.round(cls.ms / 500))
+  const stop =
+    cls.name === "app automation"
+      ? `[agentkit] killed at ${cls.ms / 1000} s: the app never answered the event. ` +
+        `Do not re-send it. Read the input (xattr, file) and the app with a read-only ` +
+        `probe that carries its own bound (with timeout of 5 seconds ... count of documents) ` +
+        `before any second send (RULES 73/166).`
+      : `[agentkit] killed at ${cls.ms / 1000} s: this did not finish. Run it in the ` +
+        `background with a progress log and read the log; a longer timeout is not the fix (RULES 73).`
+  const esc = (s: string) => s.replace(/'/g, `'\\''`)
+  return [
+    `__ak_out=$(mktemp)`,
+    `{`,
+    cmd,
+    `} >"$__ak_out" 2>&1 &`,
+    `__ak_pid=$!`,
+    `__ak_n=0`,
+    `while kill -0 "$__ak_pid" 2>/dev/null; do`,
+    `  sleep 0.5`,
+    `  __ak_n=$((__ak_n+1))`,
+    `  if [ "$__ak_n" -ge ${ticks} ]; then`,
+    `    kill -9 "$__ak_pid" 2>/dev/null`,
+    `    wait "$__ak_pid" 2>/dev/null`,
+    `    cat "$__ak_out"`,
+    `    rm -f "$__ak_out"`,
+    `    printf '\\n%s\\n' '${esc(stop)}' >&2`,
+    `    exit 124`,
+    `  fi`,
+    `done`,
+    `wait "$__ak_pid"`,
+    `__ak_rc=$?`,
+    `cat "$__ak_out"`,
+    `rm -f "$__ak_out"`,
+    `printf '\\n%s\\n' '${esc(line)}' >&2`,
+    `exit $__ak_rc`,
+  ].join("\n")
+}
+
+/** The targets an app-automation command addresses: the absolute paths it hands
+ * to the app. The exact-text repeat guard misses the case that matters - the
+ * same file re-sent under `nohup`, a bigger timeout, or a renamed script - and
+ * the app's name is not a target: addressing Keynote twice for two different
+ * files is ordinary work, addressing one file twice is the retry. */
+function targets(cmd: string): string[] {
+  const out = new Set<string>()
+  for (const m of cmd.matchAll(/(?:^|[\s'"(=])((?:\/Users|\/tmp|\/Volumes|\/private)\/[^\s'";|&)]+)/g)) out.add(m[1])
+  return [...out].sort()
+}
+
+const TARGET_WARN_AT = 2
+const TARGET_DENY_AT = 3
 
 function norm(cmd: string): string {
   return cmd.replace(/\s+/g, " ").trim().slice(0, 400)
@@ -218,13 +374,45 @@ export default Plugin.define({
     })
 
     await ctx.shell.hook("create.before", (event) => {
-      // 1) cap explicit long timeouts (0 = "no timeout", leave alone)
-      if (typeof event.timeout === "number" && event.timeout > MAX_TIMEOUT_MS) {
-        event.timeout = MAX_TIMEOUT_MS
-      }
-      // 2) deny banned patterns; quoted text is inert (osascript payload aside)
       const cmd = event.command ?? ""
       const spans = quotedSpans(cmd)
+      const cls = classify(stripQuoted(cmd, spans))
+
+      // 1) the class ladder. A supervised class owns its own bound, so the tool
+      // is given slack and our kill lands first; every other class keeps the
+      // requested timeout when it is smaller than the class cap.
+      if (event.timeout !== 0) {
+        if (cls.supervise) {
+          event.timeout = cls.ms + WATCHDOG_SLACK_MS
+        } else if (typeof event.timeout === "number") {
+          event.timeout = Math.min(event.timeout, cls.ms)
+        } else {
+          event.timeout = cls.ms
+        }
+      }
+
+      // 2) a script that opens or writes a document must carry its own per-event
+      // bound: without one the app's default is 120 s of silence (RULES 73/166).
+      if (/\bosascript\b/.test(cmd) && matchesOutsideQuotes(cmd, spans, /\bosascript\b/)) {
+        const payload = cmd + scriptsOnDisk(cmd)
+        if (APP_WRITE_RE.test(payload)) {
+          const found = bounds(payload)
+          const largest = found.length ? Math.max(...found) : 0
+          if (largest === 0 || largest > APP_EVENT_MS / 1000) {
+            deny(
+              event,
+              "Blocked by agentkit.shell-guard: this script opens or writes a " +
+                "document and carries no per-event timeout, so the app's own " +
+                "default is 120 s and a wedged event reads as a hang. Wrap the app " +
+                "block in `with timeout of 15 seconds` ... `end timeout`, and put the " +
+                "input checks (xattr, file) before it (RULES 73/166).",
+            )
+            return
+          }
+        }
+      }
+
+      // 3) deny banned patterns; quoted text is inert (osascript payload aside)
       for (const b of BLOCKS) {
         const hit = b.invocation
           ? b.re.test(cmd) && matchesOutsideQuotes(cmd, spans, b.invocation)
@@ -236,7 +424,7 @@ export default Plugin.define({
       }
       if (!cmd.trim()) return
 
-      // 3) the ledger: count the call, refuse the fourth identical command in
+      // 4) the ledger: count the call, refuse the fourth identical command in
       // one turn (rule 73's two-attempt budget), and write the clock and the
       // count into the result the agent is about to read.
       const sid = event.env?.OPENCODE_SESSION_ID ?? "unknown"
@@ -259,6 +447,34 @@ export default Plugin.define({
         return
       }
 
+      // 5) app automation is also keyed by the target it addresses: the same
+      // file or app under a rewritten command is still the same attempt.
+      let targetNote = ""
+      if (cls.name === "app automation") {
+        for (const t of targets(cmd)) {
+          const n = (led.appTargets.get(t) ?? 0) + 1
+          if (led.appTargets.size > MAX_SEEN) led.appTargets.clear()
+          led.appTargets.set(t, n)
+          if (n >= TARGET_DENY_AT) {
+            deny(
+              event,
+              `Blocked by agentkit.shell-guard: ${t} has already been addressed ` +
+                `${n - 1} times in this turn by app automation (RULES 73: two ` +
+                `attempts on one deliverable, and a rewritten command - nohup, a ` +
+                `bigger timeout, a renamed script - does not reset the count). If ` +
+                `the app did not answer, read the input (xattr, file) and probe the ` +
+                `app with a bounded read-only event; do not send the same event again.`,
+            )
+            return
+          }
+          if (n === TARGET_WARN_AT) {
+            targetNote =
+              `\n[agentkit] ${t} is on its second app-automation send this turn ` +
+              `(RULES 73). The third is refused: read the input and probe the app first.`
+          }
+        }
+      }
+
       const { base, gate } = ledgerLine(sid, led, Date.now())
       let line = gate ? `${base}\n${gate}` : base
       if (seen === REPEAT_WARN_AT) {
@@ -267,7 +483,8 @@ export default Plugin.define({
           `(RULES 73). The fourth is refused: rename the approach instead.`
       }
       led.last = Date.now()
-      event.command = withLedger(cmd, line)
+      line += targetNote
+      event.command = cls.supervise ? withWatchdog(cmd, line, cls) : withLedger(cmd, line)
     })
   },
 })

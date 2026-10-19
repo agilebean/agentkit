@@ -138,17 +138,94 @@ test("the ledger wraps a command without running it twice or losing stdout", asy
   expect(body).toBe("printf 'a\\nb\\n'")
 })
 
-test("timeouts are still capped at 60 s, and banned searches still denied", async () => {
+test("the timeout is the command class's own cap, not one flat 60 s", async () => {
   const h = await setup()
-  const long = await h.shell("node -e 1", "ses_test", 300_000)
-  expect(long.timeout).toBe(60_000)
+  expect((await h.shell("ls -la")).timeout).toBe(10_000)
+  expect((await h.shell("node -e 1", undefined, 300_000)).timeout).toBe(20_000)
+  expect((await h.shell("git status --short", undefined, 60_000)).timeout).toBe(30_000)
+  // a supervised class owns its bound: the tool is given slack, our kill is first
+  expect((await h.shell("python3 - <<'PY'\nprint(1)\nPY")).timeout).toBe(65_000)
+  expect((await h.shell(`osascript -e 'tell application "Keynote" to get count of documents'`)).timeout).toBe(25_000)
   const denied = await h.shell("grep -rn foo ~/Library")
   expect(denied.command).toContain("Blocked by agentkit.shell-guard")
   expect(denied.command).toContain("rg")
+})
+
+test("app automation runs as a watched child that answers a kill with the next step", async () => {
+  const h = await setup()
+  const e = await h.shell(`osascript -e 'tell application "Keynote" to get count of documents'`)
+  expect(e.command).toContain("__ak_pid=$!")
+  expect(e.command).toContain("kill -9")
+  expect(e.command).toContain("exit 124")
+  expect(e.command).toContain("killed at 20 s")
+  expect(e.command).toContain("Do not re-send it")
+  expect(e.command).not.toContain("Retry with a larger timeout")
+})
+
+test("a script that opens a document must carry its own 15 s event bound", async () => {
+  const h = await setup()
+  const bare = await h.shell(`osascript -e 'tell application "Keynote" to open (POSIX file "/tmp/a.key")'`)
+  expect(bare.command).toContain("Blocked by agentkit.shell-guard")
+  expect(bare.command).toContain("with timeout of 15 seconds")
+
+  const bounded = await h.shell(
+    `osascript -e 'tell application "Keynote"' -e 'with timeout of 12 seconds' -e 'open (POSIX file "/tmp/b.key")' -e 'end timeout'`,
+  )
+  expect(bounded.command).not.toContain("Blocked")
+
+  const huge = await h.shell(
+    `osascript -e 'tell application "Keynote"' -e 'with timeout of 900 seconds' -e 'open (POSIX file "/tmp/c.key")' -e 'end timeout'`,
+  )
+  expect(huge.command).toContain("Blocked by agentkit.shell-guard")
+})
+
+test("a bound that lives in the script file on disk counts", async () => {
+  const path = "/tmp/ak-test-bounded.applescript"
+  await Bun.write(
+    path,
+    'on run\n  tell application "Keynote"\n    with timeout of 10 seconds\n      open (POSIX file "/tmp/d.key")\n    end timeout\n  end tell\nend run\n',
+  )
+  const h = await setup()
+  const e = await h.shell(`osascript ${path}`)
+  expect(e.command).not.toContain("Blocked")
+})
+
+test("the same app target is refused on the third send, whatever the command says", async () => {
+  const h = await setup()
+  const one = await h.shell(`osascript -e 'tell application "Keynote" to get count of documents' /tmp/e08_copy.key`)
+  const two = await h.shell(`nohup osascript -e 'tell application "Keynote" to get count of documents' /tmp/e08_copy.key`)
+  const three = await h.shell(
+    `osascript -e 'tell application "Keynote" to get count of documents' '/tmp/e08_copy.key' -s o`,
+  )
+  expect(one.command).not.toContain("Blocked")
+  expect(two.command).toContain("second app-automation send")
+  expect(three.command).toContain("Blocked by agentkit.shell-guard")
+  expect(three.command).toContain("/tmp/e08_copy.key")
+  expect(three.command).toContain("do not send the same event again")
+  // another target in the same turn is untouched
+  expect((await h.shell(`osascript -e 'tell application "Keynote" to get count of documents' /tmp/other.key`)).command).not.toContain(
+    "Blocked",
+  )
+})
+
+test("a command that names no target is not target-guarded", async () => {
+  const h = await setup()
+  for (let i = 0; i < 2; i++) {
+    const e = await h.shell(`osascript -e 'tell application "Keynote" to get count of documents' -e 'delay ${i}'`)
+    expect(e.command).not.toContain("Blocked")
+  }
 })
 
 test("quoted text stays inert: a command mentioning grep -r is not denied", async () => {
   const h = await setup()
   const e = await h.shell(`echo 'grep -rn foo ~/Library'`)
   expect(e.command).not.toContain("Blocked")
+})
+
+test("a command that only mentions osascript stays out of the app class", async () => {
+  const h = await setup()
+  const e = await h.shell(`sed -n "s/osascript/x/" /tmp/probe.key; echo done`)
+  expect(e.command).not.toContain("killed at 20 s")
+  expect(e.command).toContain("__agentkit_rc=$?")
+  expect(e.timeout).toBe(10_000)
 })
