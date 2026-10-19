@@ -209,3 +209,4 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3130–3135 | ### 191. An element that exists in the source is cut from the source, never redrawn |
 | 3136–3142 | ## Shell: `~/.bash_aliases` (user-global) |
 | 3136 | ### 192. An image paints its own rectangle, background included |
+| 3145 | ### 193. A fix to work from this session is amended into that commit, not stacked on top |

@@ -3142,6 +3142,14 @@ Every image on a page covers the full rect it is given, not just the ink inside 
 
 Instruction basis: 2026-10-20, the E08 fast feedback loop, the second time this page lost an element to an overlapping image. The small d.school diagram and its caption "DT process from d.school" sit at x 291-614; the loop diagram's rect starts at x 574 and its white canvas covered the caption from x ~624, cutting it to "DT process from d.scho". Chaehan: "the fast feedback slide again overlaps the white background of the big onto the small image. again!!! i said that this is common sense!!"
 
+### 193. A fix to work from this session is amended into that commit, not stacked on top
+
+When something you committed earlier in the same session turns out to be wrong or incomplete — a test that still asserts the old count, a value you set and then corrected, a file you forgot — the repair belongs inside the commit that carries the work, not in a new commit on top of it. The session's history should read as the work it produced, not as the work plus its own errata. Practically: stage the fix, `git commit --amend --no-edit` when the message still describes the whole change, or reset the earlier commit softly and re-commit when more than one sits above it; then force-push with `--force-with-lease`.
+
+The distinction that matters: a **new** piece of work is a new commit, however small. A **correction to work already in this session's commit** is an amendment. Committing a CI failure fix separately and pushing it leaves a red commit and a green commit in the history for one change.
+
+Instruction basis: 2026-10-20, the E08 deck's page count. Adding the navy agenda made the deck 16 pages; the build test still asserted 15, CI failed, and I fixed the literal and pushed it as its own commit. Chaehan: "you shouldn't push such fixes but git amend them."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:

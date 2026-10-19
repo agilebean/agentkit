@@ -198,6 +198,8 @@ One row per correction whose complaint was that the agent failed at something or
 
 | the FFL's loop image over its small diagram, 2026-10-20 | the loop diagram's opaque white canvas stacked over the d.school thumbnail and its caption, cutting the caption mid-word | "the fast feedback slide again overlaps the white background of the big onto the small image. again!!! i said that this is common sense!!" | an image paints its whole rect including background; intersecting elements get an explicit order, and a word cut mid-letter is the tell | rule 192; the thumbnail and caption raised to z 9, caption reads whole |
 
+| the E08 page-count test, 2026-10-20 | the CI fix for a page-count assert pushed as its own commit, leaving a red commit in the history | "you shouldn't push such fixes but git amend them" | a correction to work from this session is amended into its commit; only new work starts a new commit | rule 193; the test fix folded into the agenda commit, force-pushed with lease |
+
 ### The neighbouring family: "can't you see X"
 
 Nine further instances between 2026-09-29 and 2026-10-12 carry the same complaint shape and are listed here rather than tabled, because each is already carried by a rule of its own: the user had the answer in front of the agent, and the agent had not read it.
