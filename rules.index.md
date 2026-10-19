@@ -181,29 +181,29 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 2755–2764 | ### 163. Nothing unreferenced is left behind; a removal sweeps the code only it reached |
 | 2765–2772 | ### 164. Uncommitted work found in the checkout is raised as a commit ask |
 | 2773–2782 | ### 165. A reading off a low-fidelity source is a reading, and it is confirmed before it judges a record |
-| 2783–2792 | ### 166. A shared GUI application is claimed before a run and released after it, and a run that dies inside `open` is a handoff failure |
-| 2793–2802 | ### 167. On a recurring symptom, the register, the log and the process are read before any hypothesis |
-| 2803–2810 | ### 168. Configuration paths come from the running process, never from an assumed filename |
-| 2811–2818 | ### 169. An error string identifies the process that raised it |
-| 2819–2824 | ### 170. Two errors are independent until something links them |
-| 2825–2830 | ### 171. A statement by the user about his own system is ground truth |
-| 2831–2840 | ### 172. Whether a release changed a mechanism is answered by three checks, in order |
-| 2841–2846 | ### 173. One command, then the user's editor |
-| 2847–2859 | ### 174. The second correction on a subject stores the learning in that turn |
-| 2860–2903 | ### 175. A comparison the user names is researched at its own products, and a blocked tool stops the answer instead of licensing a constructed one |
-| 2904–2911 | ### 176. A pending action is executed when the tool channel returns; only the user's editor is handed over |
-| 2912–2931 | ### 177. A standing constraint of the user's is loaded before options are compared, and an option that breaks it is not an option |
-| 2932–2966 | ### 178. A consumable's cost and benefit are computed at the user's serving size, never per litre, per package or per 100 ml |
-| 2967–2992 | ### 179. An artifact named as a kind carries that kind's affordances, not only its content |
-| 2993–3000 | ### 180. An artifact is delivered where its kind lives, not where the tool that made it lives |
-| 3001–3012 | ### 181. Every layer of a ported artifact is read or observed, and each layer's provenance is stated |
-| 3013–3018 | ### 182. A shared folder's change log is the cross-session channel |
-| 3019–3024 | ### 183. A delivery is stated where the reader looks, with the path, the time, and a check that it opens |
-| 3025–3049 | ### 184. A summary of a change names the movers, where they moved to, and what explains each one |
-| 3050–3065 | ### 185. A list on a page is composed to its own width, in one typeface at one size, with no explanatory tails |
-| 3065–3072 | ### 186. An image is drawn at its own aspect; a box of another shape crops its ink |
-| 3073–3078 | ### 187. A z-index is scoped to its stacking context, and a page's build layers are separate contexts |
-| 3079–3084 | ### 188. An element that animates on entry starts when the page appears; a click is not its trigger, and its duration parameter is honoured |
-| 3085–3099 | ### 189. A change to a documented system is recorded in the memory file in the same pass, never offered as a question |
-| 3100–3116 | ### 190. A check keys off the artifact in use, not an upstream source that has to be produced for it |
-| 3117–3123 | ## Shell: `~/.bash_aliases` (user-global) |
+| 2783–2798 | ### 166. A shared GUI application is claimed before a run and released after it, and a run that dies inside `open` is a handoff failure |
+| 2799–2808 | ### 167. On a recurring symptom, the register, the log and the process are read before any hypothesis |
+| 2809–2816 | ### 168. Configuration paths come from the running process, never from an assumed filename |
+| 2817–2824 | ### 169. An error string identifies the process that raised it |
+| 2825–2830 | ### 170. Two errors are independent until something links them |
+| 2831–2836 | ### 171. A statement by the user about his own system is ground truth |
+| 2837–2846 | ### 172. Whether a release changed a mechanism is answered by three checks, in order |
+| 2847–2852 | ### 173. One command, then the user's editor |
+| 2853–2865 | ### 174. The second correction on a subject stores the learning in that turn |
+| 2866–2909 | ### 175. A comparison the user names is researched at its own products, and a blocked tool stops the answer instead of licensing a constructed one |
+| 2910–2917 | ### 176. A pending action is executed when the tool channel returns; only the user's editor is handed over |
+| 2918–2937 | ### 177. A standing constraint of the user's is loaded before options are compared, and an option that breaks it is not an option |
+| 2938–2972 | ### 178. A consumable's cost and benefit are computed at the user's serving size, never per litre, per package or per 100 ml |
+| 2973–2998 | ### 179. An artifact named as a kind carries that kind's affordances, not only its content |
+| 2999–3006 | ### 180. An artifact is delivered where its kind lives, not where the tool that made it lives |
+| 3007–3018 | ### 181. Every layer of a ported artifact is read or observed, and each layer's provenance is stated |
+| 3019–3024 | ### 182. A shared folder's change log is the cross-session channel |
+| 3025–3030 | ### 183. A delivery is stated where the reader looks, with the path, the time, and a check that it opens |
+| 3031–3055 | ### 184. A summary of a change names the movers, where they moved to, and what explains each one |
+| 3056–3071 | ### 185. A list on a page is composed to its own width, in one typeface at one size, with no explanatory tails |
+| 3072–3079 | ### 186. An image is drawn at its own aspect; a box of another shape crops its ink |
+| 3080–3085 | ### 187. A z-index is scoped to its stacking context, and a page's build layers are separate contexts |
+| 3086–3091 | ### 188. An element that animates on entry starts when the page appears; a click is not its trigger, and its duration parameter is honoured |
+| 3092–3106 | ### 189. A change to a documented system is recorded in the memory file in the same pass, never offered as a question |
+| 3107–3123 | ### 190. A check keys off the artifact in use, not an upstream source that has to be produced for it |
+| 3124–3130 | ## Shell: `~/.bash_aliases` (user-global) |
