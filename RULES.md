@@ -2960,6 +2960,89 @@ much complexity, remove the 200ml and the optimization of the 3days which is not
 important as soy milk stays ok for 5-7d and i use it also for overnight oats
 where it provides more protein than oat milk."
 
+### 179. An artifact named as a kind carries that kind's affordances, not only its content
+
+When the user asks for a deck, a sheet, a note or a chart, the deliverable is the
+kind of thing he named together with what that kind does: a deck presents (it steps
+through its pages, takes the screen, scales to the display) and it animates; a sheet
+is built to print; a chart carries axes and labels. A file with the right content in
+the right format that cannot do the kind's job is a different artifact — a page set,
+a table dump — and does not count as the thing asked for. Before reporting it as
+built, open it the way its user will and name what it does when opened: arrows and
+space advance, a click advances, `f` takes the screen, the stage fits the display.
+
+A measurement goal does not lower this bar. Timing a build, comparing fidelity,
+proving a format can carry a look — each of those needs pages rendered, and pages
+rendered are not a deck. When the same file serves both, the deck's runtime is
+written first and the measurement runs on it, so the artifact reported and the
+artifact measured are one object.
+
+Instruction basis: 2026-10-19, the E08 HTML deck. Nine pages were placed, fitted,
+rendered, diffed against the deck's export and reported as "the E08 recreation", with
+the fidelity numbers and both clocks — but the file carried only a `?n=` page switch:
+no stepping, no full screen, no scale-to-fit, no animation, while its sibling
+`e07.html` carried all four. Chaehan: "why didn't you create the e08 html deck yet?"
+The request's timing clause ("recreate the e08 slides in html and measure the time")
+had been served, the artifact clause had not, and the file's name (`e08.html`) hid the
+substitution from both the report and its reader.
+
+### 180. An artifact is delivered where its kind lives, not where the tool that made it lives
+
+A session deck belongs in the session's folder beside the deck it derives from, a note in its notebook, a sheet with the material it serves. The directory a build tool happens to run in, a stage folder, a scratch or prototype directory inside a repository — none of those is a delivery location, and "it is only a prototype so far" describes maturity, not home. When an artifact's kind changes, a measurement harness becomes a deck the user will present, a working file becomes a deliverable, its location is re-decided in the same turn. The deliverable form is chosen to survive the move: a deck that needs a sibling stylesheet and an assets directory travels as one file, the stylesheet inlined and the images embedded, so it opens from the folder it is filed in.
+
+A purpose does not demote an artifact. When one request asks both for something to be built and for a measurement of the work — recreate these slides in another format *and* time it against how the originals were made — what it asks to be built is a deliverable from its first build and goes to its kind's home then; "it was only evidence for the assessment" is not a lower tier, and a deliverable that waits for the user to ask where it is has already cost him the asking. The artifact the user will open is the one that is somewhere he opens things from.
+
+Instruction basis: 2026-10-19, the E08 HTML deck. It was built, verified and handed over from `projects/kubs_dt/out/html_proto/e08/`, a git-ignored working directory of the socrates repo, while the deck's own folder on the Drive ("KUBS DT S8") holds the .key, the slides md and the PDF export as one file each. Chaehan: "i still don't get why you don't put the slide deck on the session folder, why is that?" The port had been filed as evidence for a format assessment, and that filing was never revisited when the port became a deck. Reached for again the same day, with the file verifiably in place: "i'm getting crazy. in this session i told you to put the html on the session folder!!!" — the file had existed in the repo for about a day and a half before it reached the folder, because a placement was treated as a step to be asked for rather than part of the deliverable.
+
+### 181. Every layer of a ported artifact is read or observed, and each layer's provenance is stated
+
+A faithful copy has three layers, and none of them follows from another:
+
+- **geometry** — where each element sits (read from the app's item frames, measured off the render);
+- **behaviour** — the transitions and the build sequence, with their durations (read from the app's transition properties, and where the API carries no build object, observed by *playing the artifact* and capturing one frame per step);
+- **appearance** — font, size, colour, alpha (read from the item's own attributes; never typed from memory or from a sibling artifact).
+
+Verification of one layer says nothing about the others. A render that matches to a few percent of pixels proves geometry; it proves nothing about an animation that is invisible in a static render, and a single frame comparison cannot see a colour that covers a few percent of the page. Before calling a port faithful, name for each layer how its values were obtained, and where a value cannot be read, observe it — a layer labelled "unverified" in a code comment and shipped anyway is a guess wearing a caveat.
+
+Instruction basis: 2026-10-19, the E08 HTML deck. Its geometry had been fitted and checked against the deck's export page by page, and its port to HTML was reported as faithful. Chaehan: "the animations are mostly to fast, eg the transitions fall, and you missed many transitions like the title slide showing holmer wandering left to right. where all the animations that build up the slide eg two books: first me, then the books? ... the last two slides have strongly different color and fonts from the original that's terrible given you can read all attributes." The transitions were a fixed 0.5 s where the deck runs 1.0 s on six slides; the builds were one guessed appearance step per page where the deck runs up to three, in its own order; the cover's Homer did not move; slide 11's type was Roboto 150 where the deck is HelveticaNeue-Bold 184, and slide 12's headline was white where the deck is #1682B0 — all readable through `font of object text`, `size of object text` and `color of object text`, and all of it observable by playing the deck and screenshotting each step.
+
+### 182. A shared folder's change log is the cross-session channel
+
+Work is split across sessions that meet in one folder: one writes the script and the run sheet, another builds the deck, a third keeps the notes. What one session settles — a title, a page that must exist, a word that changes, an assignment ("it is built by the generator in the other session") — lands first in that folder's `_log.md`. Before finishing a deliverable that lives in a shared folder, read the newest log entries and the sibling artifacts for work addressed to this session; a requirement stated there is a requirement, whether or not it also arrived in this conversation.
+
+Instruction basis: 2026-10-19. The S8 folder's `_log.md` carries, from the other session, "the E08 deck needs a closing page titled 'Panel discussion' ... it is built by the HTML generator being built in the other session, so nothing was written into the deck here". The E08 HTML deck was built and handed over without that page; Chaehan: "include the last slide about panel discussion which i specified earlier in this or the other session". The specification had been in the shared folder the whole time.
+
+### 183. A delivery is stated where the reader looks, with the path, the time, and a check that it opens
+
+When work lands an artifact in a shared folder — the session folder, a Drive folder, a notebook — the report says so in its opening lines: the artifact's full path, its size or page count, when it was written, and what confirmed it opens from there (a listing of that folder, or a capture of that very file). The closing artifact list is a summary of everything touched, never the delivery statement. A reader who must scan eight bullet points to find the one thing he asked for will ask again, and his second round trip costs more than the sentence would have. "It is there" with no path and no check is not a delivery.
+
+Instruction basis: 2026-10-19. The E08 HTML deck had been written to the session folder (`KUBS DT S8/KUBS DT WS2026 E08.html`, 11.2 MB), rebuilt at 17:04, and named in the report's closing artifact list; the report's body led with the repository working copy. Chaehan: "i'm getting crazy. in this session i told you to put the html on the session folder!!!" The file was verifiably in place, so the round trip bought nothing but the cost of proving it again.
+
+### 184. A summary of a change names the movers, where they moved to, and what explains each one
+
+**Priority: high. This rule shapes every summary an agent writes.**
+
+A summary is written from the result, not from the work; it makes three moves, in this order:
+
+1. What the change did to the outcome, in one clause. Not what was changed.
+2. The two or three cases that moved, each with where it went and the one trait that explains it.
+3. The sharpest case, and what it shows about the instrument, the record or the process.
+
+The reference wording, on a grading recalibration: "The habits recalibration moved the ranking more than anything else: Ahaad goes to the top on two gradings, Kathi rises to second, and Hanbit, the only student at 3.0 or better on all three, lands fourth. Maiko's 2.0 solo is now offset by a 3.0 wall and a 3.3 jobs read, which is the clearest case of a student the earlier scale was under-reading."
+
+What makes it work, and what to copy:
+
+- it opens on the effect, not on the procedure;
+- each case is named, moved to a position the reader can find in the table, and given the one fact that singles it out: Hanbit as the only student at 3.0 or better on all three, Maiko as the one offset by two later reads;
+- the last sentence picks the case that says something about the instrument itself, so the summary ends with a finding rather than with a list;
+- three sentences, no method recap, no row-by-row walk, no hedge and no apology.
+
+The reader has the table. The summary tells him what changed in it and which rows to look at. A trait is stated as a fact about the person or the item, in the fewest words that separate it from the rest, never as a hope, a potential or a caveat.
+
+This applies to every kind of summary an agent writes: a grading pass, a diff, a test run, a research sweep, a status note, the closing section of a report.
+
+Instruction basis: 2026-10-19, the KUBS grading tables. Chaehan, on the habits recalibration summary: "i really like the summary of your habits recalibration: can you remember exactly this style, as it is concise but also points to changes like Hanbit and Maiko and what their characteristics were. this is informative, and i want you to learn and apply this in other summaries across agents. point this as high prio".
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
