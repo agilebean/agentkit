@@ -191,6 +191,8 @@ One row per correction whose complaint was that the agent failed at something or
 | the E08 cover, 2026-10-19 | Homer was one click away and absent when the cover appeared | "why did you get rid of holmer on title slide, i told you to create a url parameter of ?sec to set the time for the moving animation!" | an entrance animation starts when the page appears, and the duration parameter it exposes is what runs it | rule 188; the walk is a plain layer animating while its slide is current |
 | the E08 fast feedback loop, 2026-10-19 | the loop's opaque white margin painted over the arrow's head despite the image's `z-index:3` | "you overlapped the big image with the white background onto the small one on this slide" | two build steps are two stacking contexts; the z-index goes on the layer, not the image inside it | rule 187; the arrow's layer carries z-index 3 |
 
+| the E08 cover bubble, 2026-10-19 | the bubble drawn twice as a rounded rectangle, then again with a triangle tail | "it is still terrible, why can't you see that you still made a rectangle with rounded corners? isn't that common sense?? make an ellipse ... can't you use standard shapes for that?" | a speech bubble is an ellipse; a rounded box is a box whatever its corner radius | rule 185's standard-shape clause; the bubble set as `border-radius:50%` |
+
 ### The neighbouring family: "can't you see X"
 
 Nine further instances between 2026-09-29 and 2026-10-12 carry the same complaint shape and are listed here rather than tabled, because each is already carried by a rule of its own: the user had the answer in front of the agent, and the agent had not read it.
