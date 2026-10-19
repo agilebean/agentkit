@@ -3056,6 +3056,7 @@ A projected list or table is not flowed text. Before it is rendered, four checks
 - **One typeface, one size.** Parallel items share one family and one size; colour alone distinguishes the columns (a time, a name, a duration). Two families in one table, or three sizes (44 / 40 / 34 px), is a defect even when each value was measured off a reference.
 - **No explanatory tails.** A projected label carries the name of the thing, not a note about it or about who it is for: "Welcome", not "Welcome: the room and the guests"; "Course in review", not "Intro: the semester, for the guests". The explanation belongs in the script he speaks from, and an inaccurate name ("Intro" for a review block) is replaced by the accurate one.
 - **Capitals follow the sentence.** Capitalize after a colon ("The mindset: Break habits, try new things"), and use a capital for a designation built on a common noun ("Presentation Team Alex").
+- **A caption sits at its object.** A label under a picture is placed at the picture's own box and directly beneath it, a line or two below, never at the foot of the page where it has to be matched back to the image across a field of white.
 
 The test is one glance from a step back: does the block read as a single object sitting in its own space? A row that touches a margin the content does not need, or two cells in different type, fails at that glance and is fixed before the page is shown.
 
@@ -3068,6 +3069,18 @@ Instruction basis: 2026-10-19, the E08 agenda page. It was built from correct va
 This is the same failure as a shape frame cutting its own stroke, one layer out: the first time the frame of the shape was smaller than its ink, the second time the box of the image was the wrong shape for its ink. Whenever an element's visible edge is its ink, check the container's ratio against the asset's before the render.
 
 Instruction basis: 2026-10-19, the E08 fast feedback loop page. The job statement's hand-drawn ring was reused over the grey hexagon at 340x300 while the asset is 292x283, and `.page .el{object-fit:cover}` cut the top and bottom of the stroke. Chaehan: "you did again the same error with the red ring as before, it is cut top and bottom!!" The first occurrence, earlier the same day, was the ring's Keynote frame (790,785 268x259) cutting an ink that runs 781,776 286x277.
+
+### 187. A z-index is scoped to its stacking context, and a page's build layers are separate contexts
+
+A layer that carries `clip-path`, `opacity` below 1, a `transform` or `filter` becomes a stacking context: a `z-index` on an element inside it orders that element only among its siblings in that layer, never against another layer. Two build steps are two layers, and the later one paints on top of the earlier whatever the inner element's z-index says. To lift an element over a later build, the z-index goes on the layer itself.
+
+Instruction basis: 2026-10-19, the E08 fast feedback loop page. The grey arrow carried `z-index:3` on its image, set so its head would stay visible over the loop image's opaque white margin -- and the loop still covered it, because both builds are `.wipe` layers and `clip-path` makes each its own stacking context. Chaehan: "you overlapped the big image with the white background onto the small one on this slide". The z-index moved to the arrow's layer.
+
+### 188. An element that animates on entry starts when the page appears; a click is not its trigger, and its duration parameter is honoured
+
+A page's entrance animation -- a figure that walks in, a title that builds -- belongs to the moment the page becomes current. If it sits in the click sequence instead, the page opens without it and the speaker has to click before the deck looks as it was designed; if the sequence is consumed by something else, the element never arrives at all. Where a duration is exposed as a URL parameter, the animation reads it and the default is the deck's own.
+
+Instruction basis: 2026-10-19, the E08 cover. Homer was one `.buildable` step of the cover, so the page appeared without him and needed a click; the walk-in also had a `?sec=` duration that never applied to a page that was not yet shown. Chaehan: "why did you get rid of holmer on title slide, i told you to create a url parameter of ?sec to set the time for the moving animation!" The walk is now a plain `.layer` that animates while its slide is `.current`, reading `--movein-dur`, which `?sec=` sets.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
