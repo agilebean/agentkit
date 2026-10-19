@@ -200,4 +200,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3013–3018 | ### 182. A shared folder's change log is the cross-session channel |
 | 3019–3024 | ### 183. A delivery is stated where the reader looks, with the path, the time, and a check that it opens |
 | 3025–3049 | ### 184. A summary of a change names the movers, where they moved to, and what explains each one |
+| 3050–3067 | ### 185. A list on a page is composed to its own width, in one typeface at one size, with no explanatory tails |
 | 3050–3056 | ## Shell: `~/.bash_aliases` (user-global) |
