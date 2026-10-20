@@ -207,7 +207,9 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3098–3112 | ### 189. A change to a documented system is recorded in the memory file in the same pass, never offered as a question |
 | 3113–3129 | ### 190. A check keys off the artifact in use, not an upstream source that has to be produced for it |
 | 3130–3135 | ### 191. An element that exists in the source is cut from the source, never redrawn |
-| 3136–3142 | ## Shell: `~/.bash_aliases` (user-global) |
-| 3136 | ### 192. An image paints its own rectangle, background included |
-| 3145 | ### 193. A fix to work from this session is amended into that commit, not stacked on top |
-| 3153 | ### 194. "Replace A with B" removes A |
+| 3136–3144 | ### 192. An image paints its own rectangle, background included |
+| 3145–3152 | ### 193. A fix to work from this session is amended into that commit, not stacked on top |
+| 3153–3160 | ### 194. "Replace A with B" removes A |
+| 3161–3180 | ### 195. Address the user as "you"; a record names Chaehan, never "he" |
+| 3181–3203 | ### 197. A stated plan is applied, and a variant of a live element is not a new element |
+| 3204–3210 | ## Shell: `~/.bash_aliases` (user-global) |

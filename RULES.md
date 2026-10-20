@@ -3158,6 +3158,49 @@ This is the same class as consolidation (rule 148) and the revert reading (rule 
 
 Instruction basis: 2026-10-20, the E08 agenda. "replace the old agendas with the new one" was carried out as a restyle of all three agenda pages, so the deck came out with two identical navy agendas at the front and a third before the panel. Chaehan: "why isn't it common sense that \"replace the old agendas with the new one.\" means you replace them, so the original one is removed, so we see one agenda only at beginning not two?" The deck now carries one agenda; the other two pages are deleted.
 
+### 195. Address the user as "you"; a record names Chaehan, never "he"
+
+Anything written for the user to read addresses the user in the second person:
+"you", "your", "yours". A third-person pronoun is never used about the person
+the text is being written for.
+
+A record that is not addressed to the user — a memory file, a log entry, a note
+about the work, a summary of what happened — names the subject: "Chaehan". Not
+"he", not "his". A file written by an agent that has exactly one subject has no
+grammatical need for a third-person pronoun, and the pronoun reads as some
+other, unnamed person.
+
+Where a sentence carries two people, both are named. A pronoun that could point
+at either is a write-time defect, not a sentence to read twice.
+
+Instruction basis: 2026-10-20, the swim cue options. The reply said "his own
+numbers fit that" and "the length he already owns" about the user himself.
+Chaehan: "wording change in all agents: never say He/his if you mean me, say
+You, yours, or Chaehan if neutral text is more appropriate."
+
+### 197. A stated plan is applied, and a variant of a live element is not a new element
+
+Two clauses, one failure: the pass asks about something the message already
+settled, and it treats a detail of a live thing as a new thing.
+
+- **A stated plan is applied, not confirmed.** When Chaehan says what will be
+  done and until when, the artifact that records it is changed in that turn.
+  "Shall I set the row to X" restates the sentence just received as a decision,
+  and makes Chaehan do the same work twice.
+- **An implementation variant is not a new item.** A different wording of an
+  existing cue, a different specimen of the same drill, another way of doing
+  what is already named: the count does not change, the label does not change,
+  and no row is added. The variant is noted where the thing lives.
+- **The tell.** The question about to be asked can be answered by quoting the
+  last message. When it can, it is not asked.
+
+Instruction basis: 2026-10-20, the swim block. "i just told you that i will
+finish october with the old cues isn't it common sense that you don't suggest
+to change it? the bubble beard is just an implementation variant of the
+breathe out focus! isn't that obvious?" The plan table's swing+pullthru row
+moved to 2026-11-01 ~ 2026-11-15, and the bubble beard stands as the form of
+the exhale cue with no new label.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
