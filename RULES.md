@@ -3355,6 +3355,35 @@ pre-refactor prototype folder behind it. Chaehan: "i'm getting crazy. why are
 you not cleaning up once and for all? i asked a clear question: how does the
 deckkit do it, and align to that - that means delete all other stuff?"
 
+### 203. Obsolete code is deleted by the change that obsoletes it
+
+A change is not finished while the code it replaced is still in the tree.
+Deleting it is part of the change, in the same turn, without being asked and
+never left for the user to clean up by hand. "Obsolete" is measured by
+reference, not by feel: nothing calls it, imports it, reads it or runs it.
+
+- Write the deletion list before making the change: the modules it supersedes,
+  the helpers it orphans, config keys nothing reads, comments and help strings
+  naming files that no longer exist, `__pycache__` of removed modules, and the
+  working folders of a prototype the real artifact replaced.
+- Check by reference: grep the name across the repo - a symbol with no caller, a
+  spec key with no reader, a script no pipeline invokes. A mention in a comment
+  or a help string does not make code live; it is part of what gets corrected or
+  deleted.
+- Two programs that do the same thing are one program and a bug. When a
+  refactor moves an implementation, the old home is emptied in the same commit;
+  a copy left beside the moved file is exactly the mess this rule prevents.
+- This does not cover the user's own dated records - history in logs and memory
+  files, and artifacts he named as keeps - which stay.
+
+Instruction basis: 2026-10-20, the deckkit refactor. The migration had been left
+with its superseded copies in place - the 33 MB pre-spec prototype folder, the
+stale `__pycache__`, a template spec key nothing reads, comments and help
+strings naming deleted scripts - and the cleanup happened only after he asked
+for it. Chaehan: "now remember that it is common sense to delete all code which
+has become obsolete automatically, not just leave it there until i have to do
+that manually".
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
