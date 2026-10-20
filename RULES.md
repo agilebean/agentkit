@@ -3150,6 +3150,14 @@ The distinction that matters: a **new** piece of work is a new commit, however s
 
 Instruction basis: 2026-10-20, the E08 deck's page count. Adding the navy agenda made the deck 16 pages; the build test still asserted 15, CI failed, and I fixed the literal and pushed it as its own commit. Chaehan: "you shouldn't push such fixes but git amend them."
 
+### 194. "Replace A with B" removes A
+
+A replacement leaves one thing where there were two. When the instruction says to replace the old with the new, the old is **removed**: restyling it in place, or keeping it beside the new one, is not a replacement and the count is the proof — after the pass there is exactly one of it, not the original plus the new.
+
+This is the same class as consolidation (rule 148) and the revert reading (rule 129): the instruction names a move, and a move has a source and a destination. If the source's fate is genuinely open — it serves something the destination cannot — that is a question to ask *before* the pass, never a duplicate to leave standing.
+
+Instruction basis: 2026-10-20, the E08 agenda. "replace the old agendas with the new one" was carried out as a restyle of all three agenda pages, so the deck came out with two identical navy agendas at the front and a third before the panel. Chaehan: "why isn't it common sense that \"replace the old agendas with the new one.\" means you replace them, so the original one is removed, so we see one agenda only at beginning not two?" The deck now carries one agenda; the other two pages are deleted.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
