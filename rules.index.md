@@ -219,4 +219,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3311–3329 | ### 201. A chart or diagram you produced is shown in the reply, not only named |
 | 3330–3357 | ### 202. "Look at the reference, align to it" is a conformance pass that also deletes the superseded copies |
 | 3358–3386 | ### 203. Obsolete code is deleted by the change that obsoletes it |
-| 3387–3393 | ## Shell: `~/.bash_aliases` (user-global) |
+| 3387–3419 | ### 204. A pushed change is proved on its CI run, not on the machine that wrote it |
+| 3420–3426 | ## Shell: `~/.bash_aliases` (user-global) |

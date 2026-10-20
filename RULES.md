@@ -3384,6 +3384,39 @@ for it. Chaehan: "now remember that it is common sense to delete all code which
 has become obsolete automatically, not just leave it there until i have to do
 that manually".
 
+### 204. A pushed change is proved on its CI run, not on the machine that wrote it
+
+"The tests pass" is a statement about the run GitHub executed, never about a
+run on this machine. After any push to a repository with CI, the work is not
+reported as done until the run itself is read and its conclusion quoted.
+
+- Wait for it: `gh run list --limit 1` gives the id, `gh run watch <id>
+  --exit-status --interval 10` returns its conclusion. Quote the run id (or its
+  URL) and "success" or the failing job in the reply. Never infer it.
+- A local suite, a clean worktree and a signature-identical copy on the same
+  machine are not the CI. CI has another operating system, another Python, and
+  only the files in the commit - a pass there proves the code, a pass here
+  proves the machine.
+- Read a CI crash as environmental before reading it as logic: "No module named
+  X" is a file the commit does not carry (`git ls-files` it), "cannot open
+  resource" is a path only this machine has. Both were the answer in one
+  evening.
+- Its corollary for the code: nothing that a test or a build exercises may
+  depend on an absolute path of one machine. A font, a binary, a data folder is
+  chosen from a candidate list that ends in a portable fallback.
+- If the run cannot be read (no `gh`, no token), say that, with the reason, in
+  place of the claim.
+
+Instruction basis: 2026-10-20, the finance deck. A test importing a project that
+was never committed failed in CI while passing here, and the failure was told to
+the user as "a timing artefact". The next push then died on
+`/System/Library/Fonts/HelveticaNeue.ttc`, which Ubuntu does not have, after a
+clean-worktree run on macOS had been quoted as proof. Chaehan: "you still didn't
+fix the CI error, why did you ignore that?" and then "why do you lie?
+https://github.com/agilebean/socrates/actions/runs/39418107193 i want you to
+check the CI runs now automatically without me helping you. remember in all
+agents".
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
