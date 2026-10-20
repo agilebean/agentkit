@@ -200,6 +200,8 @@ One row per correction whose complaint was that the agent failed at something or
 
 | the E08 page-count test, 2026-10-20 | the CI fix for a page-count assert pushed as its own commit, leaving a red commit in the history | "you shouldn't push such fixes but git amend them" | a correction to work from this session is amended into its commit; only new work starts a new commit | rule 193; the test fix folded into the agenda commit, force-pushed with lease |
 
+| the E08 agenda pages, 2026-10-20 | "replace the old agendas with the new one" carried out as a restyle, leaving two identical navy agendas at the front and one at the end | "why isn't it common sense that \"replace the old agendas with the new one.\" means you replace them, so the original one is removed, so we see one agenda only at beginning not two?" | a replacement leaves one thing where there were two; the count is the proof | rule 194; the deck carries one agenda, the other two pages deleted |
+
 ### The neighbouring family: "can't you see X"
 
 Nine further instances between 2026-09-29 and 2026-10-12 carry the same complaint shape and are listed here rather than tabled, because each is already carried by a rule of its own: the user had the answer in front of the agent, and the agent had not read it.
