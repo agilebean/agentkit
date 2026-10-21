@@ -96,23 +96,35 @@ renderer. Nothing in the renderer knows a session number.
 | The deck | `decks/e08.json` - pages, content, geometry, builds, transitions, outputs |
 | A new deck | copy `decks/_template.json`; its `_howto` lists the commands |
 | The theme | `themes/kubs-dt.json` - palette, named text styles, band, footer, transition |
-| The renderer | `render.py` (`--fast`, `--pages`, `--html-only`, `--no-drive`, `--assets`) |
-| The assets | `assets_build.py --deck N`, from the spec's `assets` block and its providers |
+| The engine (shared) | `src/deckkit/render.py`, run as `python3 src/deckkit/render.py --project projects/kubs_dt/html_deck --deck <deck>` (`--fast`, `--pages`, `--html-only`, `--no-drive`, `--assets`) |
+| The project | `projects/kubs_dt/html_deck/`: `decks/<deck>.json`, `themes/kubs-dt.json`, `deck.css` |
+| The assets (shared providers) | `python3 src/deckkit/assets.py --project projects/kubs_dt/html_deck --deck N`, from the spec's `assets` block - only for a deck built from a Keynote export |
+| A finished deck's images | `projects/kubs_dt/html_deck/assets/<deck>/`, named by the spec's `assets_dir`; its measured rects in `html_deck/boxes/<deck>.json` |
 | The runtime | `runtime.js` - arrows advance, `f` full screen, `?n=<k>` one page, `?sheet=1` for captures |
-| Page types | cover, chart, tiles, rows, divider, figure, screen, agenda, panel, image, shot |
-| The page-type reference | `t1`-`t8.html`, and `decks/probe.json` is those same pages through the renderer |
+| Page types | cover, chart, tiles, rows, divider, figure, screen, agenda, agenda_navy, panel, image, shot, split |
+| The page-type reference | `t1`-`t8.html`, and `decks/probe.json` is those same pages through the renderer; `decks/probe_types.json` holds a page for every type no session deck uses |
 
 - **Geometry is data and is never invented.** A rect is the deck's own 1920x1080 frame;
-  `"@ring"` takes the rect the asset step measured off the deck's export
-  (`asset_boxes.json`). A page drawn from the deck's measurements keeps those numbers.
+  `"@ring"` takes a measured rect from the deck's boxes file (`html_deck/boxes/<deck>.json`,
+  declared by the spec's `boxes`). A page drawn from the deck's measurements keeps those
+  numbers.
+- **A deck whose HTML exists never needs its Keynote file again.** Its images are the
+  finished files in `assets/<deck>/` and its rects are in `boxes/<deck>.json`, both
+  committed; the spec then has no `assets` block, and `assets.py` is not run. A deck still
+  built from an export declares `source` and, if an ink provider is used, `export` - there
+  is no `/tmp` fallback, and a missing source stops the build (`Assets.validate`).
+  `tests/test_deck_provenance.py` enforces it: no spec may name `/tmp`, every asset a page
+  places must be on disk, and every key in `PAGE_TYPES` must have a page in a spec and
+  render.
 - **A render is one browser launch.** `?sheet=1` stacks every page and the PNGs are cut
   on the page geometry: 15 pages in ~4 s against ~2 s a page for separate launches, and
   byte-identical on every static page. The cover's GIF is stilled for captures.
-- **The gate is the deck's own export.** `render.py` diffs every page against
-  `$TMPDIR/kubs_dt/<deck>_ref` (tolerance 0.1% of pixels, max channel difference 64) and
-  exits non-zero when a page is over it or when the reference is missing. The reference
-  goes stale the moment the page order changes - after adding or moving a page, export
-  the deck again before running the gate.
+- **The gate is the deck's own last accepted render.** The HTML deck is the artifact,
+  so nothing is compared against Keynote: the engine diffs every page against
+  `out/html_deck/<deck>/baseline/` (tolerance 0.1% of pixels, max channel difference 64)
+  and exits non-zero when a page is over it. The first full run writes the baseline; a
+  change you have looked at and want is accepted with `--bless`. The question it answers
+  is "did this change move a page?", which is the one a page set can answer alone.
 - **The templates and the renderer must agree.** `decks/probe.json` reproduces
   `t3_rows`, `t4_divider`, `t6_figure` and `t5_screen`; `bash render.sh` renders the
   templates and the two are compared pixel for pixel. A change to `deck.css` that breaks
