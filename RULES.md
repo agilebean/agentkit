@@ -633,6 +633,17 @@ artifact's content in detail in the chat reply.
 
 Failure mode: twins frozen at an old version while their sources advance.
 
+A record is not exempt because its file already existed and only gained a
+section: a session feedback entry, a measurement row, a booking fact. The
+same-turn rule covers every carrier, and the completion report proves it —
+the twin's title and last-updated timestamp beside the markdown's. A
+workflow that hangs off the twin (the KUBS prep-hours refresh hangs off the
+session feedback) runs behind that write, in the same pass.
+2026-10-21: Session 7's feedback sat in its markdown from 2026-10-19 while
+the Evernote note still ended at Session 6, and the hours refresh never
+fired; Chaehan, "didn't i give session feedback for s7? it's not in the
+evernote yet."
+
 ### 29. Branch proposals must cover every unit of the span they commit to
 
 When proposing if-then branches for stays, bookings, schedules, or any
