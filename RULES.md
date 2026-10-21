@@ -3444,6 +3444,39 @@ regenerate e08 even though it already exists at '.../KUBS DT WS2026 E08.html'
 which should not be touched?" The write is now `--deliver`, and a run without it
 prints that the session-folder copy was not written.
 
+### 205. A build modelled on a master takes the master's whole schema, not the fields the first draft needed
+
+When a deck, a pipeline or a config is built "like <master>", the master is a
+specification of the *pipeline*, not only of how the result looks.
+
+- Diff the master before the first build: every key of its spec, its theme and
+  its output block. Each key either appears in yours or is named as not
+  applicable. A key missing by accident is a capability the build silently
+  lacks, and nobody sees it until the artifact is opened somewhere else.
+- The output block is part of the schema. A master whose spec names a single
+  file hands over one self-contained artifact. The same engine, with that key
+  absent, writes a page whose stylesheet and images sit beside it and break as
+  soon as the file travels alone.
+- Inventing a key where the master has one is how a capability disappears: an
+  `html` beside the master's `single` looked like a nicer file name and quietly
+  dropped the embedding.
+- Material the master keeps inside its project (assets, boxes, baseline) does not
+  belong in a generated output folder. A clean checkout must still build.
+- Do the diff mechanically, on key sets, and quote it. "Like the master" is then
+  a list to work through, not a feeling about the look.
+
+Instruction basis: 2026-10-21, the finance deck. e08 had been the master since
+the start - its page types, its colours, its animation classes, its asset
+provider. Its `out` block carries `dir` and `single`; the finance spec I wrote
+carries `dir` plus an `html` key of my own. The pages were copied faithfully and
+the delivery path was not, so the one file Chaehan opened had no styles and no
+pictures. Chaehan: "i don't understand why this html doesn't embed everything
+even though we used the same deckkit as for kubsdt" and then "i said that e08 was
+the master for this build which embedded all assets. why did you ignore that and
+do a totally different rendering method? introspect that and put into agentic_ai.
+we need to learn why using the same method for a given clear master file and
+clear spec is not common sense for you".
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:

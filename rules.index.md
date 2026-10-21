@@ -221,4 +221,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3358–3386 | ### 203. Obsolete code is deleted by the change that obsoletes it |
 | 3387–3419 | ### 204. A pushed change is proved on its CI run, not on the machine that wrote it |
 | 3420–3446 | ### 205. A verification pass never writes the artifact the user presents from |
-| 3447–3453 | ## Shell: `~/.bash_aliases` (user-global) |
+| 3420–3479 | ### 205. A build modelled on a master takes the master's whole schema, not the fields the first draft needed |
+| 3480–3486 | ## Shell: `~/.bash_aliases` (user-global) |
