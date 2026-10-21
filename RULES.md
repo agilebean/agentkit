@@ -3417,6 +3417,33 @@ https://github.com/agilebean/socrates/actions/runs/39418107193 i want you to
 check the CI runs now automatically without me helping you. remember in all
 agents".
 
+### 205. A verification pass never writes the artifact the user presents from
+
+A run that exists to check something renders, measures and reports. It does not
+write the file a person consumes — the deck in the session folder, the deck in a
+shared drive, the PDF a teaching assistant prints, the note a class reads.
+Writing that file is a delivery, and a delivery is the run's stated purpose.
+
+- Make the write opt-in in the tool. A command whose default writes to a shared
+  location takes a flag for the write, and its plain form stops at the local
+  render. The default is what bites: the convenient command is the one reached
+  for during a check.
+- Prove the deliverable by rendering it back and diffing it against the local
+  pages; prove the change itself by the local page diff. Neither needs the write.
+- After an unasked write: say so in the first sentence, with the time, what the
+  content check showed, and where the previous version can be recovered (the
+  service's version history). Never report it as a verification.
+
+Instruction basis: 2026-10-21, sprint 1 of the KUBS keynote retirement. E08's
+images moved from `/tmp` into the repository, and `render.py`'s full run was
+executed to prove the delivery path — with the write as the default, so it
+overwrote `KUBS DT S8/KUBS DT WS2026 E08.html` at 17:18:34, the deck the course
+is presented from. Three earlier renders in the same pass had used `--no-drive`
+and answered the question already. Chaehan: "i don't get it why and where did you
+regenerate e08 even though it already exists at '.../KUBS DT WS2026 E08.html'
+which should not be touched?" The write is now `--deliver`, and a run without it
+prints that the session-folder copy was not written.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:

@@ -96,7 +96,7 @@ renderer. Nothing in the renderer knows a session number.
 | The deck | `decks/e08.json` - pages, content, geometry, builds, transitions, outputs |
 | A new deck | copy `decks/_template.json`; its `_howto` lists the commands |
 | The theme | `themes/kubs-dt.json` - palette, named text styles, band, footer, transition |
-| The engine (shared) | `src/deckkit/render.py`, run as `python3 src/deckkit/render.py --project projects/kubs_dt/html_deck --deck <deck>` (`--fast`, `--pages`, `--html-only`, `--no-drive`, `--assets`) |
+| The engine (shared) | `src/deckkit/render.py`, run as `python3 src/deckkit/render.py --project projects/kubs_dt/html_deck --deck <deck>` (`--fast`, `--pages`, `--html-only`, `--assets`, and `--deliver` to write the session-folder file — a check never writes it) |
 | The project | `projects/kubs_dt/html_deck/`: `decks/<deck>.json`, `themes/kubs-dt.json`, `deck.css` |
 | The assets (shared providers) | `python3 src/deckkit/assets.py --project projects/kubs_dt/html_deck --deck N`, from the spec's `assets` block - only for a deck built from a Keynote export |
 | A finished deck's images | `projects/kubs_dt/html_deck/assets/<deck>/`, named by the spec's `assets_dir`; its measured rects in `html_deck/boxes/<deck>.json` |
@@ -125,6 +125,16 @@ renderer. Nothing in the renderer knows a session number.
   and exits non-zero when a page is over it. The first full run writes the baseline; a
   change you have looked at and want is accepted with `--bless`. The question it answers
   is "did this change move a page?", which is the one a page set can answer alone.
+- **A pass renders; only a delivery delivers.** `render.py` writes nothing into the
+  session folder unless `--deliver` is passed, because a check that also writes
+  overwrites the deck being taught from (agentkit `RULES.md` 205; 2026-10-21, E08).
+  The delivered file is proved by rendering it back and diffing it against the local
+  pages; the change itself is proved by the baseline diff.
+- **Every regeneration writes a row to `projects/kubs_dt/deck_regeneration_times.md`.**
+  The row carries the request time, the ready time, the end-to-end wait, the machine
+  time inside it, and any pause spent on a question — the retirement's final report is
+  built from that file, and it measures what the lecturer waits, not what the renderer
+  computes. A first row reconstructed from the run clock says so.
 - **The templates and the renderer must agree.** `decks/probe.json` reproduces
   `t3_rows`, `t4_divider`, `t6_figure` and `t5_screen`; `bash render.sh` renders the
   templates and the two are compared pixel for pixel. A change to `deck.css` that breaks
