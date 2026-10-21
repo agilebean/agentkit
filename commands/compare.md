@@ -24,9 +24,9 @@ Present the table it prints **unchanged**, at the top of the reply:
   unit per two full strokes (`BENCHMARK_REPORTED_STROKES_TO_EFFECTIVE`), so
   DPS = distance / (reported × 2) and SR = (reported × 2) / rep wall minutes.
   Never quote the raw count as strokes per minute.
-- Main-set swim time is the sum of the reps' own wall seconds. Rest between
-  reps is the watch span minus that swim time; they are never the same number
-  and rest is never called swim time.
+- Main-set swim time is the sum of the main-set reps' own wall seconds
+  (cooldown excluded). Rest between reps is the watch span minus that swim
+  time; they are never the same number and rest is never called swim time.
 
 Then add 3–5 bullets reading the numbers: which metric moved at which effort,
 whether a pace change came from stroke length (DPS) or turnover (SR), and what
