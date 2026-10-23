@@ -11,7 +11,9 @@ Everything lives in the Drive folder "1 Projects/KUBS/KUBS DT/KUBS DT Grading":
 - "KUBS DT solo presentations grading.md" - the table: scheme on top, criteria scores (Skill, Insight, Method; 1-5, 5 best), weighted averages with class SDs, cluster column (A to E, legend in the file), grade column (A+ to C+), one evidence line per student,
 - "KUBS DT solo presentations grading curve.png" - the rendered curve,
 - "2026-10-19 KUBS DT S7 presentations grading.md" - the calibration file of 2026-10-19: S3 Solo, S6 Habits and S7 Jobs in one place, with the criteria, weights and bands the later reads use,
-- "2026-10-22 KUBS DT S8 final presentations grading.md" - the final of 2026-10-22: the five teams in the E08 agenda slide's order with the members' registered names and student numbers, and the per-team read table that is filled in after the session. This is the graded team project, 65 percent of the course grade.
+- "2026-10-22 KUBS DT S8 final presentations grading.md" - the final of 2026-10-22: the five teams in the E08 agenda slide's order with the members' registered names and student numbers, and the per-team read table. This is the graded team project, 65 percent of the course grade.
+- "2026-10-22 KUBS DT S8 final presentations - transcript.md" - the session recording (`~/Desktop/229-332.mp4`, 47 min 8 s) transcribed: teams 3, 4 and 5 only, timestamped, speaker labels left out because the app's diarization is unusable.
+- "2026-10-22 KUBS DT S8 final presentations - full read.md" - the evidence behind the S8 numbers: a section per team with what the room saw, the slides as they appeared, the four criteria with their reasons, and a member table that states how certain each attribution is.
 
 The grading files carry a date in the name, the day the presentations happened (solo 2026-10-05, S7 2026-10-19, the S8 final 2026-10-22); the earlier half of this skill's "no date in file names" guard is superseded for this folder on Chaehan's word of 2026-10-19.
 
@@ -34,7 +36,20 @@ The scores live in two places: the md table and the `ROWS` list at the top of `g
 
 - A family 60 percent (15 of 25 students), B family 40 percent, C seat reserved for clear negative outliers (empty in the first class).
 - Granular: A+ is 3.3 and up, A is 3.0, A- is 2.3 to 2.7. The flat 2.0 band splits by what the result rests on: B+ the person's response, B a design or a decision, B- the student's own effort.
-- Communication is not scored from the transcript (visuals and delivery do not transcribe). The solo sprint stays ungraded; the table is calibration for the course grade.
+- Communication is scored only where the session was recorded: 10 percent, the fourth criterion, on the 30/30/30/10 weights Chaehan set on 2026-10-23. It reads what the room saw - a scenario acted out where an explanation would have taken longer, narration that holds the audience, how the time was spent. In S3, S6 and S7 it stays unscored, because visualization and delivery leave no trace in a transcript. The solo sprint stays ungraded; the table is calibration for the course grade.
+
+## Reading a session recording
+
+Measured on the S8 final, 2026-10-23, 47 minutes of 720p video:
+
+    ffmpeg -y -i VIDEO -vn -ac 1 -ar 16000 -c:a pcm_s16le audio16k.wav          # 1.5 s
+    open -a "Whisper Transcription.app" "2026-10-22 ... teams.wav"               # the app's default model is parakeetKitPro / nvidia_parakeet-v3
+
+The app transcribes in about 24 s for 47 minutes of audio. Read the result out of its database, not the UI: `~/Library/Containers/com.goodsnooze.MacWhisper/Data/Library/Application Support/MacWhisper/Database/main.sqlite`, tables `session` (title, modelIdentifer, playbackDuration, timeTakenToTranscribe) and `transcriptline` (orderIndex, start, end in ms, speakerId, text). Open it read-only (`sqlite3 "file:PATH?mode=ro"`) while the app runs.
+
+Two limits to state in any file that leans on it: the diarization merges the professor, the guests and several students into one cluster, so drop the speaker labels and keep turn changes; and no recording holds a name-to-face key unless a team introduces itself or its title slide lists the members.
+
+For the screen: one frame every 4 s, cropped to the projection area, upscaled 2x, read with Apple's recogniser through a small Swift tool (`import Vision; VNRecognizeTextRequest`), then grouped into runs of similar text. That produces the slide timeline and the slide count. Verify the crop against one full frame first - the projection area is per camera position, not a constant. Full frames are still needed for what OCR cannot say: who stands at the front, what they wear and hold, and whether the deck was in slideshow or editing view.
 
 ## Guards
 
