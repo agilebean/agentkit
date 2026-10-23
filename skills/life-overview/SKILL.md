@@ -37,6 +37,13 @@ statement about the user's life. The result moves the item to done with its date
 and numbers, and the missing line goes into the topic's memory file in the same
 pass.
 
+Every cost and hour figure is recomputed in that pass from the record's own
+parts, never copied with its label left behind (RULES.md 208). A total and its
+parts are added up against each other, and the sentence says what the figure
+contains: "15.78 hours for each of the eight lectures, the pre-course reading and
+the course-level work included", not an average whose scope sits in another
+file.
+
 ## 2. Timeline graphic (required, top of the note)
 
 1. Copy the spec shape from the previous run: `docs/assets/<date>-life-overview-timeline.json`.

@@ -3534,6 +3534,35 @@ as open. It had been taken on 2026-10-20 and the series sat in the Evernote note
 "Cholesterol Blood Test Summary". Chaehan: "why didn't you get that i already had
 the cholesterol response blood test? don't you read that in my evernote?"
 
+### 208. A derived figure is recomputed for the use at hand, and the parts are checked against the total
+
+A number carried out of a record is a claim to verify, not an answer to copy,
+and that holds when the record is the agent's own earlier output.
+
+- **The sum is part of the read.** A source that holds a total and its parts is
+  checked by addition: the parts add up to the total, and a part that does not
+  is explained before anything is written.
+- **An average leaves with its numerator, denominator and contents.** "10.18 h
+  per lecture" was 71.25 h over seven lectures: lecture-only prep, with the
+  pre-course and course-level hours left out and the eighth lecture, already
+  delivered, left out too. Put into a sentence that answers "what does one
+  lecture cost him", it answered a different question. The figure is recomputed
+  from the parts for the use the artifact puts it to, and the sentence says what
+  is inside it.
+- **A term you do not recognize in a ledger is read in that ledger's own
+  vocabulary before you search for the literal string.** A cost sheet with a
+  fixed row and a per-lecture row makes "fix cost" the fixed cost. Searching the
+  file for the exact words finds nothing and produces a question the user has
+  already answered.
+
+Instance, 2026-10-23: the life overview stated 10.18 h per lecture while the same
+note carried 126.25 h in total and 87.25 h across the eight delivered lectures.
+Chaehan: "the calculation of 10.18 hours per lecture is wrong, we had 8
+documented ones and you must add the fix cost", then "you said the total is over
+126 and 87 is the 8 lectures. why don't you look at the current calculation
+evernote to see that?" and "isn't that common sense?" The per-lecture figure is
+15.78 h: 126.25 over eight.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
