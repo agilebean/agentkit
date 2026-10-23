@@ -222,4 +222,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3398–3430 | ### 204. A pushed change is proved on its CI run, not on the machine that wrote it |
 | 3431–3457 | ### 205. A verification pass never writes the artifact the user presents from |
 | 3458–3490 | ### 205. A build modelled on a master takes the master's whole schema, not the fields the first draft needed |
-| 3491–3497 | ## Shell: `~/.bash_aliases` (user-global) |
+| 3491–3518 | ### 206. Prose never sits in a crowded last column; the evidence takes its own full-width line |
+| 3519–3525 | ## Shell: `~/.bash_aliases` (user-global) |
