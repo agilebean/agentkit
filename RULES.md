@@ -3488,6 +3488,34 @@ do a totally different rendering method? introspect that and put into agentic_ai
 we need to learn why using the same method for a given clear master file and
 clear spec is not common sense for you".
 
+### 206. Prose never sits in a crowded last column; the evidence takes its own full-width line
+
+A table that ends in an explanation column is the defect this rule names. With
+several score or short columns ahead of it, the renderer gives the prose the
+least width, so every row grows tall enough to fill the screen and the evidence
+is read down a narrow strip.
+
+- Score columns carry numbers only. The reason goes below the table, one
+  full-width line per row, opened by that row's own label: `- **3 · Malea** — ...`.
+- The label repeats the table's identifier (number, short name, registered
+  name), so the line can be matched to its row and searched.
+- Markdown tables cannot merge cells. The full-width line under the table is
+  the rendering-safe form of "one row spanning to the last column"; an HTML
+  table with `colspan` is used only when the target renderer is known to
+  support it.
+- A two- or three-column table whose only wide column is the content itself
+  (Time | What happened, Step | Details) is not this shape: there the prose
+  column is the point and has the room.
+- The same table shape elsewhere is fixed in the same pass, not only where the
+  user pointed at it.
+
+Instruction basis: 2026-10-23, the S8 grading sheet, after the same correction
+had been given before. Chaehan: "even though i said it many times, you still
+make the last col not wide enough so the whole table stretches endlessly
+vertically. so to solve that, make one row spanning from second to last col
+where you put evidence in. remember that and find other .md files where you have
+the same last col with lots of text."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
