@@ -30,6 +30,13 @@ Read, in order — memory is ground truth (rule 35):
   `virtualfriend-architecture.md`, `startup.md`, `optimize-my-life.md`
 - `git log --oneline -15` — what moved since the last overview
 
+Then, for every item the memory files call open, search Evernote for the result
+before it reaches the note (RULES.md 207): the test, the form, the booking. A
+memory line can be older than the record, and publishing it as open is a false
+statement about the user's life. The result moves the item to done with its date
+and numbers, and the missing line goes into the topic's memory file in the same
+pass.
+
 ## 2. Timeline graphic (required, top of the note)
 
 1. Copy the spec shape from the previous run: `docs/assets/<date>-life-overview-timeline.json`.

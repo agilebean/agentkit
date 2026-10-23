@@ -64,6 +64,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 *Vocabulary*
 
 - **Container words that name a list instead of being one:** catalogue, inventory, taxonomy, matrix, framework, pipeline, mechanism, protocol, lever, modality. Name the thing: "the three filters", "how it works".
+- **Travel and transport words borrowed for ordinary work:** lane, leg, runway, track. A search for a partner is not a lane, a return flight is not a leg, a period of weeks is not a runway. Name the thing. The user, 2026-10-23: "still a lot of robotic wording ... the words lane and leg".
 - **Abstractions where a person or an action fits:** artifact, deliverable, learnings, insight, alignment, journey, problem space, solution space, touchpoint, friction, granularity, altitude ("at the right altitude"), needs-first, end-to-end.
 - **Consultant verbs:** leverage, utilize, facilitate, ideate, operationalize, socialize, surface (a need), unpack, double-click on, align on, drive (a change), enable, empower, front-load, back-load ("front-loads quality": say what comes first, "the hard sessions come first in the week").
 - **Nominalizations:** "the collection of", "the utilization of", "the implementation of", "an improvement in". Use the verb: "we collect", "you improve".
@@ -3515,6 +3516,23 @@ make the last col not wide enough so the whole table stretches endlessly
 vertically. so to solve that, make one row spanning from second to last col
 where you put evidence in. remember that and find other .md files where you have
 the same last col with lots of text."
+
+### 207. An item published as open is checked against the user's own record first
+
+A memory file is an index, never the whole record. Before a pass reports that
+something has not happened (a test not taken, a form not sent, a booking not
+made), it searches the user's own record for the result: the Evernote note, the
+app, the file the work lands in. One search per open item. The memory entry that
+calls it open may simply be older than the result, and publishing it costs the
+user a correction that reads as the agent not reading his notes.
+
+The result moves the item to done with its date and numbers, and the record that
+was missing earns a line in the topic's memory file in the same pass.
+
+Instance: 2026-10-23, the life overview listed the cholesterol response blood test
+as open. It had been taken on 2026-10-20 and the series sat in the Evernote note
+"Cholesterol Blood Test Summary". Chaehan: "why didn't you get that i already had
+the cholesterol response blood test? don't you read that in my evernote?"
 
 ## Shell: `~/.bash_aliases` (user-global)
 
