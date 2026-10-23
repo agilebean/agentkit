@@ -70,7 +70,14 @@ file.
 
 Style rules that apply: RULES.md 19 (answer first, plain words), 20 (date first
 in title), 40 (anchor every time claim to today), 42 (bullets everywhere),
-2 (no em dashes). No thousand separators in numbers.
+2 (no em dashes), **195 (the note is written to Chaehan as "you")**. No thousand
+separators in numbers.
+
+The note is addressed to him, so every sentence says "you" and "your", never
+"he", "his" or "Chaehan". The previous snapshot is a reference for the section
+shape and the timeline spec, never for its voice: a snapshot written before
+2026-10-20 is in the third person and copying it reintroduces the defect
+(`memory/agentic_ai.md` failure 104).
 
 ## What went well — selection rule
 

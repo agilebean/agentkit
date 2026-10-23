@@ -42,3 +42,4 @@ flag	\b(?:contrast|conflict|tension|split|difference|gap)\s+(?:reconciles|resolv
 flag	\b(?:carry|carries|carrying)\b	write "has" or name the actor
 flag	\b(?:question|point|thing|part|one)s? you (?:name|named|raise|raised|mention|mentioned|ask|asked)\b	state the content; the exchange is not the sentence's subject
 flag	\b(?:leg|legs|runway|swimlane)\b	name the thing: the search, the flight, the weeks before
+warn	\b(?:he|his|him)\b	text for Chaehan says "you"; a record names Chaehan
