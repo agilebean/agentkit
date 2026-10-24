@@ -529,6 +529,27 @@ batch-confirmed, then rejected ("salience is a wrong hypothesis"); the
 user's actual point was the plain recurrence fact, which belongs in the
 health memory file.
 
+**Routing check before any psych-file entry.** Before drafting a
+_psych_obs.md entry, test whether the material is the user's own account
+of himself — a stated reason, a habit, a stopping rule, an impression, a
+decision he made and why. His own report is a fact and goes into the
+domain memory file, quoted where the wording carries the reasoning; it
+never becomes a psych observation, and no confirmation question follows,
+because there is nothing to confirm. The psych file receives only
+cross-domain observations the agent itself formed and the user endorsed.
+Restating his account there is the same wrong-file error as putting a
+behavior rule in a memory file.
+
+Failure: on 2026-10-24 his deferral ("i had procrastinated since
+2026-10-16 when i started to have less preparation time for my lectures
+to register"), his stopping rule ("it would be overoptimization if i
+tried to negotiate more and longer for maybe 5-10% more discount"), and
+his read on three profiles ("their photos could also be fake or meant to
+lure me in") were put to him as _psych_obs.md candidates; he answered
+"why did you choose the wrong memory file, introspect. there is partner
+search. this is common sense!" They belong under Approach & patterns in
+partner-search.md.
+
 ### 23. "General agent instructions" always means agentkit
 
 When the user refers to "the general agent instructions" or "the overall
@@ -2341,9 +2362,13 @@ Failure mode, 2026-10-07: the Kobe beef block said "nothing rated 3.5 or higher 
 
 ### 123. Anything the user reads is written in a language he reads; a Japanese-only artifact is unreadable
 
-The user reads **German, English and Korean**. Any other language is at most a search key, never the content. A foreign name may appear only beside its English name, "Sakurabashi exit (桜橋口)", where the Japanese form is what Google Maps resolves; and a graphic whose labels are only Japanese is a broken artifact even when everything else about it is correct, because the reader cannot tell the ticket gate from the taxi stand and cannot check the agent's reading of it. The rule covers chat replies, memory files, Evernote notes and every embedded image. When the only available map, sign, screenshot or form is in a language he does not read, build a readable version before recording or attaching it (Google Maps with `hl=en`, or the same image redrawn with English labels) and keep the untranslated original out of the artifact; a link to it may stay, with a note that its content is unreadable.
+The user reads **German, English and Korean**. Any other language is at most a search key, never the content. A foreign name may appear only beside its English name, "Sakurabashi exit (桜橋口)", where the Japanese form is what Google Maps resolves; the English or romanized form leads and the characters follow in parentheses, "Kitahama (北浜)", never "北浜 (Kitahama)", because the left-hand text is what the eye takes and a line that opens with characters is unreadable at a glance even when the romanization is technically present; and a graphic whose labels are only Japanese is a broken artifact even when everything else about it is correct, because the reader cannot tell the ticket gate from the taxi stand and cannot check the agent's reading of it. The rule covers chat replies, memory files, Evernote notes and every embedded image. When the only available map, sign, screenshot or form is in a language he does not read, build a readable version before recording or attaching it (Google Maps with `hl=en`, or the same image redrawn with English labels) and keep the untranslated original out of the artifact; a link to it may stay, with a note that its content is unreadable.
 
 Failure mode, 2026-10-09: asked for the Imperial Hotel Osaka shuttle stop, the agent embedded the hotel's Japanese bus-stop map, Japanese labels and all, in the booking note, having overlooked that the same page serves the map in English. The user: "you recorded the japanese versions of images which i cannot read. didn't you register that i can't read japanese?" Told to use the English images from the URL, the agent then asserted the English page had no map and substituted a Google Maps satellite capture of its own making; the user rejected that too, because the marked spot sat inside the station rather than at the exit the map names. Resolution: the English map from the URL went into the note, the satellite capture was removed, and the language fact was written into `memory/_misc.md`.
+
+**The order is the part that fails, because the source does.** Names are collected from Japanese pages and signage, so they arrive in Japanese and the romanization is appended afterwards as a courtesy. The preventive pass, before a reply or an artifact ships: walk its text for Japanese characters and for each string confirm the romanized form stands in front of it in the same cell, bullet or line; any string with no romanization, or with the characters leading, is fixed there. A stored-body read is not the test, and neither is an Evernote search hit — read the artifact's own rendered text the way he will.
+
+Failure mode, 2026-10-23: a March 2027 Osaka long-stay answer named places in the order the sources gave them — "中央屋内プール (Shimanouchi)", "今池/今船" with no romanization at all, "飛田新地料理組合", "八戸ノ里" — and the note built from it carried the same shape. The user: "you forgot again to put the english name (searchable in google maps) before the japanese one in parentheses as i cannot read them anyways." The note was corrected the same day to "Chuo Indoor Pool (中央屋内プール)", "Imafune (今船)", "Yaenosato (八戸ノ里)", and the English-first order was adopted for every new section; the note's older sections still lead with characters and wait for a separate normalization pass.
 
 ### 124. Before asking the user to supply something, search the record — he may already have given it
 
