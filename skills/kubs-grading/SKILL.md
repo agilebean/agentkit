@@ -14,6 +14,7 @@ Everything lives in the Drive folder "1 Projects/KUBS/KUBS DT/KUBS DT Grading":
 - "2026-10-22 KUBS DT S8 final presentations grading.md" - the final of 2026-10-22: the five teams in the E08 agenda slide's order with the members' registered names and student numbers, and the per-team read table. This is the graded team project, 65 percent of the course grade.
 - "2026-10-22 KUBS DT S8 final presentations - transcript.md" - the session recording (`~/Desktop/229-332.mp4`, 47 min 8 s) transcribed: teams 3, 4 and 5 only, timestamped, speaker labels left out because the app's diarization is unusable.
 - "2026-10-22 KUBS DT S8 final presentations - full read.md" - the evidence behind the S8 numbers: a section per team with what the room saw, the slides as they appeared, the four criteria with their reasons, and a member table that states how certain each attribution is.
+- the mirror in the socrates repo: `projects/kubs_dt/grading/` holds the five grading documents, `_log.md` and the LMS export as versioned copies. Drive stays the working copy; a pass that edits one of them copies it there in the same turn, and the renders, the recordings and the submitted PDFs stay in Drive.
 
 The grading files carry a date in the name, the day the presentations happened (solo 2026-10-05, S7 2026-10-19, the S8 final 2026-10-22); the earlier half of this skill's "no date in file names" guard is superseded for this folder on Chaehan's word of 2026-10-19.
 
@@ -49,6 +50,12 @@ Measured on the S8 final, 2026-10-23, 47 minutes of 720p video:
     open -a "Whisper Transcription.app" "2026-10-22 ... teams.wav"               # the app's default model is parakeetKitPro / nvidia_parakeet-v3
 
 The app transcribes in about 24 s for 47 minutes of audio. Read the result out of its database, not the UI: `~/Library/Containers/com.goodsnooze.MacWhisper/Data/Library/Application Support/MacWhisper/Database/main.sqlite`, tables `session` (title, modelIdentifer, playbackDuration, timeTakenToTranscribe) and `transcriptline` (orderIndex, start, end in ms, speakerId, text). Open it read-only (`sqlite3 "file:PATH?mode=ro"`) while the app runs.
+
+For a silence check - the break between blocks, a cut in the file - run it on the audio track, never on the video:
+
+    ffmpeg -hide_banner -nostats -i VIDEO -vn -af silencedetect=noise=-35dB:d=20 -f null -
+
+Measured 2026-10-23 on the two S8 files: 36 s for 73 minutes of audio, against 316 MB of 720p the same scan decodes without `-vn`. A foreground shell call is capped at 20 s and a larger timeout does not raise the cap, so the first cap means move it to the background; two foreground attempts in a row spend a minute to learn what one taught.
 
 Two limits to state in any file that leans on it: the diarization merges the professor, the guests and several students into one cluster, so drop the speaker labels and keep turn changes; and no recording holds a name-to-face key unless a team introduces itself or its title slide lists the members.
 
