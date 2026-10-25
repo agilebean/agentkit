@@ -3654,6 +3654,54 @@ the answers would have entered the baseline as design. Chaehan: "you should
 not specify technical decisions as these are business requirements! you can
 suggest them but maybe the ai coding agent knows better solutions."
 
+### 211. A product is available when its page in the user's region sells it, never because a price renders
+
+Availability is read off the product page's own notice, not off a listing, a
+rating, a search hit or a price. iHerb, Amazon and Coupang all render price,
+reviews and a full label for goods they refuse to ship to the shopping region;
+the refusal is one line on that page — "This product is not available in your
+region." — usually near the bottom, under the label and warnings. The procedure
+for any availability claim: open the product page itself, read the whole page
+for the regional notice, and quote the line. Only then state the price and the
+per-day cost. A listing with no price beside it is a hint that this notice is
+present, not proof of a listing. An availability claim carries the product URL
+beside it or it is not made, and "it was available last time" is not usage data
+for today.
+
+Instance, 2026-10-25, the supplement search. Chaehan said supplement could
+not be bought at iHerb or Coupang; the reply reported it "in stock at iHerb
+Korea" on the strength of a category listing, and cited ₩38,876 off the NOW
+product page. That page also read "This product is not available in your
+region." Chaehan: "how could you not read 'This product is not available in
+your region.' on the supplement page in kr? isn't that common sense?"
+
+### 212. An effect size is read against the threshold its source publishes before any skepticism is attached to it
+
+A paper that reports a pooled effect usually also reports what a meaningful
+change is — a minimal clinically important difference (MCID), a severity band,
+a responder cut-off. Compute where the pooled estimate lands against those
+numbers first, and state that landing in the same breath as the estimate. Bias
+limits, funding, trial count and heterogeneity come after, as a separate
+statement of confidence. Skepticism lowers confidence; it never cancels a
+number already shown to clear the source's own bar. Quoting "+8.9 points" and
+then calling the result "implausibly high" in the next paragraph is a
+self-contradiction when the same paper sets the threshold for a clinically important change at 8.4
+ — the reader is left with two incompatible readings of one figure.
+
+The same discipline governs the arithmetic around a dose. A strength on a label
+is a salt weight, and a comparison between products is made on the free active:
+3 g of magnesium citrate holds ~0.48 g of magnesium, while 3 g of magnesium oxide holds ~1.8 g.
+ Getting that backwards reverses the
+recommendation.
+
+(private) (private)
+
+
+ (private)
+
+
+
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
