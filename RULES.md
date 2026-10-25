@@ -3626,6 +3626,34 @@ registered at J Noble on 2026-10-24 and read the pool as the best he had
 seen: "this is important to improve your search so it is not random but
 more systematic to find what i want."
 
+### 210. A requirements document names outcomes, never the technology that delivers them
+
+A spec, a backlog, a set of user stories: every line is a statement about
+observable behaviour or a measured quality. No stack, framework, host,
+database, protocol or library appears as a requirement. Asking about the
+platform is legitimate, and recording the answer is legitimate, but it is
+the builder's decision, not a requirement — it goes in a section labelled
+advisory and non-binding, outside the traceability matrix, with the
+requirements it stands for written separately ("one codebase serves the
+app and the shared web page", not "Electron").
+
+Classify by what the agent does with the line, not by a quality-attribute
+taxonomy. A story is a unit of work and of demo; an acceptance criterion is
+one pass/fail test; a business rule is an invariant; a non-functional
+requirement carries a metric and a target and is measured, never
+demonstrated. A layout statement ("the overlay is centred") is functional:
+it is observable and testable, so it is an acceptance criterion, not a
+non-functional requirement. And an "Evernote does it differently" note is
+neither: it is reference material for the builder, and it needs a
+screenshot, because a product name is not machine-readable.
+
+Instance, 2026-10-25, the spec for Denis Huber's Evernote replacement. The
+intake questions were framed around stack and hosting — "Electron + React +
+TypeScript (Recommended)", "Managed backend: Supabase (Recommended)" — and
+the answers would have entered the baseline as design. Chaehan: "you should
+not specify technical decisions as these are business requirements! you can
+suggest them but maybe the ai coding agent knows better solutions."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
