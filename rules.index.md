@@ -223,4 +223,7 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3431–3457 | ### 205. A verification pass never writes the artifact the user presents from |
 | 3458–3490 | ### 205. A build modelled on a master takes the master's whole schema, not the fields the first draft needed |
 | 3491–3518 | ### 206. Prose never sits in a crowded last column; the evidence takes its own full-width line |
-| 3519–3525 | ## Shell: `~/.bash_aliases` (user-global) |
+| 3545–3561 | ### 207. An item published as open is checked against the user's own record first |
+| 3562–3590 | ### 208. A derived figure is recomputed for the use at hand, and the parts are checked against the total |
+| 3591–3628 | ### 209. An option search starts from the user's outcome and gates, never from the visible brand set |
+| 3629–3635 | ## Shell: `~/.bash_aliases` (user-global) |

@@ -3588,6 +3588,44 @@ documented ones and you must add the fix cost", then "you said the total is over
 evernote to see that?" and "isn't that common sense?" The per-lecture figure is
 15.78 h: 126.25 over eight.
 
+### 209. An option search starts from the user's outcome and gates, never from the visible brand set
+
+A search for options — providers, agencies, vendors, services — is not a
+review of the names that surface first. Build the candidate universe from
+the sources that own the category: official registries and licence lists,
+the category's own program pages, associations, audit and award lists.
+Then screen before scoring: a candidate that fails a hard gate (can it
+legally serve this user, can it operate where the user is, does it have
+the mechanism the outcome needs) leaves the ranking; it is not ranked low.
+
+Score on the attributes the user's binding constraint implies, and carry
+an evidence tier per attribute: published figure, program page, consult
+answer, unknown. **An unknown is a probe item for the next verification
+step, never a penalty** — ranking what publishes numbers above what
+cannot ranks disclosure, not fit. Keep the ranking with its tiers so a
+later fact can flip it visibly, and put the decisive unknown to every
+candidate through the same scripted questions.
+
+Two failure modes this prevents. *Visible-set bias*: the first five brands
+become the universe, and the right provider is never in the list.
+*Verifiability bias*: the provider with the most published data wins a
+comparison whose deciding attribute it does not publish.
+
+Instance, 2026-03 to 2026-10, marriage agencies. The 2026-03-23 note
+"Korean marriage agencies" compared five agencies gathered from blog and
+press pages (their links still carried `utm_source=chatgpt.com`) on tier,
+a star-guessed "pool quality (PhD/abroad)", package size and price; J
+Noble, which later proved to have the only formal study-abroad member
+class, was not in it. The 2026-09-19 benchmark did find J Noble and
+described the program correctly, but ranked on published member counts,
+education percentages, traffic and fee ladders — all of which J Noble
+withholds — so it sat in the elite lane "at higher price and with
+unverifiable counts" while Duo, the most published, was recommended for
+registration and turned out to refuse foreign-passport holders. Chaehan
+registered at J Noble on 2026-10-24 and read the pool as the best he had
+seen: "this is important to improve your search so it is not random but
+more systematic to find what i want."
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
