@@ -8,6 +8,32 @@ full test suite requirement in rule 6. No local instruction can waive this.
 
 **How these rules are written.** A rule states standing behaviour: what to do, and when it applies. It must hold for the next case, not explain the one that produced it. No incident narratives, no transcript of the exchange, no dates or document names from the session that triggered it — that reasoning belongs in the project's `_log.md`, which the rule can point to. One exception: when the user's own wording fixes the standard, quote the shortest fragment that carries it, never the whole exchange. The user, 2026-09-28: "formulate the rules so they are useful to avoid the problem in the future, but not in this specific instance, but generalized."
 
+## The writing standard: every answer is a chain
+
+Every response, note, report and explanation is one reasoning chain, not a list
+of observations. It starts with the external effect, the thing that can be seen;
+goes inward to the mechanism that produced it; and ends on the consequence that
+matters, the one the reader could not have deduced alone. A reply that must lead
+with a verdict leads with the chain's last link, then walks the chain in order.
+
+Concision is chain economy, not word count. Each link appears once, and a clause
+that restates a link is the redundancy however few words it uses. Findings that
+share a cause are one chain, because the second is usually the first's
+consequence. Compose the chain two or three times before it ships: the events in
+the order they arrived, then the joins, then only the links.
+
+This binds every agent and every text, not only the notes. Rule 2 carries the
+writing markers, and rule 213 the worked form with its instance.
+
+Instruction basis, 2026-10-25, "My Swim Training": "it is not only concise but
+exposes a reasoning chain, which starts with the externally observable effects,
+and then goes inward to point to a principle or mechanism, and from there, make
+a deduction to a consequential effect which is of importance ... understand for
+all descriptions, you must think 2-3 times to get the best expression just like
+humans would do." On the placement: "i want that implemented for every response
+from socrates and any other agent!!! to make a rule 213 is not enough!!!!! this
+must be central!!!!"
+
 ### 1. NEVER write to symlinked config paths — always edit the source file
 
 Configuration files under tool-specific directories may be symlinks pointing
@@ -1545,6 +1571,8 @@ The tool is not only for ambiguity. Feeling certain is not a reason to skip it: 
 An option states every effect it will have, including where content it replaces goes. An option that fixes one thing while silently replacing something else asks the user to ratify a rider the decision does not cover: the answer he gives is about the thing asked, and the rider's loss is his to discover later. When an option's execution would move or drop content, the option names the destination, or the rider becomes its own question in the same call.
 
 Failure mode: a decision taken without the question tool, or a question asked in prose at the end of a reply.
+
+**The candidates are the answer when the user asks for options.** A request for cues, wordings or candidates is answered with the candidates themselves, not with one scheme carrying a recommendation and a fallback. Assigning them to slots decides for the user what they asked to decide (rule 214).
 
 **A stop is not a suspension.** A pass that ends early - the cost gate of rule 75, a blocked tool, a handoff - still puts its questions into the question tool in that same turn. Stopping to report and stopping to ask are one act: the reply carries the cost line and the findings, the tool carries the decisions. The stop feels different enough to be read as a report-only turn, and that is when the questions come out as a numbered list at the bottom of the findings; 2026-10-18, E08: the pass stopped at the cost gate with four decisions in prose, and the user: "you should ask the questions with the question tool as always".
 
@@ -3772,6 +3800,14 @@ concise but exposes a reasoning chain, which starts with the externally
 observable effects, and then goes inward to point to a principle or mechanism,
 and from there, make a deduction to a consequential effect which is of
 importance (high elbow catch prevented)."
+
+### 214. A cue is a word the user can hold, not a description of a sensation
+
+A cue is a short word or image carried in the head while the movement runs: "needle", "bubble beard", "hold-forward". A description of what should happen, or of a feeling, is not a cue: "heavy water on the left forearm" names a place and a sensation, and the swimmer has nothing short to repeat to himself. Give the cue as one to three words, and put one line beside it saying what it points at, so the user can choose between candidates.
+
+When the user asks for cues, they are asking for candidates, not a schedule. The options are the answer: do not assign them to reps, sets or phases, and do not turn them into a recommended plan with a fallback. Lay the wordings out and let the user pick.
+
+Instruction basis, 2026-10-26, the aerobic cue reply: the agent had assigned a roll check to rep 1 and a forearm check to rep 2, with a fallback. Chaehan: "don't tell me when to use the cues, give me several options to choose from! forearm is not a cue, needle is".
 
 ## Shell: `~/.bash_aliases` (user-global)
 
