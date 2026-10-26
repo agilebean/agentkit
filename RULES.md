@@ -1639,6 +1639,8 @@ Failure mode: a decision taken without the question tool, or a question asked in
 
 **Batch: one call per change set, not one question per turn.** The tool takes several questions at once, so when a change set opens more than one decision, they all go into a single call — the deliverable's unknown numbers, its order, the scope of the sweep, the wording of a title. Each separate call ends the turn, waits for the user to read and answer, and starts a fresh turn: on 2026-09-26 the S2 run sheet needed three question rounds for one edit set, and the session ran 76 minutes of wall clock over about 15 seconds of machine time. A later round is justified only when an earlier answer opened a fork that did not exist before.
 
+**The option set must contain the shape the user's own structure implies.** A question steers as surely as an action: an option list that offers only variations the agent invented asks him to choose among them. Before writing the options, name the answer the named artifact, folder or record already implies and put it in the list — 2026-10-26, the KUBS final-essay layout was asked with "backup + PDF folder" versus "backup + renamed copies + PDF folder", both of them sibling folders of `final essays/`, and the correct answer — everything inside `final essays/` — was not offered. Chaehan: "isn't that common sense?" Rule 217 carries the placement rule that answer follows.
+
 ### 63. Under uncertainty, always take the latest observation
 
 When information has a time series (test results, prices, rates, measurements, statuses, documents), the latest observation is the basis for any analysis or decision. Order the vintages by date, take the newest, and never use an older one without saying so. Do not pick by convenience and do not average across vintages. This is the user's standing rule, stated 2026-09-21 and marked non-negotiable: "always the latest! you must apply common sense." It applies to every decision under uncertainty.
@@ -3899,6 +3901,106 @@ vanished between the 13:33 version and the current one, and the pass had verifie
 only the 2026-10-25 row before reporting the note updated. Chaehan: "you
 stupidly deleted the training plan!!!!!" The table was restored from version
 930856 and the result checked by the markdown read of the whole plan section.
+
+### 217. A reply is in the conversation's language, and a folder the user names is the only destination
+
+**The language of the answer is the language the user is writing in.** English
+by default, Korean when he writes Korean in that thread. A third language never
+appears in a reply, a report or a summary: not as a heading, not as an aside,
+not as a translation of a term no one asked to have translated. Chinese is not
+one of his languages. This holds for the reply's own voice only — a quoted
+document, a filename or a form field may keep its original script, and rule 123
+governs how foreign text is presented.
+
+**The check is mechanical, because the drift is.** Knowing the rule is not
+enough: it shipped in this file on 2026-10-26 and the next reply came back in
+Chinese anyway. `scripts/wording_lint.py` flags any Han character in the
+writer's own text (inline code and a declared excerpt exempt) and exits 2, so
+the finished reply is written to a temp file and run through it before it is
+sent — the same gate the wording markers already use. Hangul passes: a Korean
+reply is a legitimate thread language.
+
+Instruction basis, 2026-10-26, the KUBS final-essay handoff: the reply came back
+in Chinese. Chaehan: "why do you answer in chinese now? this is terrible."
+`memory/agentic_ai.md` failure 119 carries the cause analysis.
+
+**When he names a folder, everything the pass produces goes inside that
+folder.** The backup is a subfolder of it, and the deliverables sit directly
+beside the originals. A sibling folder invented next to the named one — a
+`<folder> by studentid/`, a `<folder> output/`, a dated copy one level up — is
+not the instruction however tidy it looks: he then has two places to look and a
+rename to undo. Asked to lay out `final essays`, the pass wrote
+`final essays - backup 2026-10-26/` and `final essays by studentid/` beside it
+instead of `final essays/backup 2026-10-26/` and `final essays/<studentid>.pdf`;
+Chaehan: "the folders backup should be in the original folder final essays of
+course, isn't that common sense? and the final essays in that folder directly
+not an extra folder." `memory/agentic_ai.md` failure 120 carries the analysis;
+the structure he named is the frame, and a working copy, a converted copy or an
+intermediate is temp-folder material, never a new top-level folder in his Drive.
+
+### 218. A copy is made only where it can outlive the original, and a correction is a move, not another run of the pass
+
+**A copy beside its original is not a backup.** The word describes surviving the
+loss it protects against: a different machine, a different account, a different
+medium. Inside the same folder — and inside one synced Drive folder above all —
+a duplicate is 195 MB of redundancy, a second thing to keep in sync and delete,
+and it protects nothing, because both copies fail with the same disk or the same
+account. Worse, when the pass itself never modifies the originals, the copy has
+no failure to guard against at all: the correct backup of an untouched input is
+none. If a backup is genuinely wanted, the destination is chosen for what
+threatens the original and named in the reply; a `backup YYYY-MM-DD/` inside the
+folder being processed is the wrong answer to every version of the question.
+2026-10-26, the KUBS final essays: asked to "save these as backup", the pass
+copied 195 MB of originals into `final essays/backup 2026-10-26/` while never
+touching a single original. Chaehan: "you duplicated the backup copies - can't
+you see that? why are you so stupid that you copy the original files instead of
+understanding that this is not necessary as they already exist?"
+
+**A placement correction is a move.** When the user says where something should
+have gone, the fix is `mv`: the artifacts already exist and their content is
+already verified. Re-running the producing pass to land them in the new place
+re-renders every file, rewrites Drive, spends the machine time twice and can
+change the artifacts it was only supposed to relocate. Re-run only when the
+correction changed the *content* rule; test a changed script on one input, and
+relocate the existing outputs. 2026-10-26: the folder-placement correction was
+applied by re-running the whole 26-student conversion, then verifying it, and
+then the backup the script still wrote had to be deleted separately.
+
+**The count is part of the answer.** A turn that visits eighteen shell calls for
+one correction is a turn that did not batch: one call to inspect the destination,
+one script per change set, one read to verify, one commit per repo. Rule 74
+carries the batching standard; this clause is what its violation costs —
+`memory/agentic_ai.md` failure 122 counts the calls and names each redundant
+one.
+
+### 219. A derivative replaces its source in the working folder, and the source's name is the reason it moves
+
+When the user asks for a renamed or merged copy of a set of files, the copy is
+not an addition: it is a substitution, and the question the request leaves open
+is what the source set becomes. The pre-rename files leave the folder the user
+will open. They go where he asked the backup to be — a `backup YYYY-MM-DD/`
+subfolder inside the same folder — because that is what the backup is *for*, and
+because the old filenames are exactly what the rename was undoing. A derivative
+that sits beside its source doubles the listing, and where the source names
+carry information the derivative was built to hide (a student's name where an ID
+is wanted), keeping both defeats the request entirely and exposes the very names
+it was making disappear.
+
+Read the request as one transformation with three positions: sources into the
+backup, derivatives in their place, nothing of the source visible afterwards.
+Before writing, name that end state in one line — "the folder will show 26
+`<studentid>.pdf` and a `backup/` holding the 30 original submissions" — and if
+the user's words do not settle it, that line is the question.
+
+Failure, 2026-10-26, the KUBS final essays: asked to back the folder up and to
+make "a copy that only contains the studentid as filename", the pass produced
+both sets at the top level, then — corrected on placement — deleted the backup
+folder and kept the name-bearing originals in view, which is the exact inverse.
+Chaehan: "you shouldn't delete the backup folder you should delete the duplicate
+copies! why can't you see the obvious thing that i want not those files which
+contain the student names visibly in the final essay folder? this is common
+sense!!" The 30 originals were moved into `backup 2026-10-26/` and the 26 PDFs
+stand alone at the top; `memory/agentic_ai.md` failure 123 carries the analysis.
 
 ## Shell: `~/.bash_aliases` (user-global)
 

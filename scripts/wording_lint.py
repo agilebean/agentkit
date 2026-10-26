@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Check text for the robot markers of RULES.md rule 2.
+"""Check text for the robot markers of RULES.md rule 2, and for a reply written
+in the wrong script.
 
 Usage:
   python3 scripts/wording_lint.py [--markers PATH] FILE [FILE ...]
@@ -9,6 +10,13 @@ reports each hit as `<file>:<line>: <level> '<matched words>' - <fix>`. A
 `flag` hit fails the run with exit 2; a `warn` hit is reported only. The list
 is the checkable subset by design: three-item runs, embedded clauses, headings
 over one sentence and colon-field blocks stay a writer's pass.
+
+The language check is mechanical because the drift is not: a Han character in
+the writer's own text is a `flag` (RULES.md rule 217). Chaehan reads English,
+German and Korean; Chinese in a reply is unreadable to him, and twice in one
+session it went out unchecked. Hangul is left alone - a Korean reply is a
+legitimate thread language. Inline code and a declared excerpt are skipped, so
+a quoted filename or a source's own characters do not trip it.
 
 Every project runs this same list. A project pipeline may wrap the checker for
 its own files (socrates: `projects/kubs_dt/pipeline.py lint --session N`).
@@ -36,6 +44,34 @@ DEFAULT_MARKERS = os.path.join(
 # author's text, and the checker does not read them.
 EXCERPT_OPEN = re.compile(r"^\s*<!--\s*verbatim\s*-->\s*$")
 EXCERPT_CLOSE = re.compile(r"^\s*<!--\s*end verbatim\s*-->\s*$")
+
+# Han characters: the script of a reply that is not being written in English,
+# German or Korean. Kana and Hangul are outside these ranges.
+HAN = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
+
+
+def script_hits(text: str) -> list[tuple[int, str, str]]:
+    """Han characters in the writer's own words: (line, the character, the line).
+
+    Inline code is stripped and a declared excerpt is skipped, so a quoted
+    filename or another author's characters stay out of the check.
+    """
+    hits = []
+    in_excerpt = False
+    for lineno, line in enumerate(text.splitlines(), 1):
+        if EXCERPT_OPEN.match(line):
+            in_excerpt = True
+            continue
+        if EXCERPT_CLOSE.match(line):
+            in_excerpt = False
+            continue
+        if in_excerpt:
+            continue
+        clean = re.sub(r"`[^`]*`", "", line)
+        m = HAN.search(clean)
+        if m:
+            hits.append((lineno, m.group(0), clean.strip()[:90]))
+    return hits
 
 
 def load_robot_markers(path: str = DEFAULT_MARKERS) -> list[tuple[str, re.Pattern, str, re.Pattern | None]]:
@@ -106,6 +142,10 @@ def main(argv=None) -> int:
                 flags += 1
             else:
                 warns += 1
+        for lineno, char, line in script_hits(body):
+            print(f"  {path}:{lineno}: flag '{char}' - Han characters in your own text: "
+                  f"write it in the thread's language (RULES.md 217) | {line}")
+            flags += 1
     print(f"wording_lint: {len(args.files)} file(s), {flags} flag(s), {warns} warn(s)")
     return 2 if flags else 0
 
