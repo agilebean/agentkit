@@ -210,23 +210,24 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3174–3182 | ### 192. An image paints its own rectangle, background included |
 | 3183–3190 | ### 193. A fix to work from this session is amended into that commit, not stacked on top |
 | 3191–3198 | ### 194. "Replace A with B" removes A |
-| 3199–3218 | ### 195. Address the user as "you"; a record names Chaehan, never "he" |
-| 3219–3246 | ### 196. Code is written once, and a second project imports it |
-| 3247–3269 | ### 197. A stated plan is applied, and a variant of a live element is not a new element |
-| 3270–3301 | ### 198. A proposal opens with a header that says it is a plan, and closes with a suggestion to implement it |
-| 3302–3325 | ### 199. An option you present may not use a label the scheme does not have |
-| 3326–3347 | ### 200. A quantity that stands for a band is a range; compute its ends, never one representative |
-| 3348–3366 | ### 201. A chart or diagram you produced is shown in the reply, not only named |
-| 3367–3394 | ### 202. "Look at the reference, align to it" is a conformance pass that also deletes the superseded copies |
-| 3395–3423 | ### 203. Obsolete code is deleted by the change that obsoletes it |
-| 3424–3456 | ### 204. A pushed change is proved on its CI run, not on the machine that wrote it |
-| 3457–3483 | ### 205. A verification pass never writes the artifact the user presents from |
-| 3484–3516 | ### 205. A build modelled on a master takes the master's whole schema, not the fields the first draft needed |
-| 3517–3544 | ### 206. Prose never sits in a crowded last column; the evidence takes its own full-width line |
-| 3545–3561 | ### 207. An item published as open is checked against the user's own record first |
-| 3562–3590 | ### 208. A derived figure is recomputed for the use at hand, and the parts are checked against the total |
-| 3591–3628 | ### 209. An option search starts from the user's outcome and gates, never from the visible brand set |
-| 3629–3656 | ### 210. A requirements document names outcomes, never the technology that delivers them |
-| 3657–3677 | ### 211. A product is available when its page in the user's region sells it, never because a price renders |
-| 3678–3704 | ### 212. An effect size is read against the threshold its source publishes before any skepticism is attached to it |
-| 3705–3711 | ## Shell: `~/.bash_aliases` (user-global) |
+| 3199–3246 | ### 195. Address the user as "you"; a record names Chaehan, never "he" |
+| 3247–3274 | ### 196. Code is written once, and a second project imports it |
+| 3275–3297 | ### 197. A stated plan is applied, and a variant of a live element is not a new element |
+| 3298–3329 | ### 198. A proposal opens with a header that says it is a plan, and closes with a suggestion to implement it |
+| 3330–3353 | ### 199. An option you present may not use a label the scheme does not have |
+| 3354–3375 | ### 200. A quantity that stands for a band is a range; compute its ends, never one representative |
+| 3376–3394 | ### 201. A chart or diagram you produced is shown in the reply, not only named |
+| 3395–3422 | ### 202. "Look at the reference, align to it" is a conformance pass that also deletes the superseded copies |
+| 3423–3451 | ### 203. Obsolete code is deleted by the change that obsoletes it |
+| 3452–3484 | ### 204. A pushed change is proved on its CI run, not on the machine that wrote it |
+| 3485–3511 | ### 205. A verification pass never writes the artifact the user presents from |
+| 3512–3544 | ### 205. A build modelled on a master takes the master's whole schema, not the fields the first draft needed |
+| 3545–3572 | ### 206. Prose never sits in a crowded last column; the evidence takes its own full-width line |
+| 3573–3589 | ### 207. An item published as open is checked against the user's own record first |
+| 3590–3618 | ### 208. A derived figure is recomputed for the use at hand, and the parts are checked against the total |
+| 3619–3656 | ### 209. An option search starts from the user's outcome and gates, never from the visible brand set |
+| 3657–3684 | ### 210. A requirements document names outcomes, never the technology that delivers them |
+| 3685–3705 | ### 211. A product is available when its page in the user's region sells it, never because a price renders |
+| 3706–3732 | ### 212. An effect size is read against the threshold its source publishes before any skepticism is attached to it |
+| 3733–3774 | ### 213. A description runs from the observed effect inward to the cause, then out to the consequence that matters |
+| 3775–3781 | ## Shell: `~/.bash_aliases` (user-global) |

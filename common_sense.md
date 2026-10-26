@@ -28,6 +28,24 @@ Maintenance: every new correction is appended at the end of its table in the sam
 - One voice, the user's: "tell us (i am the prof, not we)" (2026-10-01).
 - The instructor script carries what the user will say and when; it is a reminder for the user, not a report. Rules already announced elsewhere are not reiterated (2026-10-02, 2026-10-03).
 - Two corrections on one subject store the learning (2026-10-18): "now i want an automatic detection after i corrected 2x or more your response wording or your precision that you store automatically the learning from that using exactly the previous wording I found good ... so in the future i shouldn't tell you that any more". Wording goes to table one with the accepted version verbatim, a procedural miss to the socrates register, and the records commit in the same session (rule 174).
+- The verb is the tell (2026-10-26): "you still use the wording i hate: 'buys' is as terrible robotic as 'carries', give me 10 options for different cases to replace, and remember them". The class and its fix are in rule 2; the substitution by case is the table below. The same complaint also swept every instance already written in the session's artifacts, not only the sentence he quoted.
+
+### Replacing buys and carries
+
+Both verbs dress a plain gain, cost or transfer as a transaction or a shipment. Pick the row that matches what the sentence means, then write that verb.
+
+| When the sentence means | Write | In a sentence |
+|---|---|---|
+| no gain from more of the same | adds nothing | "Past the hip, the extra push adds nothing." |
+| a benefit one action returns | returns, is worth | "The drill returns a loaded left arm, not a faster 100." |
+| what produced a result | did the work, drove it | "What did the work was the exhale, not the band session." |
+| a cue that has to last into the next set | stays on, holds | "The roll cue stays on into the main set." |
+| a cost that arrives later | shows up in, reaches | "Soreness shows up in the next day's threshold set." |
+| time or distance won | gains, wins | "It gains two seconds per hundred." |
+| a constraint that removes options | rules out | "The left shoulder rules out the swing this week." |
+| relative importance | matters most, counts most | "The roll matters most. The catch follows it." |
+| a claim that fails | does not hold, does not survive | "That reading does not hold after two sessions." |
+| a load or a role | takes the load, puts the weight on | "The left arm takes the load in the drill." |
 
 ## The wording instances
 
