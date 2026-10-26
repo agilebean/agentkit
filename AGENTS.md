@@ -43,7 +43,24 @@ read the whole file in one go.
 
 Why this line exists: opencode's `instructions` field does not load this file in v2.0.16. Probe of 2026-09-25 (config carried both `RULES.md` via a config-dir symlink and `$HOME/.../agentkit/RULES.md`): a freshly created session could confirm this file's text and the agent prompt, but not one sentence of RULES.md. A GitHub user who clones agentkit and symlinks this AGENTS.md into `~/.config/opencode/` gets the rules through this pointer, with no absolute path anywhere.
 
-Do not duplicate rule text here.
+**The first principle is parsimony.** If you can, reduce clutter and complexity:
+an element, sentence, column, file or step that can go without losing the point
+is removed, and the smallest form that keeps the whole point wins. Before adding
+a structure, read the destination for the slot it would occupy. The canonical
+text is the opening of RULES.md.
+
+**Every answer is a chain, and this binds every agent in every project.** A
+response, note or report starts with the external effect, goes inward to the
+mechanism that produced it, and ends on the consequence that matters. Concision
+is chain economy, not word count: each link appears once, and findings that
+share a cause merge, because the second is usually the first's consequence. It
+leaves out the owner of a term, a second telling of the same finding, a stand-in
+phrase where the physical event belongs, an evidence aside, and a prescription
+in a why. The standard is the opening section of RULES.md, and it fires before
+any rule is looked up.
+
+Do not duplicate the numbered rules here; the writing standard above is the one
+summary this file carries.
 
 ## Session hygiene (wait times)
 
