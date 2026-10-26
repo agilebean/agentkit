@@ -8,6 +8,29 @@ full test suite requirement in rule 6. No local instruction can waive this.
 
 **How these rules are written.** A rule states standing behaviour: what to do, and when it applies. It must hold for the next case, not explain the one that produced it. No incident narratives, no transcript of the exchange, no dates or document names from the session that triggered it — that reasoning belongs in the project's `_log.md`, which the rule can point to. One exception: when the user's own wording fixes the standard, quote the shortest fragment that carries it, never the whole exchange. The user, 2026-09-28: "formulate the rules so they are useful to avoid the problem in the future, but not in this specific instance, but generalized."
 
+## The principle of parsimony
+
+If you can, reduce clutter and complexity. This is the first test of every
+artifact, answer and plan, and it outranks completeness: an element, sentence,
+column, file or step that can be removed without losing the point is removed.
+When two forms carry the same content, the shorter one wins. When two artifacts
+serve the same function, one is deleted or merged. Every addition justifies
+itself against what it costs the reader.
+
+Parsimony is not brevity. The shortest text that drops a fact is not
+parsimonious; the smallest form that keeps the whole point is. Before adding a
+structure, read the destination for the slot it would occupy: a plan already has
+a warmup column, a note already has a section. A label that no longer names the
+function is renamed to the function, never bypassed with a new table.
+
+Instruction basis, 2026-10-26, "My Swim Training": the drills stood in their own
+table, then in two identical tables, while the training plan already had a
+warmup column and a cooldown slot. Chaehan: "put in utmost priority of agent
+rules the principle of parsimony: if you can, the reduce clutter and
+complexity!" and "the whole point of making notes is to bring all to the point,
+not describe a lot. the more you remove the clutter, the more valuable becomes
+whatever is left!!!! this is common sense!!!!"
+
 ## The writing standard: every answer is a chain
 
 Every response, note, report and explanation is one reasoning chain, not a list
@@ -3856,6 +3879,26 @@ Instruction basis, 2026-10-26, the aerobic cue reply: the agent had assigned a r
 A reader scans headings. He does not read a paragraph to find the thing he came for, and when the paragraph is long he does not read it at all. So the new term, the chosen cue, the decision the section exists for sits in the heading, and the first line under it is one sentence.
 
 Instruction basis, 2026-10-26, the swim drills section of "My Swim Training": the heading read "Warmup drills: left-roll right-up" while the cue Chaehan had just chosen sat inside a 60-word paragraph below the table. Chaehan: "how am i supposed to see my cue in this long paragraph ... the section header is: Warmup drills: left-roll right-up still doesn't contain the new cue!!! this is common sense, a human doesn't read a whole paragraph until see the important information, he doesn't read it at all. you could summarize this as: must feel the heavy water in the left arm and elbow. and put the cue into the section header!" The section now reads "Warmup drills: roll-up-hold, hold & push" with one line under the table.
+
+### 216. A write to a shared document is verified on its whole skeleton, and a second writer stops the pass
+
+After any write to a document another person or process also edits (an Evernote
+note, a deck, a shared file), verify the document's structure, not only the
+edited region: the heading list, the number of tables, and the sections that
+must still exist. A cell-level read proves the cell; it says nothing about a
+section the write did not intend to touch.
+
+When the document's version history shows a version the agent did not write, or
+the note refuses an update because an editing room is open, a second writer is
+present. Stop the pass: read the current version, restore any section that
+disappeared from the last version that had it, verify the skeleton again, and
+report the second writer. Do not keep writing over it.
+
+Instruction basis, 2026-10-26, "My Swim Training": the Training Plan table
+vanished between the 13:33 version and the current one, and the pass had verified
+only the 2026-10-25 row before reporting the note updated. Chaehan: "you
+stupidly deleted the training plan!!!!!" The table was restored from version
+930856 and the result checked by the markdown read of the whole plan section.
 
 ## Shell: `~/.bash_aliases` (user-global)
 
