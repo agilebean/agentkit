@@ -22,6 +22,31 @@ share a cause are one chain, because the second is usually the first's
 consequence. Compose the chain two or three times before it ships: the events in
 the order they arrived, then the joins, then only the links.
 
+**What the chain leaves out.** A sentence that is not a link goes, however
+short and plain it reads. The recurring non-links:
+
+- **The owner of a term.** "my name for the catch-hold momentum" and "his name
+  for ..." add the person, not the meaning. The term stands alone.
+- **The same finding in a second register.** "no crossover: i don't cross over.
+  The entry lands in line with the shoulder, so the entry line is not the
+  fault" says one thing four ways. Keep the finding and the fact that proves it.
+- **A stand-in phrase where the physical event belongs.** "The leg has nothing
+  to drive from" replaces "the leg did not lift". Name the movement.
+- **An evidence aside that changes no decision.** A prevalence figure from a
+  study beside a session observation is not a link in that session's chain.
+- **A maxim that re-explains a number already given.** "Slower times on a first
+  session with a new feel are the cost of attention" explains away a fact the
+  reader can already read.
+- **A prescription where the reader asked why.** A why column states the cause;
+  what to do belongs where the doing is listed.
+- **A fact nobody asked to remember.** A pace remark, a fault ruled out, a check
+  that passed: if the point does not need it and Chaehan did not ask for it, it
+  is not in the note. Silence is not permission to record.
+
+The test is not whether a fact is true. It is whether the point needs it. A note
+is not a record of the session but the point of it, and every removal raises the
+value of what is left.
+
 This binds every agent and every text, not only the notes. Rule 2 carries the
 writing markers, and rule 213 the worked form with its instance.
 
@@ -3803,11 +3828,15 @@ importance (high elbow catch prevented)."
 
 ### 214. A cue is a word the user can hold, not a description of a sensation
 
-A cue is a short word or image carried in the head while the movement runs: "needle", "bubble beard", "hold-forward". A description of what should happen, or of a feeling, is not a cue: "heavy water on the left forearm" names a place and a sensation, and the swimmer has nothing short to repeat to himself. Give the cue as one to three words, and put one line beside it saying what it points at, so the user can choose between candidates.
+A cue is a word or phrase the user repeats to himself while the movement runs: "needle", "bubble beard", "hold-forward", "roll-up-hold". A description of what should happen, or of a feeling, is not a cue: "heavy water on the left forearm" names a place and a sensation, and there is nothing short to repeat.
+
+The length is his to set. Never turn the shape of his examples into a limit: "needle" and "bubble beard" happen to be one and two words, and a rule read off that produced "one to three words", which then excluded "left-roll right-up" from the rule written about it. Put one line beside each cue saying what it points at, so he can choose between candidates.
+
+When two of his words are one idea, write the relation rather than listing them side by side: "roll-up-hold" is "left-roll right-up" with the hold in it. Splitting a compound into equal items loses the reason he coined it.
 
 When the user asks for cues, they are asking for candidates, not a schedule. The options are the answer: do not assign them to reps, sets or phases, and do not turn them into a recommended plan with a fallback. Lay the wordings out and let the user pick.
 
-Instruction basis, 2026-10-26, the aerobic cue reply: the agent had assigned a roll check to rep 1 and a forearm check to rep 2, with a fallback. Chaehan: "don't tell me when to use the cues, give me several options to choose from! forearm is not a cue, needle is".
+Instruction basis, 2026-10-26, the aerobic cue reply: the agent had assigned a roll check to rep 1 and a forearm check to rep 2, with a fallback. Chaehan: "don't tell me when to use the cues, give me several options to choose from! forearm is not a cue, needle is". A later pass invented the length limit and listed his compound beside its own expansion: "why did you make up this silly rule of 1-3 words? 'left-roll right-up' is more!" and "why didn't you put in my roll-up-hold??? that can be explained by left-roll right-up + hold, but that was the whole point!"
 
 ## Shell: `~/.bash_aliases` (user-global)
 
