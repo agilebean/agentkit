@@ -3838,6 +3838,12 @@ When the user asks for cues, they are asking for candidates, not a schedule. The
 
 Instruction basis, 2026-10-26, the aerobic cue reply: the agent had assigned a roll check to rep 1 and a forearm check to rep 2, with a fallback. Chaehan: "don't tell me when to use the cues, give me several options to choose from! forearm is not a cue, needle is". A later pass invented the length limit and listed his compound beside its own expansion: "why did you make up this silly rule of 1-3 words? 'left-roll right-up' is more!" and "why didn't you put in my roll-up-hold??? that can be explained by left-roll right-up + hold, but that was the whole point!"
 
+### 215. The term a section is about goes in its heading, and the section opens with one line
+
+A reader scans headings. He does not read a paragraph to find the thing he came for, and when the paragraph is long he does not read it at all. So the new term, the chosen cue, the decision the section exists for sits in the heading, and the first line under it is one sentence.
+
+Instruction basis, 2026-10-26, the swim drills section of "My Swim Training": the heading read "Warmup drills: left-roll right-up" while the cue Chaehan had just chosen sat inside a 60-word paragraph below the table. Chaehan: "how am i supposed to see my cue in this long paragraph ... the section header is: Warmup drills: left-roll right-up still doesn't contain the new cue!!! this is common sense, a human doesn't read a whole paragraph until see the important information, he doesn't read it at all. you could summarize this as: must feel the heavy water in the left arm and elbow. and put the cue into the section header!" The section now reads "Warmup drills: roll-up-hold, hold & push" with one line under the table.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:

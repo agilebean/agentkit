@@ -232,4 +232,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3760–3786 | ### 212. An effect size is read against the threshold its source publishes before any skepticism is attached to it |
 | 3787–3828 | ### 213. A description runs from the observed effect inward to the cause, then out to the consequence that matters |
 | 3829–3840 | ### 214. A cue is a word the user can hold, not a description of a sensation |
-| 3841–3847 | ## Shell: `~/.bash_aliases` (user-global) |
+| 3841–3846 | ### 215. The term a section is about goes in its heading, and the section opens with one line |
+| 3847–3853 | ## Shell: `~/.bash_aliases` (user-global) |
