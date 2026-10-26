@@ -67,6 +67,7 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 - **Travel and transport words borrowed for ordinary work:** lane, leg, runway, track. A search for a partner is not a lane, a return flight is not a leg, a period of weeks is not a runway. Name the thing. The user, 2026-10-23: "still a lot of robotic wording ... the words lane and leg".
 - **Abstractions where a person or an action fits:** artifact, deliverable, learnings, insight, alignment, journey, problem space, solution space, touchpoint, friction, granularity, altitude ("at the right altitude"), needs-first, end-to-end.
 - **Consultant verbs:** leverage, utilize, facilitate, ideate, operationalize, socialize, surface (a need), unpack, double-click on, align on, drive (a change), enable, empower, front-load, back-load ("front-loads quality": say what comes first, "the hard sessions come first in the week").
+- **Transaction and freight verbs where a gain, a cost or a transfer is meant:** buys, pays for, carries, carries over, carries weight. "Past the hip the extra push buys nothing" reads as a purchase and "the leg-up block carries into the next week" as freight. Say what the thing gains, costs, returns, stays on, or shows up in: "past the hip the extra push adds nothing". The substitution by case is the table in `common_sense.md`, "Replacing buys and carries". The user, 2026-10-26: "'buys' is as terrible robotic as 'carries'".
 - **Nominalizations:** "the collection of", "the utilization of", "the implementation of", "an improvement in". Use the verb: "we collect", "you improve".
 - **Empty intensifiers and hedges:** robust, holistic, seamless, comprehensive, cutting-edge, best-in-class, impactful, meaningful, significant, truly, deeply, arguably.
 - **Domain shorthand outside its own trade:** SKU, COGS, BOM, SLA, arm (in a study, write "test group"), agent (of an illness, write "cause"). Say what the thing is.
@@ -3216,6 +3217,34 @@ numbers fit that" and "the length he already owns" about the user himself.
 Chaehan: "wording change in all agents: never say He/his if you mean me, say
 You, yours, or Chaehan if neutral text is more appropriate."
 
+**A note he opens is addressed to him, even when it records events.** The
+"record" above is a file he never reads as prose: a memory file, a log, an
+agent-facing summary. An Evernote note, a report, a plan he opens is written to
+him: "the water you cannot feel on the left", not "the water he cannot feel".
+Classifying such a note as a record is what put "he" and "his" into his own
+training log.
+
+**A term is written in quotes; it is never introduced by its owner.** A phrase
+Chaehan coins enters the text as the term itself: `"hold-forward"`,
+`"left-roll right-up"`. "his name for the catch-hold momentum" names the owner
+instead of the thing, and the reader has to strip the frame to reach the term.
+The same repair covers every possessive frame around his content: "his fix",
+"his cue", "his thought", "the plan he set" become the fix, the cue, the
+thought, the plan. Where the record needs the owner, it says "Chaehan's". The
+test: remove the possessive and the sentence loses nothing, because the content
+is what the reader came for.
+
+The shared checker warns on he/his/him (`robot_markers.tsv`); run it on the
+finished text before a note or message is written.
+
+Instruction basis, 2026-10-25, "My Swim Training": the 2026-10-25 row read
+"**hold-forward** (his name for the catch-hold momentum)" and the drills table
+read "which is the water he cannot feel on the left". Chaehan: "for the 1000th
+time you used 'his/him' which i absolutely forbid to use ... instead of writing
+e.g. 'his name for the catch-hold momentum', put the word or term into quotes
+'hold-forward' isn't that common sense? don't stupidly remember this one phrase
+but understand to generalize to other words!"
+
 ### 196. Code is written once, and a second project imports it
 
 A renderer, an exporter, a converter: the moment a second project needs it, it
@@ -3701,6 +3730,48 @@ the arginine bottle a downgrade on a salt-weight comparison. Chaehan: "your
 analysis is wrong, you didn't read or are narrowminded: the tian and ramasamy
 studies clearly state arginine or Pycnogenol + L-arginine effect sizes bigger
 than 8.4 for severe dysfunction difference."
+
+### 213. A description runs from the observed effect inward to the cause, then out to the consequence that matters
+
+A line that reports what happened carries the whole reasoning chain, in this
+order:
+
+1. **The effect, as it was seen.** "after the left-side breath, left arm did not
+   roll down in the needle."
+2. **The cause, marked as the cause.** "Because the left roll never completed,"
+3. **The consequence the reader could not deduce.** "the right leg and hip did
+   not lift up, and ultimately prevented to setup the left arm into a high
+   elbow catch."
+
+The order is the argument: the observation is what the reader can check, the
+cause explains it, and the consequence follows from the cause. A list of
+separate observations makes the reader join them. A paragraph that opens with
+the cause reads as an assertion with no evidence in front of it. Neither lets
+the reader check the chain.
+
+The chain is one or two sentences. Combine findings that share a cause into one
+chain, because the second finding is usually the consequence of the first, not
+a new observation; keep findings with different causes apart. Cut every
+restatement: when the effect sentence already carries the mechanism, the next
+sentence does not repeat it.
+
+Compose the sentence two or three times. The first draft records the events in
+the order they arrived; the second finds the joins; the third keeps only the
+links, and that is the version that ships. This is the normal cost of a
+description, not a polish pass to skip when the text is short.
+
+Instruction basis: 2026-10-25, "My Swim Training", the 2026-10-25 row. It
+reported the roll failure and the catch failure as two entries, and the first
+one as "after the left-side breath the right leg did not lift up, because the
+left arm did not roll down in the needle — the left roll never completed, so
+the right hip never came up". Chaehan gave the merge: "after the left-side
+breath, left arm did not roll down in the needle. Because the left roll never
+completed, the right leg and hip did not lift up, and ultimately prevented to
+setup the left arm into a high elbow catch", and said why: "it is not only
+concise but exposes a reasoning chain, which starts with the externally
+observable effects, and then goes inward to point to a principle or mechanism,
+and from there, make a deduction to a consequential effect which is of
+importance (high elbow catch prevented)."
 
 ## Shell: `~/.bash_aliases` (user-global)
 
