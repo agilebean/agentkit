@@ -121,7 +121,8 @@ Em-dashes, long sentences with embedded clauses, and filler transitions ("throug
 - **Transaction and freight verbs where a gain, a cost or a transfer is meant:** buys, pays for, carries, carries over, carries weight. "Past the hip the extra push buys nothing" reads as a purchase and "the leg-up block carries into the next week" as freight. Say what the thing gains, costs, returns, stays on, or shows up in: "past the hip the extra push adds nothing". The substitution by case is the table in `common_sense.md`, "Replacing buys and carries". The user, 2026-10-26: "'buys' is as terrible robotic as 'carries'".
 - **Nominalizations:** "the collection of", "the utilization of", "the implementation of", "an improvement in". Use the verb: "we collect", "you improve".
 - **Empty intensifiers and hedges:** robust, holistic, seamless, comprehensive, cutting-edge, best-in-class, impactful, meaningful, significant, truly, deeply, arguably.
-- **Domain shorthand outside its own trade:** SKU, COGS, BOM, SLA, arm (in a study, write "test group"), agent (of an illness, write "cause"). Say what the thing is.
+- **Domain shorthand outside its own trade:** SKU, COGS, BOM, SLA, arm (in a study, write "test group"), agent (of an illness, write "cause"). Exercise-physiology and coaching terms go the same way: concentric, eccentric, DOMS, supported or unsupported (of a stroke), muscle damage marker. Say what the body does and what the world does to it: "the arm muscles only shorten as they pull", "nothing lands on the body", "a blood test that rises when muscle is damaged". The user, 2026-10-26: "what do you mean with concentric swim and supported, again incomprehensibel".
+- **A verb whose literal sense does not apply:** covered, handled, addressed, lives, sits, where nothing is physically covered, handled, sitting or living, and a fact is standing in for the picture. "The lipid reason for fish oil is already covered" makes the reader rebuild which thing was covered by what, and it says nothing about the blood fats. Write the fact: "your triglycerides and LDL are already normal, so there is nothing there for fish oil to fix". Test: can the verb's picture be drawn? If not, it is a stand-in. The user, 2026-10-26: "do not EVER use the word 'covered' if it doesn't mean covered!!! this is common sense".
 - **Analyst jargon in user-facing prose:** benign, sub-clinical, protocol signal, fictional payoff, eliminated by error analysis, tail (of a dose or an effect: write "some of it is still in the blood later").
 - **Trade slang kept out of speech:** "run of show" (write "the session plan"), "the block that stretches" (say what happens when it runs long), "shaded blocks" (say "after the break"), "in reading order", "on purpose" (write "deliberately").
 - **Japanese and other non-Latin names without their reading:** give the romanized reading first (Kawaramachi), and keep the characters only so the name can be pasted into a map or a search (京都河原町). A name the user cannot read carries no information. The user, 2026-10-04: "i can't read the hotel names in japanese."
@@ -563,6 +564,18 @@ Failure: on 2026-08-24 a cause/date query got a five-section answer with
 mechanism blocks, a candidate table, and caveats; the user rejected it as
 "incredibly overcomplicated" and supplied the two-sentence format as the
 standard.
+
+**Every part of the question gets its own verdict, and a mechanism is not a
+verdict.** A yes/no question opens with the yes or the no. A question with two
+parts ("help recovery or performance", "soreness and repair") gets two
+answers, one each, before any mechanism. The verdicts come first even when
+they differ in strength ("yes a little, for one of them; no for the other"),
+because the reader's next decision depends on which is which. A sentence that
+describes how something acts ("it blunts the inflammatory response to muscle
+damage") says nothing about whether the answer is yes or no, and leaves the
+reader to derive the verdict himself. The user, 2026-10-26: "i didn't get if
+omega 3 does help for muscle soreness and repair or not. speak in plain
+terms."
 
 ### 22. User-stated patterns are facts, not bias observations
 
