@@ -238,4 +238,6 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3905–3940 | ### 217. A reply is in the conversation's language, and a folder the user names is the only destination |
 | 3941–3975 | ### 218. A copy is made only where it can outlive the original, and a correction is a move, not another run of the pass |
 | 3976–4004 | ### 219. A derivative replaces its source in the working folder, and the source's name is the reason it moves |
-| 4005–4011 | ## Shell: `~/.bash_aliases` (user-global) |
+| 4065–4071 | ## Shell: `~/.bash_aliases` (user-global) |
+| 4005–4047 | ### 220. A fix's blast radius is the surface the user named |
+| 4048–4064 | ### 221. An instruction to show something is an instruction about the reply, not the file |

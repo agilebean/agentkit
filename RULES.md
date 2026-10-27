@@ -4002,6 +4002,66 @@ contain the student names visibly in the final essay folder? this is common
 sense!!" The 30 originals were moved into `backup 2026-10-26/` and the 26 PDFs
 stand alone at the top; `memory/agentic_ai.md` failure 123 carries the analysis.
 
+### 220. A fix's blast radius is the surface the user named
+
+Price: reading the request as a set of names, not as a theme. When the user
+names a panel, a chart, a file, a row or a routine, only that surface changes.
+Every other sibling keeps its numbers, geometry and bytes, and a fix that
+cannot be made without moving them is the wrong fix. Shared code is not
+permission: the moment a change reaches a surface the user did not name, it is
+a different change and needs its own instruction.
+
+Before finishing, diff the un-named surfaces against the state before the
+change and report that diff as empty. That diff is the evidence the rule held,
+and it is the first thing the user checks.
+
+Failure, 2026-10-27, the swim dashboard. Asked to fix the interval and
+threshold panels' DPS and stroke-rate curves, the pass rewrote the panel
+builder they share with Panel 1, so Panel 1's axis, its DPS band and its
+stroke-rate curve changed as well. Chaehan: "you should not have altered panel
+1. i gave you instructions for the other panels, that means you should NOT
+alter panel 1, isn't that common sense??" Generalizable form, for every agent
+and every project: the named surface bounds the edit.
+
+### 221. A chart axis is fitted to its data, and secondary curves sit under the primary lines
+
+Two defects have the same cause, an axis chosen as a constant instead of read
+from the plot: the data bunches into a corner with a dead band beside it, and
+anything drawn in that band reads as a flat line or falls onto the axis.
+
+Fit the axis to the panel's own values. Empty space under the lowest value is
+at most 2.5 axis steps, measured in the axis's own tick step, and the top gets
+one step for the primary curve's labels. Secondary curves (DPS in m/stroke,
+stroke rate in strokes/min, any rescaled overlay) go in that gap, below the
+primary lines, never across them, and their labels are placed so they stay
+inside the plot.
+
+Failure, 2026-10-27, the same dashboard: a pinned [50,155] s pace axis while
+every pace sat between 93 s and 145 s left 40% of the panel empty, with the DPS
+and stroke-rate strips marooned on its bottom edge (0.01 m of DPS moved 1.5 px)
+and the stroke-rate labels touching the date axis. Chaehan: "you stretched below
+the lowest pace a long vertical space for the two curves. instead you should
+stretch all paces evenly so the vertical space below is max 2.5 times a step
+between paces... the curves should ideally be below the pace curves for the
+major part."
+
+### 221. An instruction to show something is an instruction about the reply, not the file
+
+When he says a table must carry a column, the metric beside every letter, the
+numbers behind a grade, the reply itself carries that table. Changing the
+artifact is the work; the reply is where he reads it. A four-row summary of
+counts where he asked for the rows is a stand-in phrase in table form: it names
+the thing instead of showing it, and it leaves him to open a file to see what he
+just asked to see.
+
+Failure, 2026-10-27: he asked that the letter table show the metric for every
+criterion and the total, "because the letter grading is only a mapping step
+which i would adapt". The sheet was rebuilt with exactly those columns and the
+reply showed a six-row distribution. Chaehan: "i gave you specific instructions
+to show the metric grading why did you ignore it? i meant here in the response."
+Before sending, name the noun the instruction is about - the table, the list, the
+numbers - and confirm it stands in the reply body; a path to the file is not it.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
