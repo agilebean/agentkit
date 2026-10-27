@@ -241,3 +241,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 4065–4071 | ## Shell: `~/.bash_aliases` (user-global) |
 | 4005–4047 | ### 220. A fix's blast radius is the surface the user named |
 | 4048–4064 | ### 221. An instruction to show something is an instruction about the reply, not the file |
+| 4065–4100 | ### 222. A finding about someone's work is quoted or it is not written, and an absence claim is only as good as the search behind it |
+| 4101–4120 | ### 223. A page that renders blank is reported in the pass that finds it |

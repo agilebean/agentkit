@@ -4062,6 +4062,62 @@ to show the metric grading why did you ignore it? i meant here in the response."
 Before sending, name the noun the instruction is about - the table, the list, the
 numbers - and confirm it stands in the reply body; a path to the file is not it.
 
+### 222. A finding about someone's work is quoted or it is not written, and an absence claim is only as good as the search behind it
+
+Grading, assessment and review text describes another person's work, so every
+claim in it is an assertion about something they made and can check. Two shapes
+of claim carry the risk.
+
+**A content claim is the source's words.** What a team said, decided or built is
+written from a quote or a named page, and the paraphrase may not add anything the
+quote does not contain. "Nobody would know you pressed it" is not "they hid the
+device"; "the answer looked at the journey" is not "they coded the interviews".
+
+**An absence claim is a finding only after the whole source is searched.**
+"Never tested", "does not mention", "no needs on the slide", "nobody addressed
+X" are claims about a document, and one unsearched paragraph falsifies them -
+the reference can sit inside a block whose heading says something else. Name the
+search: which pages, which transcript lines, which file. Without that, the entry
+says unknown, and no score moves on it.
+
+A missing method step is a real deduction and must be taken; it is taken after
+the search, never instead of it. The same discipline runs backwards: when one
+such claim is found false, every other grading written by the same pass is
+audited against its source in the same turn, because the fault is in the method
+that produced it, not in the single sentence.
+
+Failure, 2026-10-27, KUBS DT Team 1: three claims in one read were not in the
+record. A role-play test was inferred from an acted scene in the presentation;
+the sprint-two shift was written as "from memory to anxiety" when the sprint-one
+problem was helplessness and the failure was not only forgetting the way home but
+also feeling lost; and "hiding the device does not remove stigma" was built on a
+dialogue that says nobody would know the button was pressed. Chaehan: "where did
+you find hiding device was mentioned? i think it wasn't. so really once and for
+all, remember not to make up things, especially when grading!!! this is utmost
+priority in grading!!!" And on the deduction: "you must downgrade if a method
+element like testing was not done but you must be sure of it, as there might be
+references like the user interviews of grandparents hidden in a paragraph."
+
+### 223. A page that renders blank is reported in the pass that finds it
+
+A defect found while reading the data is a question for the user at that
+moment, named by file and page, before anything is scored. It is not a fact to
+write into the record afterwards, and it is not material for a theory about
+which folder holds the better copy. Reading a blank page as "the submission is
+incomplete" charges a student for a conversion bug; reading it as "the backup
+must be the master" invents a provenance nobody stated.
+
+Failure, 2026-10-27, the final essays: a submitted PDF rendered pages 1 and 2 as
+a 560-byte placeholder. The pages were noticed, then explained in the record
+after the scores were written, and the file was swapped for one found in the
+backup folder, which was written up as "the LMS original". The corrected copy
+had in fact been placed there by Chaehan; the backup was never the master. His
+words: "the corrected copy was put in by me, so it has nothing to do with the
+backup folder having the correct ones, it didn't. so you should have learned to
+first check on these empty pages and flag them in the first pass, instead of
+your rules and lessons about empty pages". Render every page before scoring;
+report a blank one and wait.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
