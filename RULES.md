@@ -4164,6 +4164,13 @@ dropped the last row's row number and student number, while the file on disk was
 correct every time. Each render was assembled by hand from the previous one, and
 each time the tail was compressed.
 
+The mechanism is at the tail of a long emitted payload, not in the care taken:
+the same last row lost its identifier cell five renders running, including one
+built by copying the generator's output verbatim. So the last data row must not
+be the payload's tail - append a spacer row (`<tr><td colspan="N"></td></tr>`)
+after the data, and whatever drops lands on nothing. Paste the generated rows
+unchanged, and never re-derive a row from the one above it.
+
 ### 226. A modified tracked file is read, not guessed at
 
 `git status` naming a file is not information about who changed it. When a tracked
