@@ -4164,6 +4164,22 @@ dropped the last row's row number and student number, while the file on disk was
 correct every time. Each render was assembled by hand from the previous one, and
 each time the tail was compressed.
 
+### 226. A modified tracked file is read, not guessed at
+
+`git status` naming a file is not information about who changed it. When a tracked
+file shows as modified and the change was not made this turn, open its diff before
+deciding anything; a one-line change that carries a name this session renamed is
+this session's work and is committed with it, and a change that is genuinely
+another session's is named in the reply with what it contains, never waved off as
+"predates this pass". Leaving it silently is the worst of the three: the user is
+told nothing and the tree stays dirty.
+
+Failure, 2026-10-28, `memory/kubs.md`: it sat modified through two commits with a
+one-line sweep of a filename the grading pass had renamed. The agent saw `M` in
+`git status` and wrote "uncommitted changes that predate this pass; left
+untouched" without opening the diff. Chaehan: "what's left in kubs? why didn't
+you commit it before?"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
