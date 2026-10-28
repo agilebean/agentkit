@@ -4149,6 +4149,21 @@ changed again totally the content of the table! this is annoying! show the whole
 table!". In the same passes two evidence cells were lost to a field appended one
 place too far.
 
+### 225. A repeated row is copied from its generator, never retyped
+
+When a page, report or file carries a block of near-identical rows, the rows are
+produced once by a loop over the data and pasted as that loop's output. Retyping
+them into the destination is how cells go missing, and the cells that go missing
+are at the tail — the last row loses its leading fields while every row above it
+reads correctly, so the defect is invisible in the part you would skim. The check
+is mechanical: count the cells in every row against the header, and count them in
+the last row first.
+
+Failure, 2026-10-28, the KUBS DT course grades page: four renders in a row
+dropped the last row's row number and student number, while the file on disk was
+correct every time. Each render was assembled by hand from the previous one, and
+each time the tail was compressed.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:

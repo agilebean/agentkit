@@ -244,3 +244,4 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 4065–4100 | ### 222. A finding about someone's work is quoted or it is not written, and an absence claim is only as good as the search behind it |
 | 4101–4120 | ### 223. A page that renders blank is reported in the pass that finds it |
 | 4121–4150 | ### 224. "As before" means the user's artifact, and an accepted table's shape is frozen |
+| 4152–4178 | ### 225. A repeated row is copied from its generator, never retyped |
