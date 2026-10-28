@@ -4118,6 +4118,37 @@ first check on these empty pages and flag them in the first pass, instead of
 your rules and lessons about empty pages". Render every page before scoring;
 report a blank one and wait.
 
+### 224. "As before" means the user's artifact, and an accepted table's shape is frozen
+
+A request to restore something — "as before", "the same as", "show it like it
+was", "don't change what worked" — names an artifact the user was looking at.
+The reference is that artifact: the file he opened, the sheet he uploads, the
+version he last signed off. It is never the newest state in the repository,
+because the newest state may be the agent's own previous output, and restoring
+your own last draft as "before" reproduces the change he asked you to undo. Find
+the operating version and say which one you found; if the history holds no
+version matching what he describes, ask instead of picking the closest.
+
+Once a table's columns are accepted, its shape is fixed. A later request adds,
+renames or fills the column it names and touches nothing else: no other column
+moves, no column is dropped because the agent thinks the file is too wide, and
+no row is re-sorted unless the order itself was requested. Each pass that
+rebuilds a working table into a different one delivers something new to
+re-review, and the user reads that as the work being rewritten under him.
+
+Rows in a markdown table are edited by field name against the header, never by
+position from a split. A row is data: an extra field appended past the last
+column overwrites the neighbour, and the neighbour is usually the evidence.
+
+Failure, 2026-10-28, the KUBS DT course grade sheet: "as before" was read as the
+version in git, which was the agent's own output sorted by Total, so the roster
+order the user meant — student number ascending, the order of the LMS sheet — was
+never looked for; three passes each delivered a differently shaped table. His
+words: "why did you change the sorting table which was alphabetical?", "you
+changed again totally the content of the table! this is annoying! show the whole
+table!". In the same passes two evidence cells were lost to a field appended one
+place too far.
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
