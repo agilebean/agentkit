@@ -4213,3 +4213,20 @@ For anything that should persist across shells:
 - **Do not** suggest `~/.bashrc` as the only/default location.
 - macOS login shells load `~/.bash_profile`, not `~/.bashrc`.
 - For Python envs: follow the repo README — don't assume `python -m venv` when the repo documents **mamba** + `environment.yml`.
+
+### 228. A record's letters are plain; colour belongs to a rendered artifact
+
+A file that is read as text - markdown, a table in a log, a CSV - carries no colour,
+and the property is not smuggled in as inline HTML. A viewer that renders it shows
+the chip; a viewer that does not shows `<span style="background:#166534">B+</span>`
+where a grade should be, and the record is worse than it was without the colour. When
+the user asks for a property the format cannot hold, say so in one line and leave it
+out, or deliver the coloured thing as its own rendered artifact (a page, a PNG) that
+sits beside the plain record. The same reading covers any marker a reader would have
+to decode: a bold tag in a cell, an entity where a character belongs, a glyph that
+stands for a word.
+
+Failure, 2026-10-29, `KUBS DT gradebook.md`: asked for the gradebook "if possible with
+the color coding", the pass wrote all 78 Ltr cells as background-coloured spans.
+Chaehan: "terrible, the Ltr cols contain now html!" The colour had already been shown
+to him as a rendered page the same session; the file needed none of it.
