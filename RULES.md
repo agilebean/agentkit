@@ -4187,6 +4187,25 @@ one-line sweep of a filename the grading pass had renamed. The agent saw `M` in
 untouched" without opening the diff. Chaehan: "what's left in kubs? why didn't
 you commit it before?"
 
+### 227. A mirrored folder has one working copy, and it is the one the user opens
+
+Where a set of files exists twice - a Drive folder he reads and a versioned copy
+in the repo - the working copy is the one he opens, and a file written only into
+the other does not exist for him. Before writing into such a folder, establish
+which side is live (the skill or record that owns the folder names it); write
+that side in the same turn, match the two copies, and log the change where the
+set's own log lives. "In this folder", said of two source files that happen to
+sit in the repo, is not a statement about where the deliverable belongs.
+
+Failure, 2026-10-29, `KUBS DT grades for students.md`: 26 correct lines, written
+to `projects/kubs_dt/grading/`, the socrates mirror, while the Drive folder
+"KUBS DT Grading" - holding every sibling grading file at the same size and
+timestamp - received nothing. The task arrived as a text transform, so the
+kubs-grading skill that owns the folder was never loaded, and its rule ("Drive
+stays the working copy; a pass that edits one of them copies it there in the
+same turn") never reached the pass. Chaehan: "why did you not put this into the
+grading folder, isn't that common sense???"
+
 ## Shell: `~/.bash_aliases` (user-global)
 
 For anything that should persist across shells:
