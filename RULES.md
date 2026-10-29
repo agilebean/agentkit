@@ -452,6 +452,12 @@ When positioning annotation boxes relative to data (for example "to the right of
 5. To put the box's left edge at `last_data_x + gap_mm * units_per_mm`: with the text anchored at a reference x (e.g. 0), measure the box's left edge `bx0`; then set the anchor to `desired_left - bx0`. This is exact because the box moves rigidly with its anchor. Equivalently, for a centered box, `anchor = last_data_x + box_width/2 + gap`.
 6. After placing, re-measure with the same final transform and verify the box right edge stays inside `xlim` and the gap to the data meets the required minimum.
 
+The same test covers every geometric decision on a chart, not only annotation boxes: the
+axis fit, where a secondary curve's band sits, how far a label sits from its marker, how
+tall that band is. Each is judged on the render, because a number read back out of the
+payload cannot show a label over another label or a label clipped by the axis line. Rule
+229 carries the placement of secondary curves and the arrangement a new chart starts from.
+
 ### 17. Notes must bind every datum to its referent — an ambiguous note is a write-time defect
 
 Notes written by one agent (memory files, Evernote notes, docs, comments) are
@@ -3479,6 +3485,11 @@ the artifact was made for, and he reads that as the agent having held back.
   whole image goes in, since a claimed panel the user cannot see is a claim.
 - Show it at the point where the point is made, so the prose beside it can be
   two lines instead of a retelling.
+- Show it in a form the client draws. A local HTML page with scripts is not a
+  shown chart when the client does not run them: on 2026-10-29 two rounds went
+  to an inline page for a Plotly dashboard and both arrived empty ("i cannot see
+  your graphs, they are empty"). A capture of the real page, taken in the
+  browser the user's client renders, always arrives.
 
 Instruction basis: 2026-10-20, the KUBS DT grading diagram. The reply reported
 the downgrade numbers and named the file in the Drive folder; the image was one
@@ -4230,3 +4241,52 @@ Failure, 2026-10-29, `KUBS DT gradebook.md`: asked for the gradebook "if possibl
 the color coding", the pass wrote all 78 Ltr cells as background-coloured spans.
 Chaehan: "terrible, the Ltr cols contain now html!" The colour had already been shown
 to him as a rendered page the same session; the file needed none of it.
+
+### 229. A chart with secondary curves is placed on the render, one dial at a time
+
+When a chart carries auxiliary curves (stroke rate, DPS, SWOLF, any second quantity
+mapped into the primary axis), the placement is judged on the rendered picture, never
+derived from constraints. Build it, capture it (browser capture for an HTML/Plotly
+dashboard, the PNG for an R chart), compare it with the sentence the user just wrote,
+then move one number. Reading the numbers back out of the payload proves nothing: it
+cannot show a label crossing the axis line, two numbers printed over each other, or a
+curve that reads as a flat dotted line.
+
+The default arrangement, which a new chart with secondary curves starts from instead of
+a blank page:
+
+- the curves fill the band under the primary lines, the one the user names as upper on
+  top and the other below, overlapping so the two curves cross
+- each takes about a fifth of the plot height; a shallower band flattens the curve into
+  a line and the reader loses the change
+- the pair sits clear of the axis scale, far enough that its value labels print whole
+- labels belong to their own curve and sit outside the pair (upper curve's labels above
+  its points, lower curve's labels below)
+- a label prints when the value changes, never the same number twice, and the last
+  point always carries its number
+- one clearance and one overlap constant produce that on every panel. A per-panel table
+  of bands is the defect, not the flexibility
+
+Why this rule exists. On the swim dashboard, 2026-10-29, a dozen rounds went into
+placing two such curves. Four failure modes, each of which this rule closes:
+
+1. I optimized constraints instead of looking. "Never cross the primary lines", "the
+   axis must be fitted to the data", "both bands equal" were my inventions; each one
+   forced an empty reserved gutter under the axis scale, which reads to the user as "the
+   curves are too low", and set range against position so no arrangement satisfied both.
+2. I read his relative notes as absolute geometry. "DPS too high, stroke rate too low"
+   means move each curve in that direction; re-deriving the whole layout from it moved
+   the pair the opposite way on the next round.
+3. I let a chat sentence override his own edit. He had set the curves' order in
+   `constants.py` and in the project's AGENTS.md; two later chat lines said the reverse,
+   I followed the chat, and every following note landed on a build that could not obey
+   it. His edits in the repository outrank his chat shorthand.
+4. I never showed him the render early. The first two confirmations went out as an inline
+   HTML page his client did not draw ("i cannot see your graphs, they are empty"); a
+   screenshot of the real dashboard would have exposed every problem in one round.
+
+The user's closing ask, in his words: "i expect now that i don't have to tell these
+visual design every time you create a new chart with curves." That is what the default
+arrangement above is for. The concrete numbers live in the project (swim:
+`STRIP_EDGE_TOP`, `STRIP_EDGE_FLOOR`, `STRIP_CROSS_OVERLAP` in
+`src/swim/dashboard/constants.py`, held by `tests/test_strip_bands.py`).
