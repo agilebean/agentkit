@@ -238,12 +238,14 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 3905–3940 | ### 217. A reply is in the conversation's language, and a folder the user names is the only destination |
 | 3941–3975 | ### 218. A copy is made only where it can outlive the original, and a correction is a move, not another run of the pass |
 | 3976–4004 | ### 219. A derivative replaces its source in the working folder, and the source's name is the reason it moves |
-| 4065–4071 | ## Shell: `~/.bash_aliases` (user-global) |
-| 4005–4047 | ### 220. A fix's blast radius is the surface the user named |
+| 4005–4025 | ### 220. A fix's blast radius is the surface the user named |
+| 4026–4047 | ### 221. A chart axis is fitted to its data, and secondary curves sit under the primary lines |
 | 4048–4064 | ### 221. An instruction to show something is an instruction about the reply, not the file |
 | 4065–4100 | ### 222. A finding about someone's work is quoted or it is not written, and an absence claim is only as good as the search behind it |
 | 4101–4120 | ### 223. A page that renders blank is reported in the pass that finds it |
-| 4121–4150 | ### 224. "As before" means the user's artifact, and an accepted table's shape is frozen |
-| 4152–4166 | ### 225. A repeated row is copied from its generator, never retyped |
-| 4167–4182 | ### 226. A modified tracked file is read, not guessed at |
+| 4121–4151 | ### 224. "As before" means the user's artifact, and an accepted table's shape is frozen |
+| 4152–4173 | ### 225. A repeated row is copied from its generator, never retyped |
+| 4174–4189 | ### 226. A modified tracked file is read, not guessed at |
 | 4190–4208 | ### 227. A mirrored folder has one working copy, and it is the one the user opens |
+| 4209–4216 | ## Shell: `~/.bash_aliases` (user-global) |
+| 4217–4232 | ### 228. A record's letters are plain; colour belongs to a rendered artifact |
