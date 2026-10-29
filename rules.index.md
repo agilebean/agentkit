@@ -246,3 +246,4 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 4121–4150 | ### 224. "As before" means the user's artifact, and an accepted table's shape is frozen |
 | 4152–4166 | ### 225. A repeated row is copied from its generator, never retyped |
 | 4167–4182 | ### 226. A modified tracked file is read, not guessed at |
+| 4190–4208 | ### 227. A mirrored folder has one working copy, and it is the one the user opens |
