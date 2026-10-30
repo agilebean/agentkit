@@ -242,6 +242,87 @@ essays with the same defect sat at 2.50. When two essays are close, say in one l
 above the other and leave the number where the evidence puts it - never move it to match a letter,
 a curve, or a colleague's read.
 
+**Rank continuously, not every tenth.** From the fifth essay on, every new essay is placed against
+the batch already scored, and a number may move - the older one - when the new essay is clearly
+better or worse than it. A pass that scores each essay on its own and checks only every tenth file
+lets the first five set the centre, and everything after it clusters there.
+
+## Use the whole scale
+
+The settled set ranges 1.00 to 5.00, and most criteria are used to both ends: Insight reaches 5.00
+three times and 1.50 once, Communication reaches 4.75 and 1.00. A batch whose four criteria all sit
+between 3.25 and 4.50 has not been read; it has been averaged. Place each criterion on its rungs,
+and let an essay take a low rung when it earns one.
+
+**Method, six rungs.** The rung is set by whether a struggle the student names is acted on.
+
+| Rung | Trigger |
+| :-- | :-- |
+| 5.00 | the journal kept across the four weeks, the struggle named at each stage, and the change carried into an application specified to the day (017) |
+| 4.50 | the same walk with the struggle named and the application either specified or honestly absent; the student's own position at each step (021, 040) |
+| 4.25 | a walk of states with the review of progress thin, or one section given to classmates (026, 038) |
+| 4.00 | a thematic review made of states but with no account of progress, or a walk whose takeaway is the book's first elements with habit changes that cross no threshold (001, 020, 024) |
+| 3.50 | preferences rather than states: what they liked, what they took away, with no resistance named (004) |
+| 3.00 | a sprint missed and the essay spent proving who wrote what, or method vocabulary with no application (034) |
+
+**Skill, five rungs.** The rung is set by whether a distinction is drawn, and how far it is carried.
+
+| Rung | Trigger |
+| :-- | :-- |
+| 4.75 | a distinction only someone who did the work could draw, stated as a test: "sketching felt less like a drawing activity and more like a way to check how well I understood the problem" (013) |
+| 4.50 | a distinction plus the decision it changed, or a tool computed and then checked against other interviewees (031, 017) |
+| 4.25 | one clear distinction carried through a section (021, 038) |
+| 3.75 to 4.00 | description of what happened with the analysis thin; a real observation that names no decision (001, 004, 020, 026) |
+| 3.25 to 3.50 | maxim-shaped analysis, a sentence that could move into another essay (007, 022) |
+| 3.00 | maxims as the body of the analysis, or tools named and not used (034) |
+
+**Insight, seven rungs.** The rung is set by how far the best finding travels, then the count.
+
+| Rung | Trigger |
+| :-- | :-- |
+| 5.00 | every finding carried observation → implication → what the student now does; the reasoning is there for each (064, 021) |
+| 4.75 | the same chain but shorter on one finding, or one finding fewer |
+| 4.50 | two or three findings carried, the reasoning present but brief (013) |
+| 4.25 | one finding carried all the way, or good findings with less reasoning behind each (040) |
+| 4.00 | a principle naming no action, a quoted insight, or a group observation with nothing turned on the student (019, 038, 040's lesser rows) |
+| 3.50 | an observation about groups only, or a team finding restated as the essay's main point |
+| 2.50 | one finding stated and left; disclosure with no finding (004, 007) |
+| 1.50 | a maxim, or a defence of the writer's own contribution (034) |
+
+**One verdict, three criteria.** Some essays are one thing wearing four columns. A contribution
+defence is not a Method finding with an Insight question beside it: it scores Method 3.00, Insight
+1.50 **and** Communication 1.00 together, because the same section is what costs all three. Read the
+essay's subject first, and when it is the writer's share rather than the writer's learning, place
+all three low in the same pass.
+
+The 5.00 rung asks you to name the findings, not count them: if you cannot write down three
+findings and the action each one changed, the essay is not there.
+
+**Communication, five rungs.** The rung is set by the largest thing the reader meets.
+
+| Rung | Trigger |
+| :-- | :-- |
+| 4.75 | clear and unhurried, every section showing learning, nothing announced and nothing addressed to the grader (021, 064) |
+| 4.50 | the same with one soft spot (031, 040) |
+| 4.25 | clean, with one charge: a short thank-you line, one section restating the course (017, 028) |
+| 3.75 | one real cost: portraits taking the middle, the student's sprint in an appendix, a habit list with no thread (001, 004, 013, 020, 022, 024, 026, 029, 164) |
+| 3.25 to 3.50 | thanks through the close, or signposting in most sections (007, 038, 039) |
+| 1.00 to 1.50 | the essay is addressed to the grader: a contribution defence, appendices as proof of authorship (034) |
+
+**Method and Skill are the crowded pair.** Most essays land on 4.00 or 4.25, which is why these two
+produce the most inversions. Separate them with two questions, in this order: does the student name a
+struggle in the review (yes → 4.50 and above, no → 3.75 and below)? and is the analysis a
+distinction between two ideas or a description of what happened (distinction → 4.25 and above,
+description → 4.00 and below)? Between two essays a quarter point apart, the one that names its
+struggle earlier wins Method, and the one whose distinction could not be made by someone who did
+not do the work wins Skill.
+
+**The four criteria must differ.** In the settled set the best and worst criterion of an essay sit
+0.68 apart on average, and 17 of 26 differ by 0.75 or more. A pass that gives one essay 4.25/4.25/
+4.25/4.25 has stopped reading. Two criteria may share a value only when each has its own passage
+that decided it.
+
+
 ## The arithmetic
 
 | Item | Value |
@@ -249,7 +330,8 @@ a curve, or a colleague's read.
 | Essay score | weighted mean of the four at 30/30/30/10, then the length charge, floored at 1 |
 | Essay letter | absolute, no curve: A+ 4.50+, A 4.00-4.49, B+ 3.50-3.99, B 3.00-3.49, C+ 2.50-2.99, C 2.00-2.49 |
 | Length target | **1,401 body words**, not 1,500: the 99 free words come off the bottom, so the comparison is body against 1,401. Comparing body minus 99 against 1,500 is the bug that made the target 1,599 |
-| Length charge | **0.001 per word short - 0.10 per 100 - off the essay score, floored at 1**: 674 words loses 0.73, 1029 loses 0.37. A closing remark about the journal is not essay text. **An over-run is not charged**: the rules table names one, but 15 settled essays sit above 1,500 words and none is docked, so the rows are what govern until the rule is restored or retired - charge nothing and say so in the row |
+| Length charge | **0.001 per word short - 0.10 per 100 - off the essay score, floored at 1**: 674 words loses 0.73, 1029 loses 0.37. A closing remark about the journal is not essay text |
+| Over-run | **no charge, ever.** The rules table names one and the settled rows never apply it: 15 essays sit above 1,500 words and not one is docked. Charge nothing, and if you were about to write a deduction for length above the target, delete it |
 | Body words | title block, running headers, page numbers, a reference list and an appendix excluded; a closing remark about the journal is a remark, not essay text; a handwritten page is counted line by line from the image; text that prints without spaces is counted on its letters at 4.93 per word |
 | Team | one value per team, the settled weighted mean on the same 1-5 scale; **Chaehan's row governs** over the AI read |
 | Total | 0.65 x Team + 0.35 x Essay, less the AI penalty where one applies |
@@ -280,8 +362,9 @@ Two rules that were corrected and must not drift back:
    that decided it. Write the four before opening the next file.
 5. **Charge a defect once**: length is the rule deduction and nothing else; a thin method is Method
    and not also Insight; an unclear structure is Communication and not also Method.
-6. **Every tenth file**, re-read the last five scores against each other and write one line on what
-   separates them.
+6. **From the fifth file on, place every new essay against the batch already scored** and move an
+   older number when the new one is clearly above or below it, with one line on what separates
+   them. Do not score the whole set file by file and sort it afterwards.
 7. **Write the artefacts from a script**, never by typing rows by hand: the essay sheet, then the
    gradebook, its anonymous twin and the PDF. Every distribution table is computed on each build -
    a hand-kept count drifted three times in one round.
