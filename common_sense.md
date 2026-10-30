@@ -265,6 +265,7 @@ One row per correction whose complaint was that the agent failed at something or
 | 2026-10-30 | "a PDF that is one revision behind the sheet is the failure this whole pass keeps hitting" | "robotic: a PDF that is one revision behind the sheet is the failure this whole pass keeps hitting" | say what happens: "the PDF can end up one revision behind the sheet" - the abstract "failure this pass keeps hitting" names the pattern instead of the event | RULES.md 2 |
 | 2026-10-30 | "not an act you choose" | "robotic: not an act you choose" | the X-not-Y antithesis used as rhythm rather than to correct a belief; drop it and the sentence still carries its point | RULES.md 2 |
 | 2026-10-30 | "A slash command runs when you remember to run it; the gradebook has to follow the scores, and a PDF that is ..." | "look at the grammar, this is ai give away isn't that common sense?" | a semicolon splice joining three clauses, 40 words with no main clause; split into two sentences, each with one subject and one verb | RULES.md 2 |
+| 2026-10-30 | the PDF rebuilt with its own existing colour map, presented as the format he asked for | "i see exactly the same pdf with the old colors! ... why did you stick to the old definitions and didn't read what you produced in this chat?" | he named the chat table as the reference, so its four tones are the spec; the file under edit only shows what is being replaced | RULES.md 232 |
 
 ### The neighbouring family: "can't you see X"
 

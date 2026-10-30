@@ -4333,3 +4333,17 @@ indicators to prove this is working like the powerpoints." Opening AUSTSWIM's ow
 finder with State = VIC and Month = December returned five bookable Victorian courses,
 one of them 19-20 December at Maribyrnong Aquatic Centre for $449 with a working enrol
 form. The lesson: the finder is the source, the search snippet is not.
+
+### 232. A reference he names is read before the artifact it replaces
+
+When Chaehan points at a reference - a table in this chat, a screenshot, another file -
+and asks for its formatting, the values come from that reference. The file under edit
+holds what is there now, which is the thing being replaced; reading it and reporting it
+back answers a question he did not ask and leaves the output identical.
+
+Failure, 2026-10-30, the gradebook PDF: he asked for the colour coding of the inline
+table shown in the chat, and the agent reported the PDF's own seven-colour map and
+rebuilt with it, so the PDF came back byte-identical. His words: "i see exactly the
+same pdf with the old colors! i told you i wanted the colors of the inline table you
+should in this chat, why did you stick to the old definitions and didn't read what you
+produced in this chat?" The map now carries the chat's four tones.
