@@ -336,14 +336,15 @@ each score cell reading criteria = score and letter:
 Measured on the 26 settled essays, read blind by a fresh session from this skill: the arithmetic
 reproduces exactly (both length charges to the point, every word count), the four criteria land
 within 0.36 to 0.58 mean absolute error (Method 0.36, Skill 0.42, Insight 0.58, Communication 0.39),
-and 12 of 26 letters match. The middle of the set is reliable; the extremes are not - the top four
-and the bottom three are where a blind read and the settled read disagree by 0.5 or more, because
-those scores rest on comparisons inside the set.
+and 12 of 26 letters match. The error is not spread evenly: the top four essays come back within
+0.25, the middle nineteen within 0.39, the bottom three within 0.68. A low score rests on what the
+essay *fails* to do, and a reader who finds any finding credits it.
 
 So: a cold first round runs on this skill alone, and its numbers are a defensible draft. A re-read
 that must land on settled numbers starts from the settled rows, not from the rubric, and any row
-inside the A family or below B+ goes past Chaehan before it is written. Adding rules to the model
-did not narrow that gap in two measured attempts; the comparison did.
+below B+ goes past Chaehan before it is written. Adding rules to the model did not narrow the gap in
+two measured loops; the anchor rows are what carry the calibration, and they carry it only when the
+essay being scored sits near one.
 
 ## Report
 
