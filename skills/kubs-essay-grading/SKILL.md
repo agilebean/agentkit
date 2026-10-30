@@ -416,18 +416,26 @@ each score cell reading criteria = score and letter:
 
 ## What this instrument can and cannot do
 
-Measured on the 26 settled essays, read blind by a fresh session from this skill: the arithmetic
-reproduces exactly (both length charges to the point, every word count), the four criteria land
-within 0.36 to 0.58 mean absolute error (Method 0.36, Skill 0.42, Insight 0.58, Communication 0.39),
-and 12 of 26 letters match. The error is not spread evenly: the top four essays come back within
-0.25, the middle nineteen within 0.39, the bottom three within 0.68. A low score rests on what the
-essay *fails* to do, and a reader who finds any finding credits it.
+Measured by reading all 26 settled essays blind, three times, and comparing cell by cell. The
+arithmetic reproduces exactly every time (both length charges to the point, every word count). The
+four criteria, on the last pass:
 
-So: a cold first round runs on this skill alone, and its numbers are a defensible draft. A re-read
-that must land on settled numbers starts from the settled rows, not from the rubric, and any row
-below B+ goes past Chaehan before it is written. Adding rules to the model did not narrow the gap in
-two measured loops; the anchor rows are what calibrate, and they work only when the essay being
-scored sits near one.
+| | Method | Skill | Insight | Communication | Essay |
+| :-- | :-- | :-- | :-- | :-- | :-- |
+| correlation | 0.70 | 0.51 | 0.41 | 0.64 | 0.65 |
+| mean absolute error | 0.27 | 0.38 | 0.55 | 0.40 | 0.36 |
+| bias | +0.02 | +0.02 | +0.01 | −0.08 | −0.08 |
+
+The earlier pass, with rungs for Insight and Communication only, reached 0.70 on the essay and 0.54
+on Insight but lifted every criterion by about 0.1. So the band is this: **Method and Communication
+reproduce closely, Skill moderately, Insight weakly** - Insight is where a blind read and the settled
+sheet still disagree, because three of its values rest on comparisons inside the set.
+
+A cold first round therefore runs on this skill and produces a defensible draft. A re-read that must
+land on settled numbers starts from the settled rows, and any essay whose Insight or whose letter is
+at stake goes past Chaehan. The rung tables name settled rows, so part of any measured gain is
+recognition of those rows rather than judgment of a new one; the triggers are what transfer.
+
 
 ## Report
 
