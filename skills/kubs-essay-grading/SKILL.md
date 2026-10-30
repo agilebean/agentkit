@@ -1,0 +1,280 @@
+---
+name: kubs-essay-grading
+description: Grade the KUBS DT final essays - the 35 percent individual round - on the five-point scale, regrade a single student, sweep the essay sheet, and build the course gradebook from the settled scores. Use when the user asks to grade or regrade essays, check an essay score, or rebuild the gradebook and its PDF. The team presentations round is kubs-grading, not this.
+---
+
+# KUBS DT essay round
+
+Everything lives in the Drive folder "1 Projects/KUBS/KUBS DT/KUBS DT Grading"; the mirror
+is `projects/kubs_dt/grading/` in the socrates repo, and it is never the deliverable.
+
+- "final essays/" - 26 PDFs named by student number only, plus "backup 2026-10-26" and "top8"
+- "KUBS DT final essays grading - anonymous.md" - the essay sheet: the reading model, the
+  fixed rules, one row per student number, the computed distribution. **This is the only essay
+  sheet.** A named twin and a dated twin were both retired; do not recreate either.
+- "KUBS DT final presentations grading.md" - the team round's roster and settled team means
+- "KUBS DT gradebook.md" + "KUBS DT gradebook - anonymous.md" + "KUBS DT gradebook.pdf" -
+  the course grade, built from the two rounds
+- "KUBS DT grade disclosure prompt.md", "KUBS DT grading insights.md", `_log.md`
+
+The criteria, the weight of each and the word target come from the syllabus and "KUBS DT
+session 2 - assessment.md", never from a previous round's summary row.
+
+## What is being graded
+
+A 1500-word personal learning journey, built from the learning journal, assessed on how personal
+it is and on being the student's own writing. English quality is **not** scored - the syllabus
+says so - and clumsy English that stays comprehensible is therefore never a defect.
+
+| Criterion | Weight | The question it asks |
+| :-- | :-- | :-- |
+| Method | 30 | Did the student keep a learning journal and review their own progress and struggles across the four weeks? |
+| Skill | 30 | Is the student's own analysis differentiated and non-trivial? |
+| Insight | 30 | What did they come to understand that they did not before, and did it change anything? |
+| Communication | 10 | Structure and clarity only: can a reader follow it, and is the reader shown the learning or told the plan? |
+
+## The grader's model
+
+Five tests decide almost every point. They are statements about what a sentence *does*, so they
+apply to an essay nobody has written yet.
+
+**1. The chain: prior belief, then the moment that broke it, then what changed.**
+A stated lesson is worth nothing on its own. Method is satisfied by the student's own state at
+each stage of the four weeks - "we were like, What? Why are we doing this?", "I kind of liked the
+silent voting because we just had to put a sticker" - so a chronological walk through the course
+is Method evidence, not a lack of structure. It fails only when the elements are listed with
+nothing of the student attached, or when classmates' portraits displace the student's own review.
+Skill is satisfied by a decision reported with its cause ("the button to call a family member has
+made them feel a burden, so we shifted to seek a helper outside"). Insight is satisfied only when
+the understanding arrives and something follows it.
+
+**Method does not require a week-by-week form.** A review ordered by cause, by theme or by stage is
+just as systematic as a calendar; headings, numbers and dates are formatting and earn nothing. What
+Method asks is that the review covers the four weeks and that the student's *struggles* appear in it.
+Separate the two things a walk can be made of:
+
+- **A state** - what they found hard, got wrong, or did not expect ("the first homework was the
+  hardest for me"; "I felt a lot of impostor syndrome for two reasons: energy loss and habit").
+  A walk built of states is Method 4.50 and above, even when it lists every session in order.
+- **A preference** - what they liked, enjoyed, or took away as a habit with no resistance ("more
+  time with my child", "jogging", "new music"). A walk built of preferences, with no struggle
+  anywhere, is Method 3.50 to 4.00 however complete its coverage.
+
+Nothing in between counts as a flaw of organisation: an essay that recounts the course thematically
+and names its struggles is not "a report", and one that names the weeks without naming a struggle
+is not "systematic".
+
+**A defence of one's share is not a review.** A student who missed a sprint and then spends the
+essay establishing who wrote what ("I got in touch with my team members to find out what had
+happened during Sprint 2", appendices offered so a grader can tell the student's work apart) has
+documented an absence, not reviewed a progress: Method 3.00, and the same section costs
+Communication under the band table below.
+
+
+
+**2. An insight is scored on how far it travels, not on being present.**
+Count the insights, then read each one: observation only, observation plus what it implies, or
+the whole way to a change the student made. Two insights carried to a change outrank five that
+stop at the observation. Anchors from the settled set, Insight: the fullest reasoning per insight
+5.00, the same chain carried into actions already taken 5.00, the reasoning present but shorter
+4.50, good insights with less reasoning and fewer of them 4.25, a principle that names no action
+**capped at 4.00**, an observation about groups rather than about the student 3.50 and below.
+
+Count first, then place the essay on this ladder - the count is half the score:
+
+| What the essay holds | Insight |
+| :-- | :-- |
+| two or more findings, each taken to a change the student made | 4.50 to 5.00 |
+| one finding taken that far, or two taken part of the way | 4.00 to 4.25 |
+| a principle, a lesson, or a finding that names no action | 4.00 at most |
+| one finding the essay states and then leaves | 2.50 |
+| disclosure with no finding: the hurt, the pregnancy, the father, "I was hurt too by the interview. Not because of the interview but because of our past and our relationship" | 2.50 and below |
+| a maxim, or a defence of the writer's own contribution | 1.50 and below |
+
+**Whose insight it is decides the ceiling.** The team sprint produces findings for everyone in
+the team; restating one, or iterating it, is not the student's own insight. If the finding never
+turns on the student's own conduct it **caps at 4.25**; if the essay's main finding is the team's
+principle restated, it caps at 3.50. The question that separates the two: does the essay show what
+this person now does differently, or only what the team concluded?
+
+
+**3. A maxim is not analysis.**
+"It is important to listen before judging", "using a structured approach does not guarantee
+reliable evidence", "observing what people do is one thing and making conclusions is another" -
+each reads like a finding and asserts nothing about a specific decision. The test: could the
+sentence be moved into another student's essay unchanged? If yes it is not differentiation.
+A balanced abstraction that weighs two considerations and names no decision, no person and no
+direction ("placing those considerations in relation to the user instead of allowing them to
+replace the user's perspective") says nothing either.
+
+**A confession is not analysis either.** Choosing to write about an awkwardness, a guilt or a
+difficulty is a topic; Skill appears only when the student draws a distinction between two ideas
+and says which one held. "I chose the awkwardness topic and named it avoidance" is the topic.
+"I needed to question whether my ideas addressed a meaningful need, before showing their strength"
+is the distinction - only someone who sat through that sprint could draw it.
+
+
+**4. A tool named is not a tool used, and an intention is not a change.**
+Method scores the application: an opportunity score computed at 12 and 7 and then checked against
+other interviewees is Method; a list of Opportunity Score, Value Proposition Canvas and HMW that
+"helped me think" is vocabulary and buys Method only, never Skill or Insight. Likewise a rewritten
+interview question is proof the lesson landed; "I could do a mini Design Sprint... I haven't done
+this yet" is a plan and scores as Insight below 4.00. Volume - 1600 words, nine numbered sections,
+the most method references in the set - buys nothing on the other three criteria. Put ceilings on
+it so it cannot creep back:
+
+- The essay's analysis is mostly method vocabulary, restated steps or tool names: **Skill 4.00 and
+  Insight 3.50 at most**, whatever Method earned.
+- A tool is computed and then critiqued (an opportunity score worked out at 15 and questioned):
+  that is Skill 4.50 and above, and it is the difference between the two essays above.
+
+
+**5. Two things cost Communication, and grammar does not.**
+Signposting: an essay that narrates its own architecture ("in the following, I will describe my
+learning journey", "I have divided this section into two parts. First..., Second...", "Firstly,
+Secondly, In conclusion", "in this essay, I wanted to talk about") tells the reader the plan
+instead of showing the learning. Enumeration of content ("First, I will try to understand a
+situation before making a judgment") is not signposting and costs nothing. And a gratitude
+formula or compliments to the professor are an influence attempt, not a close. What also costs:
+a close that restates the course, and a section spent defending one's share of the work
+("I got in touch with my team members to find out what had happened during Sprint 2", appendices
+offered so a grader can tell the student's work apart) - documentation of absence reads as
+diligence and is neither Method nor Skill.
+
+Place the essay in a band rather than subtracting ad hoc. The bands are the settled set's own:
+
+| Band | What puts an essay there |
+| :-- | :-- |
+| 1.00 to 1.50 | the essay is addressed to the grader: a contribution defence, appendices offered as proof of authorship, a list of what the writer alone wrote, and writing that argues nothing |
+| 3.00 to 3.50 | the reader is told the plan (signposting in most sections), or the essay closes on thanks, or a single thank-you line sits where the finding should be |
+| 3.75 to 4.00 | readable throughout with one cost: classmates' portraits taking the middle, a section that repeats the course, the student's own sprint evidence left in an appendix |
+| 4.25 to 4.75 | the learning is shown in order, the sections follow the argument, no plan is announced and nothing is addressed to the grader |
+
+Charges are small and named; a single thank-you line costs half a point, not a band.
+
+
+**6. Which of the book's ideas the student kept says how deep the reading went.**
+Choosing long-term goal and HMWs - the first elements in the book, in the order they appear - as
+the life takeaway is shallow. A habit change with no threshold crossed (more time with the child,
+jogging, new music) cost nothing and is self-serving; a learning episode meets resistance.
+Retrospective nostalgia - a digital detox taken years ago - describes a past, not a shift. Personal
+disclosure is material, not a finding: a wife's pregnancy, a difficult father, "I was hurt too by
+the interview. Not because of the interview but because of our past and our relationship" points at
+a problem and stops.
+
+## Writing: authorship, not detection
+
+The syllabus's rule is a **two-grade downgrade**, and it is charged on the **Total** in the
+gradebook, once. The essay keeps the score its text earned. No detector output is evidence.
+
+- The tells are uniform, balanced, complex syntax with no awkward construction, and a concept that
+  appears in neither the course nor its books ("The gift analogy had opened a door"; gift and
+  empathy are not course material). Formulations that could be moved between essays count with them.
+- The reverse is evidence of authorship: "This was of thinking is very important to me", ligature-
+  broken characters, a complaint about the course's own logistics. A grader prefers these to a
+  polished surface, so never mark down clumsiness - it is neither Communication nor authorship doubt.
+- Handwriting is not an AI signal either way. A reconstructed record with no dated journal entries
+  caps Method at 4.50, which is a Method finding, not an authorship one.
+
+## Order: a score is only defensible in order
+
+Score one file at a time, and before each new essay read it against the rows already recorded.
+A number that contradicts its own evidence line is the miss this rule exists for: the essay whose
+evidence said "the life takeaway is the book's first three elements" sat at Insight 3.75 while two
+essays with the same defect sat at 2.50. When two essays are close, say in one line what puts one
+above the other and leave the number where the evidence puts it - never move it to match a letter,
+a curve, or a colleague's read.
+
+## The arithmetic
+
+| Item | Value |
+| :-- | :-- |
+| Essay score | weighted mean of the four at 30/30/30/10, then the length charge, floored at 1 |
+| Essay letter | absolute, no curve: A+ 4.50+, A 4.00-4.49, B+ 3.50-3.99, B 3.00-3.49, C+ 2.50-2.99, C 2.00-2.49 |
+| Length | body words against 1500; the first 99 words free; **0.10 off the essay score per 100 words short, charged proportionally, floored at 1** - 674 words loses 0.73, 1029 loses 0.37 |
+| Body words | title block, running headers, page numbers, a reference list and an appendix excluded; a closing remark about the journal is a remark, not essay text; a handwritten page is counted line by line from the image; text that prints without spaces is counted on its letters at 4.93 per word |
+| Team | one value per team, the settled weighted mean on the same 1-5 scale; **Chaehan's row governs** over the AI read |
+| Total | 0.65 x Team + 0.35 x Essay, less the AI penalty where one applies |
+| Total letter | the top 16 rows of the Total ranking are the A family - A+ at Total 4.08 and up, A the remaining seats; below the family the absolute scale, so a Total under 3.00 reads C+ however few rows sit beneath it; a row with the AI penalty reads C+ |
+| AI penalty | -2.00 on Total only, shown as "(-2 AI)" inside the Total cell |
+
+Two rules that were corrected and must not drift back:
+
+- **A shortfall comes off the essay score, an over-run off Communication.** An essay is judged as a
+  whole, so missing words are missing content; running over shows the points were not brought
+  across in the space the brief set.
+- **The essay and the team are already on one scale**, so nothing is converted. A 1-5 mean stretched
+  across a 0-100 band invents resolution the score does not have; that mapping was retired.
+
+## The pass
+
+1. **Say the cost before starting**: the number of files and the batch plan, one line. Work in
+   batches of nine.
+2. **Read blind.** Essays are keyed by student number. Do not open the gradebook, the roster's name
+   column or any number-to-name map while scoring; the name goes on at the writing stage.
+3. **Per file, before scoring**: extract the text, count the body words, and look at the pages -
+   downscaled to a few hundred KB, never full size. A page that renders blank stops the file and is
+   reported with its name and page number before any score; it is a question to ask, never a fact to
+   record, and no substituted copy is scored in its place. The instrument is
+   `python3 projects/kubs_dt/essay_pass.py --pdf PATH`: it prints the body count, the net count and
+   the pages with no text layer. Use its count; a count typed by hand is the one that drifts.
+4. **Score Method, then Skill, then Insight, then Communication**, each with the page and the words
+   that decided it. Write the four before opening the next file.
+5. **Charge a defect once**: length is the rule deduction and nothing else; a thin method is Method
+   and not also Insight; an unclear structure is Communication and not also Method.
+6. **Every tenth file**, re-read the last five scores against each other and write one line on what
+   separates them.
+7. **Write the artefacts from a script**, never by typing rows by hand: the essay sheet, then the
+   gradebook, its anonymous twin and the PDF. Every distribution table is computed on each build -
+   a hand-kept count drifted three times in one round.
+
+## The sheet and the gradebook
+
+Essay sheet, one row per student number, no names:
+
+| Student no. | Essay | Letter | Method | Skill | Insight | Comm. | Mean | Length | AI | Body words | Evidence |
+| :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
+
+The evidence cell names the page and quotes the words. For A and above, one thing that earns it;
+below A, the element the essay lacks. An absence claim names the search that established it
+("searched all 8 pages for 'journal': zero hits", RULES 222). A page that renders blank was reported
+in the pass that found it (RULES 223).
+
+Gradebook, one row per student, **roster order** (student number ascending, the LMS sheet's order),
+each score cell reading criteria = score and letter:
+
+| # | Student no. | Student | Essay | Team | Total |
+| :-- | :-- | :-- | :-- | :-- | :-- |
+
+- `3.75/3.75/3.25/3.75=3.60 B+` - the four criteria in Method / Skill / Insight / Comm order.
+- Metric beside every letter, always. A table of letters without the number is rejected.
+- No separate "absolute letter" column and no Why column: the Why lives in the essay sheet.
+- The student number column repeats at the right edge if the table scrolls.
+- Letters are plain text in the `.md`. Colour belongs to the PDF: A+ and A positive, B+ and B
+  neutral, C+ and below warning (RULES 228). The PDF is a render of the sheet, so a PDF one
+  revision behind it is a defect.
+
+## Guards
+
+- **A grading file exists nowhere for the user until it is in the Drive folder.** Copy every write
+  there in the same turn and match the two by checksum; the repo folder is the versioned mirror.
+  The gradebook PDF lives in Drive only.
+- **An accepted table's shape is frozen** (RULES 224). Change a value in it, never its columns;
+  when he asks for a column back, restore the shape from his own earlier table, not from git history
+  of your last output.
+- **Never re-type a repeated row; copy it from the generator** (RULES 225), and read a modified
+  tracked file before writing to it (RULES 226) - a second session may hold the same document.
+- **A lesson he teaches in chat goes into the essay sheet's model section in the turn he teaches it**,
+  with the essay it was taught on; a correction that lives only in the conversation is re-derived
+  wrong on the next file.
+- Text he will read goes through the robot-marker check:
+  `mamba run -n socrates python3 ~/Software/Prototypes/agentkit/scripts/wording_lint.py FILE`
+  ("Insight" as the criterion's own name is a known warn).
+- An edit to `build_course_grades.py` or any `.py` triggers the full test suite (RULES 6):
+  `mamba run -n socrates python3 -m pytest -q`.
+
+## Report
+
+The table keyed by student number with the four criteria, the essay score and the letter; the bands
+and the mean; every deviation from a settled score with the one line that explains it; and the
+decisions that are his. Lean and specific, no filler, no names unless he asks to issue grades.
