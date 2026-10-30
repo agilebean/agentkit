@@ -250,3 +250,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 4220–4227 | ## Shell: `~/.bash_aliases` (user-global) |
 | 4228–4244 | ### 228. A record's letters are plain; colour belongs to a rendered artifact |
 | 4245–4292 | ### 229. A chart with secondary curves is placed on the render, one dial at a time |
+| 4294–4312 | ### 230. A capability is not an intent; the activity's limits are asked, never inferred from the training record |
+| 4314–4336 | ### 231. An option carried by a search is proved at its own booking page: link, date, price, and the live step that takes the form |
