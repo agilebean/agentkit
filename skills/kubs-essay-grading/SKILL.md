@@ -35,8 +35,13 @@ says so - and clumsy English that stays comprehensible is therefore never a defe
 
 ## The grader's model
 
-Five tests decide almost every point. They are statements about what a sentence *does*, so they
+Eight tests decide almost every point. They are statements about what a sentence *does*, so they
 apply to an essay nobody has written yet.
+
+**Every score is a quarter point.** 1.00, 1.25, 1.50 and so on to 5.00 and nothing between - the
+settled sheet holds no other value, and a score like 4.10 is not a finer judgment, it is a number
+nobody chose.
+
 
 **1. The chain: prior belief, then the moment that broke it, then what changed.**
 A stated lesson is worth nothing on its own. Method is satisfied by the student's own state at
@@ -150,7 +155,10 @@ Place the essay in a band rather than subtracting ad hoc. The bands are the sett
 | 3.75 to 4.00 | readable throughout with one cost: classmates' portraits taking the middle, a section that repeats the course, the student's own sprint evidence left in an appendix |
 | 4.25 to 4.75 | the learning is shown in order, the sections follow the argument, no plan is announced and nothing is addressed to the grader |
 
-Charges are small and named; a single thank-you line costs half a point, not a band.
+Charges are small and named; a single thank-you line costs half a point, not a band. A page given
+to three classmates costs 0.75, and so does a section that restates the course. The student's own
+sprint evidence left in an appendix is the same charge: the essay routes the reader away from the
+proof it claims.
 
 
 **6. Which of the book's ideas the student kept says how deep the reading went.**
@@ -161,6 +169,55 @@ Retrospective nostalgia - a digital detox taken years ago - describes a past, no
 disclosure is material, not a finding: a wife's pregnancy, a difficult father, "I was hurt too by
 the interview. Not because of the interview but because of our past and our relationship" points at
 a problem and stops.
+
+**7. An insight quoted is not an insight arrived at.**
+Kathi's "we usually jump right into solutions, but we should focus on what others really need",
+the professor's "we shouldn't be biased by our own judgment": whoever says it, the student has
+borrowed the authority instead of doing the work, and the criterion scores the doing. **Insight
+4.00 at most** when the findings are quotations, however good the quotations. The same holds for an
+essay that lists what the student liked - "I liked the warm-ups", "the lecture was helpful" - with a
+professor's line under each: **Skill and Insight 4.00 at most**.
+Disagreeing with the professor is not that, and costs nothing: the one essay in the set that says
+the one-minute meditations did not help *is* showing its own judgment, and scores on it.
+
+**8. An A needs one criterion at 4.25 or above.**
+Every essay at A or A+ in the settled set has at least one criterion at 4.25 or higher, and no
+essay whose best criterion is 4.00 sits at A. That single check settles most boundary calls: an
+essay at 4.00 / 3.75 / 4.00 / 3.75 is 3.90 B+ and stays there, because the cheapest way to lift it
+would push it above essays doing more. When a colleague asks whether an essay can be upgraded,
+answer with that arithmetic and name the criterion that would have to clear 4.25 to do it honestly.
+
+A score can also be **held for a reason that is not its reading** - a correction withdrawn because
+of the seats it moved, a number kept to match a published state. The row's note says so. Do not
+move such a number on a re-read, and do not re-propose a correction the record has already
+withdrawn: say what the reading produces and that the record holds it for the other reason.
+
+
+## The anchor set
+
+Rules alone cannot place a number; these rows can. Read them before the first essay and compare
+every new essay to them, saying in one line which anchor it sits above or below. They are the
+settled 2026-10-28 read (001 and 004 re-read 2026-10-30), in the sheet's own order of quality.
+
+| Anchor: criteria = score | What decided it |
+| :-- | :-- |
+| 2026972064 · 4.75/4.75/5.00/4.75 = 4.82 A+ | the most reasoning per insight in the set: observation, what it implies, what she does differently - every one taken that far |
+| 2026417027 · 4.75/4.75/4.75/4.50 = 4.73 A+ | "the first homework was the hardest for me. I chose to interview my father... because it is hard to remove yourself from a problem that actively involves you"; impostor syndrome named as energy loss and habit |
+| 2026417040 · 4.50/4.75/4.25/4.50 = 4.50 A+ | the clearest single depiction of Skill in the set; good insights with less reasoning behind each and fewer in total than 013 |
+| 2026417017 · 4.50/4.50/4.50/4.25 = 4.40 A | the walk with her own state at each step ("by first developing a sense of affinity... I could speak in front of others without feeling self-conscious"), the silent-voting analysis, and an application specified to the day; 272 words short and still A |
+| 2026417031 · 4.50/4.25/4.25/4.50 = 4.35 A | the opportunity score computed at 12 and 7 and checked against other interviewees - a tool used, not named |
+| 2026417013 · 4.00/4.50/4.00/4.00 = 4.15 A | the sketching analysis is worth 4.50 Skill, but every change she names is still an intention and her own sprint sits in an appendix |
+| 2026417039 · 4.00/4.25/4.00/3.50 = 4.02 A | opportunity score computed at 15 and then critiqued - real work - but the applications are plans ("I haven't done this yet") and the close is thanks |
+| 2026417038 · 4.25/3.75/4.00/3.25 = 3.92 B+ | insights quoted rather than arrived at; "in this essay, I wanted to talk about" |
+| 2026972164 · 4.00/3.75/4.00/3.75 = 3.90 B+ | the strongest single insight below the A line (the mother sprint) inside a list of what he liked, quotes from the professor, and a method half that contradicts itself |
+| 2026417007 · 3.75/3.25/2.50/3.50 = 3.20 B | disclosure with no finding: the hurt reported, never explained; the record holds this number for a seating reason, not a reading one |
+| 2026417012 · 3.50/3.75/3.50/4.00 - 0.73 = 2.89 C+ | handwritten, 674 body words, a reconstructed record with no dated entry; the length charge is arithmetic, not judgment |
+| 2026417034 · 3.00/3.00/1.50/1.00 = 2.35 C | the essay's subject is the writer's share of a sprint he missed; a maxim is not Skill, a contribution defence is not Insight, and addressing the grader is Communication 1.00 |
+
+2026417008 sits at 3.83 B+ on its four criteria with the two-grade AI downgrade charged on the
+Total only, and 2026972154 at 5.00/4.00/3.50/3.75 = 4.12 A: the most method references in the set
+buy Method 5.00 and nothing else.
+
 
 ## Writing: authorship, not detection
 
@@ -191,7 +248,8 @@ a curve, or a colleague's read.
 | :-- | :-- |
 | Essay score | weighted mean of the four at 30/30/30/10, then the length charge, floored at 1 |
 | Essay letter | absolute, no curve: A+ 4.50+, A 4.00-4.49, B+ 3.50-3.99, B 3.00-3.49, C+ 2.50-2.99, C 2.00-2.49 |
-| Length | body words against 1500; the first 99 words free; **0.10 off the essay score per 100 words short, charged proportionally, floored at 1** - 674 words loses 0.73, 1029 loses 0.37 |
+| Length target | **1,401 body words**, not 1,500: the 99 free words come off the bottom, so the comparison is body against 1,401. Comparing body minus 99 against 1,500 is the bug that made the target 1,599 |
+| Length charge | **0.001 per word short - 0.10 per 100 - off the essay score, floored at 1**: 674 words loses 0.73, 1029 loses 0.37. A closing remark about the journal is not essay text. **An over-run is not charged**: the rules table names one, but 15 settled essays sit above 1,500 words and none is docked, so the rows are what govern until the rule is restored or retired - charge nothing and say so in the row |
 | Body words | title block, running headers, page numbers, a reference list and an appendix excluded; a closing remark about the journal is a remark, not essay text; a handwritten page is counted line by line from the image; text that prints without spaces is counted on its letters at 4.93 per word |
 | Team | one value per team, the settled weighted mean on the same 1-5 scale; **Chaehan's row governs** over the AI read |
 | Total | 0.65 x Team + 0.35 x Essay, less the AI penalty where one applies |
@@ -250,9 +308,9 @@ each score cell reading criteria = score and letter:
 - Metric beside every letter, always. A table of letters without the number is rejected.
 - No separate "absolute letter" column and no Why column: the Why lives in the essay sheet.
 - The student number column repeats at the right edge if the table scrolls.
-- Letters are plain text in the `.md`. Colour belongs to the PDF: A+ and A positive, B+ and B
-  neutral, C+ and below warning (RULES 228). The PDF is a render of the sheet, so a PDF one
-  revision behind it is a defect.
+- Letters are plain text in the `.md`. Colour belongs to the PDF (RULES 228), and there are four
+  tones: A+ and A green, B+ blue, B amber, C+ and C red, below C grey. The PDF is a render of the
+  sheet, so a PDF one revision behind it is a defect.
 
 ## Guards
 
@@ -272,6 +330,20 @@ each score cell reading criteria = score and letter:
   ("Insight" as the criterion's own name is a known warn).
 - An edit to `build_course_grades.py` or any `.py` triggers the full test suite (RULES 6):
   `mamba run -n socrates python3 -m pytest -q`.
+
+## What this instrument can and cannot do
+
+Measured on the 26 settled essays, read blind by a fresh session from this skill: the arithmetic
+reproduces exactly (both length charges to the point, every word count), the four criteria land
+within 0.36 to 0.58 mean absolute error (Method 0.36, Skill 0.42, Insight 0.58, Communication 0.39),
+and 12 of 26 letters match. The middle of the set is reliable; the extremes are not - the top four
+and the bottom three are where a blind read and the settled read disagree by 0.5 or more, because
+those scores rest on comparisons inside the set.
+
+So: a cold first round runs on this skill alone, and its numbers are a defensible draft. A re-read
+that must land on settled numbers starts from the settled rows, not from the rubric, and any row
+inside the A family or below B+ goes past Chaehan before it is written. Adding rules to the model
+did not narrow that gap in two measured attempts; the comparison did.
 
 ## Report
 
