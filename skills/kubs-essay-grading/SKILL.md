@@ -343,8 +343,8 @@ essay *fails* to do, and a reader who finds any finding credits it.
 So: a cold first round runs on this skill alone, and its numbers are a defensible draft. A re-read
 that must land on settled numbers starts from the settled rows, not from the rubric, and any row
 below B+ goes past Chaehan before it is written. Adding rules to the model did not narrow the gap in
-two measured loops; the anchor rows are what carry the calibration, and they carry it only when the
-essay being scored sits near one.
+two measured loops; the anchor rows are what calibrate, and they work only when the essay being
+scored sits near one.
 
 ## Report
 
