@@ -4290,3 +4290,46 @@ visual design every time you create a new chart with curves." That is what the d
 arrangement above is for. The concrete numbers live in the project (swim:
 `STRIP_EDGE_TOP`, `STRIP_EDGE_FLOOR`, `STRIP_CROSS_OVERLAP` in
 `src/swim/dashboard/constants.py`, held by `tests/test_strip_bands.py`).
+
+### 230. A capability is not an intent; the activity's limits are asked, never inferred from the training record
+
+When a recommendation is a set of activities rather than one action, the limits that
+define the set — environment, distance, duration, intensity, competition — are the
+first thing to establish, and an absent limit is asked for or left open. Skill in an
+activity says nothing about which version of it the user wants: a swimmer who trains
+1.5 km pool sets is not thereby someone who races 3.8 km in the bay. The record holds
+what he does, never what he wants.
+
+Failure, 2026-10-30, Melbourne stay: memory carried "competitive swimmer … 800 m race
+performance" and 1.5 km sessions, and the pass returned a fourteen-race open-water
+calendar for Port Phillip Bay. Chaehan: "the table is useless. i never wanted to do
+long swim races, the max i'd do is 1km indoors, i never do open water!" The constraint
+was nowhere in the file, so it was filled with the most demanding version of the sport
+he already does.
+
+The fix is structural: state the limit above the options in the user's own terms
+("pool only, 1 km maximum, indoors"), then derive the options from it. An option that
+crosses the limit is not ranked low — it is not in the list.
+
+### 231. An option carried by a search is proved at its own booking page: link, date, price, and the live step that takes the form
+
+A price or a date on a provider's marketing page is not availability. Every option
+handed over carries four things together: the URL where the user can see it for
+himself, the exact date and time, the price as the provider prints it, and the
+indicator that the offer is live — an enrolment form that opens, an availability
+label, a booking calendar with places, a registration portal. Where the live step is a
+script I could not read, the reply says which part is unverified instead of implying
+the whole row is.
+
+A claim that nothing exists in the user's dates ("no Victorian course in your window")
+is made only after the provider's own finder has been filtered to the region and the
+month, and it names the filter used.
+
+Failure, 2026-10-30, the same stay: asked for courses to become a swim coach, the pass
+answered from a search result that listed March dates for months already past, and
+concluded "no AUSTSWIM date inside the window". Chaehan: "i need direct links and a
+clear check if this is really offered and valid with price and dates, so you need more
+indicators to prove this is working like the powerpoints." Opening AUSTSWIM's own
+finder with State = VIC and Month = December returned five bookable Victorian courses,
+one of them 19-20 December at Maribyrnong Aquatic Centre for $449 with a working enrol
+form. The lesson: the finder is the source, the search snippet is not.
