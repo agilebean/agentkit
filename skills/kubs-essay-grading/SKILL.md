@@ -105,8 +105,9 @@ test. Three questions, in this order:
 - **Ownership.** Whose is it? A team finding restated, or a teammate's or the professor's line
   quoted, is not the student's: 4.25 at most when restated, 4.00 when quoted.
 - **Depth.** An insight that states what is true and stops is description. It needs the mechanism
-  behind it and why it matters to this person; without either, it caps at 3.50 however true it is
-  (001 and 020, set 2026-10-31).
+  behind it and why it matters to this person; without either it sits in the 3.00 to 3.50 band,
+  however true it is - and where in that band depends on how specific the description is (001 3.50,
+  020 3.25, 022 3.00, set 2026-10-31).
 
 **The removal test.** Take the method out of the essay and read what is left. If the insights stand
 unchanged without it, the method did not produce them and **Insight is 4.00 at most**, whatever
@@ -122,7 +123,7 @@ Count the insights next, then place the essay on the ladder:
 | 4.50 | two or three traceable findings, the reasoning behind each brief (013) |
 | 4.25 | one traceable finding carried all the way, or a team finding the student turns on their own conduct (018) |
 | 4.00 | a genuine understanding the method did not produce (a life lesson), a principle naming no action, or a quoted insight (019, 038) |
-| 3.50 | a descriptive insight - true, with no mechanism and no personal relevance - or observations about the user group with nothing turned on the student (001, 020) |
+| 3.00 to 3.50 | a descriptive insight - true, with no mechanism and no personal relevance: 3.50 when the description is specific (001), 3.25 when it is thinner (020), 3.00 when it is a generic principle about the user group (022) |
 | 2.50 | disclosure with no understanding, or one finding stated and then left (004, 007) |
 | 1.50 | nothing understood: a maxim, or a defence of the writer's own contribution (034) |
 
