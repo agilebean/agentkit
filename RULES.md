@@ -2434,6 +2434,10 @@ Rule 3's trigger extends again. When the last two rounds of the user's correctio
 
 Not converged, and rule 46's ask applies as usual: any round that changes structure, approach or scope, reverses an earlier correction, or adds a new requirement; any doubt or open question about the work; or any case where the read is unclear, since uncertainty resolves to not converged.
 
+**A record that grades other people is never committed without his word, converged or not.** Gradebooks, score sheets, transcripts and the artifacts derived from them are his signature over someone else's outcome: a commit publishes them, and a wrong rule inside them is a wrong grade for a student who cannot see the working. Apply the round, rebuild, verify, show the table, and stop. The same holds for the rule that produces the letters, not only the numbers: replacing a curve with a threshold is a decision about every student in the class, so it waits for his approval even when the numbers it produces look right to the agent.
+
+Failure, 2026-10-31: three rule changes to the KUBS DT gradebook (a halves cap, then absolute Total thresholds) and two score rounds were committed one after another on the converged-work trigger. Chaehan: "you shouldn't have committed the last changes without my approval. i'm still not satisfied at all. there are too many changes in overall grades." Every one of them was reverted by hand.
+
 Mechanics follow rules 10 and 46: other sessions' dirty files stay unstaged and are named in the report; when the item already sits in the tip commit, fold the round into it (rule 10's amend clause) rather than stacking a repair commit.
 
 Stated 2026-10-06: "you can commit when i gave several times feedback and my agreement is converging and only giving minor modifications. i feel that this would at least cover 50% of all runs where we can save another llm call and finish faster"
@@ -4347,3 +4351,24 @@ rebuilt with it, so the PDF came back byte-identical. His words: "i see exactly 
 same pdf with the old colors! i told you i wanted the colors of the inline table you
 should in this chat, why did you stick to the old definitions and didn't read what you
 produced in this chat?" The map now carries the chat's four tones.
+
+### 233. An analysis request is not an execution mandate, and an excluded action is never an option
+
+When he asks what could be done and rules one action out in the same message
+("find out which could be deleted ... i want you not to delete them"), the
+answer is the assessment: the sizes, the buckets, what stands in the way, and
+the alternative he named. The excluded action does not become the plan, does
+not become the next tool call, and does not appear as an option in the question
+tool - offering it there asks him to re-exclude what he has already excluded.
+
+The test of the reply is where it ends. It ends on the alternative he asked
+about (here: archiving outside the database), not on a scope question for the
+action he refused.
+
+Failure, 2026-10-31, the 1.6 GB opencode database: he asked how much space each
+session occupied, said plainly "i want you not to delete them", and asked
+whether archiving outside the database made sense. The reply delivered the
+sizes, then a deletion plan - a 248-session scope table and a question tool
+carrying four deletion scopes plus an export-before-deleting option. His words:
+"no i told you not to plan for deletion but archiving. what are the options for
+that technically?" and, to the second question, "i told you not to delete".
