@@ -4398,3 +4398,27 @@ terrible. i told you not to implement before my approval. now i have 3 files for
 the backup with different file extensions which i hate. why do you need 3?? i need
 to understand this stupid backup mechanism before i give approval!" The archive,
 its sidecars and the script were removed in the same turn.
+
+### 235. A due date is the last day to file, not the first, and a blocked filing is answered with a route that works today
+
+**The deadline is not the opening.** "Due 15 February" means the last permissible
+day, never the day the filing becomes possible. A filing window opens when the
+period it reports on closes, so a user trying to file the week after that close is
+filing early, not impossibly early. Reading the date backwards turns "how do I
+submit this" into "nothing is due yet", which is a wait he did not ask for and a
+wrong answer.
+
+**A blocked filing is answered with a path, never with permission to wait.** When
+the system offers no form, the product is the channel that accepts the filing today
+- the paper form with a check, a different queue, a printed package - together with
+the mechanism that explains why the portal is empty, named so he can have it fixed.
+"Wait until the deadline" is correct only when every channel is closed, and that is
+a finding to prove, not a default to fall back on.
+
+Failure, 2026-10-31, the Virtual Friend annual charity renewal: the record showed
+expiration 2027-02-15 with no RRF-1 available in the new Online Filing Service, and
+the reply answered "nothing is due until 2027-02-15" and offered to wait. Chaehan:
+"you didn't get it! 4.5m is the last day of submission!!! i can submit now but the
+system doesn't allow it, so find out how! there is nothing to confirm but just to
+submit!" The working channel was on the Registry's own pages: the mailed Form RRF-1
+with a check, and the program address printed on its letter.
