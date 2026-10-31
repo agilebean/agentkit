@@ -255,3 +255,4 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 4337–4349 | ### 232. A reference he names is read before the artifact it replaces |
 | 4355–4374 | ### 233. An analysis request is not an execution mandate, and an excluded action is never an option |
 | 4376–4400 | ### 234. An explanation request ends in an explanation, and his backup folder keeps one naming scheme |
+| 4402–4424 | ### 235. A due date is the last day to file, not the first, and a blocked filing is answered with a route that works today |
