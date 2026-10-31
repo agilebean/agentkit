@@ -361,7 +361,7 @@ that decided it.
 | Body words | title block, running headers, page numbers, a reference list and an appendix excluded; a closing remark about the journal is a remark, not essay text; a handwritten page is counted line by line from the image; text that prints without spaces is counted on its letters at 4.93 per word |
 | Team | one value per team, the settled weighted mean on the same 1-5 scale; **Chaehan's row governs** over the AI read |
 | Total | 0.65 x Team + 0.35 x Essay, less the AI penalty where one applies |
-| Total letter | the top 16 rows of the Total ranking are the A family - A+ at Total 4.08 and up, A the remaining seats; below the family the absolute scale, so a Total under 3.00 reads C+ however few rows sit beneath it; a row with the AI penalty reads C+ |
+| Total letter | **absolute thresholds, no family is filled** (Chaehan, 2026-10-31): A+ 4.08 and up, A 3.75 and up, then the absolute scale B+ 3.50, B 3.00, C+ 2.50, C 2.00. The letter is a function of the number, so a higher Total never carries a lower letter; a row with the AI penalty reads C+ |
 | AI penalty | -2.00 on Total only, shown as "(-2 AI)" inside the Total cell |
 
 Two rules that were corrected and must not drift back:
@@ -371,6 +371,11 @@ Two rules that were corrected and must not drift back:
   across in the space the brief set.
 - **The essay and the team are already on one scale**, so nothing is converted. A 1-5 mean stretched
   across a 0-100 band invents resolution the score does not have; that mapping was retired.
+- **The Total letter is a threshold on the number, never a filled family.** A curve that fills
+  sixteen seats, and a cap that holds a row below the better of its halves, both break the one thing
+  the sheet must show: that a higher Total never carries a lower letter. 011 at 3.65 read A while
+  020 at 3.71 read B+ under the cap, which is the inversion Chaehan rejected. Absolute thresholds
+  only, and the build refuses to ship an inversion.
 
 ## The pass
 
