@@ -12,13 +12,28 @@ is `projects/kubs_dt/grading/` in the socrates repo, and it is never the deliver
 - "KUBS DT final essays grading - anonymous.md" - the essay sheet: the reading model, the
   fixed rules, one row per student number, the computed distribution. **This is the only essay
   sheet.** A named twin and a dated twin were both retired; do not recreate either.
-- "KUBS DT final presentations grading.md" - the team round's roster and settled team means
+- "KUBS DT final presentations grading.md" - the team round's roster and settled team means. **Data only, and only at the gradebook step**, after every essay score is fixed; never open it while scoring
 - "KUBS DT gradebook.md" + "KUBS DT gradebook - anonymous.md" + "KUBS DT gradebook.pdf" -
   the course grade, built from the two rounds
 - "KUBS DT grade disclosure prompt.md", "KUBS DT grading insights.md", `_log.md`
 
 The criteria, the weight of each and the word target come from the syllabus and "KUBS DT
 session 2 - assessment.md", never from a previous round's summary row.
+
+## Boundary with the team round
+
+Two grading skills exist, one per round. **Load exactly one per pass.**
+
+- This skill owns the 35 percent essay round and the course gradebook. The team presentations are `kubs-grading`: do not load it, and do not open its criteria table, its comparison rows, its full read or its recordings while an essay is being scored.
+- The rounds share the folder, the letter scale and the record discipline. They share no criterion, no anchor and no deduction. This round's length charge, AI downgrade and signposting rule have no counterpart there; that round's half point for a mandatory slide and its room-reception test have none here.
+- One file both rounds read: "KUBS DT grading insights.md". This skill reads the essay lessons - the traps list, the transferable-lesson rows and the essay reproduction prompt - and does not apply a lesson written for the team round.
+- Nothing crosses in either direction. A team lesson never moves an essay score, and an essay rule never moves a team score. A correction taught on one round belongs to it; the other round waits for its own.
+- The gradebook is this skill's job and it consumes the team round as **data**: the settled team means, quoted as they stand in the team file. A team score is never re-derived here, and an essay score is never re-derived there.
+
+**Two entry points, one skill.** `/grade-essay` runs the scoring pass and never opens the team file;
+`/gradebook` runs the gradebook step alone from settled scores and re-scores nothing. A scoring pass
+never ends by building the gradebook, and a gradebook run never changes a number. `/grade-team` is
+the other round's entry point, and it loads the other skill.
 
 ## What is being graded
 
