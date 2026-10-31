@@ -49,6 +49,16 @@ is removed, and the smallest form that keeps the whole point wins. Before adding
 a structure, read the destination for the slot it would occupy. The canonical
 text is the opening of RULES.md.
 
+**The artifact in hand is the reference, and a change is a delta on it.** Before
+editing anything the user already has open, name what must be identical
+afterwards: its layout, axes, population, labels, and everything the request
+does not mention. Capture the rendered before-state before the first edit and
+open it beside every candidate; axis fields and widths can stay equal while the
+marks move, so only the picture answers. A defect that appears after your edit
+is a consequence of your edit: shrink the edit, never widen it to fit the
+symptom, and never edit the phrase that defines the artifact to match what you
+built. The full standard is "The artifact in hand is the reference" in RULES.md.
+
 **Every answer is a chain, and this binds every agent in every project.** A
 response, note or report starts with the external effect, goes inward to the
 mechanism that produced it, and ends on the consequence that matters. Concision
@@ -59,8 +69,8 @@ phrase where the physical event belongs, an evidence aside, and a prescription
 in a why. The standard is the opening section of RULES.md, and it fires before
 any rule is looked up.
 
-Do not duplicate the numbered rules here; the writing standard above is the one
-summary this file carries.
+Do not duplicate the numbered rules here; the change standard and the writing
+standard above are the two summaries this file carries.
 
 ## Session hygiene (wait times)
 
