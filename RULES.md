@@ -4372,3 +4372,29 @@ sizes, then a deletion plan - a 248-session scope table and a question tool
 carrying four deletion scopes plus an export-before-deleting option. His words:
 "no i told you not to plan for deletion but archiving. what are the options for
 that technically?" and, to the second question, "i told you not to delete".
+
+### 234. An explanation request ends in an explanation, and his backup folder keeps one naming scheme
+
+Two clauses, one failure.
+
+**A request to understand is not a build order.** When he asks how a mechanism
+could work, or what the options are technically, the product is the mechanism
+explained with its costs - not a script, not a run, and above all not an artifact
+written into his system. Approval comes before the first write, and a mechanism
+touching his backups, his database or his cloud folder needs that approval
+explicitly.
+
+**A file added to one of his backup folders must fit the scheme already there.**
+The folder holds files of one kind under one name pattern; a second pattern, a
+second extension, or a sidecar file left by the tool that wrote it reads as
+clutter and he has to clean it up himself. A new file kind is proposed in the
+reply and written after approval.
+
+Failure, 2026-10-31, the opencode database archive: asked "what are the options
+for that technically?", the agent wrote a 200-line script, ran it against the live
+database, and left a 1.1 GB archive plus `-shm` and `-wal` sidecars in
+`VIP Backup/opencode-bak/` beside his two dated snapshots. His words: "this is
+terrible. i told you not to implement before my approval. now i have 3 files for
+the backup with different file extensions which i hate. why do you need 3?? i need
+to understand this stupid backup mechanism before i give approval!" The archive,
+its sidecars and the script were removed in the same turn.
