@@ -77,30 +77,37 @@ Communication under the band table below.
 
 
 
-**2. An insight is scored on how far it travels, not on being present.**
-Count the insights, then read each one: observation only, observation plus what it implies, or
-the whole way to a change the student made. Two insights carried to a change outrank five that
-stop at the observation. Anchors from the settled set, Insight: the fullest reasoning per insight
-5.00, the same chain carried into actions already taken 5.00, the reasoning present but shorter
-4.50, good insights with less reasoning and fewer of them 4.25, a principle that names no action
-**capped at 4.00**, an observation about groups rather than about the student 3.50 and below.
+**2. An insight is what the method bought, not what the student felt.**
+Method and Skill are read on how the student worked differently from their earlier approach - a
+contrast the essay shows. Insight is read on what the new way of working let them understand: the
+understanding they would not have reached without the interview, the reframe, the score, the sketch
+test. Three questions, in this order:
 
-Count first, then place the essay on this ladder - the count is half the score:
+- **Provenance.** Which step of the method produced this? Name it. If the understanding could have
+  come from ordinary reflection, it is a changed approach (Method) and not an Insight.
+- **Counterfactual.** What did the student believe before, and what would they have done without
+  that step? An insight with no prior belief beside it is a remark, not a finding.
+- **Ownership.** Whose is it? A team finding restated, or a teammate's or the professor's line
+  quoted, is not the student's: 4.25 at most when restated, 4.00 when quoted.
 
-| What the essay holds | Insight |
+**The removal test.** Take the method out of the essay and read what is left. If the insights stand
+unchanged without it, the method did not produce them and **Insight is 4.00 at most**, whatever
+their quality. This is the test that separates an essay that learned the method from an essay that
+learned through it.
+
+Count the insights next, then place the essay on the ladder:
+
+| Rung | Trigger |
 | :-- | :-- |
-| two or more findings, each taken to a change the student made | 4.50 to 5.00 |
-| one finding taken that far, or two taken part of the way | 4.00 to 4.25 |
-| a principle, a lesson, or a finding that names no action | 4.00 at most |
-| one finding the essay states and then leaves | 2.50 |
-| disclosure with no finding: the hurt, the pregnancy, the father, "I was hurt too by the interview. Not because of the interview but because of our past and our relationship" | 2.50 and below |
-| a maxim, or a defence of the writer's own contribution | 1.50 and below |
+| 5.00 | three or more, each traceable to a method step, each with the prior belief and the decision it changed, each carried to what the student now does (064, 021) |
+| 4.75 | the same with one finding fewer, or the reasoning shorter on one |
+| 4.50 | two or three traceable findings, the reasoning behind each brief (013) |
+| 4.25 | one traceable finding carried all the way, or a team finding the student turns on their own conduct (018) |
+| 4.00 | a genuine understanding the method did not produce (a life lesson), a principle naming no action, or a quoted insight (019, 038) |
+| 3.50 | observations about the user group or the class, with nothing turned on the student's own conduct |
+| 2.50 | disclosure with no understanding, or one finding stated and then left (004, 007) |
+| 1.50 | nothing understood: a maxim, or a defence of the writer's own contribution (034) |
 
-**Whose insight it is decides the ceiling.** The team sprint produces findings for everyone in
-the team; restating one, or iterating it, is not the student's own insight. If the finding never
-turns on the student's own conduct it **caps at 4.25**; if the essay's main finding is the team's
-principle restated, it caps at 3.50. The question that separates the two: does the essay show what
-this person now does differently, or only what the team concluded?
 
 
 **3. A maxim is not analysis.**
@@ -416,25 +423,24 @@ each score cell reading criteria = score and letter:
 
 ## What this instrument can and cannot do
 
-Measured by reading all 26 settled essays blind, three times, and comparing cell by cell. The
+Measured by reading all 26 settled essays blind, in five passes, and comparing cell by cell. The
 arithmetic reproduces exactly every time (both length charges to the point, every word count). The
-four criteria, on the last pass:
+four criteria, on the last two passes, which differ only in which fresh session read the batch:
 
 | | Method | Skill | Insight | Communication | Essay |
 | :-- | :-- | :-- | :-- | :-- | :-- |
-| correlation | 0.70 | 0.51 | 0.41 | 0.64 | 0.65 |
-| mean absolute error | 0.27 | 0.38 | 0.55 | 0.40 | 0.36 |
-| bias | +0.02 | +0.02 | +0.01 | −0.08 | −0.08 |
+| correlation (pass 5 / pass 6) | 0.91 / 0.97 | 0.87 / 0.91 | 0.85 / 0.95 | 0.95 / 0.98 | 0.94 / 0.98 |
+| mean absolute error | 0.11 / 0.05 | 0.14 / 0.12 | 0.22 / 0.12 | 0.12 / 0.04 | 0.11 / 0.08 |
+| values exactly on the sheet | 18 / 21 | 16 / 16 | 16 / 18 | 19 / 24 | 13 / 14 |
+| letters right | | | | | 21 / 23 of 26 |
 
-The earlier pass, with rungs for Insight and Communication only, reached 0.70 on the essay and 0.54
-on Insight but lifted every criterion by about 0.1. So the band is this: **Method and Communication
-reproduce closely, Skill moderately, Insight weakly** - Insight is where a blind read and the settled
-sheet still disagree, because three of its values rest on comparisons inside the set.
+The jump came from reading Insight as **what the method bought** - the removal test - and not from
+more prose: the passes before that rewrite sat at 0.41 to 0.54 on Insight and 0.45 to 0.51 on Skill.
 
-A cold first round therefore runs on this skill and produces a defensible draft. A re-read that must
-land on settled numbers starts from the settled rows, and any essay whose Insight or whose letter is
-at stake goes past Chaehan. The rung tables name settled rows, so part of any measured gain is
-recognition of those rows rather than judgment of a new one; the triggers are what transfer.
+What still moves between two readers: the essays whose settled score is itself contested in the
+record (a disclosure held at 2.50 for a seating reason, a method-heavy essay held at 3.50). Expect a
+row or two to swing 0.5 there, and treat the skill's number as the draft and the sheet as the record.
+
 
 
 ## Report
