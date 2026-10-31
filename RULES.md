@@ -31,6 +31,47 @@ complexity!" and "the whole point of making notes is to bring all to the point,
 not describe a lot. the more you remove the clutter, the more valuable becomes
 whatever is left!!!! this is common sense!!!!"
 
+## The artifact in hand is the reference
+
+A change to something the user already has open - a chart, a page, a deck, a
+note, a file - is a delta on that artifact, never a build from the request.
+Before the first edit, write down the invariants: what must be identical
+afterwards. The request's nouns bound the delta; everything it does not name
+stays as it is. Not being mentioned is not permission to move it.
+
+The invariants are read from the artifact, not from its configuration. Capture
+the rendered before-state before the first edit and open it beside every
+candidate. Axis fields, card widths and styles can all stay equal while the
+marks move; only the picture answers. A before capture that is opened once at
+the start and never again is not a reference, and a pass that reports the
+before-state missing first lists the captures the session already made.
+
+A defect that appears after your edit is a consequence of your edit. Trace it
+back to the step that caused it and shrink that step. Patching the symptom by
+widening the change is how a one-line request becomes a rebuilt page: added data
+crowds a chart, so the card is widened, so the row is wrapped, so the comparison
+that row carried is gone. The data addition is wrong before the card's width is.
+
+A correction binds its class, not the act it names. "You broke all panels" fixes
+the page's geometry: no other way of moving it is allowed either. A pass that
+avoids only the exact act he named returns with another act of the same class,
+which reads to him as ignoring him.
+
+An artifact's definition belongs to the user, not to the code. Where the
+implementation and the written contract disagree, the contract is the spec, and
+a pass never edits the phrase that defines the artifact to match what it just
+built.
+
+The case the user says is right is the diagnosis. "Only X works" names the
+mechanism that singles X out. Find what X has that the others lack, and fix
+that; a detail in your own first dump that explains exactly one case is the root
+cause, never a side note.
+
+Verification is against the before capture and the invariant list. A refreshed
+baseline, a payload field, a count that matches the panel you copied, or your
+own plan sentence proves only that the pass ran; none of them can see the
+artifact.
+
 ## The writing standard: every answer is a chain
 
 Every response, note, report and explanation is one reasoning chain, not a list
@@ -4422,96 +4463,3 @@ the reply answered "nothing is due until 2027-02-15" and offered to wait. Chaeha
 system doesn't allow it, so find out how! there is nothing to confirm but just to
 submit!" The working channel was on the Registry's own pages: the mailed Form RRF-1
 with a check, and the program address printed on its letter.
-
-### 236. A panel is the marks it draws, and a named panel's membership is its contract
-
-**A rendered panel is defined by its marks, not by its axis.** Two builds with
-byte-identical `y_range`, tick list and styles are different panels the moment
-they draw different dates or a different pace band. "Keep the chart as it was"
-binds the marks and where they sit; a change that leaves every axis field equal
-while the plotted population moves has changed exactly what the sentence
-protects.
-
-**The population of a named panel comes from its own definition, read before
-the edit.** A card called "Threshold sessions" draws the dates its contract
-admits, and that contract is the docstring, the contract document, the test and
-the panel subtitle. It binds every change; it is not a description of the
-current build. A request about one effort level's marks is answered inside that
-population: recolour, re-key, add the missing rep dots. Widening the population
-so one series resembles another panel replaces the panel with a different
-chart, and the documentation is corrected only after the user has accepted the
-new identity.
-
-**When the data no longer fits the card, the card keeps its geometry.** Collided
-ticks, a dense label band and squeezed lines are an axis problem: name fewer
-ticks, thin the labels, or say the request cannot be met at that width. Widening
-the card, wrapping its row or reordering the page is a layout change nobody
-asked for, and it breaks the comparison that row exists for.
-
-Failure, 2026-10-31, the swim threshold card: asked to make the 60% and 70%
-series read like panel 1, the pass took the block-based membership as the
-defect, filtered dates by `series_key`, and pulled 71 and 60 aerobic dates into a
-card named for threshold work. Its axis check passed because `y_range` and
-`y_tick_secs` were byte-identical, while the drawn pace band moved from 2:02 to
-2:32. The ticks collided, so it widened the card to a full row, and "interval
-and threshold next to each other" was gone. Chaehan: "you broke all panels!!!
-can't you see that??? isn't that common sense??? revert!!!!"
-
-### 237. "Revert" restores what the user saw, so the before-state is captured before the first edit
-
-**A change framed as "don't change X", "keep it as it is" or "revert" opens with
-a capture of X.** Open the artifact as the user has it, capture it whole (the
-rendered panel, the page, the deck page) and keep it beside the payload or
-source it came from. Every later check compares against that capture. A `git
-checkout` restores files, not a picture, and the state the user rejected
-survives only in the capture.
-
-**A pass compares to the reference, never to its own last attempt.** A second
-attempt that starts from the previous attempt re-derives the target from the
-thing the user rejected, and each round drifts further. When a revert lands, the
-next attempt states what was rejected, what stays identical, and where the
-capture proves it.
-
-**A capture that is taken and never opened is not a reference.** Put the before
-and after side by side before any claim, and read the before one first. When a
-pass is about to say the before-state was never available, it lists the
-screenshots the session already made; a reference sitting in the session's own
-folder is the answer, and reporting its absence is a false account of the work.
-
-**A defect visible in your own capture is investigated in the pass that sees
-it.** A collapsed page, a title drawn over a card, a curve through a label: each
-is a finding. Calling one a browser artifact and shipping anyway is the same as
-not looking.
-
-Failure, 2026-10-31, the same card. A full-page capture of the untouched
-dashboard was taken 37 seconds before the first edit, and it sat in the session's
-own screenshot folder through every round. Told "revert!!!!" and then "keep
-strictly not change anything the chart showed", the pass ran a checkout,
-restarted from its own plan, and rebuilt the same population change three times;
-it later reported "I never rendered the before-state" and rebuilt a reference at
-the end. Its after captures already showed the page collapsed with the aerobic
-title over the historic card, and it had written that off as a browser artifact.
-Chaehan: "i told you to revert so that means you must read what was before your
-changes stupid!"
-
-### 238. The case the user says is right is the diagnosis
-
-When a report says "only X behaves correctly", the mechanism that singles X out
-is the cause, and it is usually a few lines away in the evidence already in
-hand. Find what X has that the others lack: a different code path, a field never
-rewritten, a key never re-stamped. Then fix that. Changing the population, the
-layout or the axis until X stops being the exception removes the evidence
-instead of the cause.
-
-A detail in your own first dump that explains exactly one case is the root
-cause, not a side note. A label that disagrees with the series it sits in, a
-value outside the range its neighbours share, one date that skips a transform:
-each is a proof, and writing it into the summary as "a side defect" without
-following it is the failure.
-
-Failure, 2026-10-31, the same pass. The user's first sentence was "only 90%
-sessions are shown correctly". The first dump showed a 70% series carrying reps
-labelled `60% · 200m`; the set template re-keys a block's core reps to the
-block's own effort, and the 90% finishers are never re-keyed, which is exactly
-why only they read right. The pass called it "a side defect" and answered a
-request about colours and population that the user had not made.
