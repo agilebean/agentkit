@@ -4512,3 +4512,24 @@ apply changes not blindly but carefully looking at the structure and its
 building code." The charge was true: "keep strictly not change anything the
 chart showed" was followed by a new plotted population, a new axis band and a
 new layout.
+
+### 237. A line for a conversation is written in speech, and asks what happened
+
+Advice about a human interaction — a date, a negotiation, a call — is a line the
+user will say out loud, so it is written in speech, not in analyst nouns. Its
+questions ask about the lived past (what she did, noticed, chose) rather than a
+hypothetical future; a row of parallel counterfactuals ("in ten years", "at 15",
+"on a Tuesday") is an interview script, and the user spots that before the agent
+does.
+
+The test before a line ships: say it as a sentence to a stranger across a table. A
+noun the speaker would never use ("a risk check", "she filed it", "what keeps me in
+the room") fails it; the plain version ("she heard that as not decided", "what I
+like about teaching") passes.
+
+Failure, 2026-11-01, the date follow-up. Five questions were proposed as
+counterfactuals in fixed frames, and the location answer was explained as "a risk
+check" that "she filed as undecided". Chaehan: "robotic: introspect why you make so
+many counterfactuals in a rigid frame like in ten years, at 15, on a Tuesday -
+don't you get that this sounds like a job interview more than a date? this is common
+sense." and "robotic: what keeps me in the room, risk check, she filed it".
