@@ -688,6 +688,17 @@ lure me in") were put to him as _psych_obs.md candidates; he answered
 search. this is common sense!" They belong under Approach & patterns in
 partner-search.md.
 
+**A stated criterion is a constraint, not a motive to explain.** When the user names
+a trait he wants in a partner, an option he prefers, or a condition he sets, that
+statement is the fact and it is complete. Do not read an earlier pattern in the psych
+file as its explanation, and do not ask him to confirm a motive he did not state. The
+2026-11-01 failure: "I felt i need someone who's curious to know things and can find
+interest in anything so life doesn't go by unnoticed" was mapped onto the 2026-10-02
+contribution-not-received observation and offered as an attention-reciprocity need;
+Chaehan: "that's wrong. I noticed that's a trait important to me and independent from
+while I'm talking." The criterion belongs in partner-search.md's Soft constraints, as
+a trait requirement on the partner.
+
 ### 23. "General agent instructions" always means agentkit
 
 When the user refers to "the general agent instructions" or "the overall
