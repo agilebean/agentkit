@@ -699,6 +699,17 @@ Chaehan: "that's wrong. I noticed that's a trait important to me and independent
 while I'm talking." The criterion belongs in partner-search.md's Soft constraints, as
 a trait requirement on the partner.
 
+**Use the user's concept, and place a check where the information exists.** When he
+names a trait or a mechanism, his definition is the one to work with; never replace it
+with an agent-made dichotomy. On 2026-11-01 curiosity was split into object-directed
+and people-directed, and the split was wrong at the root: "people vs object is
+completely wrong you don't get the concept of curiosity which is also on people!!!!
+correct is curiosity brings their own stimulus." A proposed check must also sit where
+the information can exist. The same reply suggested screening the trait from the
+manager's profile, which cannot carry it: "1 is a stupid suggestion you can't know
+before the traits." A trait observable only in live conversation is tested in the
+conversation, or not at all.
+
 ### 23. "General agent instructions" always means agentkit
 
 When the user refers to "the general agent instructions" or "the overall
