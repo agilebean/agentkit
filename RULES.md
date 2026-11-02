@@ -4554,3 +4554,23 @@ grading or grade entry eg" and "look again and understand that grading goes into
 the admin work". The calendar held ten grading blocks — 1 h on 10-19 and nine
 more, 20.5 h, from 10-23 to that same morning — all of them under his own labels.
 Read from the source, the ledger closed at 155.75 h with grading at 21.5 h.
+
+### 239. A table's row order is the user's, and a projection renders it, never sorts it
+
+A date-keyed table in his notes reads newest on top. A tool that projects data
+into one of these tables renders in that order; it never substitutes its own
+canonical order — oldest first, alphabetical, by identifier — for the order the
+table already carries. Where a sync needs a different internal order, that order
+stays inside its store and the projection reverses it at write time. A pass that
+finds itself rewriting a table it never meant to reorder is a defect, not a
+tidy-up: the row order is content, and the reader sees it before any cell.
+
+Failure, 2026-10-29, the Training Plan table of "My Swim Training". The swim
+pipeline's plan sync sorted the blocks ascending in `plan_blocks()` and
+`render_table()` wrote that order into the note, so the table that had read
+newest-first in every stored version up to 2026-10-28 came back oldest-first at
+10:04 on 10-29. Chaehan, 2026-11-02: "explain to me why you changed the sorting
+of the table in my swim training evernote - it should always be newest on top but
+the training plan is opposite". Repaired by rendering the projection
+newest-first, keeping the master oldest-first for the carry-forward logic, and
+writing the note back newest-first; a test in the swim repo holds the order.
