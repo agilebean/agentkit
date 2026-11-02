@@ -4574,3 +4574,22 @@ of the table in my swim training evernote - it should always be newest on top bu
 the training plan is opposite". Repaired by rendering the projection
 newest-first, keeping the master oldest-first for the carry-forward logic, and
 writing the note back newest-first; a test in the swim repo holds the order.
+
+### 240. A dated note named as the target of a consolidation is a source too
+
+Consolidating dated notes means the material lands in the topic's own note — the
+working record of the domain, "My Swim Training" for swim — and every dated note
+in the row retires, the one he named as the target included. A dated note records
+one episode; naming it as the destination makes it the last row of that episode,
+not the home of the domain. Leaving it standing with the merged content rebuilds
+exactly the standalone note he is removing, and the next consolidation has to
+find it again.
+
+Failure, 2026-11-02, three August swim notes. "2026-08-24 New swim training
+routine" and "2026-08-22 Swim LL" were folded into "2026-08-21 Decision: Lats
+session scheduling Budapest" and trashed, and the Budapest note was kept as the
+home. Chaehan: "why don't you get it, the budapest note must be removed after
+integrating isn't that common sense?" The bullets moved into "My Swim Training"
+as the section "Lats and shoulder (2026-08-21, Budapest)" and the Budapest note
+was trashed with the other two; the decision's reasoning stays in
+`decisions/2026-08-21-lats-session-scheduling.md`.
