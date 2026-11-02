@@ -4594,7 +4594,7 @@ as the section "Lats and shoulder (2026-08-21, Budapest)" and the Budapest note
 was trashed with the other two; the decision's reasoning stays in
 `decisions/2026-08-21-lats-session-scheduling.md`.
 
-### 239. A ledger row is new hours or a relabelling, and the total says which
+### 241. A ledger row is new hours or a relabelling, and the total says which
 
 When a count gains a row — a fixed cost, a category split out of another, a
 corrected band — the reply states whether that row brings hours the record never
