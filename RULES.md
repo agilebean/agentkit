@@ -4611,3 +4611,21 @@ never said the row was a reclassification. Chaehan: "this is stupid, you added
 30.5h and still get the same total!!!" The ledger was right; the sentence that
 made it readable was missing. The note now states that Sx summarizes every hour
 from the final onward and enters the total once.
+
+### 242. A counting rule covers the span it was written for, and that span's end is stated
+
+A rule that credits or estimates time exists for a period — the run-up to a
+course, the weeks it runs, a sprint, a trip — and it stops where that period
+stops. Carried past the end, it invents hours nobody worked and inflates the
+count exactly where the user reads it. Before a rule of this kind is applied to a
+new date, name the span it belongs to and the day that span ended; a day beyond
+it earns nothing unless he says so.
+
+Failure, 2026-11-02, closing the KUBS DT prep-hours ledger. The ledger credits
+1.5 h for any day with no counted block. That rule was written for the pre-course
+months and the weeks the course ran; this pass carried it into the days after the
+final lecture and added six days, 9 h, to a course that had already ended.
+Chaehan: "you drive me crazy. what are the blockless days? did you just apply the
+rule i had before course start? this doesn't apply further to course end, isn't
+that common snese?" With the span closed at 10-22 the credit covered 26 days, 39 h,
+and the ledger read 150 h instead of 156 h.
