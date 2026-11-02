@@ -10,7 +10,7 @@ The standard behind every row of table one: anything the user will read or hear 
 
 ## The system
 
-- `RULES.md` rule 2: the standing classes, each with the plain fix. The reference for the word "robotic".
+- `RULES.md` rule 2: the standing classes and the thirty-five kinds, each with its fix. The reference for the word "robotic". Their examples are in the section "Examples of rule 2's kinds".
 - This file, table one: one row per wording instance: location and date, the flagged wording, why the user rejected it, the repair, and why the repair is better.
 - This file, table two: one row per "not common sense" correction: date, what he flagged, his words, what should have been obvious, and the rule or repair it produced.
 - Checker: `robot_markers.tsv` (this folder) holds the machine-checkable subset; `scripts/wording_lint.py` runs it on any file, in any project. The KUBS pipeline wraps it (`pipeline.py lint --session N`).
