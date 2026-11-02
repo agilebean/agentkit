@@ -145,6 +145,7 @@ service.users().messages().send(
 ### Threading
 
 - Never change the subject. Reply with `Re: [exact original subject]`.
+- If the reply has to add information, it goes in the body, never in the subject.
 - Use `threadId` + `In-Reply-To` + `References` headers. Fetch all three from the original incoming message before sending.
 - Before resending a corrected email, check per recipient: did a prior send already go to this address? If yes, verify whether the correction replaces or adds to it. Never resend the same content unless explicitly instructed.
 

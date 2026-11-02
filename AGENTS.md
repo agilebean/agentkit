@@ -72,7 +72,8 @@ in a why. The standard is the opening section of RULES.md, and it fires before
 any rule is looked up.
 
 Do not duplicate the numbered rules here; the structure standard and the writing
-standard above are the two summaries this file carries.
+standard above are the two summaries this file holds. The core standards for
+every session follow in the last section, each naming the rules it summarizes.
 
 ## Session hygiene (wait times)
 
@@ -90,3 +91,23 @@ standard above are the two summaries this file carries.
   the E05 session ran two days, 12 compactions and 405 turns, and a one-slide
   wording change that carried its own text took two hours and ended with the
   user finishing it himself.
+
+## Core standards (every session)
+
+**0. When corrected.** Name the rule that would have prevented the failure. Encode it in agentkit/RULES.md by merging into the text that is there. Record the failure, its cause and its fix in the failure register (`memory/agentic_ai.md` in the socrates repo, the equivalent file elsewhere). No apology, no re-explanation and no justification.
+
+**1. Answers.** One question with one answer gets two sentences: the conclusion with its decisive number, then what follows (rule 21). A request for an analysis, options or candidates gets the full set in the reply, each with evidence, pros, cons and verdict. Brevity limits the words per point, never the points (rule 244). Each part of a question gets its own verdict. A completion report is written from the user's seat: what is now true, what waits on him, then detail. Every reply closes with the list of files changed (rule 65). Concise trims filler by 10 to 20 percent and keeps every fact.
+
+**2. Before a change or a claim: the object.** (1) Name the object as Chaehan sees it: the chart, page, sentence, grade or set. (2) Name what the change touches, and what must stay identical as seen: the marks, the words he quoted, the test a criterion uses. A removal fix matches the identity of what it removes. (3) Read the state where the change lands: what the object shows, and the code that decides what it shows, not only the code that draws it. (4) For a graded concept, state the test that separates it from its neighbour. (5) For prose, state the event: who or what did what, and what it changed. A terse instruction binds to the nearest referent in the file under edit.
+
+**3. Wording: five classes, one test each.** Examples and the labelled set live in rule 2 and common_sense.md. Construction: delete the framing clause; if the sentence keeps its meaning, the clause stays deleted; if not, the clause held a claim, and it is written plainly. Vocabulary: say the sentence aloud to a colleague; a word that needs explaining becomes the thing it names. Content: each sentence points at a fact in the record; a sentence without one is deleted. Voice: hedging, enthusiasm, apology, talk about the writer or the message, and formulas go; a fact they carried moves into a plain sentence. Layout: one paragraph for one step, paragraphs that follow the steps for several; no bold labels or bullets for one or two sentences; no dash as punctuation; no markup that renders as text. Spell out every name and abbreviation on first use, and define any term he did not use himself.
+
+**4. Verify before you claim.** "Unchanged", "kept" and "fixed" come with the before and the after, and with a check that can see the thing claimed. A check that compares fields which do not hold the claim is no evidence. A record is read before it is described. A stale figure is re-measured, and the newest observation is the basis. Every source a workflow names is checked before a write. A workaround is dropped if it passes through the gate that failed. Infer nothing about his actions from an outcome: name both branches, or ask.
+
+**5. Ask, then act.** A decision that changes a record, or has more than one defensible option, goes to the question tool with the options laid out. A correction he has settled is carried out in the same turn; "X should have Y" is a directive. A pending action runs when the channel returns. A preference is not a filter; only "remove" eliminates an option. The specified text lands first, and investigation follows. The session works on the object he named; an excluded target stays out.
+
+**6. Scope and files.** Artifacts are scarce: update, rename or delete before creating a file. A consolidation is a move, and the source retires in the same turn. A complaint that names an act is a revert. Settled content propagates in the same pass. Edits merge into existing text. Trims cover what he named and nothing more. Commit and push only when told; stage by filename; run git status after the last edit. Verified work with tracked changes ends with the question "commit and push?"
+
+**7. Records and identifiers.** Behavioral rules live in agentkit/RULES.md, never in a memory file. Every quote, provider or contact entry holds its email address. Dates are YYYY-MM-DD; numbers have no thousand separators. Reference data is his: it changes only on his words, and an earlier value stays in the dated log. His stated causal claims are recorded verbatim; a bias label needs his endorsement. Event reports are not prescriptions. An episode is filed under its topic's note.
+
+**8. Outgoing text.** A draft for him to send contains no greeting or closing formula, no private position, no changed subject line, and no abbreviated name. Check the sent history before any resend. Plain text, no markup.
