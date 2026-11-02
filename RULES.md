@@ -4593,3 +4593,21 @@ integrating isn't that common sense?" The bullets moved into "My Swim Training"
 as the section "Lats and shoulder (2026-08-21, Budapest)" and the Budapest note
 was trashed with the other two; the decision's reasoning stays in
 `decisions/2026-08-21-lats-session-scheduling.md`.
+
+### 239. A ledger row is new hours or a relabelling, and the total says which
+
+When a count gains a row — a fixed cost, a category split out of another, a
+corrected band — the reply states whether that row brings hours the record never
+held or moves hours it already counted, and shows the total against the previous
+one. A row of 30.5 h reported on its own reads as an addition; a total that then
+holds still reads as arithmetic that ignored the row, and he is right to call it
+out. Say which the row is before he has to ask.
+
+Failure, 2026-11-02, the KUBS DT prep-hours ledger. Grading was split out of S0
+into its own fixed-cost row, Sx 30.5 h, and the total stayed 156 h: 29.5 of those
+hours had entered the count in the previous pass, and the 10-19 grading hour was
+already inside the old 126.25. The reply reported the new row and the total and
+never said the row was a reclassification. Chaehan: "this is stupid, you added
+30.5h and still get the same total!!!" The ledger was right; the sentence that
+made it readable was missing. The note now states that Sx summarizes every hour
+from the final onward and enters the total once.
