@@ -4629,3 +4629,9 @@ Chaehan: "you drive me crazy. what are the blockless days? did you just apply th
 rule i had before course start? this doesn't apply further to course end, isn't
 that common snese?" With the span closed at 10-22 the credit covered 26 days, 39 h,
 and the ledger read 150 h instead of 156 h.
+
+### 243. Two kinds of work he names separately stay separate inside their total
+
+When the user's own labels separate two kinds of work — grading and grade entry, prep and postprep, a lecture and a workshop — the summary keeps them apart even when they share one row, and the row's total is the sum of the parts as he named them. Merging them into a single figure loses the distinction he put there himself, and the correction costs him another round trip. The row may be one; its components are his.
+
+Failure, 2026-11-02, the KUBS DT grading row. The calendar carries "KUBS DT Grading" / "Grading KUBS DT Teams" / "Grading KUBS DT Total" (16.5 h) and, apart from it, "Grading Entry KUBS DT" blocks (5 h). The fixed-cost row Sx was written as one figure, "grading as a fixed cost: the ten grading blocks", and the reply called them ten grading blocks without the distinction. Chaehan: "you didn't listen. grading and grading entry are different so should be summarized separately but still in the same row. the 21.5 stay." The row now reads grading 16.5 and grade entry 5.
