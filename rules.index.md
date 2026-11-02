@@ -259,6 +259,7 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 4468–4491 | ### 235. A due date is the last day to file, not the first, and a blocked filing is answered with a route that works today |
 | 4492–4515 | ### 236. A failure analysis answers the charge as stated, in his words |
 | 4516–4536 | ### 237. A line for a conversation is written in speech, and asks what happened |
-| 4537–4556 | ### 238. What a record holds is read before it is described |
-| 4558–4576 | ### 239. A table's row order is the user's, and a projection renders it, never sorts it |
-| 4578–4595 | ### 240. A dated note named as the target of a consolidation is a source too |
+| 4537–4557 | ### 238. What a record holds is read before it is described |
+| 4558–4577 | ### 239. A table's row order is the user's, and a projection renders it, never sorts it |
+| 4578–4596 | ### 240. A dated note named as the target of a consolidation is a source too |
+| 4597–4613 | ### 239. A ledger row is new hours or a relabelling, and the total says which |
