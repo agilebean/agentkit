@@ -4533,3 +4533,24 @@ check" that "she filed as undecided". Chaehan: "robotic: introspect why you make
 many counterfactuals in a rigid frame like in ten years, at 15, on a Tuesday -
 don't you get that this sounds like a job interview more than a date? this is common
 sense." and "robotic: what keeps me in the room, risk check, she filed it".
+
+### 238. What a record holds is read before it is described
+
+A statement about a record's contents — a calendar, a database, a folder, an
+inbox, a log — is made only after that record has been read in the same turn, and
+the numbers in the statement come from the read. This holds even when the
+statement is a question rather than a finding: offering him a choice between two
+counting methods on the ground that his calendar holds few entries is an absence
+claim about data he typed himself, and he catches it in one line. The read comes
+first, the question after it, and the question is then about what the read
+actually shows.
+
+Failure, 2026-11-02, the final prep-hours count. Asked for the hour count of the
+KUBS DT grading, the agent asked him to choose between a calendar count and a
+work-record reconstruction, on the claim that "grading since 10-22 sits mostly
+outside calendar blocks (the work went into sessions and file edits, not
+events)". Chaehan: "that's not correct, there are many entries for kubs dt
+grading or grade entry eg" and "look again and understand that grading goes into
+the admin work". The calendar held ten grading blocks — 1 h on 10-19 and nine
+more, 20.5 h, from 10-23 to that same morning — all of them under his own labels.
+Read from the source, the ledger closed at 155.75 h with grading at 21.5 h.
