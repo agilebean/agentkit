@@ -260,3 +260,4 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 4492–4515 | ### 236. A failure analysis answers the charge as stated, in his words |
 | 4516–4536 | ### 237. A line for a conversation is written in speech, and asks what happened |
 | 4537–4556 | ### 238. What a record holds is read before it is described |
+| 4558–4576 | ### 239. A table's row order is the user's, and a projection renders it, never sorts it |
