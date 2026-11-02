@@ -262,4 +262,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 4537–4557 | ### 238. What a record holds is read before it is described |
 | 4558–4577 | ### 239. A table's row order is the user's, and a projection renders it, never sorts it |
 | 4578–4596 | ### 240. A dated note named as the target of a consolidation is a source too |
-| 4597–4613 | ### 241. A ledger row is new hours or a relabelling, and the total says which |
+| 4597–4614 | ### 241. A ledger row is new hours or a relabelling, and the total says which |
+| 4615–4631 | ### 242. A counting rule covers the span it was written for, and that span's end is stated |
