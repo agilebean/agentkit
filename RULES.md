@@ -678,6 +678,8 @@ bias hypothesis the user rejects is removed from the psych-observations
 file entirely, not defended or marked superseded — their "don't record"
 overrides any never-delete guideline.
 
+The same holds for an insight he gives to be recorded, not only for a pattern: his words go in as stated, with his own why. The agent adds no mechanism, consequence, caveat on his causal claim, or link to older entries; a missing why is asked with the question tool (rule 9), never supplied. Failure, 2026-11-03: a roll and catch insight was recorded with the agent's own mechanism ("the elbow barely bends", which he never said) and a caveat on his "it brought me two breakthroughs"; three corrections followed. Failure 150 in memory/agentic_ai.md.
+
 Failure: on 2026-08-24 a "salience" psych observation was
 batch-confirmed, then rejected ("salience is a wrong hypothesis"); the
 user's actual point was the plain recurrence fact, which belongs in the
