@@ -272,4 +272,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 4746–4758 | ### 248. A fix for a blocked process must not pass through the gate that blocked it |
 | 4759–4767 | ### 249. A disputed account is checked against the ground truth, not defended |
 | 4768–4777 | ### 250. Outgoing text never contains a private position |
-| 4778–4786 | ### 251. Concise trims filler, never data |
+| 4778–4787 | ### 251. Concise trims filler, never data |
+| 4788–4802 | ### 252. A load is read from the zone or the measured rate, never from the session's name |
