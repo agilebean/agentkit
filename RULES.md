@@ -4784,3 +4784,19 @@ and named structures are data, not prose: they stay. "Don't suppress any
 details" is an explicit instruction to keep every fact while cutting only
 connective filler. A version that deletes a table or collapses mechanism detail
 to save space has misread the request.
+
+### 252. A load is read from the zone or the measured rate, never from the session's name
+
+A session's name says what shape it has, not how hard it is. Chaehan's perceived
+effort runs opposite to rep length: short reps reset the effort between each one,
+so an interval day is the one he calls easiest — "even easier than aerobic and
+threshold as it is way easier to overcome 100m instead of 400s and even 200s"
+(2026-11-03). Read the load from the rep's zone (pace per 100 m) or from the
+watch's heart rate, per session. Instruction basis: 2026-11-03, a swim question
+during a cold. The agent barred "the interval session" as the hard session and
+offered the aerobic day instead. The record already held the contrary fact:
+continuous 60% blocks felt subjectively harder than the interval sessions
+(swim.md), the classic set is 6x100 at 60-70-80% plus 3x50 at 90%, and its
+session average heart rate reads 135-140 against 139-143 on the aerobic days, so
+the only part of it that reaches the top zone is 150 m of 50 m reps. Instance:
+`memory/agentic_ai.md` failure 149.
