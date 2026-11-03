@@ -497,9 +497,7 @@ noise, a deliberate protocol choice). If a plan's execution is unknown, ask, or
 frame it as if-then covering both branches. When the user corrects you, record
 his report as ground truth and update the memory file.
 
-Failure, 2026-08-24: "the low-carb depletion apparently never ran" was inferred
-from the scale reading 75 after Zurich. Chaehan had run it for 2.5 days in
-Zurich, and the reading reflected creatine retention plus glycogen refill.
+The instance is Failure 147 (Zurich, 2026-08-24).
 
 ### 16. Chart annotation placement: measure the rendered geometry, never guess coordinates
 
@@ -1086,7 +1084,7 @@ Failure mode: answering from the phase the plan describes after the user has mov
 ### 42. Summaries and notes are bulleted; icons tag categories, used sparingly
 
 Any summary or overview written for the user (Evernote note, memory report,
-session summary) uses bullets for the TL;DR and for every subsection. A
+session summary) uses bullets for the Takeaway and for every subsection. A
 wall of prose in a summary is a defect: notes are read by scanning, not by
 parsing paragraphs.
 
@@ -1117,7 +1115,7 @@ user asked for selection.
 
 - The artifact opens with the conceptual overview: what this is and how
   the parts relate, before any detail. Add a visual when one clarifies
-  the structure, placed at the top of the note, above the TL;DR.
+  the structure, placed at the top of the note, above the Takeaway.
 - Wording test: a reader with no context must reconstruct each idea from
   the artifact alone, in plain short sentences. If a sentence needs the
   source material to be understood, it is written wrong.
@@ -1413,7 +1411,7 @@ examples is incomplete even when accurate; the reader should see their own year
 in it and be able to say what happens in each of their cases ("the trade in the
 US account: nothing; the wire into Korea: the visible event").
 
-- The TL;DR carries the live consequence in plain life terms. Analyst labels
+- The Takeaway carries the live consequence in plain life terms. Analyst labels
   ("verified", "consistent", "Position 2") belong in working notes, not in the
   user-facing summary.
 - Lists of open items read as actions: what to do, who does it, and the timing
@@ -1719,10 +1717,7 @@ When a number you used is challenged, fix the answer you gave; to change the sto
 
 Failure mode: stored reference values rewritten from another source without the user's word.
 
-Failure, 2026-09-21, the swim memory: "why do you use 2:08?" became an
-unrequested rewrite of the swim memory's training reference from the swim repo
-config, whose zone rule had two versions. Chaehan: "these are not from the css
-test, you made up new times!"
+The instance is Failure 146 (the swim memory's 2:08 reference, 2026-09-21).
 
 ### 62. Ask with the question tool, before acting, not in prose
 
@@ -2272,10 +2267,7 @@ correct it?" about a fact already settled. Never claim a file still contains an
 error without re-reading it this turn: a concurrent session may already have
 fixed and committed it.
 
-Failure, 2026-08-24, health.md: the agent claimed health.md still labeled the
-08-20 gym "Bucharest hotel" and asked permission to fix it. The record already
-read "(Budapest hotel)", corrected and committed by the earlier session. The
-re-ask wasted a turn and asserted a stale state.
+The instance is Failure 148 (health.md, 2026-08-24).
 
 ### 103. Send-ready text is delivered copy-paste-ready: plain text, no markers
 
@@ -4686,22 +4678,24 @@ When the user's own labels separate two kinds of work — grading and grade entr
 
 Failure, 2026-11-02, the KUBS DT grading row. The calendar carries "KUBS DT Grading" / "Grading KUBS DT Teams" / "Grading KUBS DT Total" (16.5 h) and, apart from it, "Grading Entry KUBS DT" blocks (5 h). The fixed-cost row Sx was written as one figure, "grading as a fixed cost: the ten grading blocks", and the reply called them ten grading blocks without the distinction. Chaehan: "you didn't listen. grading and grading entry are different so should be summarized separately but still in the same row. the 21.5 stay." The row now reads grading 16.5 and grade entry 5.
 
-### 244. An analysis is answered in full in the reply; brevity cuts words, not points
+### 244. A research reply opens with the Takeaway and states only checked findings
 
-When the user asks for an analysis, the potentials, the options, or the
-candidates behind a recommendation, the reply carries the full set itself: each
-candidate with its evidence, its pros and cons, and its verdict. Rule 21's two-
-sentence form is for a question with one answer. A verdict with a pointer to a
-file, or a summary that stands in for the set, leaves out what was asked.
-Brevity limits the words spent on each point. It never removes a point.
+The reply opens with a Takeaway: the conclusion and the number that decides it.
+Below it come the few findings that decide the question, each checked against
+its source before it is stated as a finding. Each candidate is first tested
+against the user's conditions (access, proximity, affordability, usability, and
+the terms the user needs), because a candidate that fails one of them does not
+help the user, however strong its evidence. When there are more candidates than
+can be checked in the time the user has, the reply reports the unchecked ones as
+unverified, says how many there are, and offers to check more. An unverified
+candidate is never stated as a finding. The full set, each candidate with its
+evidence, pros and cons and a verdict marked checked or unverified, comes when
+the user asks for it. Rule 21's two-sentence form still governs a question with
+one answer.
 
-Failure, 2026-11-02, the agent-rules analysis. Asked for the improvement
-potentials of the rules, the reply gave a verdict and the path of the analysis
-file, and the analysis stayed in that file. Chaehan: "your report is very bad.
-you told me to rearrange without giving me the full analysis of improvement
-potentials. do that, and then continue". In the same request he had asked for
-in-depth understanding instead of "a lot of answer text": fewer words, the same
-points.
+The instances are Failure 141 (an analysis answered with a verdict and a file
+path, 2026-11-02) and Failure 143 (the Mapo storage locker: many lockers listed,
+the monthly-payment check not run).
 
 ### 245. A "why didn't you" question gets its cause, and the instructions get an edit
 
@@ -4729,22 +4723,25 @@ Failure, 2026-07-09, the Logistics Test note: the agent wrote a partial update
 missing 3 of 4 new quotes, after it improvised from skills instead of opening
 the dedicated workflow file.
 
-### 247. Accommodation is checked for the user's dates and room before it is recommended
+### 247. A price or availability is checked against the user's conditions before it is recommended
 
-Before a place to stay is recommended, quote the nightly rate for the user's
-actual stay window if it can be obtained. Otherwise label the figure "from" and
-state that the dates must be checked on the booking site. Confirm the required
-room type (a private double, not a dorm) is bookable on those dates, not only
-that the property offers it in general. Check the seasonality data (KAYAK's
-cheapest and most-expensive month tables) and flag a stay that falls in the peak
-month. Benchmark against the user's stated anchor: if he pays the same price for
-a 4-star hotel in a comparable city he knows, a hostel-level property at that
-price is a bad recommendation.
+Before a place to stay, a storage unit or any other purchase is recommended, its
+price and availability are checked for the user's actual window and terms. Quote
+the nightly rate or monthly fee for the user's dates if it can be obtained;
+otherwise label the figure "from" and state that the dates must be checked on
+the booking site. Confirm the required room or unit type is bookable on those
+dates, not only that the property offers it in general. Check the seasonality
+data (KAYAK's cheapest and most-expensive month tables) and flag a stay that
+falls in the peak month. Check the payment terms the user needs (monthly or
+up-front, minimum term, deposit) on the same page as the price. An option that
+fails one of the user's conditions (access, proximity, affordability, usability,
+term, payment) is dropped, not listed. Benchmark against the user's stated
+anchor: if he pays the same price for a 4-star hotel in a comparable city he
+knows, a hostel-level property at that price is a bad recommendation.
 
-Failure, 2026-08-27, Madrid: five venues were listed with "from" rates (€69-150).
-The actual Sep 3-13 prices were 1.5-2x higher (The Social Hub €286), two hostels
-had only 6-8 bed dorms left, and the user's anchor was a 4-star hotel near Les
-Halles in Paris at €158.
+The instances are Failure 144 (Madrid, 2026-08-27: five venues quoted at "from"
+rates) and Failure 143 (the Mapo storage locker, where the monthly-payment
+availability was not checked).
 
 ### 248. A fix for a blocked process must not pass through the gate that blocked it
 
@@ -4757,13 +4754,7 @@ if the first answer is no and the second is yes. Before presenting any fix for a
 blocked process, run the test "could this path be blocked by the same failure
 I'm trying to escape?" and discard the proposal if it fails.
 
-Failure, 2026-08-10, Meta business verification: verification was rejected
-because the phone number was not on the incorporation documents, and the agent
-recommended Meta Verified for Business as the human-support escape hatch. The
-user corrected: enrollment requires passing business verification with those
-same documents, and Meta's own docs confirm that the tier's support covers
-subscription management, not Security Center verification appeals. The
-recommendation was invalid on both checks.
+The instance is Failure 145 (Meta business verification, 2026-08-10).
 
 ### 249. A disputed account is checked against the ground truth, not defended
 

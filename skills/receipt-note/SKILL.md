@@ -1,6 +1,6 @@
 ---
 name: receipt-note
-description: Turn a receipt or booking confirmation into an Evernote note: an itinerary card PNG at the top, the booking facts below, no TL;DR. Use when the user books a flight, hotel, apartment or ticket and forwards or mentions the confirmation, or asks to put a confirmation into Evernote.
+description: Turn a receipt or booking confirmation into an Evernote note: an itinerary card PNG at the top, the booking facts below, no Takeaway. Use when the user books a flight, hotel, apartment or ticket and forwards or mentions the confirmation, or asks to put a confirmation into Evernote.
 ---
 
 # receipt-note
@@ -12,7 +12,7 @@ the email, the PDF, the booking page — never a summary of it.
 
 ## The rule that governs the shape
 
-**No TL;DR on a note made from a receipt or confirmation.** A TL;DR belongs to
+**No Takeaway on a note made from a receipt or confirmation.** A Takeaway belongs to
 a meeting summary or to an analysis of the user's results. A confirmation note
 opens with the card and then states the facts; nothing restates them above.
 (Stated 2026-10-07; the evernote skill carries the same rule.)
@@ -86,7 +86,7 @@ rule), then the facts.
      `2026-12-04 Flugticket ICN-UKB Asiana OZ1163 KRW154344`).
    - Notebook: the topic's notebook (travel → that year's `... Travel & Logistics`;
      health → Health; finance → Chaehan Financials). Ask when no notebook matches.
-   - Body: no TL;DR, no label prefixes. Write it as a **bulleted hierarchy** with the
+   - Body: no Takeaway, no label prefixes. Write it as a **bulleted hierarchy** with the
      sub-facts indented under their parent, so the shape is visible at a glance:
      the entity, then its dates, its price, its references as sub-bullets. Say it
      the way it would be said in chat.
