@@ -34,6 +34,7 @@ def run_consent_flow(
     client_secret: Path | str = DEFAULT_CLIENT_SECRET,
     token_out: Path | str = DEFAULT_TOKEN_PATH,
     scopes: tuple[str, ...] = DEFAULT_SCOPES,
+    login_hint: str = "",
 ) -> Path:
     """Open the browser, run the consent flow, and write *token_out* (0600).
 
@@ -54,7 +55,10 @@ def run_consent_flow(
 
     token_path = Path(token_out).expanduser()
     flow = InstalledAppFlow.from_client_secrets_file(str(secret_path), list(scopes))
-    creds = flow.run_local_server(port=0)
+    if login_hint:
+        creds = flow.run_local_server(port=0, login_hint=login_hint)
+    else:
+        creds = flow.run_local_server(port=0)
 
     token_path.parent.mkdir(parents=True, exist_ok=True)
     token_path.write_text(creds.to_json(), encoding="utf-8")
@@ -84,6 +88,11 @@ def main(argv: list[str] | None = None) -> int:
         default=[],
         help="Extra or replacement scope (repeatable; defaults to the standard set).",
     )
+    parser.add_argument(
+        "--login-hint",
+        default="chaehan.so@gmail.com",
+        help="Address pre-filled on the consent screen (default: chaehan.so@gmail.com).",
+    )
     args = parser.parse_args(argv)
     scopes = tuple(args.scopes) if args.scopes else DEFAULT_SCOPES
 
@@ -96,7 +105,7 @@ def main(argv: list[str] | None = None) -> int:
     for scope in scopes:
         print(f"  scope: {scope}")
     print()
-    print("Opening the browser. Log in as chaehan.so@gmail.com and click Allow.")
+    print("Opening the browser. Log in as " + args.login_hint + " and click Allow.")
     print()
 
     try:
@@ -104,6 +113,7 @@ def main(argv: list[str] | None = None) -> int:
             client_secret=args.client_secret,
             token_out=args.token_out,
             scopes=scopes,
+            login_hint=args.login_hint,
         )
     except Exception as exc:
         print(f"OAuth consent failed: {exc}", file=sys.stderr)
