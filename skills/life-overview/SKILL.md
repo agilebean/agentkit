@@ -59,8 +59,8 @@ file.
 
 ## 3. Write the snapshot (structure)
 
-- Image reference first, above the TL;DR: `![timeline](assets/YYYY-MM-DD-life-overview-timeline.png)`
-- `## TL;DR` — 4-6 bullets: ⚠️ most urgent action, the chapter's fixed
+- Image reference first, above the Takeaway: `![timeline](assets/YYYY-MM-DD-life-overview-timeline.png)`
+- `## Takeaway` — 4-6 bullets: ⚠️ most urgent action, the chapter's fixed
   commitments, one line each for parallel workstreams and long-horizon items.
   Icons sparingly (rule 42).
 - Current chapter section (e.g. "Seoul window: dates") with bold sub-labels per thread.
@@ -105,7 +105,7 @@ used (the user's "never use the cli fallback", 2026-09-26).
    `![...]` line converts to a dead `<img src>`. With the image as the first
    line, `tail -n +3` strips it:
    `create --markdown "YYYY-MM-DD Life Overview" "$(tail -n +3 docs/YYYY-MM-DD-life-overview.md)" --notebook "Chaehan's Life"`
-2. Embed the graphic above the TL;DR:
+2. Embed the graphic above the Takeaway:
    `embed-image "YYYY-MM-DD Life Overview" docs/assets/YYYY-MM-DD-life-overview-timeline.png --top`
    Text updates orphan the attachment; re-running embed reuses it by hash
    (idempotent), so always re-embed after a text update.
