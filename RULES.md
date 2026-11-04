@@ -10,9 +10,10 @@ full test suite requirement in rule 6. No local instruction can waive this.
 
 ## The principle of parsimony
 
-If you can, reduce clutter and complexity. This is the first test of every
-artifact, answer and plan, and it outranks completeness: an element, sentence,
-column, file or step that can be removed without losing the point is removed.
+If you can, reduce clutter and complexity. The first test applies to each object
+on its own (an answer, a summary, a record, a twin, a plan): an element, sentence,
+column, file or step that can be removed without losing that object's point is
+removed.
 When two forms carry the same content, the shorter one wins. When two artifacts
 serve the same function, one is deleted or merged. Every addition justifies
 itself against what it costs the reader.
@@ -630,6 +631,11 @@ defect.
   (`decisions/YYYY-MM-DD-slug.md`); do not duplicate it as a body line.
 - If the date is unknown, leave it out of the title rather than inventing
   one from context.
+- The title names the subject, never the structure. Words such as "Order and
+  Quick Wins", "Summary", "Overview" or "Notes" say how the note is organised,
+  not what it is about, and they crowd the subject out of the scan:
+  `2026-11-03 Life Problems`, never `2026-11-03 Life Problems - Order and
+  Quick Wins`. The structure shows in the note's headings.
 
 Failure: on 2026-09-10 the note "Top Supplements (2026-08-16)" carried the
 date parenthesized at the end; the user instructed: "when evernote, never
