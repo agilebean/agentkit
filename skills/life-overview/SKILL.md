@@ -44,6 +44,8 @@ contains: "15.78 hours for each of the eight lectures, the pre-course reading an
 the course-level work included", not an average whose scope sits in another
 file.
 
+Each overview claim carries its file and date before a draft is shown.
+
 ## 2. Timeline graphic (required, top of the note)
 
 1. Copy the spec shape from the previous run: `docs/assets/<date>-life-overview-timeline.json`.
@@ -59,14 +61,32 @@ file.
 
 ## 3. Write the snapshot (structure)
 
+An item earns its place by what it costs you if it is ignored: money, health,
+the trip, and the anxiety that grows while it stays unresolved. Growing anxiety
+weighs as much as a quantified loss. Order the note and the Takeaway by that
+cost and by when it bites, never by domain. An item with no date and no decision
+inside 90 days is one line or out.
+
 - Image reference first, above the Takeaway: `![timeline](assets/YYYY-MM-DD-life-overview-timeline.png)`
 - `## Takeaway` — 4-6 bullets: ⚠️ most urgent action, the chapter's fixed
   commitments, one line each for parallel workstreams and long-horizon items.
+  Each bullet is one sentence: the fact and the one move. Amounts, addresses and
+  the reasoning sit in the section below; a date stays only when it is the
+  deadline that makes the bullet urgent. A bullet that runs to a paragraph is a
+  section not yet written.
   Icons sparingly (rule 42).
 - Current chapter section (e.g. "Seoul window: dates") with bold sub-labels per thread.
 - `## Running in parallel` — company, health, money/admin, side work.
 - `## What went well` — selection rule below.
 - `## Open tasks` — table: Thread | Waiting on | Next move.
+
+Where an item has a detail note in Evernote, the section carries the state in one
+sentence, the consequence in one sentence, and a link to that note with its exact
+title as the link text. The note holds the inventory: the figures, the contact
+addresses, the contract terms, the history.
+
+A point that can be subsumed sits as an indented bullet under the point it
+belongs to, never as a sibling at the same level.
 
 Style rules that apply: RULES.md 19 (answer first, plain words), 20 (date first
 in title), 40 (anchor every time claim to today), 42 (bullets everywhere),
@@ -110,7 +130,7 @@ used (the user's "never use the cli fallback", 2026-09-26).
    Text updates orphan the attachment; re-running embed reuses it by hash
    (idempotent), so always re-embed after a text update.
 3. Verify: read the note back; `en-media` appears before the first heading; one
-   resource. New notes take minutes to appear in search — use the `create`
+   resource, and its text matches the file by hash (`evernote` skill, sweep superseded copies). New notes take minutes to appear in search — use the `create`
    guid with `get <guid>` for the immediate check.
 4. Supersede: search the notebook for older "Life Overview" notes and delete
    each (to trash). Only the current snapshot remains.
