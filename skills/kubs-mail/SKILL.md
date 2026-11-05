@@ -75,34 +75,61 @@ that inversion is the whole point of this step.
 
 ## Step 6 — the table
 
-Columns, in this order: `When | Event | Who is in the room | Topic ‹tags› | Where | Register`.
-Everything in the table is English except `Where`, which keeps the venue name as
-the mail writes it (`SK미래관 최종현홀·인재림`, `하나스퀘어 B115`); a Korean event
-title is translated and its original left out, because the link carries the
-identity. The same holds in chat and in an Evernote note.
+Columns, in this order: `When | Event | Who is in the room | Tags | Where | Register`.
+
+Two language rules, measured against the event he has to search for later:
+
+- **The event name and the venue keep their Korean exactly as the mail writes
+  them, with the English in parentheses after it**: `제14회 KU-KUM 콜로키움 (14th
+  KU-KUM Colloquium)`, `하나스퀘어 B115 멀티미디어룸 (Hana Square multimedia room
+  B115)`. The Korean is the search key in the university's own pages and in the
+  mail archive; a translation alone cannot be found there. Everything else —
+  When, Who, Tags, the notes below — is English.
+- **Register carries a clickable link, not a URL to copy.** In an Evernote note
+  that is a markdown link `[RSVP form](https://…)`; in chat the bare address is
+  the only clickable form. Anchor text names what the link accepts (`RSVP form`,
+  `registration form`, `labtolife.kr`), never "here".
 
 - `When` — `Thu 11/12 12:30–13:30`, weekday included, because a wrong weekday is
   the mistake that costs an event.
 - `Who is in the room` — the 대상 and program lines read straight: 대학원생, 교원,
   의료원, 학생, or `대상 명시 없음`. This is the column that decides whether he
   goes, so it never borrows a guess from the subject.
-- `Topic ‹tags›` — the subject in one short phrase, then two angle-bracketed tags
-  in the style of a streaming-service one-liner. When the mail names no session
-  title, write what the room is for and let the tags carry the subject.
-- `Where` — building and room as the mail names them, shortened but exact.
+- `Tags` — two or three plain words that give the event's vibe and shape at a
+  glance: `showcase, booths, prize draw`; `lunch, small room, clinicians`;
+  `papers, roundtable, formal`; `lecture, undergrads, Pepero`. They are not a
+  second telling of the topic and not angle-bracketed genre labels; the subject
+  already sits in the event name, and the tags answer "what is it like to be in
+  that room".
+- `Where` — Korean venue with the English in parentheses, as above.
   **Korea University's Seoul campus (Anam-dong, Seongbuk-gu) carries no district
   marker** — 하나스퀘어, SK미래관, 백주년기념관, 백주년기념삼성관, 문과대 서관,
   운초우선교육관 are all there. A KU building in another part of Seoul is marked
   with its gu (the medical campus in Jongno-gu reads `의대본관 (종로구)`); any
   off-campus venue reads `장소 (구)`.
-- `Register` — the bare URL from the href, not the visible anchor text. Multiple
-  links (a festival site beside a competition site) go on one line separated by a
-  space. No link and no signup in the body reads `없음 (walk-in)`, never a guessed
-  address.
+- `Register` — `[RSVP form](https://…)` for a single form, or two links joined by
+  `·` when a festival site sits beside a competition site. No form and no signup
+  in the body reads `none, walk-in`, never a guessed address.
 
 Rows sort by the Step 5 order, then by date. Below the table: the clash line when
 two in-person events overlap, and a deadline line for anything registering today
 or tomorrow. Close with the files changed (usually none).
+
+## Step 7 — the details block
+
+The table is the scan layer; under it a `## Details` section carries one bold
+entry per event, named in Korean with the English in parentheses, saying what
+actually happens: the run of the day with hours and rooms, the speakers with
+their institutions, the host office, what the registration asks, and the fact
+that changes the decision (a missing session topic, food banned in the room, the
+Zoom password). Two to four sentences each, no bullet nesting.
+
+The row that reads thinnest in the table is the one that needs this most: the
+KU-KUM row cannot show a session title because the mail has none, so the entry
+names the host office, the two campuses the lunch joins, the hybrid room, the
+password and the fact that the subject is unannounced. Detail he could not
+derive from the table is the test for keeping a sentence here.
+
 
 ## Known venues, for shortening
 
