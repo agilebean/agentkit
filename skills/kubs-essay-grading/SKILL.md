@@ -9,13 +9,15 @@ Everything lives in the Drive folder "1 Projects/KUBS/KUBS DT/KUBS DT Grading"; 
 is `projects/kubs_dt/grading/` in the socrates repo, and it is never the deliverable.
 
 - "final essays/" - 26 PDFs named by student number only, plus "backup 2026-10-26" and "top8"
-- "KUBS DT final essays grading - anonymous.md" - the essay sheet: the reading model, the
-  fixed rules, one row per student number, the computed distribution. **This is the only essay
-  sheet.** A named twin and a dated twin were both retired; do not recreate either.
+- "KUBS DT final essays grading.md" - the essay sheet: the reading model, the fixed rules, one
+  row per student number, the computed distribution, and "Chaehan's read beside the AI read" with
+the blind pass of 2026-10-30. **This is the only essay sheet.** A named twin, a dated twin and an
+anonymous twin were all retired; do not recreate any of them.
 - "KUBS DT final presentations grading.md" - the team round's roster and settled team means. **Data only, and only at the gradebook step**, after every essay score is fixed; never open it while scoring
-- "KUBS DT gradebook.md" + "KUBS DT gradebook - anonymous.md" + "KUBS DT gradebook.pdf" -
-  the course grade, built from the two rounds
-- "KUBS DT grade disclosure prompt.md", "KUBS DT grading insights.md", `_log.md`
+- "KUBS DT gradebook.md" + "KUBS DT gradebook.pdf" - the course grade, built from the two
+  rounds. Its anonymous twin was deleted on 2026-11-05; do not rebuild one
+- "KUBS DT grading insights.md", `_log.md`; the disclosure prompt now sits in "KUBS DT Course
+  Design" as "2026 KUBS DT grade disclosure prompt.md"
 
 The criteria, the weight of each and the word target come from the syllabus and "KUBS DT
 session 2 - assessment.md", never from a previous round's summary row.
@@ -397,7 +399,7 @@ Three rules that were corrected and must not drift back:
    older number when the new one is clearly above or below it, with one line on what separates
    them. Do not score the whole set file by file and sort it afterwards.
 7. **Write the artefacts from a script**, never by typing rows by hand: the essay sheet, then the
-   gradebook, its anonymous twin and the PDF. Every distribution table is computed on each build -
+   gradebook and its PDF. Every distribution table is computed on each build -
    a hand-kept count drifted three times in one round.
 
 ## The sheet and the gradebook
@@ -429,7 +431,9 @@ each score cell reading criteria = score and letter:
 ## Guards
 
 - **A grading file exists nowhere for the user until it is in the Drive folder.** Copy every write
-  there in the same turn and match the two by checksum; the repo folder is the versioned mirror.
+  there in the same turn and match the two by checksum; the repo folder is the versioned mirror. A
+  rename in Drive is a copy, a checksum, then a delete of the old name: `mv` across two folders on the
+  streaming mount reported a missing source on 2026-11-05 and left no file behind.
   The gradebook PDF lives in Drive only.
 - **An accepted table's shape is frozen** (RULES 224). Change a value in it, never its columns;
   when he asks for a column back, restore the shape from his own earlier table, not from git history

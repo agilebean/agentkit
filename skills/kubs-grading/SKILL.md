@@ -11,7 +11,7 @@ Everything lives in the Drive folder "1 Projects/KUBS/KUBS DT/KUBS DT Grading":
 
 - the LMS export csv (registered names, student IDs, section; Olesia Forkulitsa and Deepti Gupta sit in it but are off the course),
 - "KUBS DT solo presentations grading.md" - the table: scheme on top, criteria scores (Skill, Insight, Method; 1-5, 5 best), weighted averages with class SDs, cluster column (A to E, legend in the file), grade column (A+ to C+), one evidence line per student,
-- "KUBS DT solo presentations grading curve.png" - the rendered curve,
+- "2026-10-20 KUBS DT solo presentations grading curve.png" - the rendered curve, dated by the day its scores were settled; the 2026-10-05 render sits beside it,
 - "2026-10-19 KUBS DT S7 presentations grading.md" - the calibration file of 2026-10-19: S3 Solo, S6 Habits and S7 Jobs in one place, with the criteria, weights and bands the later reads use,
 - "KUBS DT final presentations grading.md" - the final of 2026-10-22: the five teams in the E08 agenda slide's order with the members' registered names and student numbers, the per-team read, the criteria table, the mandatory-slide table, and the two comparison tables. This is the graded team project, 65 percent of the course grade,
 - "2026-10-22 KUBS DT S8 final presentations - transcript.md" - both session recordings (`142.mp4`, 42 min, the intro and teams 1-2; `229-332.mp4`, 47 min, teams 3-5) transcribed and merged in time order, timestamped, speaker labels left out because the app's diarization is unusable,
