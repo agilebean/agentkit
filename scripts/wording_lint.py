@@ -74,6 +74,21 @@ def script_hits(text: str) -> list[tuple[int, str, str]]:
     return hits
 
 
+# A title (an Evernote note's title, a file's name) names its subject by a
+# category noun: "nutritional intake", never "what she gets". A person or a
+# sexual act in a title shows in every list, search result and screen share
+# (RULES.md rule 20). A weak model cannot judge "embarrassing", so the test is
+# lexical: no pronoun for a person, no explicit word.
+TITLE_BAD = re.compile(
+    r"\b(she|he|her|his|him|hers|they|them|their|gets|gives|swallow\w*|oral|sex|sexual|"
+    r"blowjob|cum\w*|orgasm\w*|ejaculat\w*|penis|vagina\w*|naked|nude)\b", re.I)
+
+
+def title_hits(title: str) -> list[str]:
+    """The words that make a title unfit to show anyone (RULES.md rule 20)."""
+    return [m.group(0) for m in TITLE_BAD.finditer(title)]
+
+
 def load_robot_markers(path: str = DEFAULT_MARKERS) -> list[tuple[str, re.Pattern, str, re.Pattern | None]]:
     rules = []
     with open(path, encoding="utf-8") as fh:
@@ -125,12 +140,20 @@ def lint_text(text: str, rules) -> list[tuple[int, str, str, str]]:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--markers", default=DEFAULT_MARKERS, help="override: the robot marker list to read")
+    ap.add_argument("--title", action="append", default=[], help="a note title to check (rule 20); the files' own names are always checked")
     ap.add_argument("files", nargs="+", help="files to check")
     args = ap.parse_args(argv)
     if not os.path.exists(args.markers):
         sys.exit(f"wording_lint: no marker list at {args.markers}")
     rules = load_robot_markers(args.markers)
     flags = warns = 0
+    titles = list(args.title) + [os.path.splitext(os.path.basename(p))[0] for p in args.files]
+    for title in titles:
+        bad = title_hits(title)
+        if bad:
+            print(f"  title '{title}': flag {bad} - name the subject by a neutral category noun "
+                  f"(\"nutritional intake\", never \"what she gets\"), RULES.md 20")
+            flags += 1
     for path in args.files:
         if not os.path.exists(path):
             print(f"  missing: {path}")
