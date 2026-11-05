@@ -14,8 +14,14 @@ T6  a date or number of the original that survives neither in the draft nor in a
 --facts-only runs T6 alone, for any note that is not a life overview.
 --note runs T6 plus T5 for any note: a section of 3 or more sentences with no
 list in it is named; T7 a table row of the original that is gone; T8 an empty
-list item. It also prints the words of the original that left (not a failure:
-each is accounted for in the report).
+list item; T10 a summary of more than 5 lines or a line over 30 words; T11 a
+summary line that repeats a body line; T12 more than 7 list items at one level
+under one parent.
+
+--cuts <file> is the cut list: one line per removal, "- <numbers or words>:
+<where it went or why it left>". A number of the original passes T6 when the
+cut list names it. T9 is a cut line with no reason. Cutting is the point of a
+rewrite: the gate checks that each cut is declared, not that nothing was cut.
 """
 
 from __future__ import annotations
@@ -67,15 +73,21 @@ def task_rows(md: str) -> list[str]:
 
 
 def check(draft: str, original: str | None = None, linked: list[str] | None = None,
-          facts_only: bool = False, note: bool = False) -> list[str]:
+          facts_only: bool = False, note: bool = False, cuts: str | None = None) -> list[str]:
     fails: list[str] = []
+    pool = list(linked or [])
+    if cuts:
+        fails += _bad_cuts(cuts)
+        pool.append(cuts)
     if facts_only or note:
         if note:
             fails += _prose_sections(draft)
             fails += _empty_items(draft)
+            fails += _summary(draft)
+            fails += _flat_lists(draft)
             if original is not None:
                 fails += _lost_rows(draft, original)
-        return fails + (_facts(draft, original, linked) if original is not None else [])
+        return fails + (_facts(draft, original, pool) if original is not None else [])
     rows = task_rows(draft)
     for b in takeaway_bullets(draft):
         bw = {w for w in words(b) if not w.isdigit()}
@@ -128,14 +140,66 @@ def _lost_rows(draft: str, original: str) -> list[str]:
     return [f"T7 table row lost: {r}" for r in rows if r not in have and not re.fullmatch(r"[|\s:-]+", r)]
 
 
-def lost_words(draft: str, original: str) -> list[str]:
-    """Words of six letters or more that the original had and the draft lost.
-    Rewording drops some; the rest are facts that left. Each is accounted for."""
-    words = lambda x: {w.lower() for w in re.findall(r"[A-Za-z][A-Za-z-]{5,}", x)}
-    return sorted(words(original) - words(draft))
+def _bad_cuts(cuts: str) -> list[str]:
+    return [f"T9 cut without a reason or destination: {l.strip()!r}" for l in cuts.splitlines()
+            if l.strip() and not re.match(r"\s*-?\s*[^:]+:\s*\S", l)]
+
+
+SUMMARY_HEADS = ("summary", "takeaway")
+
+
+def _bullets(body: str) -> list[str]:
+    return [re.sub(r"^\s*(?:[-*]|\d+[.)])\s+", "", l).strip() for l in body.splitlines()
+            if re.match(r"\s*(?:[-*]|\d+[.)])\s+\S", l)]
+
+
+def _summary(md: str) -> list[str]:
+    out = []
+    secs = sections(md)
+    summ = [b for t, b in secs if t.lower().startswith(SUMMARY_HEADS)]
+    if not summ:
+        return out
+    lines = _bullets(summ[0])
+    if len(lines) > 5:
+        out.append(f"T10 summary has {len(lines)} lines, keep at most 5: one per decision, move the rest down")
+    body = [b for t, b in secs if not t.lower().startswith(SUMMARY_HEADS)]
+    body_lines = [x for b in body for x in _bullets(b)]
+    for l in lines:
+        n = len(l.split())
+        if n > 30:
+            out.append(f"T10 summary line of {n} words, keep at most 30: {l[:60]!r}")
+        lw = words(l)
+        for bl in body_lines:
+            bw = words(bl)
+            if lw and len(lw & bw) / len(lw) >= 0.6:
+                out.append(f"T11 summary line repeats a body line: {l[:60]!r} ~ {bl[:60]!r}")
+                break
+    return out
+
+
+def _flat_lists(md: str) -> list[str]:
+    out = []
+    for title, body in sections(md):
+        runs: dict[tuple[int, int], int] = {}
+        stack: list[tuple[int, int]] = []
+        for i, l in enumerate(body.splitlines()):
+            m = re.match(r"(\s*)(?:[-*]|\d+[.)])\s+\S", l)
+            if not m:
+                continue
+            ind = len(m.group(1).expandtabs(4))
+            while stack and stack[-1][0] >= ind:
+                stack.pop()
+            key = (ind, stack[-1][1] if stack else -1)
+            runs[key] = runs.get(key, 0) + 1
+            stack.append((ind, i))
+        n = max(runs.values(), default=0)
+        if n > 7:
+            out.append(f"T12 {n} list items at one level in {title!r}: group them under at most 7 points, cut the detail Chaehan does not decide on")
+    return out
 
 
 def _facts(draft: str, original: str, linked: list[str] | None) -> list[str]:
+    """Numbers of the original found neither in the draft, a linked note, nor the cut list."""
     pool = (draft + "\n" + "\n".join(linked or [])).replace(",", "")
     have = set(FACT.findall(pool))
     return [f"T6 fact lost: {f}" for f in sorted(set(FACT.findall(original.replace(",", ""))) - have)]
@@ -147,16 +211,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--original")
     ap.add_argument("--linked", nargs="*", default=[])
     ap.add_argument("--facts-only", action="store_true", help="any note: only check that no date or number of --original is lost")
-    ap.add_argument("--note", action="store_true", help="any note: the fact check plus no section written as prose of 3 or more sentences")
+    ap.add_argument("--note", action="store_true", help="any note: facts, lists, summary size and duplicates (T5-T12)")
+    ap.add_argument("--cuts", help="the cut list: one line per removal, '- <numbers or words>: <destination or reason>'")
     a = ap.parse_args(argv)
     read = lambda p: open(p, encoding="utf-8").read()
-    fails = check(read(a.draft), read(a.original) if a.original else None, [read(p) for p in a.linked], a.facts_only, a.note)
+    fails = check(read(a.draft), read(a.original) if a.original else None, [read(p) for p in a.linked],
+                  a.facts_only, a.note, read(a.cuts) if a.cuts else None)
     for f in fails:
         print(f)
-    if a.note and a.original:
-        gone = lost_words(read(a.draft), read(a.original))
-        if gone:
-            print("CHECK words gone (each: the fact is still in the note, or it left on purpose): " + ", ".join(gone))
     print("PASS" if not fails else f"FAIL ({len(fails)})")
     return 1 if fails else 0
 
