@@ -13,8 +13,13 @@ notebook "Chaehan's Life". Run everything from the socrates repo root
 
 ## Trigger
 
-"create a life overview" / "life overview". This creates a NEW dated snapshot
-and supersedes the previous one (delete the old note — rules 28 and 31).
+"create a life overview" / "life overview". This creates a NEW dated snapshot.
+Every earlier snapshot, note and local file, stays untouched: a dated snapshot
+records what Chaehan believed on that date and is never superseded, folded,
+trashed or renamed (RULES.md 31). A rework of today's draft keeps today's date;
+a rework on a later day issues a new date. The local file and the note have
+the same title stem (`docs/YYYY-MM-DD-life-overview.md` for "YYYY-MM-DD Life
+Overview"); no `-NEW` or `v2` suffix.
 
 ## 1. Gather state
 
@@ -59,45 +64,84 @@ Each overview claim carries its file and date before a draft is shown.
    Per-item fixes: bar `text_pos` ("center"/"below"/"above"/"right"), milestone
    `offset` ("above"), narrow-bar short labels. Rerender until clean.
 
-## 3. Write the snapshot (structure)
+## 3. Write the snapshot: four moves, in this order
 
-An item earns its place by what it costs you if it is ignored: money, health,
-the trip, and the anxiety that grows while it stays unresolved. Growing anxiety
-weighs as much as a quantified loss. Order the note and the Takeaway by that
-cost and by when it bites, never by domain. An item with no date and no decision
-inside 90 days is one line or out.
+Relevance is impact on a goal Chaehan is pursuing or a decision Chaehan has
+pending: the family, the base in Korea, health, money, work (the live goals
+are listed in `memory/` and in the brief behind this skill,
+`agentkit/docs/answer_quality_prompt.md` section 2). A cost is a symptom of
+that impact, not its definition. A fact that touches no live goal and no
+pending decision is one line in its section or out. Do the moves in order and
+write each product down before the next move; the Takeaway is written last.
 
-- Image reference first, above the Takeaway: `![timeline](assets/YYYY-MM-DD-life-overview-timeline.png)`
-- `## Takeaway` — 4-6 bullets: ⚠️ most urgent action, the chapter's fixed
-  commitments, one line each for parallel workstreams and long-horizon items.
-  Each bullet is one sentence: the fact and the one move. Amounts, addresses and
-  the reasoning sit in the section below; a date stays only when it is the
-  deadline that makes the bullet urgent. A bullet that runs to a paragraph is a
-  section not yet written.
-  Icons sparingly (rule 42).
-- Current chapter section (e.g. "Seoul window: dates") with bold sub-labels per thread.
-- `## Running in parallel` — company, health, money/admin, side work.
-- `## What went well` — selection rule below.
-- `## Open tasks` — table: Thread | Waiting on | Next move.
+**Move 1. One sentence per live goal: where it stands now.** For each goal
+the record touches, write the sentence Chaehan would say to a friend: "The
+search is signed with J Noble, and one date has not told you whether the age
+gap is the problem." Its subject is Chaehan's decision, body, money or time,
+never the agency, the contract or the file. A closed door is written as
+Chaehan's decision and its consequence; a refusal as what remains open.
 
-Where an item has a detail note in Evernote, the section carries the state in one
-sentence, the consequence in one sentence, and a link to that note with its exact
-title as the link text. The note holds the inventory: the figures, the contact
-addresses, the contract terms, the history.
+**Move 2. Under each sentence, the facts that change it.** At most three per
+goal, each a fact that would move the sentence if it were different, plus the
+one fact that would reverse it. A fact that belongs under another fact is
+indented under it as a sub-bullet, never set beside it.
 
-A point that can be subsumed sits as an indented bullet under the point it
-belongs to, never as a sibling at the same level.
+**Move 3. Every remaining fact is detail, and gets its note.** For each
+section, find its detail note (`find-note`, then the link form in the
+`evernote` skill: `[<exact title>](evernote:///view/39d2f74/s365/<guid>/<guid>/)`).
+The section shows the state in one sentence, the consequence in one sentence,
+and that link. No figure that lives in the linked note appears above the link.
+A section with no detail note says "no detail note" and keeps its facts. Do
+not compress Chaehan's facts: dates, numbers, decisions and constraints stay,
+here or in the linked note. Only world detail (study design, vendor prose,
+public rules) may leave the page.
 
-Style rules that apply: RULES.md 19 (answer first, plain words), 20 (date first
-in title), 40 (anchor every time claim to today), 42 (bullets everywhere),
-2 (no em dashes), **195 (the note is written to Chaehan as "you")**. No thousand
-separators in numbers.
+**Move 4. The Takeaway, last, from moves 1 and 2.** Four to six bullets: what
+Chaehan would say to a friend who asks "how is it going?". Between them they
+cover what the next month depends on, what is settled, what changed and why,
+and what gets worse if left alone. That list is the content, never the
+wording: no bullet names its own function. Each bullet opens on Chaehan or
+Chaehan's thing doing something, in the words Chaehan would say aloud, and
+names every object it points at.
 
-The note is addressed to him, so every sentence says "you" and "your", never
-"he", "his" or "Chaehan". The previous snapshot is a reference for the section
-shape and the timeline spec, never for its voice: a snapshot written before
-2026-10-20 is in the third person and copying it reintroduces the defect
-(`memory/agentic_ai.md` failure 104).
+<!-- verbatim -->
+- Accepted (2026-11-05): "You fly to Osaka on 2026-12-04, in 29 days, and every flight is booked except the return from Osaka to Seoul in March." / "What you want in a partner has not changed." Later the same day: "you must still book a locker for your winter clothes" and "it is unclear if Gayeon provides women of my target age or none like couple.net, so you didn't book it yet".
+- Rejected: "The next month turns on ...", "What changed since the last snapshot is ...", "The KUBS grade entry is the one deadline this week", "The route is fixed until Valencia ...", "Money keeps one clock", "the daily tablet" with no name for the tablet, "Your winter clothes and the green card papers have no home in Seoul", and "The question it cannot answer ... goes to the Gayeon free consult, which is not booked". `scripts/wording_lint.py` flags these shapes.
+<!-- end verbatim -->
+
+It is not a task list: a bullet that an Open tasks row could replace without
+losing its consequence is rewritten or cut. The actions live in the task table.
+
+**Layout.** Image line first, then `## Takeaway`, the current chapter section,
+`## Running in parallel` with one `###` per goal, `## What went well`, and
+`## Open tasks` (Thread | When | Waiting on | Next move). Rules that apply: 19,
+20 (date first in title), 40 (anchor time claims to today), 42 (bullets), 2
+and `scripts/wording_lint.py`; no thousand separators. The note is written to
+Chaehan as "you", which is necessary and not sufficient: the seat test in
+`AGENTS.md` core 1 is the check. The previous snapshot is a reference for the
+timeline spec only, never for voice, selection or section content: copying it
+reintroduces its defects (`memory/agentic_ai.md` failure 104).
+
+## 3a. The gate (runs on the finished draft, before the twin)
+
+Seven checks. Each names the sentence it rejects; a check that cannot name one
+has not run. A failing draft goes back to the move that produced the sentence,
+never to the twin.
+
+Mechanical, T3 to T6:
+
+`python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/overview_gate.py docs/YYYY-MM-DD-life-overview.md --original docs/<previous snapshot>.md --linked <exported detail notes>`
+
+- T3 no Takeaway bullet repeats an Open tasks row. The script catches literal repeats only; a paraphrased task passes it. So also read each bullet against the table: a bullet that a row could replace without losing its consequence is rewritten. Then read the bullets aloud: a reader can tell what the month depends on, and no bullet says so in those words (Move 4).
+- T4 every body section has its link or says "no detail note"; the note has at least one link.
+- T5 at least one indented bullet; read each top-level bullet and indent any that belongs under its neighbour.
+- T6 every date and number of the previous snapshot survives in the draft or in a linked note, unless the record shows it is done or replaced. List each one the script reports and say which it is.
+
+Read by the agent, quoting the sentence:
+
+- T1 seat: name every sentence whose subject is the agency, a study, a document or the research path, and every sentence that could be sent unchanged to a stranger. Rewrite each.
+- T2 gist: for each section, name its conclusion, its two or three deciding facts and its reversing fact. A section where the reader has to work these out is rewritten.
+- T7 weak reader: when this skill changes, run a fresh case through the installed model (`opencode run`, the socrates agent) with this skill only, and run the mechanical gate on its output.
 
 ## What went well — selection rule
 
@@ -117,7 +161,7 @@ locally first with `markdown_to_enml` from `projects/evernote/src/enml.py`
 (drop the image line and strip the `<en-note>` wrapper); the chart embedded
 with the upload bridge documented in the `evernote` skill
 (`start_attachment_upload`, GCS upload, `finalize_attachment`, then `edit_note`
-`prepend`); the old note removed with `delete_note` (to trash). The CLI
+`prepend`). No earlier snapshot is deleted (section Trigger). The CLI
 commands below are the outside-session fallback; in a session they are not
 used (the user's "never use the cli fallback", 2026-09-26).
 
@@ -130,14 +174,15 @@ used (the user's "never use the cli fallback", 2026-09-26).
    Text updates orphan the attachment; re-running embed reuses it by hash
    (idempotent), so always re-embed after a text update.
 3. Verify: read the note back; `en-media` appears before the first heading; one
-   resource, and its text matches the file by hash (`evernote` skill, sweep superseded copies). New notes take minutes to appear in search — use the `create`
-   guid with `get <guid>` for the immediate check.
-4. Supersede: search the notebook for older "Life Overview" notes and delete
-   each (to trash). Only the current snapshot remains.
+   resource; its text matches the file by hash; the raw read shows one
+   `evernote:///view/` per linked section. The twin is written from the text
+   that passed the gate: the hash proves the copy, the gate proves the text, and
+   neither replaces the other. New notes take minutes to appear in search — use
+   the `create` guid with `get <guid>` for the immediate check.
 
 ## 5. Report and commit
 
 Report at headline level only (rule 28): which artifact changed, plus the
-headline deltas since the last snapshot. Commit the docs, asset, and any memory
+headline changes against the previous snapshot. Commit the docs, asset, and any memory
 changes once the user approves (rule 46), asking "commit and push?" when the
 signal is ambiguous.

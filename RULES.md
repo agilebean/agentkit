@@ -8,6 +8,8 @@ full test suite requirement in rule 6. No local instruction can waive this.
 
 **How these rules are written.** A rule states standing behaviour: what to do, and when it applies. It must hold for the next case, not explain the one that produced it. No incident narratives, no transcript of the exchange, no dates or document names from the session that triggered it — that reasoning belongs in the project's `_log.md`, which the rule can point to. One exception: when the user's own wording fixes the standard, quote the shortest fragment that carries it, never the whole exchange. The user, 2026-09-28: "formulate the rules so they are useful to avoid the problem in the future, but not in this specific instance, but generalized."
 
+**This file is not loaded by the harness.** `AGENTS.md` points here because opencode's `instructions` field did not load it (probe of 2026-09-25, opencode v2.0.16: a fresh session could quote AGENTS.md and the agent prompt, and not one sentence of this file). The always-loaded core in `AGENTS.md` holds each standard's step and names its home here; the home holds the full text. A standard has one home, and every other file points to it.
+
 ## The principle of parsimony
 
 If you can, reduce clutter and complexity. The first test applies to each object
@@ -77,6 +79,8 @@ baseline, a payload field, a count that matches the thing you copied, or your
 own plan sentence. Those prove the pass ran; none of them can see the structure.
 
 ## The writing standard: every answer is a chain
+
+This section is the home of the chain standard. `AGENTS.md` core 2 and `socrates/.opencode/agents/socrates.md` point here and do not restate it. What a text selects is a different standard, with its home in `AGENTS.md` core 1 (the four questions, the three moves, the seat test and the gist): the chain orders what was selected, it does not decide what enters.
 
 Every response, note, report and explanation is one reasoning chain, not a list
 of observations. It starts with the external effect, the thing that can be seen;
@@ -159,7 +163,7 @@ Check every sentence against five classes of robotic text. For each class, the t
 
 Write the text as plain sentences, each stating what was seen, why it happened, or what it changes.
 
-**Thirty-five kinds, by name.** Each is a detector: when a sentence has the feature, apply its fix.
+**Thirty-eight kinds, by name.** Each is a detector: when a sentence has the feature, apply its fix.
 
 - **Stand-in phrase**, one that names no object ("that ends it"): name the object, the operation and the result.
 - **Telegraphic fragment**, a line with no verb: write a full sentence.
@@ -195,6 +199,9 @@ Write the text as plain sentences, each stating what was seen, why it happened, 
 - **Analyst jargon in user-facing prose** ("sub-clinical", "protocol signal", "fictional payoff"): say what it means for the reader.
 - **Pointing back at the conversation** ("as you said", "the point you raise"): state the content.
 - **Numbered or bulleted asks inside a letter**: write each ask as a sentence in the running text.
+- **An object's absence where the reader's action belongs** ("the clothes have no home", "none is booked", "the consult is not booked"): write the action still open, with the reader as subject: "you must still book a locker for your winter clothes".
+- **A question that travels** ("the question goes to the Gayeon consult"): write what is unclear and what the reader did because of it: "it is unclear whether Gayeon has women of your target age, so you have not booked it".
+- **The agent's own history in a note** ("I said earlier ...", "That was wrong"): a note states what is true now; the correction of an earlier answer belongs in the chat.
 - **A goal the session cannot deliver** ("can name every classmate's skill and strength" in one session): write a goal the session's time allows and the reader can show by its end.
 
 **The instances are inventoried.** Every correction the user gives is appended to `common_sense.md` (this folder) in the same turn, as one row: the flagged words and where they stood, why the user rejected them, the repair, and why the repair is better. That file's second table carries the corrections whose complaint was that the agent missed something ordinary: the user's own "not common sense" statements, with what should have been obvious and where it now lives as a rule. The user's words are quoted where the record has them; a correction recorded without the reasoning is incomplete, and when the exchange carries none, ask. Text the user will read or hear is checked against this list and that inventory before it ships. A new class becomes a kind here. A class a machine can check becomes a row in the shared marker list `robot_markers.tsv` (this folder), run by `scripts/wording_lint.py` on any project's files; a project workflow wraps the checker where useful (KUBS: `pipeline.py lint --session N` in the socrates repo). Text quoted from a source and kept verbatim sits between `<!-- verbatim -->` and `<!-- end verbatim -->`, and the checker skips it: another author's punctuation is not the user's to repair, and the path that renders an artifact drops the two marker lines before the page is drawn.
@@ -580,7 +587,8 @@ have derived that from the travel itinerary."
 
 Any text written for the user to read later (decision notes, session
 summaries, memory entries, Evernote notes, reports) follows the reader's
-order and the reader's language, not the analyst's process.
+order and the reader's language, not the analyst's process. What enters the
+text is selected by `AGENTS.md` core 1; this rule governs how it reads.
 
 - **Answer first.** If the document exists to answer a question, the answer
   is the first sentence. Reasoning follows. Never build suspense by saving
@@ -636,6 +644,11 @@ defect.
   not what it is about, and they crowd the subject out of the scan:
   `2026-11-03 Life Problems`, never `2026-11-03 Life Problems - Order and
   Quick Wins`. The structure shows in the note's headings.
+- The title is in neutral words Chaehan could show anyone. An explicit, sexual
+  or embarrassing word is replaced by the neutral term for the subject:
+  `2026-11-05 Semen: nutritional intake, taste, consistency and production`,
+  never `... what she gets ...`. The body can stay precise; the title is what
+  shows in lists, search results and on screen.
 
 Failure: on 2026-09-10 the note "Top Supplements (2026-08-16)" carried the
 date parenthesized at the end; the user instructed: "when evernote, never
@@ -912,7 +925,15 @@ session's first touch of an artifact family still gets one scan — the
 agent's memory of the notebook is a compressed snapshot, not the notebook
 state.
 
-Failure mode: a new or reworked note left beside its superseded sibling in the notebook.
+**A dated snapshot is never superseded.** A note or file whose title starts
+with a date and records a state (a life overview, a decision, a session
+summary) is what Chaehan believed on that date. A rework of it issues a new
+date and a new note, and the earlier note and its local file stay untouched:
+no fold, no trash, no rename. The sweep above covers undated working notes and
+same-date drafts of one snapshot, never an earlier date. When in doubt whether
+a note is a dated snapshot, ask.
+
+Failure mode: a new or reworked note left beside its superseded sibling in the notebook. Its inverse, 2026-11-04: the 2026-10-23 Life Overview was trashed when the 2026-11-03 note was reworked, and had to be restored.
 
 
 ### 32. README is part of the CLI change — update it in the same slice
@@ -1095,6 +1116,11 @@ Any summary or overview written for the user (Evernote note, memory report,
 session summary) uses bullets for the Takeaway and for every subsection. A
 wall of prose in a summary is a defect: notes are read by scanning, not by
 parsing paragraphs.
+
+- **The Summary block takes the body's shape.** A note whose sections are lists
+  opens with a list under `## Summary`, one line per decision the note changes.
+  Prose there is the one block that reads as a different document, and the
+  summary written as an answer is the paragraph that gets rejected.
 
 Icons tag the category of an item; they do not decorate it:
 
@@ -2724,6 +2750,8 @@ The user runs several sessions over the same folders, so a target file can chang
 2. When the change collides with the target, or the artifact has one writer (a deck open in Keynote), find the writer - `openchamber` `session.list` with status on the directory, the stage's fresh files - then park that step or put one question to the user. The deck has one writer; the text carriers (md, script, notes) do not, so a sibling pass on the deck never blocks your text edits.
 3. Never answer a foreign write with full recon: re-reading the whole world at every mtime change is how the 2026-10-11 change never landed.
 
+A session compacted twice starts nothing new and is handed off (`AGENTS.md`, Sessions): every task after a compaction re-derives its world from disk. Measured on 2026-10-11, the E05 session ran two days, 12 compactions and 405 turns, and a one-slide wording change that carried its own text took two hours.
+
 Instruction basis: 2026-10-11, E05: "i stopped the session named E05 Need - Job Statement bec it took forever and without any progress writing the damn slide. investigate why. we must improve how the agent works and loses so much endless time."
 
 ### 142. The session works on the object the user named; an excluded target stays out
@@ -3420,6 +3448,10 @@ Anything written for the user to read addresses the user in the second person:
 "you", "your", "yours". A third-person pronoun is never used about the person
 the text is being written for.
 
+The pronoun is necessary and not sufficient. A text in the second person whose
+sentences have the agency, the study or the file as their subject still fails
+the seat test in `AGENTS.md` core 1, which is the home of user perspective.
+
 A record that is not addressed to the user — a memory file, a log entry, a note
 about the work, a summary of what happened — names the subject: "Chaehan". Not
 "he", not "his". A file written by an agent that has exactly one subject has no
@@ -4022,8 +4054,9 @@ must still exist. A cell-level read proves the cell; it says nothing about a
 section the write did not intend to touch.
 
 When the document's version history shows a version the agent did not write, or
-the note refuses an update because an editing room is open, a second writer is
-present. Stop the pass: read the current version, restore any section that
+its text changed since the pass read it, a second writer is present. A note that
+refuses an update because it is open in the app is a lock, not a second writer:
+the evernote skill's lock recovery switches the app to another note and retries. Stop the pass: read the current version, restore any section that
 disappeared from the last version that had it, verify the skeleton again, and
 report the second writer. Do not keep writing over it.
 
@@ -4701,6 +4734,14 @@ evidence, pros and cons and a verdict marked checked or unverified, comes when
 the user asks for it. Rule 21's two-sentence form still governs a question with
 one answer.
 
+The same holds for a research note, not only a reply. A study enters a personal
+note as a meta-analysis with its effect size and sample size; a single study is
+named only when it decides the verdict or contradicts the pooled estimate. The
+text says what the evidence shows as a whole and what it cannot say. Tables of
+studies stay below the answer, for the record. Chaehan: "in studies look only
+for meta-analysis, and report only effect size and sample size of
+meta-analysis." The selection step is `AGENTS.md` core 1.
+
 The instances are Failure 141 (an analysis answered with a verdict and a file
 path, 2026-11-02) and Failure 143 (the Mapo storage locker: many lockers listed,
 the monthly-payment check not run).
@@ -4808,3 +4849,44 @@ continuous 60% blocks felt subjectively harder than the interval sessions
 session average heart rate reads 135-140 against 139-143 on the aerobic days, so
 the only part of it that reaches the top zone is 150 m of 50 m reps. Instance:
 `memory/agentic_ai.md` failure 149.
+
+### 253. A comparison is made on equal amounts, and the unit is not spoken aloud
+
+Two things compared by composition, price or weight are compared per the same
+base unit; that is what a comparison is. Writing the unit into the sentence
+("more protein per millilitre than milk") marks a doubt the reader does not
+have, and it turns a plain fact into a hedged one. State it plainly ("more
+protein than milk"); the detail line fixes the base (per 100 mL against whole
+milk's 3.4 g), and the base belongs there. Instruction basis, 2026-11-05:
+"the comparison is always per same amount of base unit, this is common sense".
+
+This is not licence to drop scope. Rule 17 still binds a datum to its subject
+and its timeframe; the base unit is what makes a comparison a comparison, not a
+qualifier that has to be repeated.
+
+### 254. A perceived change carries the reason it is believable, and what does not move it
+
+A claim that a change alters something perceived (taste, texture, smell, feel,
+look) states the physical link in the same sentence, or it is dropped. "After a
+longer gap the sample is larger and less sour" is believable only with its
+reason: the gap fills the seminal vesicles, whose alkaline fructose dilutes the
+prostatic acid. Without that link the claim is an assertion the reader has to
+take on faith, and he will reject it as one.
+
+The negative half is named beside it: what does not move the thing ("not with
+diet") answers the question he is actually asking, and it converts the claim
+from a fact about the fluid into a fact about his choices.
+
+### 255. A possibility that survives every objection enters the summary
+
+A finding that cannot be ruled out changes what the reader does even when the
+evidence behind it is one small study or a mechanism he cannot test: a compound
+measured in a fluid, a listed side effect, a pass rate a page reports. It
+belongs in the summary with its evidence and its status in the same line
+("oxytocin and the other peptides cannot be ruled out, and the human evidence
+is one correlational study of about 300 women"), not only in the section that
+carries the detail. A summary of the proven claims alone withholds the one
+thing he would hedge against.
+
+Instruction basis, 2026-11-05: "weak positive claims about oxytocin and
+peptides that cannot be rules out should be in the summary".

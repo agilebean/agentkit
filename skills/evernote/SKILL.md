@@ -33,7 +33,7 @@ The shell CLI below is the fallback, and the only path outside an opencode sessi
 
 **Verify the whole skeleton, not only the edited cell.** Before the write, record the note's headings, table count and length; after it, read the note back and confirm each heading and table is still there. A cell-level read proves the cell and says nothing about a section the write did not intend to touch. On 2026-10-26 the 2026-10-25 row verified clean while the Training Plan table had vanished and the note had dropped from 18465 to 11057 characters.
 
-When the note is open in the app (the thrift update answers `RTE room has already been open`) or the version list shows a version the agent did not write, a second writer is present. Stop the pass: read the current content, restore any missing section from the last version that had it (`listNoteVersions` then `getNoteVersion`, both on the note store), verify the skeleton again, and report the second writer. Never write over it.
+A note open in the app (the thrift update answers `RTE room has already been open`) is a lock: "Note lock recovery (RTE room)" below releases it. When the note's text changed since you read it, or the version list shows a version the agent did not write, a second writer is present. Stop the pass: read the current content, restore any missing section from the last version that had it (`listNoteVersions` then `getNoteVersion`, both on the note store), verify the skeleton again, and report the second writer. Never write over it.
 
 ## Prerequisites
 
@@ -52,8 +52,31 @@ Alternatively: set `EVERNOTE_TOKEN` env var.
 - **A table is as wide as its content needs, and never stretched to the pane.** Every table leaves with an explicit width and a colgroup. `projects/evernote/src/enml.py`'s `fit_table_widths` computes it on every markdown write; `fit-tables "<title>"` applies it to a note already written and `--refit` replaces a fitting that was wrong. The model: a column's natural width is its longest line (headers counted, bold counted at 1.06) at 16 px plus 24 px of padding and air, so that a header cannot break mid-word; where the columns' sum fits under the ceiling they are used as they are, and where it does not they are compressed together, each column's width following its content raised to 0.75 and never dropping below its longest word. Then the wrapping column gives its width back: it is trimmed to the point where its content stops saving the table a line, so the table ends narrower than the ceiling. Width past that point buys nothing - a second or third line in a column costs nothing when a neighbouring column already carries three (rule 149) - and a table with four columns does not reach the width a six-column one needs. The ceiling is **939 px**, the widest table of his own in the account (his hand-dragged Osaka table at 937/938.88, a 939 px table of 2025-02-26, the client's own fits at 923, 817, 774, 700, 632, 623). The 1108.64 px of 2026-10-09 was the agent's own output measured back: every 1108-1128 px table in the account is agent-written, and a table that wide runs past his pane. A table whose columns all carry the same width is a default, not a layout, and is refitted; a table whose columns differ is his own (he drags borders and the client writes fractional widths such as 938.88) and is left alone. Stated 2026-10-12, three times: "i said to optimize the vertical space, but that doesn't mean by extend all tables to max. width"; of the first fitting, which cut the widest column until the total fit: "you broke 'Mandatory, 10% of the grade; more than 30% of sessions missed = F' across 5 rows!!" and a header broken after "Hour"; and of the second, which filled the S6 table to the ceiling: "can't you apply common sense? it doesn't matter if there is a second or third line if another column already has 3 lines!!!! ... keep 130 but shorten the text line bec the goal is not to use max width with so few cols!" The reference is his hand-dragged Osaka table (938.88: 188/116/79/132/85/339); the anti-shape is the same table at 1128 px with six equal 188 px columns.
 - **Every place name is a link to Google Maps.** Restaurants, bars and hotels carry a Google Maps link on the name itself, wherever the name appears in the note — not only in a links section at the foot: `<a href="https://maps.google.com/?q=<url-encoded name>">name</a>`. The Japanese name is what resolves in Maps, so it travels in the query while the English name stays as the visible text. Stated 2026-10-07: "always link the location names (restaurants, bars, hotels) with the google maps link".
 - The body is written the way you would say it to the user in chat, not as a reference entry: no label prefixes ("Status:", "Why:"), no telegraphic fragments, no analyst third person. Canonical rule: RULES.md rule 19.
+- **A title names its subject in neutral words.** It reads as something Chaehan could show anyone: "2026-11-05 Semen: nutritional intake, taste, consistency and production", never "what she gets". An explicit, sexual or embarrassing word in a title is replaced by the neutral term for the subject; the body can stay precise.
 - **A note is a record: it keeps every fact Chaehan gave, each once and in its place.** It removes only a duplicate, a superseded value (kept as a dated line), single-trial study detail, or clutter he names.
 - **Before adding a table or section, read the note's existing structure for the slot.** A plan already has a warmup column and a cooldown column: the drills go in the warmup cell, the scull in the cooldown cell, and no second table is created. A label that no longer names the function is renamed to the function, never bypassed with a new section.
+
+## Writing or rewriting a note's text: six steps, in order
+
+Every note whose prose is written or rewritten goes through these steps, whatever the topic. Do them in order and do not skip one because the note is short. `AGENTS.md` core 1 is the standard; these steps are how it is run. A life overview also runs the life-overview skill's gate.
+
+1. **Save the old text** to `$TMPDIR/<slug>_before.md`. In an opencode session read it with `get_note` through `execute` (the MCP path above); outside a session use `get --markdown <guid>`. It is the base for step 5. Write your draft to `$TMPDIR/<slug>.md`: the checks in steps 4 and 5 read that file.
+2. **Write the summary as four parts, nothing else:**
+   a) the answer in one sentence;
+   b) the action Chaehan still has to take, with Chaehan as subject ("You must still call CHA Gangnam ...");
+   c) at most three facts that decide the answer, one of them the fact that would reverse it;
+   d) one closing line with the consequence.
+
+   Leave out what Chaehan already knows or what goes without saying. "Swallowing has no pregnancy risk" is trivial, and Chaehan called it "stupid as it is trivial".
+
+   Every other fact moves to a section below. Write each part in terms Chaehan can picture: compare a figure with something familiar and say what it means, and leave the exact figures to the section. Chaehan's example: "The average serving is 5 mL fluid with more protein content than milk and a little fructose making the taste slightly sweet." Test each summary sentence: if deleting it would not change what Chaehan decides, move it down.
+3. **Rewrite the sections for the seat test.** For each sentence ask: is its subject Chaehan's decision, body, money or time? Rewrite sentences whose subject is the agency, the study, the document or the research path. Delete any sentence about your own earlier answers ("I said earlier", "That was wrong"). Keep tables unchanged unless the change was asked for. Then three more checks on every sentence:
+   a) **Which one?** A thing named by a common noun (a tablet, a panel, a test, a consult, a contract) says which one at its first mention: "the daily Atobamib tablet", "the 2026-10-20 blood test". Read it as someone who opens only this note.
+   b) **What does it do for Chaehan?** A property is written with its value to Chaehan: "is more practical as it removes the need for a towel", not "it ends without a towel".
+   c) **Is it a list?** A process with stages is a numbered list, one stage per item, its details indented under it. Any other section with three or more facts is bullets, with a point that belongs under another indented under it.
+4. **Run the wording checker:** `python ~/Software/Prototypes/agentkit/scripts/wording_lint.py <draft.md>`. Fix every flag outside a table or a verbatim block. Fix every warn too, or name it in your report with the reason it stays.
+5. **Run the fact and list check:** `python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/overview_gate.py <draft.md> --original /tmp/<slug>_before.md --note`. Every date and number it lists goes back into the draft, every section it names as prose is rewritten as a list, every table row it lists goes back unchanged, and every empty bullet is filled or deleted. Then go through its "CHECK words gone" line word by word: either the fact that word carried is still in the note, or you name it in your report as removed on purpose. Delete one only if Chaehan's record shows it is done or replaced.
+6. **Write, then read back.** Write the checked file: in an opencode session through the MCP write in "Write modes" below, outside a session with `update --markdown --file <draft.md> <guid>`. Read the note back and confirm the headings, the table rows and the summary are there. A write refused because the note is open is a lock, not a second writer: follow "Note lock recovery (RTE room)" below, which switches Evernote to another note and retries. Stop only when the note's text changed since step 1 or its version list shows a version you did not write.
 
 ## A note write is verified against the reader's view, not the stored bytes
 
@@ -104,6 +127,12 @@ note supersedes: fold any unique content into the new note, then delete
 the superseded note. The same sweep runs when an existing artifact is
 reworked, renamed, or declared superseded. The sweep is automatic; ask
 the user only when the content cannot tell you which note is canonical.
+
+**A dated snapshot is never superseded** (RULES.md 31). A note whose title starts
+with a date and records a state is what Chaehan believed on that date. A rework
+issues a new date and a new note; the earlier note and its local file stay
+untouched, never folded, trashed or renamed. The sweep covers undated working
+notes and same-date drafts only.
 
 A twin is written from its approved file, and its text is checked against that file by hash before any old copy is trashed.
 
@@ -345,6 +374,16 @@ mamba run -n socrates python -m projects.evernote.src.evernote_api create-table 
 ```
 
 ## Cross-reference links between notes
+
+**Authoring a link in a note written from markdown.** A section that has a detail
+note carries the state in one sentence, the consequence in one sentence, and one
+link to that note. Build the link before the write:
+
+1. Resolve the target: `find-note "<exact title>"` returns its guid.
+2. Write it in the markdown as `[<exact title>](evernote:///view/39d2f74/s365/<guid>/<guid>/)`. The link text is the note's exact title; `39d2f74` and `s365` are this account's user id and shard, read from the token.
+3. `markdown_to_enml` turns it into `<a href="evernote:///...">`. After the write, the raw read shows one `evernote:///view/` per detail note; zero links in a note with detail sections is a failed write.
+
+For a note that already exists, `link-note` below appends the same link.
 
 ```
 mamba run -n socrates python -m projects.evernote.src.evernote_api link-note "<source_title>" "<target_title>" [--after-heading "<heading>"]
