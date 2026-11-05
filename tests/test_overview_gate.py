@@ -105,7 +105,45 @@ def test_note_mode_fails_on_lost_table_row_and_empty_bullet():
     assert "T8 empty list item at line 3" in fails
 
 
-def test_note_mode_lists_lost_words_without_failing():
+def test_note_mode_passes_a_reworded_line() -> None:
     draft = ORIG.replace("- Acceptance leaves the owner unstated.", "- Reception is her side.")
     assert gate.check(draft, ORIG, note=True) == []
-    assert "acceptance" in gate.lost_words(draft, ORIG)
+
+
+def test_a_cut_list_lets_a_fact_leave_with_its_destination() -> None:
+    original = "## Buying\n- Swanson 100 mg, 30 capsules, 39647 won.\n- Prelox, 62118 won.\n"
+    draft = "## Buying\n- Pycnogenol 100 mg from any brand.\n"
+    assert "T6 fact lost: 39647" in gate.check(draft, original, note=True)
+    cuts = "- 39647, 62118, 30: brand prices, any brand at 100 mg works\n"
+    assert gate.check(draft, original, note=True, cuts=cuts) == []
+
+
+def test_a_cut_without_its_reason_fails() -> None:
+    original = "## Buying\n- Prelox, 62118 won.\n"
+    fails = gate.check("## Buying\n- Pycnogenol.\n", original, note=True, cuts="- 62118\n")
+    assert any(f.startswith("T9") for f in fails)
+
+
+SUMMARY = "## Summary\n\n" + "".join(f"- Decision {i} is short.\n" for i in range(6)) + "\n## Body\n- Detail.\n"
+
+
+def test_a_summary_over_five_lines_fails() -> None:
+    assert any(f.startswith("T10") for f in gate.check(SUMMARY, note=True))
+
+
+def test_a_long_summary_line_fails() -> None:
+    draft = "## Summary\n- " + " ".join(["word"] * 31) + ".\n\n## Body\n- Detail.\n"
+    assert any(f.startswith("T10") for f in gate.check(draft, note=True))
+
+
+def test_a_summary_line_that_repeats_a_body_line_fails() -> None:
+    line = "Pycnogenol raises the erection score 9.2 points across 23 trials in 1583 men"
+    draft = f"## Summary\n- {line}.\n\n## Evidence\n- {line}, Ramasamy 2024.\n"
+    assert any(f.startswith("T11") for f in gate.check(draft, note=True))
+
+
+def test_more_than_seven_siblings_fail() -> None:
+    flat = "## Buying\n" + "".join(f"- Item {i}.\n" for i in range(8))
+    grouped = "## Buying\n" + "".join(f"- Group {g}.\n" + "".join(f"  - Item {i}.\n" for i in range(4)) for g in range(2))
+    assert any(f.startswith("T12") for f in gate.check(flat, note=True))
+    assert not any(f.startswith("T12") for f in gate.check(grouped, note=True))

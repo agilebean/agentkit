@@ -644,11 +644,13 @@ defect.
   not what it is about, and they crowd the subject out of the scan:
   `2026-11-03 Life Problems`, never `2026-11-03 Life Problems - Order and
   Quick Wins`. The structure shows in the note's headings.
-- The title is in neutral words Chaehan could show anyone. An explicit, sexual
-  or embarrassing word is replaced by the neutral term for the subject:
-  `2026-11-05 Semen: nutritional intake, taste, consistency and production`,
-  never `... what she gets ...`. The body can stay precise; the title is what
-  shows in lists, search results and on screen.
+- The title and the file name are in neutral words Chaehan could show anyone.
+  They name the subject by a category noun, never by a person or by what
+  someone does or receives: `2026-11-05 Semen: nutritional intake, taste,
+  consistency and production`, never `... what she gets ...`. The body can stay
+  precise; the title is what shows in lists, search results and on screen.
+  `scripts/wording_lint.py` checks every file's own name and each
+  `--title "<note title>"`, and flags a pronoun or an explicit word.
 
 Failure: on 2026-09-10 the note "Top Supplements (2026-08-16)" carried the
 date parenthesized at the end; the user instructed: "when evernote, never
@@ -1158,7 +1160,21 @@ user asked for selection.
   default. State the questions in the chat reply itself so the user can
   answer there, never only inside the artifact.
 
+- A request that names one member of a product line ("add the thinnest one",
+  "only the cheapest", "just the best rated") selects that member alone. The
+  siblings are not the chosen set and do not enter the artifact alongside it,
+  even when they share the brand, the page and the spec sheet: the answer to
+  "which of these is thinnest" is one row, and the other two go in the reply's
+  "stays out" note if they go anywhere. Reading the request as "add the line"
+  is an archive answer to a selection question.
+
 Failure mode: an integration that keeps every extracted item instead of choosing.
+
+Failure, 2026-11-05, Evernote "Condom Thickness & Width". Asked for the
+Japanese brand sold in Seoul whose products are named 001, 002 and 003, and
+which of them is thinnest, the agent wrote all three products into the table.
+Chaehan: "why did you put 002 and 003 in although i told you to select only
+the thinnest?"
 
 ### 44. Availability and licensing claims are verified at the official source
 
@@ -1883,6 +1899,7 @@ A file name has to identify the file in the visible part of a Finder row, roughl
 - A name that runs past the visible width is less descriptive, not more: files sharing a prefix become indistinguishable, because the tail that separates them is exactly what gets truncated.
 - When descriptive detail has grown into the file name (a subtitle, a list, a method), move that detail into the document's own title or status line and shorten the name; the Evernote twin then carries the same short title.
 - Applies to Drive and Desktop files, quote PDFs, diagram versions, and session material alike.
+- A file name is a title: rule 20's neutral-words bullet binds it too.
 
 Failure mode: a file name truncated in Finder, so the artifact cannot be identified by sight.
 
@@ -2409,6 +2426,11 @@ the four parts of a presentation, the run of show the room follows, the tips a
 team picks from - each one sits on its own indented line, not merged into the
 sentence that introduces it; a list inside a list is indented so the nesting
 is visible at a glance.
+
+A level holds at most seven items. More than seven siblings is a pile, not a
+list: group them under at most seven points, and cut the items Chaehan does not
+decide on (the prices of brands he will not buy, a study's subscales). The note
+gate's T12 fails it.
 
 Failure mode: numbered items delivered as running prose, points the user
 counts left unnumbered, a heading phrase left inline with its content, or a
@@ -4647,6 +4669,19 @@ table already carries. Where a sync needs a different internal order, that order
 stays inside its store and the projection reverses it at write time. A pass that
 finds itself rewriting a table it never meant to reorder is a defect, not a
 tidy-up: the row order is content, and the reader sees it before any cell.
+
+The other half of the rule: a table whose rows are options compared on one
+number is ordered by that number, in the direction the comparison is read.
+Thickness reads thinnest first, price reads cheapest first, a rating reads
+highest first. Grouping those rows by brand, or appending a new row at the
+bottom because it was written last, is not an order the reader can scan. The
+test for which order applies: does the row order itself say something — a date,
+a sequence, a layout he dragged — or is it the order things happened to be
+typed in? The first keeps his order, the second is sorted. On 2026-11-05 the
+same note was a brand-grouped list of condoms, thinnest row third: "the table
+must be sorted from thinnest to thickest isn't that common sense?"; it was
+rebuilt thinnest first, and every row string was carried over verbatim so the
+coloured runs in three of the cells survived the move.
 
 Failure, 2026-10-29, the Training Plan table of "My Swim Training". The swim
 pipeline's plan sync sorted the blocks ascending in `plan_blocks()` and

@@ -97,3 +97,22 @@ def test_the_cli_returns_zero_on_a_clean_file(tmp_path) -> None:
     p = tmp_path / "clean.md"
     p.write_text("The filters cost you more on Wednesday.\n", encoding="utf-8")
     assert wording.main([str(p)]) == 0
+
+
+def test_a_title_naming_a_person_or_an_act_flags() -> None:
+    # RULES.md rule 20: a title names its subject by a category noun, never by a
+    # person or by what someone does or receives.
+    assert wording.title_hits("2026-11-05 Semen: what she gets, taste, consistency and production")
+    assert wording.title_hits("2026-11-05 Oral sex and taste")
+    assert wording.title_hits("2026-11-05 Semen: nutritional intake, taste, consistency and production") == []
+    assert wording.title_hits("2026-11-05 Paternal Age and the Frozen 2020 Sperm Question") == []
+
+
+def test_the_file_name_and_a_given_title_are_checked(tmp_path, capsys) -> None:
+    bad = tmp_path / "2026-11-05 what she gets.md"
+    bad.write_text("Plain text.\n")
+    assert wording.main([str(bad)]) == 2
+    good = tmp_path / "note.md"
+    good.write_text("Plain text.\n")
+    assert wording.main(["--title", "2026-11-05 Semen: what she gets", str(good)]) == 2
+    assert wording.main(["--title", "2026-11-05 Semen: nutritional intake", str(good)]) == 0
