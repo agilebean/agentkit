@@ -16,7 +16,7 @@ Everything lives in the Drive folder "1 Projects/KUBS/KUBS DT/KUBS DT Grading":
 - "KUBS DT final presentations grading.md" - the final of 2026-10-22: the five teams in the E08 agenda slide's order with the members' registered names and student numbers, the per-team read, the criteria table, the mandatory-slide table, and the two comparison tables. This is the graded team project, 65 percent of the course grade,
 - "2026-10-22 KUBS DT S8 final presentations - transcript.md" - both session recordings (`142.mp4`, 42 min, the intro and teams 1-2; `229-332.mp4`, 47 min, teams 3-5) transcribed and merged in time order, timestamped, speaker labels left out because the app's diarization is unusable,
 - "2026-10-22 KUBS DT S8 final presentations - full read.md" - a section per team with what the room saw, the slides as they appeared, the four criteria with their reasons, and a member table that states how certain each attribution is. It is a reading, not a source: it carried three claims its own evidence contradicted,
-- "KUBS DT grading insights.md" - the traps and lessons written through both rounds; this skill reads its team sections only, named in the boundary below,
+- "2026 KUBS DT grading insights.md" in "KUBS DT Course Design" - the traps and lessons written through both rounds; this skill reads its team sections only, named in the boundary below,
 - the mirror in the socrates repo: `projects/kubs_dt/grading/` holds the grading documents, `_log.md` and the LMS export as versioned copies. Drive stays the working copy; a pass that edits one of them copies it there in the same turn, and the renders, the recordings and the submitted PDFs stay in Drive.
 
 The grading files are named after the day the presentations happened (solo 2026-10-05, S7 2026-10-19, the S8 final 2026-10-22); the earlier half of this skill's "no date in file names" guard is superseded for this folder on Chaehan's word of 2026-10-19.
@@ -29,7 +29,7 @@ Two grading skills exist, one per round. **Load exactly one per pass.**
 
 - This skill owns the 65 percent team round and the solo presentation table. The 35 percent essays and the course gradebook are `kubs-essay-grading`: do not load it, and do not open its sheet, its anchors or its reading model while a team is being scored.
 - The rounds share the folder, the letter scale and the record discipline. They share no criterion, no anchor and no deduction. An essay's length charge, AI downgrade and signposting rule have no meaning here; this round's half point for a mandatory slide and its room-reception test have none there.
-- One file both rounds read: "KUBS DT grading insights.md". This skill reads only the team sections - "What the team round taught about grading" and the team reproduction prompt - and stops at the essay lessons below them.
+- One file both rounds read: "2026 KUBS DT grading insights.md". This skill reads only the team sections - "What the team round taught about grading" and the team reproduction prompt - and stops at the essay lessons below them.
 - Nothing crosses in either direction: a rule learned on an essay never changes a team score, and a team lesson never changes an essay score. When a correction arrives that seems to apply to both, it belongs to the round it was taught on, and the other round waits for its own.
 - A task that needs both rounds - rebuilding the gradebook - belongs to `kubs-essay-grading`, which quotes this round's settled means as data. A team mean is never re-derived there, and an essay score is never re-derived here.
 
