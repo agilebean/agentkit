@@ -153,13 +153,22 @@ Check every sentence against five classes of robotic text. For each class, the t
 
 1. **Construction.** The sentence frames its point instead of making it: a contrast ("it is not X, it is Y"), an announcement ("what matters here is", "the key point is"), or a restatement of the sentence before it. Test: delete the framing clause. If the sentence says the same thing, the clause was decoration and stays deleted. If the sentence now says less, the clause held a claim: write the claim as its own sentence with a plain verb.
 
+   A contrast frame defines a claim by the alternative it rejects, and it takes many forms. Each one is the same defect:
+   a) correction: "X, not Y"; "not Y but X"; "it is not Y, it is X"; "isn't Y. It's X"; "never Y, always X";
+   b) substitution: "X rather than Y"; "instead of Y"; "in place of Y"; "as opposed to Y";
+   c) scale: "not just X"; "not only X but also Y"; "more than just X"; "far from X";
+   d) a contrast marker: "unlike Y"; "whereas"; "in contrast"; "by contrast"; "on the other hand"; "X versus Y";
+   e) emphasis by denial: "less about Y than X"; "the point is not Y";
+   f) an absence set beside the claim: "a quote, not a booking"; "no Y, only X"; "X but not Y".
+   Test: write what is true and what you do, each as its own statement ("You have a quote for the flat. You must still book it."). The forms are rows in `robot_markers.tsv` whose fix starts "contrast frame". The wording checker warns on them in prose, and the note gate fails them in a summary line and in a section's first sentence.
+
 2. **Vocabulary.** A word a person would not say aloud to a colleague about this material (leverage, robust, seamless, covered, buys, lane, facilitate). Test: say the sentence aloud. If the word needs explaining, replace it with the thing it names: the action, the number, the object.
 
 3. **Content.** A claim, number, name or step that is not in the source the text is written from. Test: point at the fact that supports each sentence. A sentence with no fact behind it is deleted, not softened.
 
 4. **Voice.** Hedging, enthusiasm, apology, talk about the writer or the message, and formulas at the start or the end. Test: delete it. A fact it carried goes into a plain sentence. If it carried no fact, the sentence goes.
 
-5. **Layout.** Headings, bold labels such as "Status:", bullet lists or tables where the content is one or two sentences, and dashes used as punctuation. Test: if the content is one step, write it as one plain paragraph. If it has several steps (what was seen, why it happened, what it changes), give each step its own paragraph, in that order.
+5. **Layout.** Headings, bold labels such as "Status:", bullet lists or tables where the content is one or two sentences, and dashes used as punctuation. Test: if the content is one step, write it as one plain paragraph. If it has several steps (what was seen, why it happened, what it changes), give each step its own paragraph, in that order. Emphasis is markdown (`**bold**`, `*italic*`), never Unicode math-bold, math-italic or any other font-variant codepoint (`𝒃𝒐𝒍𝒅`): those glyphs break search, copy and screen readers.
 
 Write the text as plain sentences, each stating what was seen, why it happened, or what it changes.
 
@@ -418,6 +427,26 @@ the principle must stand alone without the example. If removing the example
 makes the principle incomprehensible, the example is doing the work of the
 principle and the principle is too weak.
 
+**A fix plan is ordered by causal level, and it is written for the agent that
+runs it.** Name first what that agent cannot do, from its measured record. Fix
+that at the earliest step of the work, where an error would spread into every
+later step, and at the one point every path passes, such as the write, so that
+no brief or skipped step goes around it. A smaller check stays only for what the
+higher fix cannot reach, and it is listed under the fix it backs up. A flat list
+with one check per defect fixes the instances again. For a weaker model, judgment
+over a whole text is moved into tasks it can do item by item, and a script
+assembles the result. The plan's first step tests the ability the plan rests on.
+A weaker model invents and copies: it fills a gap from its own context, and it repeats
+the instruction's example as its answer. So its instructions give examples from
+another domain than the task, and its output is checked mechanically: a sentence
+that repeats six words in a row of the instructions is refused as a copy, and a
+number or name that neither the source nor Chaehan's record contains is refused
+as an invention (`agentkit/skills/evernote/scripts/note_build.py`).
+Failure 164 in `memory/agentic_ai.md`: a seven-item plan answered the Osaka
+note's symptoms one by one; Chaehan: "not to fix issues on the symptomatic level
+but strategically as early and high as possible, and hierarchically subsequently
+the smaller issues subsumed".
+
 ### Extraction into agentkit (externalizing logic from an app)
 
 When moving code INTO agentkit from a consumer app: **don't simplify the structure.** Two functions in the original means two functions in agentkit. A try/except fallback means a try/except fallback. If you change module paths that tests patch, update every test; a test patching the old path passes silently against dead code. Before done, run the consumer's full test suite.
@@ -538,6 +567,19 @@ one will eventually be chosen.
   or the following topic is a defective note. Rewrite it with the subject
   named. The metric is irrelevant: loads, doses, prices, dates, and
   frequencies all misattach the same way when unbound.
+- **Money carries its currency as a symbol, in front of the amount.** `¥233`,
+  `$2676`, `₩4430`; no thousand separators and no currency word taken from a
+  language (`233 엔`, `4500 dollars`). The word form is the defect even when it
+  is the reader's own language, because a cell holding won and yen figures then
+  names both currencies in Korean and the two amounts stop telling themselves
+  apart. His won amounts keep the form he writes them in (`7450 원`); a second
+  currency in the same table gets its own symbol. Learned 2026-11-05 on
+  "Condom Thickness & Width", where yen went in as `233 엔` beside his
+  `7450 원`: "why don't you use the yen symbol instead of transcribing it to
+  KRW? isn't that common sense???"
+- **Identifiers are search keys and stay whole.** An email address is written
+  in full, because it is what he searches his inbox for; a company name is
+  spelled in full; a file is named by its complete filename.
 - **Plans carry scope: activity, metric, time.** "Load at 50-60% of normal"
   is defective. "Freestyle-return program (swim sessions after 2026-08-18,
   not gym lat work): load at 50-60% of normal volume" survives. An event
@@ -1049,6 +1091,36 @@ calibration for every following draft in that thread.
   nearby category ("what is shown in class is a reminder") turns the sentence
   into a different and false claim — the class is the content, the slides are
   the reminder.
+
+- **One purpose per draft, one to three sentences.** A draft asks one question,
+  moves the negotiation one step, or confirms one point. Several points go across
+  several turns; a draft that layers reasoning into one message is rejected.
+- **Reply to the last message, not the topic.** The opening engages what the
+  other person just wrote; a draft that restates the situation from scratch is
+  rejected. Add only the next turn: no recap of what Chaehan already said, no
+  re-explaining what the recipient already has.
+- **Chaehan's framing and words are used verbatim.** When he reframes the
+  situation ("소개" instead of "미팅", "18개월 기준"), the draft is built on that
+  frame; when he supplies words ("competent, professional, engaged"), they go in
+  unchanged. Use the other person's name, title or role from context, never a
+  placeholder: "매니저님이 승진하시거나" was accepted, "사람이 바뀌거나" rejected.
+- **Only authorized content.** No number, concession, negotiation move or
+  clause enters a draft without his approval for that draft. State his
+  reactions plainly: no imagined inner monologue ("이제 이 분이..."), no staged
+  emotion ("솔직히 무섭습니다").
+- **Conversational register, no bookends by default.** Only the message body:
+  no greeting header, no closing formula, unless he asks for them or the
+  occasion is a formal group announcement (rule 57). In Korean, natural endings
+  (죠, 는데요, 잖아요, 네요), not formal-declarative structures.
+- **Thread constraints are sticky.** Tone, content boundaries and manner
+  elements he asks for in one draft (a greeting, a thank-you) bind every later
+  draft in that thread until he changes them; they never become global rules.
+  Before each draft, assemble the thread's active constraints plus the standing
+  ones (rule 250), write, then check each against the draft. The assembly is
+  not shown to him.
+- **A rejected draft moves one step.** "Too long" shortens it, never to a
+  single sentence; "too short" adds one element, never a paragraph. The right
+  length is found by moving toward it, not by swinging past it.
 
 Failure mode: a message built as a structured memo (preamble, rationale, conditions) instead of the sender's plain ask.
 
@@ -1579,7 +1651,7 @@ read rules 50+ to make it human accessible and less robotic".
 
 ### 55. Expand every abbreviation on first use in anything the user reads
 
-Any text the user reads (chat replies, notes, artifacts, drafts) must expand every abbreviation, acronym, and domain shorthand the first time it appears, with the term spelled out and its role in plain words: "rating of perceived exertion (RPE, how hard the effort feels)". Abbreviations carried over from memory files, source notes, or professional literature are not exempt; a note's shorthand is not user vocabulary. The user should never have to ask what a term means.
+Any text the user reads (chat replies, notes, artifacts, drafts) must expand every abbreviation, acronym, and domain shorthand the first time it appears, with the term spelled out and its role in plain words: "rating of perceived exertion (RPE, how hard the effort feels)". A named thing that is not an abbreviation gets the same treatment: "Form 1000" and "Priority Two" are said as "the form a state government writes to recommend you" and "the queue the federal government picks from". A term an educated non-specialist outside the field would not know (SKU, COGS, BOM, SLA) is replaced by its plain description, not merely defined. Abbreviations carried over from memory files, source notes, or professional literature are not exempt; a note's shorthand is not user vocabulary. The user should never have to ask what a term means.
 
 Failure: on 2026-09-21 a training answer used "RPE drifts up with duration" and "your AeT is 2:05" without definitions; the user: "what is rpe and aet". Both abbreviations sat bare in the swim memory file, and the answer imported them as-is.
 
@@ -1850,6 +1922,8 @@ Right — one table, each item once, the options as columns:
 This is the general form of the user's "common sense" standard: the layout follows the reader's decision, and complication is the defect. Rule 48's test applies to structure as well as wording — if the reader has to reassemble the picture, the structure is wrong.
 
 Failure mode: one item set split into one list per option.
+
+Three or more competing providers, services, tools or websites are always a table, never a bullet list, and each provider's name is a hyperlink to its website (`[Name](https://...)`), so the reader can open the option he picks from the row itself. Defaults the rows share ("door-to-door, customs included, destination Seoul") are declared once above the table; a column the default covers entirely is deleted, and only deviations appear in the rows.
 
 Every row also states why it is there — see rule 68.
 
@@ -4209,6 +4283,14 @@ stroke-rate curve changed as well. Chaehan: "you should not have altered panel
 alter panel 1, isn't that common sense??" Generalizable form, for every agent
 and every project: the named surface bounds the edit.
 
+When the requested change genuinely needs a visible property to move (an axis
+range or scale, a colour, a layout, a sort order, a filter, a date floor or a
+visible date scope), propose the minimum incision first: widen only for the new
+data point, never remove the constraint. Name the property that will move and
+get his confirmation before implementing. A constant, floor or filter coupled
+to something you removed is flagged with the question whether to re-peg it or
+drop it; it is never deleted silently because it "is no longer needed".
+
 ### 221. A chart axis is fitted to its data, and secondary curves sit under the primary lines
 
 Two defects have the same cause, an axis chosen as a constant instead of read
@@ -4803,6 +4885,11 @@ task where "complete" means "all inputs considered", not "some inputs found".
 The failure mode: find 2 of 4 quotes in a folder, treat that as "the latest
 quotes", write the update and stop.
 
+A task with a dedicated agent file in the repo's `.opencode/agents/` starts by
+reading that file end to end, before the first tool call. Its steps run in its
+order, none skipped or reordered for the request's framing; a blocked step is
+reported and stops the run, and no shortcut from another source replaces it.
+
 Failure, 2026-07-09, the Logistics Test note: the agent wrote a partial update
 missing 3 of 4 new quotes, after it improvised from skills instead of opening
 the dedicated workflow file.
@@ -4869,6 +4956,10 @@ details" is an explicit instruction to keep every fact while cutting only
 connective filler. A version that deletes a table or collapses mechanism detail
 to save space has misread the request.
 
+The gate before any record write (a memory file, an Evernote note, its twin):
+list the record's dated facts and numbers before and after the write, and name
+each removal. The write waits for that list.
+
 ### 252. A load is read from the zone or the measured rate, never from the session's name
 
 A session's name says what shape it has, not how hard it is. Chaehan's perceived
@@ -4925,3 +5016,35 @@ thing he would hedge against.
 
 Instruction basis, 2026-11-05: "weak positive claims about oxytocin and
 peptides that cannot be rules out should be in the summary".
+
+### 256. A hypothetical is answered as a hypothetical
+
+Chaehan often asks inside a scenario he is not proposing to enter, and he says
+so in the sentence that introduces it. Detect it there. Answer whether the door
+is open or shut and what would reopen it. Do not read it as a plan change, and
+do not ask him to choose between the hypothetical and the plan on file.
+
+Instruction basis, 2026-10-14: "Melbourne is main target in this hypothetical
+scenario in which i'm asking and looking for closure".
+
+### 257. Instructions live in opencode files; a CLAUDE.md is an import stub
+
+Every agent instruction has one home among the opencode files: a rule every
+agent follows goes into `agentkit/RULES.md`, a core step into
+`agentkit/AGENTS.md`, one project's workflow into that repo's
+`.opencode/agents/<name>.md` or its `AGENTS.md`, a procedure into a skill, a
+trigger into a command. A rule that would hold for any agent is never written
+into a project agent such as Socrates; the project file keeps only its own
+workflow and points to the rule by number.
+
+Claude Code reads CLAUDE.md files only, so each one is a stub of `@` imports
+of those opencode files and nothing else. Correcting, optimizing or extending
+agent behaviour never edits a CLAUDE.md beyond its imports, never creates
+`~/.claude/agents/` or `~/.claude/rules/`, and never writes Claude Code's own
+auto-memory: memory is the project's `memory/` folder as its agent file
+defines it.
+
+Instruction basis, 2026-11-06: "i want that claude when optimizing edits not
+claude.md files but the opencode config files for agents rules etc" and "any
+agent rule that should be applied for every agent should be in agentkit, not
+in a specific agent like socrates".
