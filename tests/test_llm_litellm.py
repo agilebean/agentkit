@@ -350,3 +350,23 @@ class TestPublicAuthReaders:
         from agentkit.llm._litellm import _get_go_api_key, _get_personal_deepseek_key
         assert get_go_api_key is _get_go_api_key
         assert get_personal_deepseek_key is _get_personal_deepseek_key
+
+
+def test_read_stream_assembles_content_tool_calls_and_usage() -> None:
+    from agentkit.llm._litellm import _read_stream, _wrap_response
+    lines = [
+        b'data: {"id":"r1","choices":[{"index":0,"delta":{"role":"assistant","content":"Hel"}}]}\n',
+        b"\n",
+        b'data: {"id":"r1","choices":[{"index":0,"delta":{"content":"lo"}}]}\n',
+        b'data: {"id":"r1","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"id":"c1","function":{"name":"get","arguments":"{\\"a\\""}}]}}]}\n',
+        b'data: {"id":"r1","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":":1}"}}]},"finish_reason":"tool_calls"}]}\n',
+        b'data: {"id":"r1","choices":[],"usage":{"prompt_tokens":5,"completion_tokens":7,"total_tokens":12}}\n',
+        b"data: [DONE]\n",
+    ]
+    resp = _wrap_response(_read_stream(lines))
+    msg = resp.choices[0].message
+    assert msg.content == "Hello"
+    assert msg.tool_calls[0].id == "c1" and msg.tool_calls[0].function.name == "get"
+    assert msg.tool_calls[0].function.arguments == '{"a":1}'
+    assert resp.choices[0].finish_reason == "tool_calls"
+    assert resp.usage.total_tokens == 12

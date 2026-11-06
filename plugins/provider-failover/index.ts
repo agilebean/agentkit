@@ -65,6 +65,14 @@ export type ModelRef = { providerID: string; id: string; variant?: string }
 export const isConnectionFailure = (error: { type?: string; message?: string } | undefined): boolean =>
   error?.type === "provider.transport" && CONNECTION_FAILURE.test(error.message ?? "")
 
+// A spent gateway quota (Go's weekly limit, 429 GoUsageLimitError, first seen
+// 2026-11-06) does not recover by retrying, so it moves the session on the first
+// failure instead of the fourth.
+const QUOTA_FAILURE = /usage limit exceeded|GoUsageLimitError|quota/i
+
+export const isQuotaFailure = (error: { type?: string; message?: string } | undefined): boolean =>
+  error?.type === "provider.quota" || QUOTA_FAILURE.test(error?.message ?? "")
+
 /** Milliseconds of retry waiting burned by `attempts` failed attempts. */
 export const waitedFor = (attempts: number): number =>
   RETRY_GAPS_MS.slice(0, Math.max(0, attempts - 1)).reduce((sum, ms) => sum + ms, 0)
@@ -128,7 +136,7 @@ export default Plugin.define({
       switched.set(sessionID, record)
       try {
         await ctx.session.switchModel({ sessionID, model: { providerID: FALLBACK_PROVIDER, id: FALLBACK_MODEL, variant: from.variant } })
-        log(`switched ${sessionID} to ${FALLBACK_PROVIDER}/${FALLBACK_MODEL} after ${FALLBACK_AFTER} resets`)
+        log(`switched ${sessionID} to ${FALLBACK_PROVIDER}/${FALLBACK_MODEL}`)
         return true
       } catch (error) {
         log(`switch failed ${sessionID}: ${message(error)}`)
@@ -144,6 +152,11 @@ export default Plugin.define({
           const model = input.model as unknown as ModelRef
           if (model.providerID !== PRIMARY_PROVIDER || model.id !== PRIMARY_MODEL) return
           if (switched.has(input.sessionID)) return
+          if (isQuotaFailure(input.error)) {
+            log(`quota ${input.sessionID} ${(input.error.message ?? "").slice(0, 160)}`)
+            if (await failover(input.sessionID, model)) input.decision = { retry: true, delay: SWITCH_DELAY_MS }
+            return
+          }
           if (!isConnectionFailure(input.error)) return
           const count = (failures.get(input.sessionID) ?? 0) + 1
           failures.set(input.sessionID, count)
