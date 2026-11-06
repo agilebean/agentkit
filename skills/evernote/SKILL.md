@@ -25,7 +25,7 @@ Verified 2026-10-12: socrates read `failed` (`getaddrinfo ENOTFOUND mcp.evernote
 
 A failed connect now heals on its own. The plugin `agentkit/plugins/mcp-reconnect` watches the MCP status of every location and forces a fresh connection attempt for a server sitting in `failed`, with a doubling backoff of 1 s to 30 s for the first ten attempts and a 5 minute ceiling after that; a server that is deliberately disconnected reads `disabled` and is left alone. It is registered in `~/.config/opencode/opencode.jsonc` under `plugins`, verified live on 2026-10-12 (a broken server read `failed`, was retried, and connected within seconds of its target becoming reachable). So when a tool is missing, check the status first and wait a moment before reaching for the manual call: the plugin may already be on it. Its predecessor, a V1 plugin at `~/.config/openchamber/mcp-reconnect/`, never ran (V1 plugin functions do not execute on opencode V2) and has been removed.
 
-The shell CLI below is the fallback, and the only path outside an opencode session.
+The shell CLI below is the fallback, and the only path outside an opencode session. A whole-body write through MCP carries the `// note-gate:<sha>` line from the note gate's PASS, or the note-gate plugin refuses it ("Writing or rewriting a note's text").
 
 **Batch MCP work into one visible call.** Fetch the note once inside a single `execute` call, apply every edit in that same call (await them in a loop), and read the note back once at the end for the report. Never read-modify-verify per edit: each MCP call is a remote round trip, and on 2026-09-25 thirteen edits became twenty calls while the user watched it hang ("is that absolutely necessary? if yes, timeout early!!!!!"). One call for the changes, one for the verification; the execute runtime has no timers, so the only lever is fewer calls.
 
@@ -56,49 +56,34 @@ Alternatively: set `EVERNOTE_TOKEN` env var.
 - **A note is a record: it keeps every fact Chaehan gave, each once and in its place.** It removes only a duplicate, a superseded value (kept as a dated line), single-trial study detail, or clutter he names.
 - **Before adding a table or section, read the note's existing structure for the slot.** A plan already has a warmup column and a cooldown column: the drills go in the warmup cell, the scull in the cooldown cell, and no second table is created. A label that no longer names the function is renamed to the function, never bypassed with a new section.
 
-## Writing or rewriting a note's text: six steps, in order
+## Writing or rewriting a note's text: run note_build.py
 
-Every note whose prose is written or rewritten goes through these steps, whatever the topic. Do them in order and do not skip one because the note is short. `AGENTS.md` core 1 is the standard; these steps are how it is run. A life overview also runs the life-overview skill's gate.
+Every note whose prose is written or rewritten is built with `~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py`, whatever the topic and however short. Do not draft the note yourself. The script asks for three things, one at a time, builds the note from them, runs the note gate, and writes the note. The gate's PASS stamps the text. The Evernote CLI refuses a `--markdown` or `--clean` body write without that stamp (exit 7), and the note-gate plugin refuses an MCP whole-body write without its marker. A life overview runs the life-overview skill's gate instead, whose PASS stamps the same way.
 
-1. **Save the old text** to `$TMPDIR/<slug>_before.md`. In an opencode session read it with `get_note` through `execute` (the MCP path above); outside a session use `get --markdown <guid>`. It is the base for step 5. Write your draft to `$TMPDIR/<slug>.md`: the checks in steps 4 and 5 read that file.
-   Then **label every sentence of the old text** in `$TMPDIR/<slug>_labels.md`, one line each, before you write a word of the draft. First write Chaehan's decisions in this note, at most five ("what to take before sex", "whether to buy the arginine bottle"). Then give each sentence one label:
-   a) **decides**: it changes one of those decisions. Only these can enter the summary.
-   b) **supports**: it is the evidence that makes a decision credible. At most two per decision stay, in the section.
-   c) **world detail**: a study's subscale, a brand's price, a second trial saying the same, a mechanism step Chaehan does not act on. It is cut, or moved behind a link.
-   d) **known**: Chaehan already knows it or it goes without saying. It is cut.
-   Chaehan's own dates, doses, reports and constraints are never world detail. A rewrite that keeps every sentence has skipped this step: a rewrite is a selection, and most notes lose a third or more.
-   Every sentence labelled world detail or known goes into the cut list `$TMPDIR/<slug>_cuts.md`, one line per removal: `- <its numbers or key words>: <where it went, or why it left>`. Example: `- 39647, 43337, 102251, 62118: pycnogenol brand prices, any 100 mg brand works`.
-2. **Write the summary as four parts, nothing else:**
-   a) the answer in one sentence;
-   b) the action Chaehan still has to take, with Chaehan as subject ("You must still call CHA Gangnam ...");
-   c) at most three facts that decide the answer, one of them the fact that would reverse it;
-   d) one closing line with the consequence.
+1. Run `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py init $TMPDIR/<slug> --guid <guid> --record ~/Software/Prototypes/socrates/memory/<topic>.md`. The script reads the note itself. For a new note, write your findings into a file and pass it in place of `--guid`, with `--title "<title>" --notebook "<notebook>"`. The record is Chaehan's memory file for the topic: what matters in the note comes from there and from the sections he asked for, never from an old summary. When the brief names his decisions, write them to a file as `D1: ...` lines and add `--decisions <file>`.
+2. Run `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py next $TMPDIR/<slug>` and do what it prints. Run it again after each file you write, until it prints PASS. It asks, in this order:
+   a) the decisions Chaehan makes with the note, at most five, and for every old section the decision it serves;
+   b) a label for every item of the old text: decides, supports, world detail or known;
+   c) per decision, a heading, a summary line and the section's first line.
+3. When `next` exits 3, it lists old sections that serve none of the decisions. Ask Chaehan with the question tool whether each one stays, and write his answer into `decisions.md`. A section leaves his note only with his word.
+4. Run `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py write $TMPDIR/<slug>`. It writes the stamped draft, reads the note back, and verifies the read-back. A refusal because the note is open in the app is a lock: follow "Note lock recovery (RTE room)" below. Report the cut list (`cuts.md`) and the verify result.
 
-   Leave out what Chaehan already knows or what goes without saying. "Swallowing has no pregnancy risk" is trivial, and Chaehan called it "stupid as it is trivial".
-
-   Every other fact moves to a section below. Write each part in terms Chaehan can picture: compare a figure with something familiar and say what it means, and leave the exact figures to the section. Chaehan's example: "The average serving is 5 mL fluid with more protein content than milk and a little fructose making the taste slightly sweet." Test each summary sentence: if deleting it would not change what Chaehan decides, move it down.
-3. **Rewrite the sections for the seat test.** For each sentence ask: is its subject Chaehan's decision, body, money or time? Rewrite sentences whose subject is the agency, the study, the document or the research path. Delete any sentence about your own earlier answers ("I said earlier", "That was wrong"). Keep tables unchanged unless the change was asked for. Then three more checks on every sentence:
-   a) **Which one?** A thing named by a common noun (a tablet, a panel, a test, a consult, a contract) says which one at its first mention: "the daily Atobamib tablet", "the 2026-10-20 blood test". Read it as someone who opens only this note.
-   b) **What does it do for Chaehan?** A property is written with its value to Chaehan: "is more practical as it removes the need for a towel", not "it ends without a towel".
-   c) **Is it a list?** A process with stages is a numbered list, one stage per item, its details indented under it. Any other section with three or more facts is bullets, with a point that belongs under another indented under it.
-4. **Run the wording checker:** `python ~/Software/Prototypes/agentkit/scripts/wording_lint.py --title "<note title>" <draft.md>`. Fix every flag outside a table or a verbatim block. Fix every warn too, or name it in your report with the reason it stays.
-5. **Run the gate:** `python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/overview_gate.py <draft.md> --original $TMPDIR/<slug>_before.md --cuts $TMPDIR/<slug>_cuts.md --note`. A number it lists as lost is either put back, because it was labelled decides or supports, or added to the cut list with its reason. Every section it names as prose becomes a list, every table row it lists goes back unchanged, every empty bullet is filled or deleted. A summary over 5 lines or 30 words a line, a summary line that repeats a body line, and more than 7 items at one level are fixed by cutting or grouping, never by rewording. The cut list goes into your report.
-6. **Write, then read back.** Write the checked file: in an opencode session through the MCP write in "Write modes" below, outside a session with `update --markdown --file <draft.md> <guid>`. Read the note back and confirm the headings, the table rows and the summary are there. A write refused because the note is open is a lock, not a second writer: follow "Note lock recovery (RTE room)" below, which switches Evernote to another note and retries. Stop only when the note's text changed since step 1 or its version list shows a version you did not write.
+The script delivers Chaehan's three imperatives by construction. Items labelled world detail or known go to the cut list, so the note gets shorter. Every section opens with its first line, which states its point. Supporting items sit indented under the item they support. It also refuses a decision or sentence that copies its instructions, and a number or name that neither the note nor the record contains. Never edit `draft.md` by hand: the stamp no longer matches, and the write is refused.
 
 ## Briefing another agent to rewrite a note
 
-A brief may narrow this standard, never widen what must stay. Use this text, filled in:
+A brief names the note, Chaehan's record of the topic and, when he gave them, his decisions. It says nothing about what to keep:
 
-> Rewrite the note "<title>" (guid <guid>) by the six steps in "Writing or rewriting a note's text". Chaehan's decisions in it: <one line each>. Chaehan's dates, doses, reports and constraints stay. Studies leave as one meta-analysis line with its effect size and sample size, or behind a link. Brand lists, prices of products Chaehan will not buy, subscales and repeated trials are cut. Report the cut list and the gate's output.
+> Rewrite the Evernote note "<title>" (guid <guid>) with note_build.py, as the evernote skill's section "Writing or rewriting a note's text" says. Chaehan's record: `~/Software/Prototypes/socrates/memory/<topic>.md`. Report the cut list, the verify result, and each section Chaehan decided on.
 
-Never write "every number stays", "every citation stays" or "keep all facts": the gate already protects Chaehan's facts through the cut list, and those words forbid the selection the rewrite is for.
+Never add "every number stays", "every citation stays" or "keep all facts". The labels and the cut list already protect Chaehan's facts, and those words forbid the selection the rewrite is for.
 
 ## A note write is verified against the reader's view, not the stored bytes
 
 Reading the ENML back proves storage; it does not prove the client renders the block or that the user can read it. Learned 2026-10-07, when the Kobe beef table was reported missing after two writes that each "verified" by re-reading the note:
 
 1. **Build tables with the pipeline, never by hand-writing ENML `<table>` markup.** A markdown table through the converter, or `create-table`, is the shape this project's notes are known to render. Hand-assembling `<table width="…"><colgroup>…` copied out of another note is not a guarantee, and a storage read cannot tell the two apart.
-2. **Verify the shape by converting the note back through the project's own converter** — `get <guid> --markdown` — and reading that output. A table that does not come back as a markdown table, or a bullet whose text comes back as a bare `-`, is a defect the byte check cannot see: the same day, a `<li>` containing a nested `<ul>` converted to an empty `-` with its parent's text gone. Keep list nesting to one level in notes.
+2. **Verify the shape by converting the note back through the project's own converter** — `get <guid> --markdown` — and reading that output. A table that does not come back as a markdown table, or a bullet whose text comes back as a bare `-`, is a defect the byte check cannot see: the same day, a `<li>` containing a nested `<ul>` converted to an empty `-` with its parent's text gone. The converter keeps a parent's text since 2026-11-06, so a point and its sub-points read back as written.
 3. **When the user says a note is unreadable or a block is missing, do not answer with the stored content.** Ask what he sees — a screenshot settles it — and check whether the note is open in the desktop app, where the client's own copy can be written back over an API write. Never claim a note is fixed on the strength of an API read: that is the claim he has to disprove.
 
 ## Notebook placement

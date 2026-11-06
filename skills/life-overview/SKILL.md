@@ -161,7 +161,9 @@ locally first with `markdown_to_enml` from `projects/evernote/src/enml.py`
 (drop the image line and strip the `<en-note>` wrapper); the chart embedded
 with the upload bridge documented in the `evernote` skill
 (`start_attachment_upload`, GCS upload, `finalize_attachment`, then `edit_note`
-`prepend`). No earlier snapshot is deleted (section Trigger). The CLI
+`prepend`). The `execute` code that creates or appends the body carries the
+line `// note-gate:<sha>` that the gate printed on its PASS, or the note-gate
+plugin refuses the write. No earlier snapshot is deleted (section Trigger). The CLI
 commands below are the outside-session fallback; in a session they are not
 used (the user's "never use the cli fallback", 2026-09-26).
 

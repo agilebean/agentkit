@@ -16,7 +16,27 @@ T6  a date or number of the original that survives neither in the draft nor in a
 list in it is named; T7 a table row of the original that is gone; T8 an empty
 list item; T10 a summary of more than 5 lines or a line over 30 words; T11 a
 summary line that repeats a body line; T12 more than 7 list items at one level
-under one parent.
+under one parent; T13 a body section that does not open with one sentence of at
+most 30 words whose subject is you, your thing or an action; T15 a summary
+sentence whose subject is not you or an action, or that frames ", not a X";
+T16 a wording-checker flag (agentkit/scripts/wording_lint.py) outside a table
+row, so one PASS covers the wording too. Japanese in parentheses after its
+English name (rule 123) is not a flag here; table rows belong to T7.
+
+--labels <file> is note_build.py's merged label file, one line per item of the
+original: "id<TAB>label<TAB>parent<TAB>text", label D, S, W or K. T14 is an item
+without a label, or an item labelled W (world detail) or K (known) whose text is
+still in the draft. On the command line --note with --original requires --labels
+and --cuts: a rewrite is a selection, and a brief cannot switch that off.
+
+A PASS writes a stamp: an empty file named by the SHA-256 of the draft's text
+with its image lines dropped and its ends stripped (stamp_key), in
+$NOTE_GATE_STAMPS or ~/.local/state/agentkit/note-gate, and prints the marker
+"note-gate:<sha>". The socrates Evernote CLI computes the same key and refuses a
+markdown or clean body write without a stamp; the note-gate plugin refuses an
+MCP whole-body write whose code does not carry a marker of a stamp under 3 hours
+old. The key drops image lines because a body write never carries its images:
+they are re-embedded after it.
 
 --cuts <file> is the cut list: one line per removal, "- <numbers or words>:
 <where it went or why it left>". A number of the original passes T6 when the
@@ -27,8 +47,11 @@ rewrite: the gate checks that each cut is declared, not that nothing was cut.
 from __future__ import annotations
 
 import argparse
+import hashlib
+import os
 import re
 import sys
+from pathlib import Path
 
 STOP = set(
     "the and for with that this from your you are was has have not into only "
@@ -73,7 +96,8 @@ def task_rows(md: str) -> list[str]:
 
 
 def check(draft: str, original: str | None = None, linked: list[str] | None = None,
-          facts_only: bool = False, note: bool = False, cuts: str | None = None) -> list[str]:
+          facts_only: bool = False, note: bool = False, cuts: str | None = None,
+          labels: str | None = None) -> list[str]:
     fails: list[str] = []
     pool = list(linked or [])
     if cuts:
@@ -85,8 +109,13 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
             fails += _empty_items(draft)
             fails += _summary(draft)
             fails += _flat_lists(draft)
+            fails += _gists(draft)
+            fails += _summary_subjects(draft)
+            fails += _wording(draft)
+            if labels is not None:
+                fails += _labels(draft, labels)
             if original is not None:
-                fails += _lost_rows(draft, original)
+                fails += _lost_rows(draft, original, cuts)
         return fails + (_facts(draft, original, pool) if original is not None else [])
     rows = task_rows(draft)
     for b in takeaway_bullets(draft):
@@ -134,15 +163,16 @@ def _row(l: str) -> str:
     return " ".join(l.split())
 
 
-def _lost_rows(draft: str, original: str) -> list[str]:
-    have = {_row(l) for l in draft.splitlines() if l.lstrip().startswith("|")}
+def _lost_rows(draft: str, original: str, cuts: str | None = None) -> list[str]:
+    """A table row of the original that is in neither the draft nor the cut list."""
+    have = {_row(l) for l in (draft + "\n" + (cuts or "")).splitlines() if l.lstrip().startswith("|")}
     rows = [_row(l) for l in original.splitlines() if l.lstrip().startswith("|")]
     return [f"T7 table row lost: {r}" for r in rows if r not in have and not re.fullmatch(r"[|\s:-]+", r)]
 
 
 def _bad_cuts(cuts: str) -> list[str]:
     return [f"T9 cut without a reason or destination: {l.strip()!r}" for l in cuts.splitlines()
-            if l.strip() and not re.match(r"\s*-?\s*[^:]+:\s*\S", l)]
+            if l.strip() and not l.lstrip().startswith("|") and not re.match(r"\s*-?\s*[^:]+:\s*\S", l)]
 
 
 SUMMARY_HEADS = ("summary", "takeaway")
@@ -198,6 +228,164 @@ def _flat_lists(md: str) -> list[str]:
     return out
 
 
+# The seat test as a check a weaker model can meet: the sentence's subject is
+# you, your thing, or an action you take. A leading clause of time or condition
+# ("On 2026-12-04 you fly", "If the flat costs more, take the hotel") is read
+# through to the clause that carries the subject.
+YOU = {"you", "your", "yours", "you're", "you'll", "chaehan", "chaehan's"}
+LEAD = set("""on in at by from until till before after for between during when if once since
+with without as because while unless whether although though then now so and but or also
+only every each""".split())
+IMPERATIVE = set("""add allow apply arrive ask avoid book bring budget buy call cancel change
+charge check choose compare confirm cut decide drink drop eat expect fill fly follow get give go
+hold keep land leave let look make move note open order pack pay pick plan put rest read register
+remember reserve return ride save see sell send shop sign skip sleep spend start stay stop store
+swim take tap tell travel try use visit wait walk wake watch wear write""".split())
+# The example comes from another domain than the notes it judges: a weaker model
+# copies the accepted sentence's shape into the note (2026-11-06, Osaka note).
+SUBJECT_EXAMPLE = ("rejected 'The locker has a quote and a size, not a booking.', "
+                   "accepted 'You must still book the Mapo locker; it costs 72090 won a month.'")
+
+
+def _plain(text: str) -> str:
+    text = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", text)
+    return re.sub(r"[*_`]", "", text)
+
+
+def _sentences(text: str) -> list[str]:
+    return [x.strip() for x in re.split(r"(?<=[.!?])\s+(?=[A-Z0-9¥€$])", _plain(text)) if x.strip()]
+
+
+def seat(sentence: str) -> bool:
+    """True when the sentence's subject is you, your thing, or an imperative."""
+    for clause in re.split(r"[,:;]", sentence):
+        w = re.findall(r"[a-z0-9'-]+", clause.lower())
+        if not w:
+            continue
+        if w[0] in IMPERATIVE or YOU & set(w[:2]):
+            return True
+        if w[0] in LEAD or re.match(r"\d", w[0]):
+            if YOU & set(w[:8]):
+                return True
+            continue
+        return False
+    return False
+
+
+def _gists(md: str) -> list[str]:
+    out = []
+    for title, body in sections(md):
+        if title.lower().startswith(SUMMARY_HEADS):
+            continue
+        lines = [l.strip() for l in body.splitlines() if l.strip()]
+        if not lines:
+            continue
+        first = lines[0]
+        if re.match(r"(?:[-*]|\d+[.)]|\||!\[|<)", first) or not re.search(r"[a-z]{3}", _plain(first)):
+            out.append(f"T13 section {title!r} must open with one sentence that tells you its point, "
+                       f"before any list, table or image: {first[:50]!r}")
+            continue
+        sent = (_sentences(first) or [first])[0]
+        if len(sent.split()) > 30:
+            out.append(f"T13 section {title!r} opens with {len(sent.split())} words, keep at most 30: {sent[:50]!r}")
+        elif re.search(r"\b(?:the|this) (?:section|note|table|list)\b|\bbelow (?:shows|lists|ranks|compares|prices|covers)\b", sent, re.I):
+            out.append(f"T13 section {title!r} opens by talking about the note: {sent[:60]!r}; say the point itself")
+        elif contrast(sent):
+            out.append(f"T13 section {title!r} opens with a contrast: {sent[:60]!r}; {contrast(sent)[0]}")
+        elif not seat(sent):
+            out.append(f"T13 section {title!r} opens on an object, not on you: {sent[:60]!r}. Write it with you, "
+                       f"your thing or an action as subject: rejected 'Osaka city has no soapland district.', "
+                       f"accepted 'You will find no soapland district in Osaka city.'")
+    return out
+
+
+def _summary_subjects(md: str) -> list[str]:
+    out = []
+    summ = [b for t, b in sections(md) if t.lower().startswith(SUMMARY_HEADS)]
+    if not summ:
+        return out
+    for line in _bullets(summ[0]):
+        titles = {t.strip() for t in re.findall(r"\[([^\]]+)\]\([^)]*\)", line)}
+        for sent in _sentences(line):
+            if len(sent.split()) < 4 or sent.rstrip(".") in titles:
+                continue
+            if not seat(sent):
+                out.append(f"T15 summary sentence has no you or action as subject: {sent[:70]!r}; {SUBJECT_EXAMPLE}")
+            for c in contrast(sent):
+                out.append(f"T15 summary sentence uses a contrast: {sent[:70]!r}; {c}")
+    return out
+
+
+def _lint():
+    import importlib.util
+    path = Path(__file__).resolve().parents[3] / "scripts" / "wording_lint.py"
+    spec = importlib.util.spec_from_file_location("wording_lint", path)
+    lint = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lint)
+    return lint
+
+
+def contrast(sentence: str) -> list[str]:
+    """The contrast frames in a sentence: the marker rows whose fix starts "contrast frame"."""
+    lint = _lint()
+    rules = [r for r in lint.load_robot_markers() if r[2].startswith("contrast frame")]
+    return [f"{fix} ({m.group(0).strip()!r})" for _level, pat, fix, _exc in rules for m in [pat.search(sentence)] if m]
+
+
+def _wording(md: str) -> list[str]:
+    lint = _lint()
+    lines = md.splitlines()
+    table = lambda n: lines[n - 1].lstrip().startswith("|")
+    out = [f"T16 line {n}: '{words_}' - {fix}" for n, level, words_, fix in lint.lint_text(md, lint.load_robot_markers())
+           if level == "flag" and not table(n)]
+    for n, char, line in lint.script_hits(md):
+        outside = re.sub(r"\([^)]*\)", "", re.sub(r"\]\([^)]*\)", "]", lines[n - 1]))
+        if not table(n) and lint.HAN.search(outside):
+            out.append(f"T16 line {n}: '{char}' - Japanese or Chinese leads the name; write the English name "
+                       f"first and the characters after it in parentheses (rule 123)")
+    return out
+
+
+def _norm(text: str) -> str:
+    return " ".join(_plain(text).split()).lower()
+
+
+def _labels(draft: str, labels: str) -> list[str]:
+    out = []
+    body = _norm(draft)
+    for line in labels.splitlines():
+        if not line.strip():
+            continue
+        cells = line.split("\t")
+        while len(cells) < 4:
+            cells.append("")
+        item, label, _parent, text = cells[0].strip(), cells[1].strip().upper(), cells[2].strip(), cells[3]
+        if label not in ("D", "S", "W", "K"):
+            out.append(f"T14 item {item} has no label (D decides, S supports, W world detail, K known): {text[:50]!r}")
+        elif label in ("W", "K") and len(text.split()) >= 5 and _norm(text) in body:
+            out.append(f"T14 item {item} is labelled {label} but is still in the draft: {text[:60]!r}")
+    return out
+
+
+def stamp_dir() -> Path:
+    return Path(os.environ.get("NOTE_GATE_STAMPS") or Path.home() / ".local/state/agentkit/note-gate")
+
+
+def stamp_key(text: str) -> str:
+    """The contract with the Evernote CLI: SHA-256 of the text without image lines, ends stripped."""
+    body = "\n".join(l for l in text.splitlines() if not re.fullmatch(r"\s*!\[[^\]]*\]\([^)]*\)\s*", l))
+    return hashlib.sha256(body.strip().encode()).hexdigest()
+
+
+def stamp(text: str) -> Path:
+    """Record that this text passed the gate (the Evernote CLI and the note-gate plugin read it)."""
+    d = stamp_dir()
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / stamp_key(text)
+    f.touch()
+    return f
+
+
 def _facts(draft: str, original: str, linked: list[str] | None) -> list[str]:
     """Numbers of the original found neither in the draft, a linked note, nor the cut list."""
     pool = (draft + "\n" + "\n".join(linked or [])).replace(",", "")
@@ -213,12 +401,19 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--facts-only", action="store_true", help="any note: only check that no date or number of --original is lost")
     ap.add_argument("--note", action="store_true", help="any note: facts, lists, summary size and duplicates (T5-T12)")
     ap.add_argument("--cuts", help="the cut list: one line per removal, '- <numbers or words>: <destination or reason>'")
+    ap.add_argument("--labels", help="note_build.py's merged label file: id, label, parent, text per item")
     a = ap.parse_args(argv)
     read = lambda p: open(p, encoding="utf-8").read()
-    fails = check(read(a.draft), read(a.original) if a.original else None, [read(p) for p in a.linked],
-                  a.facts_only, a.note, read(a.cuts) if a.cuts else None)
+    draft = read(a.draft)
+    fails = check(draft, read(a.original) if a.original else None, [read(p) for p in a.linked],
+                  a.facts_only, a.note, read(a.cuts) if a.cuts else None, read(a.labels) if a.labels else None)
+    if a.note and a.original and not (a.labels and a.cuts):
+        fails.append("T14 a rewrite needs --labels and --cuts: build it with note_build.py "
+                     "(agentkit/skills/evernote/scripts), which writes both")
     for f in fails:
         print(f)
+    if not fails and not a.facts_only:
+        print(f"note-gate:{stamp(draft).name}")
     print("PASS" if not fails else f"FAIL ({len(fails)})")
     return 1 if fails else 0
 

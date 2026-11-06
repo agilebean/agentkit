@@ -53,3 +53,30 @@ flag	\b(?:question|answer)s? (?:\w+[ ,]+){0,14}(?:goes|go|moves|passes) to\b	say
 flag	\bI (?:said|claimed|wrote|stated) (?:earlier|before)\b|\bmy earlier (?:claim|answer|statement)\b|\bThat was wrong\b	a note states what is true now; the correction belongs in the chat
 warn	\b(?:refus(?:ed|ing)|reject(?:ed|ing)|declin(?:ed|ing)|turned down) (?:you|your|a foreign|foreign|to take you)\b	write your decision and what you do now: "Duo would not take a foreign passport, so you look for that pool at the next agency"
 warn	\bthe (?:[0-9-]{4,10} )?(?:daily |morning |evening )?(?:tablet|pill|drug|medication|panel(?! physician))\b	name which one at first mention: "the 2026-10-20 blood test", "the daily Atobamib tablet"
+
+# Contrast frames (RULES.md rule 2, class 1): every way a sentence defines a claim by
+# the alternative it rejects. Warn in prose; the note gate fails them in a summary
+# line and a section's first sentence (rows whose fix starts "contrast frame").
+warn	,\s+not\s+(?!only\b|just\b|least\b|yet\b|even\b|sure\b|always\b)\w	contrast frame: "X, not Y" - say what is true and what you do
+warn	\bnot\s+(?:\w+\s+){1,6}?but\b	contrast frame: "not X but Y" - state Y on its own
+warn	\b(?:is|are|was|were|does|do)\s*n(?:o|')t\b[^.;:!?]{1,60}[;,:.]\s*(?:it|this|that|they)\s*(?:is|are|'s|'re|does|do)\b	contrast frame: "it is not X, it is Y" - state Y on its own
+warn	\b(?:rather than|instead of|in place of|as opposed to)\b	contrast frame: substitution ("rather than", "instead of") - name the one you take
+warn	\bnot (?:just|only|merely|simply)\b|\bmore than (?:just|merely)\b|\bfar from\b	contrast frame: "not just X" - say the whole thing once
+warn	\b(?:unlike|whereas|in contrast|by contrast|on the other hand|conversely)\b	contrast frame: a contrast marker ("unlike", "whereas") - state each fact on its own
+warn	\b(?:versus|vs\.?)\s	contrast frame: "X versus Y" - state the call and its reason
+warn	\bless (?:about |of |a )?\w+ than\b|\bthe (?:point|issue|question|problem|key) (?:is|was) not\b	contrast frame: "less X than Y", "the point is not X" - state Y
+warn	\bno\s+\w+(?:\s+\w+)?,\s+(?:only|just)\b|\bbut not\b|\band not (?:a|an|the)\b	contrast frame: an absence set beside the claim - state what you have
+warn	\bnever\b[^.;]{1,40}[,;]\s+(?:always|only)\b	contrast frame: "never X, always Y" - state Y
+
+# Everyday contrast forms: concession, a concessive turn, a scalar extreme, counter-expectation,
+# proof by an event, effort set against its outcome, and a correction marker.
+warn	\b(?:even though|even if|although|in spite of|notwithstanding|granted|admittedly)\b|\bdespite\b(?!\s+(?:your|all your|all the|his|her|their|our)\s+(?:\w+\s+){0,2}(?:effort|efforts|work|time|research|trying|planning)\b)|,\s*though\b|(?:^|[.!?]\s+|[-*]\s+)though\b	contrast frame: concession ("even though", "although", "despite") - state each fact on its own
+warn	\b(?:and yet|but still|even so|nonetheless|nevertheless|all the same|regardless)\b|,\s+(?:yet|still)\b	contrast frame: a concessive turn ("yet", "even so", "but still") - state the second fact plainly
+warn	\b(?:not even|let alone|much less|hardly|barely|only just|not so much)\b	contrast frame: a scalar extreme ("not even", "let alone", "barely") - give the number
+warn	\b(?:surprisingly|unexpectedly|counterintuitively|ironically|paradoxically|strikingly|contrary to|against (?:all )?expectations?|(?:it )?turns out)\b|\bthan (?:you|one|we|most people)(?:'d| might| would)? (?:expect|think|assume)\b|\b(?:more|less|higher|lower) than expected\b	contrast frame: counter-expectation ("surprisingly high", "it turns out") - state the figure and what it means for you
+warn	\bas (?:[\w-]+\s+){1,5}(?:showed|shows|proved|proves|revealed|reveals|demonstrated|confirmed)\b	contrast frame: proof by an event ("as the March booking showed") - state the fact with its date
+warn	\b(?:despite|for all|in spite of)\s+(?:your|all your|all the|his|her|their|our)\s+(?:\w+\s+){0,2}(?:effort|efforts|work|time|research|trying|planning)\b|\bonly to\b|\bin vain\b|\bfor nothing\b|\beven after\b	contrast frame: effort set against its outcome ("despite your effort", "only to") - state the outcome and your next step
+warn	\b(?:if anything|in fact|in reality|actually)\b|\bthe real (?:\w+ )?(?:question|issue|point|cost|problem|reason)\b|\bwhat (?:really|actually) matters\b|\bthe (?:catch|thing|twist|irony) is\b|\bat least\b(?!\s+(?:\d|one|two|three|four|five|six|seven|eight|nine|ten|half|a|an)\b)	contrast frame: a correction marker ("actually", "in fact", "the catch is", "at least") - state the fact
+warn	\b(?:have|has|hold|holds|got)\s+only\b|\bonly\s+(?:have|has)\b	contrast frame: what you lack set beside what you have ("you have only a quote") - state what you have and what you must still do
+warn	\bso\b[^.;:]{1,60}\bstill\b	contrast frame: a consequence turned against the claim ("so the bed still costs") - state the figure plainly
+warn	\b(?:you|your \w+) (?:have|has) no\b|\bthere (?:is|are) no\b|\bnone (?:is|are|was|were)\b	contrast frame: an absence ("you have no pool", "none is booked") - state what you have or what you must still do

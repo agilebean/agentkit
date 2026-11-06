@@ -159,7 +159,15 @@ Check every sentence against five classes of robotic text. For each class, the t
    c) scale: "not just X"; "not only X but also Y"; "more than just X"; "far from X";
    d) a contrast marker: "unlike Y"; "whereas"; "in contrast"; "by contrast"; "on the other hand"; "X versus Y";
    e) emphasis by denial: "less about Y than X"; "the point is not Y";
-   f) an absence set beside the claim: "a quote, not a booking"; "no Y, only X"; "X but not Y".
+   f) an absence set beside the claim: "a quote, not a booking"; "no Y, only X"; "X but not Y"; "you have only a quote"; "you have no pool";
+   Everyday speech hides the same defect in forms that sound natural, and they count too:
+   g) concession: "even though Y, X"; "although"; "despite Y"; "X, though Y";
+   h) a concessive turn: "X, yet Y"; "and yet"; "but still"; "even so"; "nonetheless"; "so the bed still costs";
+   i) a scalar extreme: "not even for the March week"; "let alone"; "barely"; "hardly";
+   j) counter-expectation: "surprisingly high effort"; "it turns out"; "more than expected"; "contrary to";
+   k) proof by an event: "a surprisingly low burden, as the March booking showed";
+   l) effort set against its outcome: "despite your effort for the flat"; "only to"; "in vain";
+   m) a correction marker: "actually"; "in fact"; "the catch is"; "at least" without a number.
    Test: write what is true and what you do, each as its own statement ("You have a quote for the flat. You must still book it."). The forms are rows in `robot_markers.tsv` whose fix starts "contrast frame". The wording checker warns on them in prose, and the note gate fails them in a summary line and in a section's first sentence.
 
 2. **Vocabulary.** A word a person would not say aloud to a colleague about this material (leverage, robust, seamless, covered, buys, lane, facilitate). Test: say the sentence aloud. If the word needs explaining, replace it with the thing it names: the action, the number, the object.
@@ -2036,6 +2044,8 @@ Stated 2026-09-25: "why do you do such long timeouts of 600s? the max timeout sh
 - Close a multi-artifact turn with the call count and the measured machine time, so the ratio stays visible.
 
 **The wait the user asks about is the turn, not the command.** When something "takes too long", the number to quote and to cut is the wall clock of the whole request as they wait: their message to the reply, model steps, tool round trips and question waits included. The command's own seconds are the breakdown, never the headline. Read the turn from the session store (`~/.local/share/opencode/opencode.db`: `session_message.time_created` to the message's `data.time.completed`, in ms), or from `date` markers around the pass. The shape to expect: a pipeline command is seconds, a turn of a few model steps is minutes. A report that answers a waiting question with the command's seconds has answered the wrong question.
+
+**A loop that stops improving is stopped, and the next attempt is an experiment.** Every repeated round (a model run, a fix and rerun, a retry) has a count that should fall each round: gate failures, refusals, failing tests. Before the first round, write down that count, the time budget, and two or three other strategies. After two rounds in which the count does not fall, stop: the cause lies in the setup, and a third identical round costs minutes and teaches nothing. Then change one thing at a time against the baseline, on the smallest input that shows the defect (one section, one step, one call), and compare the counts: keep the change that moves the count, drop the one that does not. Fix a transport fault (a cut connection, a timeout, a refused launch) before any round counts, since it turns every comparison into noise. Failure 165 in `memory/agentic_ai.md`: deepseek ran 32 rounds of about two minutes on the Osaka note, 26 of them on refusals it could not satisfy, one refusal 12 times in a row. Chaehan: "if it doesn't improve then 12 rounds are not necessary and you must be more time conscious ... you lack the experimentation and what small changes could comparitively change".
 
 ### 75. Heavy local work has a weight budget, a stated cost, and a one-element probe
 
