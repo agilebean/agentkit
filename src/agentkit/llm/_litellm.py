@@ -8,6 +8,7 @@ For local MLX models see ``agentkit.llm.mlx``.
 """
 from __future__ import annotations
 
+import http.client
 import json
 import os
 import time
@@ -126,7 +127,12 @@ def resolve_model(
 # HTTP transport (mockable seam)
 # ---------------------------------------------------------------------------
 
-_HTTP_TIMEOUT_S = 120
+_HTTP_TIMEOUT_S = 120  # per read: with streaming, the longest gap between two chunks
+
+# Stream every request. A non-streamed answer sends no byte until the model has
+# finished, and the Claude Code sandbox proxy cut such answers after minutes of
+# silence (IncompleteRead, 2026-11-05). AGENTKIT_LLM_STREAM=0 turns it off.
+_STREAM = os.environ.get("AGENTKIT_LLM_STREAM", "1") != "0"
 
 # OpenCode Go (https://opencode.ai/docs/go/) sits behind Cloudflare and rejects
 # generic HTTP-library user agents (urllib's default yields ``403 error code: 1010``).
@@ -209,6 +215,43 @@ def _wrap_response(data: dict) -> SimpleNamespace:
     return SimpleNamespace(choices=choices, usage=usage, id=data.get("id", ""))
 
 
+def _read_stream(lines: Any) -> dict:
+    """Assemble a streamed chat completion (server-sent events) into the non-streamed JSON shape.
+
+    The answer arrives as many small chunks, so bytes flow while the model
+    reasons, and a proxy that cuts an idle connection never sees one.
+    """
+    content: list[str] = []
+    tools: dict[int, dict] = {}
+    finish, usage, rid = None, None, ""
+    for raw in lines:
+        line = (raw.decode("utf-8", "replace") if isinstance(raw, bytes) else raw).strip()
+        if not line.startswith("data:"):
+            continue
+        payload = line[5:].strip()
+        if payload == "[DONE]":
+            break
+        chunk = json.loads(payload)
+        rid = chunk.get("id") or rid
+        usage = chunk.get("usage") or usage
+        for c in chunk.get("choices") or []:
+            delta = c.get("delta") or {}
+            if delta.get("content"):
+                content.append(delta["content"])
+            for tc in delta.get("tool_calls") or []:
+                slot = tools.setdefault(tc.get("index", 0), {"id": "", "type": "function",
+                                                            "function": {"name": "", "arguments": ""}})
+                slot["id"] = tc.get("id") or slot["id"]
+                fn = tc.get("function") or {}
+                slot["function"]["name"] += fn.get("name") or ""
+                slot["function"]["arguments"] += fn.get("arguments") or ""
+            finish = c.get("finish_reason") or finish
+    message: dict[str, Any] = {"role": "assistant", "content": "".join(content) if content else None}
+    if tools:
+        message["tool_calls"] = [tools[i] for i in sorted(tools)]
+    return {"id": rid, "choices": [{"index": 0, "message": message, "finish_reason": finish}], "usage": usage or {}}
+
+
 def _post_completion(**kwargs: Any) -> SimpleNamespace:
     """Make an OpenAI-compatible chat completion HTTP request.
 
@@ -222,6 +265,9 @@ def _post_completion(**kwargs: Any) -> SimpleNamespace:
     kwargs["model"] = _strip_provider_prefix(request_model)
 
     url = f"{api_base.rstrip('/')}/chat/completions"
+    if _STREAM:
+        kwargs["stream"] = True
+        kwargs.setdefault("stream_options", {"include_usage": True})
     body = json.dumps(kwargs).encode("utf-8")
     headers = _build_headers(api_key)
 
@@ -229,7 +275,12 @@ def _post_completion(**kwargs: Any) -> SimpleNamespace:
 
     try:
         with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT_S) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
+            if "text/event-stream" in resp.headers.get("Content-Type", ""):
+                data = _read_stream(resp)
+            else:
+                data = json.loads(resp.read().decode("utf-8"))
+    except http.client.IncompleteRead as e:
+        raise RuntimeError(f"Connection cut mid-response after {len(e.partial)} bytes") from e
     except urllib.error.HTTPError as e:
         error_body = e.read().decode("utf-8", errors="replace")
         raise RuntimeError(f"HTTP {e.code}: {error_body}") from e

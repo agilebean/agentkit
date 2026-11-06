@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import plugin, { FALLBACK_AFTER, isConnectionFailure, stillOnFallback, waitedFor } from "./index"
+import plugin, { FALLBACK_AFTER, isConnectionFailure, isQuotaFailure, stillOnFallback, waitedFor } from "./index"
 
 describe("failure class", () => {
   test("a socket reset on the transport is the class that moves the session", () => {
@@ -137,4 +137,11 @@ describe("failover", () => {
     await h.hooks.prompt({ sessionID: "ses_test", messageID: "m", prompt: { text: "" }, delivery: "steer" })
     expect(h.calls.length).toBe(switches)
   })
+})
+
+
+test("a spent gateway quota moves the session on its first failure", () => {
+  expect(isQuotaFailure({ type: "provider.quota", message: "Go usage limit exceeded" })).toBe(true)
+  expect(isQuotaFailure({ type: "provider.transport", message: "ECONNRESET" })).toBe(false)
+  expect(isConnectionFailure({ type: "provider.quota", message: "Go usage limit exceeded" })).toBe(false)
 })
