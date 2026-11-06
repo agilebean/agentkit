@@ -2170,6 +2170,8 @@ Two habits, one for writing a line and one for reading one.
 
 **Reading.** An existing line whose stated source you cannot find is not binding. Do not carry it into a plan, a question or an instruction, and do not repeat it as a fact. Replace the source with what you can show, and where the line gates an action, keep the action and swap the requirement for the check that settles it. "The submission needs the X number" becomes "no X number is on record; check Y before submitting".
 
+**An open question is a line about the user too.** An open task, a "missing fact" or a "probe" that a note or plan carries is Chaehan's question only when a message of Chaehan's asks it, or it decides an action Chaehan named. Otherwise it is an earlier agent's question, and it is asked of Chaehan before it frames a decision, a knot or a plan. The test: name the message in which Chaehan asks it. 2026-11-06, the Life Problems restructure: "ask J Noble how many dates a week it yields" stood as an open task in the 2026-11-05 overview and as a "missing fact" in the 2026-11-03 note, and the proposal made it the fact that decides the March route. Chaehan: "the jnoble how many dates was never a question. i have 4 dates already planned with date after 5d. so no worry".
+
 Why it matters: such a line is the agent's own earlier inference, and a file makes it read as the user's own requirement. It then blocks work they never asked to block, and each later session copies it forward again.
 
 ### 84. Nothing goes out that the user has not read in its final form, with every field its recipient needs
