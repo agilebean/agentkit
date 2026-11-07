@@ -121,6 +121,18 @@ notes in the database rewrote byte-identical through it).
 These are limits of Hanji 0.8.1, the CLI's own help is the reference, and a new
 build may close them: check `$H --help` when one blocks a task.
 
+## Speed against the Evernote MCP (2026-11-07)
+
+Per call, the bare CLI is 55 to 190 times faster than the Evernote MCP: a read
+takes 6 ms against 389 ms, a create 8 ms against 1524 ms. The checked helper is
+2.8 to 5.3 times faster for an edit (a cell 257 ms against 715 ms, a section
+184 ms against 839 ms) and ~7 times for a read or a search, and it puts an image
+at the top in 393 ms against 27 s for the MCP upload bridge. The same task took
+deepseek 64 s and $0.0086 on Hanji, 131 s and $0.0205 on Evernote. The full table
+and the requests that would remove the helper's rewrite are in
+`~/Library/CloudStorage/Dropbox/Hanji/2026-11-07-cli-feature-requests.md`, for
+Denis.
+
 ## Note rules
 
 The rules about Chaehan's notes hold in Hanji unchanged: read the evernote
