@@ -11,20 +11,17 @@ for a cut without a reason), and these:
 C1  a heading with nothing under it before the next heading of its level
 C2  "he", "his" or "him" in a note addressed to Chaehan
 C3  a number with a thousand separator
-C4  a section that is not one of the five, a required one missing, or the
-    order broken: Takeaway, The deciding question (optional), Your decisions,
-    Hand to me, Settled
-C5  a decision without its question, without two to four numbered options,
-    without its "Your choice depends on" sentence, or with a label word ("anxiety",
-    "avoidance", "bias") outside quotation marks
+C4  Takeaway not first, no goal section between it and Hand to me, Hand to
+    me missing, or a section after Settled
+C5  a decision bullet (ending with "?") without two to four options indented
+    under it, or a label word ("anxiety", "avoidance", "bias") outside
+    quotation marks in a goal section
 C6  a Hand to me row with an empty cell, a command that is not "/life
     <keyword>", a keyword used twice, or a draft under the table
 C7  a Takeaway line that is not a bullet, or more than three bullets
 C8  a social security number written out; write its last four digits
 C9  an issue of the previous note that is neither in this note nor in the cut
     list (only with --original)
-C10 a deciding question that does not end with "?", has no bullet per answer,
-    or is not named by the first Takeaway bullet
 
 A PASS writes the note-gate stamp of the life-overview gate and prints its
 marker "note-gate:<sha>", which the Evernote write path requires.
@@ -49,8 +46,7 @@ def _overview_gate():
 
 gate = _overview_gate()
 
-SECTIONS = ("takeaway", "the deciding question", "your decisions", "hand to me", "settled")
-REQUIRED = ("takeaway", "your decisions", "hand to me", "settled")
+FIXED = ("takeaway", "hand to me", "settled")
 LABEL_WORDS = re.compile(
     r"\b(?:anxiety|anxious|avoidance|avoidant|procrastinat\w*|bias(?:es|ed)?|fear\w*|"
     r"paralysis|pattern\w*|tendency|tendencies|trait\w*|perfectionis\w*|binary framing)\b", re.I)
@@ -59,7 +55,6 @@ THOUSANDS = re.compile(r"(?<![\d.,])\d{1,3}(?:,\d{3})+(?!\d|,\d)")
 QUOTE = re.compile(r"\"[^\"]+\"|“[^”]+”|'[^']{3,}'")
 SSN = re.compile(r"(?<!\d)\d{3}-\d{2}-\d{4}(?!\d)")
 COMMAND = re.compile(r"^`?/life ([a-z0-9-]+)`?$")
-OPTION = re.compile(r"^\s*\d+[.)]\s+\S", re.M)
 BULLET = re.compile(r"^\s*[-*]\s+\S", re.M)
 
 
@@ -152,35 +147,50 @@ def _thousands(md: str) -> list[str]:
 
 def _sections(md: str) -> list[str]:
     titles = [t.lower() for t, _ in h2_sections(md)]
-    out = [f"C4 section '## {t}' is not part of the note; the five are: " + ", ".join(SECTIONS)
-           for t in titles if not t.startswith(SECTIONS)]
-    out += [f"C4 section missing: '## {name.capitalize()}'" for name in REQUIRED
-            if not any(t.startswith(name) for t in titles)]
-    order = [next(i for i, s in enumerate(SECTIONS) if t.startswith(s)) for t in titles if t.startswith(SECTIONS)]
-    if order != sorted(order) or len(order) != len(set(order)):
-        out.append("C4 sections out of order or repeated; the order is " + ", ".join(SECTIONS))
+    out = []
+    if not titles or not titles[0].startswith("takeaway"):
+        out.append("C4 the note must open with '## Takeaway'")
+    hand = next((i for i, t in enumerate(titles) if t.startswith("hand to me")), None)
+    if hand is None:
+        out.append("C4 section missing: '## Hand to me'")
+    elif not any(not t.startswith(FIXED) for t in titles[1:hand]):
+        out.append("C4 no goal section between Takeaway and Hand to me: write one per live goal")
+    settled = next((i for i, t in enumerate(titles) if t.startswith("settled")), None)
+    if settled is not None and settled != len(titles) - 1:
+        out.append("C4 '## Settled' must be the last section")
+    if hand is not None and settled is not None and settled < hand:
+        out.append("C4 '## Settled' comes after '## Hand to me'")
     return out
 
 
+def _goal_sections(md: str) -> list[tuple[str, str]]:
+    return [(t, b) for t, b in h2_sections(md) if not t.lower().startswith(FIXED)]
+
+
 def _decisions(md: str) -> list[str]:
-    body = section(md, "your decisions")
-    if body is None:
-        return []
-    subs = h3_sections(body)
-    out = [] if subs else ["C5 '## Your decisions' has no '###' decision"]
-    for title, sub in subs:
-        lines = _lines(sub)
-        first = lines[0] if lines else ""
-        if not first.endswith("?"):
-            out.append(f"C5 decision {title!r} must open with its question, ending with '?': {first[:50]!r}")
-        n = len(OPTION.findall(sub))
-        if not 2 <= n <= 4:
-            out.append(f"C5 decision {title!r} has {n} numbered options; give two to four, each a clickable answer")
-        if not re.search(r"(?:^|[.!?]\s+)Your choice depends on\b", sub, re.M):
-            out.append(f"C5 decision {title!r} has no sentence starting 'Your choice depends on' with the fact that tips it")
-        m = LABEL_WORDS.search(QUOTE.sub("", gate._plain(sub)))
-        if m:
-            out.append(f"C5 decision {title!r}: {m.group(0)!r} labels your inner state; say the fact that "
+    out = []
+    for title, body in _goal_sections(md):
+        lines = body.splitlines()
+        for i, line in enumerate(lines):
+            m = re.match(r"(\s*)[-*]\s+(.*\?)\s*$", line)
+            if not m:
+                continue
+            ind = len(m.group(1).expandtabs(4))
+            subs = 0
+            for nxt in lines[i + 1:]:
+                if not nxt.strip():
+                    continue
+                n = re.match(r"(\s*)[-*]\s+\S", nxt)
+                if not n or len(n.group(1).expandtabs(4)) <= ind:
+                    break
+                if len(n.group(1).expandtabs(4)) > ind and len(n.group(1).expandtabs(4)) <= ind + 4:
+                    subs += 1
+            if not 2 <= subs <= 4:
+                out.append(f"C5 decision in {title!r} has {subs} options under it; give two to four, "
+                           f"each a clickable answer: {gate._plain(m.group(2))[:60]!r}")
+        hit = LABEL_WORDS.search(QUOTE.sub("", gate._plain(body)))
+        if hit:
+            out.append(f"C5 {title!r}: {hit.group(0)!r} labels your inner state; say the fact that "
                        f"makes it heavy, or quote your own words")
     return out
 
@@ -249,27 +259,10 @@ def _dropped(draft: str, original: str, cuts: str | None) -> list[str]:
             f"'- {name}: <why it left>'" for name in previous_issues(original) if name.lower() not in pool]
 
 
-def _deciding(md: str) -> list[str]:
-    body = section(md, "the deciding question")
-    if body is None:
-        return []
-    lines = _lines(body)
-    out = []
-    first = lines[0] if lines else ""
-    if not first.endswith("?"):
-        out.append(f"C10 the deciding question must open with the question, ending with '?': {first[:50]!r}")
-    if len(BULLET.findall(body)) < 2:
-        out.append("C10 the deciding question needs one bullet per answer, saying what follows from it")
-    bullets = gate._bullets(section(md, "takeaway") or "")
-    if bullets and first and len(gate.words(bullets[0]) & gate.words(first)) < 2:
-        out.append(f"C10 the first Takeaway bullet does not name the deciding question: {bullets[0][:60]!r}")
-    return out
-
-
 def check(draft: str, original: str | None = None, cuts: str | None = None) -> list[str]:
     fails = gate.check(draft, note=True)
     fails += _empty_headings(draft) + _pronouns(draft) + _thousands(draft) + _sections(draft)
-    fails += _decisions(draft) + _hand_to_me(draft) + _takeaway(draft) + _identifiers(draft) + _deciding(draft)
+    fails += _decisions(draft) + _hand_to_me(draft) + _takeaway(draft) + _identifiers(draft)
     if original is not None:
         if cuts is None:
             fails.append("T6 a note built on a previous one needs --cuts: one line per number it drops, with the reason")
