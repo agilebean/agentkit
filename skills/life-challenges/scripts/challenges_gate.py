@@ -11,13 +11,14 @@ for a cut without a reason), and these:
 C1  a heading with nothing under it before the next heading of its level
 C2  "he", "his" or "him" in a note addressed to Chaehan
 C3  a number with a thousand separator
-C4  Takeaway not first, no goal section between it and Hand to me, Hand to
-    me missing, or a section after Settled
-C5  a decision bullet (ending with "?") without two to four options indented
-    under it, or a label word ("anxiety", "avoidance", "bias") outside
-    quotation marks in a goal section
-C6  a Hand to me row with an empty cell, a command that is not "/life
-    <keyword>", a keyword used twice, or a draft under the table
+C4  the layout broken: Takeaway first, then "## Two ways ..." with exactly two
+    ### ways, then "## What decides between them", then at least one area
+    section
+C5  a question under "What decides between them" without "If yes" and "If no"
+    sub-bullets, no question or more than three, or a label word ("anxiety",
+    "avoidance", "bias") outside quotation marks anywhere in the note
+C6  a command, keyword table or "Hand to me" section: the note holds answers,
+    never tooling
 C7  a Takeaway line that is not a bullet, or more than three bullets
 C8  a social security number written out; write its last four digits
 C9  an issue of the previous note that is neither in this note nor in the cut
@@ -46,7 +47,8 @@ def _overview_gate():
 
 gate = _overview_gate()
 
-FIXED = ("takeaway", "hand to me", "settled")
+TWO_WAYS = "two ways"
+DECIDES = "what decides between them"
 LABEL_WORDS = re.compile(
     r"\b(?:anxiety|anxious|avoidance|avoidant|procrastinat\w*|bias(?:es|ed)?|fear\w*|"
     r"paralysis|pattern\w*|tendency|tendencies|trait\w*|perfectionis\w*|binary framing)\b", re.I)
@@ -54,7 +56,6 @@ PRONOUN = re.compile(r"\b(?:he|his|him|himself)\b", re.I)
 THOUSANDS = re.compile(r"(?<![\d.,])\d{1,3}(?:,\d{3})+(?!\d|,\d)")
 QUOTE = re.compile(r"\"[^\"]+\"|“[^”]+”|'[^']{3,}'")
 SSN = re.compile(r"(?<!\d)\d{3}-\d{2}-\d{4}(?!\d)")
-COMMAND = re.compile(r"^`?/life ([a-z0-9-]+)`?$")
 BULLET = re.compile(r"^\s*[-*]\s+\S", re.M)
 
 
@@ -146,80 +147,57 @@ def _thousands(md: str) -> list[str]:
 
 
 def _sections(md: str) -> list[str]:
-    titles = [t.lower() for t, _ in h2_sections(md)]
+    secs = h2_sections(md)
+    titles = [t.lower() for t, _ in secs]
     out = []
     if not titles or not titles[0].startswith("takeaway"):
         out.append("C4 the note must open with '## Takeaway'")
-    hand = next((i for i, t in enumerate(titles) if t.startswith("hand to me")), None)
-    if hand is None:
-        out.append("C4 section missing: '## Hand to me'")
-    elif not any(not t.startswith(FIXED) for t in titles[1:hand]):
-        out.append("C4 no goal section between Takeaway and Hand to me: write one per live goal")
-    settled = next((i for i, t in enumerate(titles) if t.startswith("settled")), None)
-    if settled is not None and settled != len(titles) - 1:
-        out.append("C4 '## Settled' must be the last section")
-    if hand is not None and settled is not None and settled < hand:
-        out.append("C4 '## Settled' comes after '## Hand to me'")
+    if len(titles) < 2 or not titles[1].startswith(TWO_WAYS):
+        out.append("C4 the second section must be '## Two ways to handle ...', the dilemma of the moment")
+    else:
+        ways = h3_sections(secs[1][1])
+        if len(ways) != 2:
+            out.append(f"C4 '## {secs[1][0]}' has {len(ways)} ways; write exactly two competing ways as '###'")
+    if len(titles) < 3 or not titles[2].startswith(DECIDES):
+        out.append("C4 the third section must be '## What decides between them'")
+    if len(titles) < 4:
+        out.append("C4 no area section after the questions: write one per area with something open")
     return out
 
 
-def _goal_sections(md: str) -> list[tuple[str, str]]:
-    return [(t, b) for t, b in h2_sections(md) if not t.lower().startswith(FIXED)]
-
-
-def _decisions(md: str) -> list[str]:
+def _questions(md: str) -> list[str]:
     out = []
-    for title, body in _goal_sections(md):
+    body = section(md, DECIDES)
+    if body is not None:
         lines = body.splitlines()
-        for i, line in enumerate(lines):
-            m = re.match(r"(\s*)[-*]\s+(.*\?)\s*$", line)
-            if not m:
-                continue
-            ind = len(m.group(1).expandtabs(4))
-            subs = 0
+        qs = [i for i, l in enumerate(lines) if re.match(r"[-*]\s+.*\?\s*$", l)]
+        if not 1 <= len(qs) <= 3:
+            out.append(f"C5 '## What decides between them' has {len(qs)} questions; ask one to three")
+        for i in qs:
+            subs = []
             for nxt in lines[i + 1:]:
-                if not nxt.strip():
-                    continue
-                n = re.match(r"(\s*)[-*]\s+\S", nxt)
-                if not n or len(n.group(1).expandtabs(4)) <= ind:
+                if re.match(r"[-*]\s", nxt):
                     break
-                if len(n.group(1).expandtabs(4)) > ind and len(n.group(1).expandtabs(4)) <= ind + 4:
-                    subs += 1
-            if not 2 <= subs <= 4:
-                out.append(f"C5 decision in {title!r} has {subs} options under it; give two to four, "
-                           f"each a clickable answer: {gate._plain(m.group(2))[:60]!r}")
-        hit = LABEL_WORDS.search(QUOTE.sub("", gate._plain(body)))
-        if hit:
-            out.append(f"C5 {title!r}: {hit.group(0)!r} labels your inner state; say the fact that "
-                       f"makes it heavy, or quote your own words")
+                m = re.match(r"\s+[-*]\s+(.*)", nxt)
+                if m:
+                    subs.append(m.group(1))
+            if not any(x.startswith("If yes") for x in subs) or not any(x.startswith(("If no", "If not")) for x in subs):
+                out.append(f"C5 question {gate._plain(lines[i])[2:62]!r} needs an 'If yes' and an 'If no' sub-bullet")
+    hit = LABEL_WORDS.search(QUOTE.sub("", gate._plain(md)))
+    if hit:
+        out.append(f"C5 {hit.group(0)!r} labels your inner state; say the fact that makes it heavy, or quote your own words")
     return out
 
 
-def _hand_to_me(md: str) -> list[str]:
-    body = section(md, "hand to me")
-    if body is None:
-        return []
+def _tooling(md: str) -> list[str]:
     out = []
-    if re.search(r"^###\s", body, re.M):
-        out.append("C6 a '###' under '## Hand to me': drafts and scripts are made by /life on demand, "
-                   "never kept in the note")
-    header, rows = table(body)
-    want = ("issue", "i do", "you decide", "command")
-    if [h.strip() for h in header] != list(want):
-        return out + ["C6 the Hand to me table needs exactly the columns: Issue | I do | You decide | Command"]
-    seen = {}
-    for r in rows:
-        name = gate._plain(r[0])[:40] if r else "?"
-        if len(r) < 4 or not all(gate._plain(c).strip() for c in r[:4]):
-            out.append(f"C6 row {name!r} has an empty cell")
-            continue
-        m = COMMAND.match(r[3].strip())
-        if not m:
-            out.append(f"C6 row {name!r}: command {r[3].strip()!r} is not '/life <keyword>'")
-            continue
-        if m.group(1) in seen:
-            out.append(f"C6 keyword {m.group(1)!r} is used by {seen[m.group(1)]!r} and {name!r}; make each unique")
-        seen[m.group(1)] = name
+    if re.search(r"`?/life\b", md):
+        out.append("C6 a /life command in the note: the note holds answers, never commands")
+    if any(t.lower().startswith("hand to me") for t, _ in h2_sections(md)):
+        out.append("C6 a 'Hand to me' section: the work is done in the note, never offered as a command")
+    header, _ = table(md)
+    if header and any("command" in h for h in header):
+        out.append("C6 a table with a Command column")
     return out
 
 
@@ -262,7 +240,7 @@ def _dropped(draft: str, original: str, cuts: str | None) -> list[str]:
 def check(draft: str, original: str | None = None, cuts: str | None = None) -> list[str]:
     fails = gate.check(draft, note=True)
     fails += _empty_headings(draft) + _pronouns(draft) + _thousands(draft) + _sections(draft)
-    fails += _decisions(draft) + _hand_to_me(draft) + _takeaway(draft) + _identifiers(draft)
+    fails += _questions(draft) + _tooling(draft) + _takeaway(draft) + _identifiers(draft)
     if original is not None:
         if cuts is None:
             fails.append("T6 a note built on a previous one needs --cuts: one line per number it drops, with the reason")
