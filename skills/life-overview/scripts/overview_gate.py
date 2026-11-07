@@ -2,9 +2,14 @@
 
 Each failure names the sentence or section it rejects. Exit 1 on any failure.
 
-    python overview_gate.py <draft.md> [--original <old.md>] [--linked <note.md> ...]
+    python overview_gate.py <draft.md> [--original <old.md>] [--challenges <note.md>] [--linked <note.md> ...]
 
-T3  a Takeaway bullet made mostly of an Open tasks row's words (numbers ignored)
+T3  an Open tasks section, an email address or a phone number in the overview
+    (the next moves live in the Life Challenges note); no link to a
+    "YYYY-MM-DD Life Challenges" (or, before 2026-11-07, "Life Problems") note;
+    with --challenges, a Takeaway bullet made mostly of the words of one of
+    that note's decision options or Hand to me rows (numbers ignored). The
+    --challenges note also counts as linked for T6.
 T4  a body section with no note link (unless it says "no detail note");
     a note with zero links
 T5  no indented bullet anywhere
@@ -87,19 +92,67 @@ def takeaway_bullets(md: str) -> list[str]:
     return []
 
 
-def task_rows(md: str) -> list[str]:
-    for title, body in sections(md):
-        if "open tasks" in title.lower():
-            rows = [l for l in body.splitlines() if l.startswith("|")]
-            return [r for r in rows[2:]]
-    return []
+CHALLENGES_LINK = re.compile(r"\[\d{4}-\d{2}-\d{2} Life (?:Challenges|Problems)\]\(evernote:///view/")
+EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+PHONE = re.compile(r"(?<![\d.-])0\d{1,2}[-.]\d{3,4}[-.]\d{4}(?![\d.-])")
+ACTION_SECTIONS = ("your decisions", "decisions", "hand to me", "quick wins")
+
+
+def challenges_items(md: str) -> list[str]:
+    """The decision questions and options, and the Hand to me rows, of a Life Challenges note."""
+    out, h2, table = [], "", 0
+    for line in md.splitlines():
+        m = re.match(r"##\s+(.*)", line)
+        if m:
+            h2, table = m.group(1).strip().lower(), 0
+            continue
+        if not h2.startswith(ACTION_SECTIONS):
+            continue
+        s = line.strip()
+        if s.startswith("|"):
+            table += 1
+            if table > 2:  # header and separator skipped
+                out.append(" ".join(c.strip() for c in s.strip("|").split("|")))
+        else:
+            table = 0
+            if re.match(r"\d+[.)]\s", s) or (s.endswith("?") and not s.startswith("#")):
+                out.append(re.sub(r"^\d+[.)]\s+", "", s))
+    return out
+
+
+def _overview_actions(draft: str, challenges: str | None) -> list[str]:
+    out = []
+    for title, _ in sections(draft):
+        if title.lower().startswith("open tasks"):
+            out.append(f"T3 an Open tasks section: the next moves live in the Life Challenges note; "
+                       f"link it under '## Your decisions' instead: {title!r}")
+    for line in draft.splitlines():
+        if line.lstrip().startswith("!["):
+            continue
+        for hit in EMAIL.findall(line) + PHONE.findall(line):
+            out.append(f"T3 a contact belongs in the Life Challenges note, with its step: {hit!r} in {line.strip()[:70]!r}")
+    if not CHALLENGES_LINK.search(draft):
+        out.append("T3 no link to the current Life Challenges note")
+    for b in takeaway_bullets(draft) if challenges else []:
+        claim = re.sub(r"\[[^\]]*\]\([^)]*\)", "", b)  # a link's title and address are not the bullet's words
+        bw = {w for w in words(claim) if not w.isdigit()}
+        for item in challenges_items(challenges):
+            rw = {w for w in words(item) if not w.isdigit()}
+            shared = len(bw & rw)
+            if bw and rw and shared / len(rw) >= 0.5 and shared / len(bw) >= 0.3:
+                out.append(f"T3 Takeaway bullet repeats the Life Challenges note: {b!r} ~ {item!r}")
+                break
+    return out
 
 
 def check(draft: str, original: str | None = None, linked: list[str] | None = None,
           facts_only: bool = False, note: bool = False, cuts: str | None = None,
-          labels: str | None = None, table_titles: bool = False) -> list[str]:
+          labels: str | None = None, table_titles: bool = False,
+          challenges: str | None = None) -> list[str]:
     fails: list[str] = []
     pool = list(linked or [])
+    if challenges:
+        pool.append(challenges)
     if cuts:
         fails += _bad_cuts(cuts)
         pool.append(cuts)
@@ -119,16 +172,7 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
             if original is not None:
                 fails += _lost_rows(draft, original, cuts)
         return fails + (_facts(draft, original, pool) if original is not None else [])
-    rows = task_rows(draft)
-    for b in takeaway_bullets(draft):
-        bw = {w for w in words(b) if not w.isdigit()}
-        for r in rows:
-            cells = [c for c in r.strip().strip("|").split("|")]
-            rw = {w for w in words(" ".join(cells)) if not w.isdigit()}
-            shared = len(bw & rw)
-            if bw and rw and shared / len(rw) >= 0.5 and shared / len(bw) >= 0.3:
-                fails.append(f"T3 Takeaway bullet repeats a task row: {b!r} ~ {r.strip()!r}")
-                break
+    fails += _overview_actions(draft, challenges)
     if not LINK.search(draft):
         fails.append("T4 the note carries no evernote:/// link")
     for title, body in sections(draft):
@@ -139,7 +183,7 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
     if not re.search(r"^[ \t]{2,}- ", draft, re.M):
         fails.append("T5 no indented bullet: every point is a sibling")
     if original is not None:
-        fails += _facts(draft, original, linked)
+        fails += _facts(draft, original, pool)
     return fails
 
 
@@ -420,11 +464,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--note", action="store_true", help="any note: facts, lists, summary size and duplicates (T5-T12)")
     ap.add_argument("--cuts", help="the cut list: one line per removal, '- <numbers or words>: <destination or reason>'")
     ap.add_argument("--labels", help="note_build.py's merged label file: id, label, parent, text per item")
+    ap.add_argument("--challenges", help="the current Life Challenges note, exported: T3 compares the Takeaway with it")
     a = ap.parse_args(argv)
     read = lambda p: open(p, encoding="utf-8").read()
     draft = read(a.draft)
     fails = check(draft, read(a.original) if a.original else None, [read(p) for p in a.linked],
-                  a.facts_only, a.note, read(a.cuts) if a.cuts else None, read(a.labels) if a.labels else None)
+                  a.facts_only, a.note, read(a.cuts) if a.cuts else None, read(a.labels) if a.labels else None,
+                  challenges=read(a.challenges) if a.challenges else None)
     if a.note and a.original and not (a.labels and a.cuts):
         fails.append("T14 a rewrite needs --labels and --cuts: build it with note_build.py "
                      "(agentkit/skills/evernote/scripts), which writes both")

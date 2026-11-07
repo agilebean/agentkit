@@ -1,12 +1,21 @@
 ---
 name: life-overview
-description: Create or refresh the user's dated Life Overview — whole-life status snapshot with a timeline graphic, what-went-well section, and open tasks. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
+description: Create or refresh the user's dated Life Overview — whole-life status snapshot with a timeline graphic, what-went-well section, and one link to the Life Challenges note, which holds the open decisions and next moves. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
 ---
 
 # Life Overview
 
 A dated snapshot of the whole life state: what is fixed, what is moving, what
-went well, what is open. The current snapshot is the source of truth at
+went well, and what waits on someone else. Every open decision and every next
+move lives in the current Life Challenges note (the life-challenges skill),
+and this note links it once and repeats none of it. The two notes run on
+different clocks: this one is frozen on its date, while `/life` rewrites the
+Challenges note in place, so a task list here goes stale the day a task
+closes. On 2026-11-06 the Life Problems note repeated 11 of the 2026-11-05
+overview's issues, and an agent's question listed in both was taken as
+Chaehan's (`memory/agentic_ai.md` failure 166).
+
+The current snapshot is the source of truth at
 `socrates/docs/YYYY-MM-DD-life-overview.md`, with a twin in the Evernote
 notebook "Chaehan's Life". Run everything from the socrates repo root
 (`~/Software/Prototypes/socrates`).
@@ -34,6 +43,13 @@ Read, in order — memory is ground truth (rule 35):
   `taxes_us.md`, `immigration.md`, `virtualfriend.md`, `virtualfriend-marketing.md`,
   `virtualfriend-architecture.md`, `startup.md`, `optimize-my-life.md`
 - `git log --oneline -15` — what moved since the last overview
+- the current Life Challenges note, read in Evernote and exported to a file
+  (newest "YYYY-MM-DD Life Challenges"; before 2026-11-07 "YYYY-MM-DD Life
+  Problems"), because `/life` writes its answers there: it names the issues
+  this note states in one sentence and links, and its Settled bullets are
+  candidates for What went well. An open action the memory files hold and the
+  Challenges note does not is named in the report to Chaehan as missing there,
+  never written into this note.
 
 Then, for every item the memory files call open, search Evernote for the result
 before it reaches the note (RULES.md 207): the test, the form, the booking. A
@@ -96,6 +112,16 @@ not compress Chaehan's facts: dates, numbers, decisions and constraints stay,
 here or in the linked note. Only world detail (study design, vendor prose,
 public rules) may leave the page.
 
+An issue the Life Challenges note holds, an open decision or a step Chaehan
+can take or hand over, takes that note as its detail note. Its section says
+where the issue stands and what is still Chaehan's, one sentence each, and
+links the Challenges note; the options, the contacts (phone numbers, email
+addresses), the scripts and the steps themselves stay there. "You must still
+book a locker for your winter clothes" belongs here; the unit, its price and
+the booking link belong in the Challenges note. A thread that waits on someone
+else (an office's reply, a queue, a registry) is state: it stays in its
+section with the date it has waited since, and names no next move.
+
 **Move 4. The Takeaway, last, from moves 1 and 2.** Four to six bullets: what
 Chaehan would say to a friend who asks "how is it going?". Between them they
 cover what the next month depends on, what is settled, what changed and why,
@@ -109,12 +135,15 @@ names every object it points at.
 - Rejected: "The next month turns on ...", "What changed since the last snapshot is ...", "The KUBS grade entry is the one deadline this week", "The route is fixed until Valencia ...", "Money keeps one clock", "the daily tablet" with no name for the tablet, "Your winter clothes and the green card papers have no home in Seoul", and "The question it cannot answer ... goes to the Gayeon free consult, which is not booked". `scripts/wording_lint.py` flags these shapes.
 <!-- end verbatim -->
 
-It is not a task list: a bullet that an Open tasks row could replace without
-losing its consequence is rewritten or cut. The actions live in the task table.
+It is not a task list: a bullet that a decision or a Hand to me row of the
+Life Challenges note could replace without losing its consequence is rewritten
+or cut. The actions live in that note.
 
 **Layout.** Image line first, then `## Takeaway`, the current chapter section,
 `## Running in parallel` with one `###` per goal, `## What went well`, and
-`## Open tasks` (Thread | When | Waiting on | Next move). Rules that apply: 19,
+`## Your decisions`: one sentence that links the current Life Challenges note
+by its exact title, "Your open decisions and the steps you can hand to me are
+in [<exact title>](evernote:///view/...)." The note has no task table. Rules that apply: 19,
 20 (date first in title), 40 (anchor time claims to today), 42 (bullets), 2
 and `scripts/wording_lint.py`; no thousand separators. The note is written to
 Chaehan as "you", which is necessary and not sufficient: the seat test in
@@ -130,9 +159,9 @@ never to the twin.
 
 Mechanical, T3 to T6:
 
-`python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/overview_gate.py docs/YYYY-MM-DD-life-overview.md --original docs/<previous snapshot>.md --linked <exported detail notes>`
+`python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/overview_gate.py docs/YYYY-MM-DD-life-overview.md --original docs/<previous snapshot>.md --challenges <exported Life Challenges note> --linked <exported detail notes>`
 
-- T3 no Takeaway bullet repeats an Open tasks row. The script catches literal repeats only; a paraphrased task passes it. So also read each bullet against the table: a bullet that a row could replace without losing its consequence is rewritten. Then read the bullets aloud: a reader can tell what the month depends on, and no bullet says so in those words (Move 4).
+- T3 the draft has no Open tasks section, no email address and no phone number. It links the Life Challenges note, and no Takeaway bullet repeats a decision option or a Hand to me row of the note passed as `--challenges`. The script catches literal repeats only; a paraphrased task passes it. So also read each bullet and each section against the Challenges note: a sentence that a decision or a row could replace without losing its consequence is rewritten. Then read the bullets aloud: a reader can tell what the month depends on, and no bullet says so in those words (Move 4). The `--challenges` note also counts as linked for T6, so a number of the previous snapshot that moved there passes.
 - T4 every body section has its link or says "no detail note"; the note has at least one link.
 - T5 at least one indented bullet; read each top-level bullet and indent any that belongs under its neighbour.
 - T6 every date and number of the previous snapshot survives in the draft or in a linked note, unless the record shows it is done or replaced. List each one the script reports and say which it is.
@@ -185,6 +214,7 @@ used (the user's "never use the cli fallback", 2026-09-26).
 ## 5. Report and commit
 
 Report at headline level only (rule 28): which artifact changed, plus the
-headline changes against the previous snapshot. Commit the docs, asset, and any memory
+headline changes against the previous snapshot, plus each open action the
+Challenges note is missing (step 1), for the next `/life` or Challenges build. Commit the docs, asset, and any memory
 changes once the user approves (rule 46), asking "commit and push?" when the
 signal is ambiguous.
