@@ -17,6 +17,11 @@ It is made in two passes:
 The walk-through refines the note in place. A new build on a later day gets a
 new date and leaves every earlier note untouched (RULES.md 31).
 
+This note is the one home of every open decision and every next move in
+Chaehan's life. The Life Overview (the life-overview skill) says where each
+goal stands, links this note once, and repeats none of it; this note never
+reads the Overview, so the information runs one way.
+
 **Quality over quantity is the first rule here.** The note has the five
 sections below and nothing else, and each issue appears in exactly one of
 them. Drafts, call scripts and research never sit in the note: the
@@ -45,15 +50,22 @@ Put each issue in one section, testing in this order:
    lookup, a form's values) and Chaehan only approves it: **Hand to me**.
 4. A decided step that only Chaehan can take (placing a sell order): one
    Takeaway bullet with its date.
+5. Nothing for Chaehan or the agent to do until someone else moves (a queue,
+   an office's reply, a registry's portal): out of this note. The Life
+   Overview states it as a thread waiting since its date.
 
 ## Build
 
 ### 1. Gather
 
-1. Read the latest `docs/*-life-overview.md`, the previous
-   `docs/*-life-challenges.md` (before 2026-11-07: `docs/*-life-problems.md`),
-   `memory/travel.md`, `memory/travelitinerary.csv`, and the memory file of
-   each issue's domain.
+1. Read the previous `docs/*-life-challenges.md` (before 2026-11-07:
+   `docs/*-life-problems.md`), `memory/travel.md`,
+   `memory/travelitinerary.csv`, and every chapter file the life-overview
+   skill lists in its step 1, and take each open action they hold as an issue
+   to place. Never read the Life Overview: it links this note, and a line read
+   back from it looks confirmed twice (`memory/agentic_ai.md` failure 166).
+   An issue the Overview's report named as missing here is placed like any
+   other.
 2. Ask Chaehan which issues of the previous note are done since it, with the
    question tool: one multiSelect question per four issues. Never decide that
    an issue is done or open from a missing record (core 5). Write what Chaehan
