@@ -42,3 +42,18 @@ def test_a_spent_quota_is_a_provider_error() -> None:
     assert nt.PROVIDER_ERROR.search('{"type": "provider.quota", "message": "Go usage limit exceeded", "status": 429}')
     assert nt.PROVIDER_ERROR.search("Upstream request failed: Model is unavailable.")
     assert not nt.PROVIDER_ERROR.search("note_build.py: no heading contains 'Swim'")
+
+
+def test_the_launch_puts_the_project_folder_in_pwd(tmp_path, monkeypatch) -> None:
+    seen = {}
+
+    class FakePopen:
+        def __init__(self, cmd, cwd=None, env=None, **kw):
+            seen.update(cwd=cwd, pwd=env.get("PWD"))
+
+    monkeypatch.setattr(nt.subprocess, "Popen", FakePopen)
+    monkeypatch.setenv("PWD", "/somewhere/else")
+    a = type("A", (), {"out": str(tmp_path), "session": None, "agent": "socrates", "title": "t",
+                       "cwd": "/Users/x/socrates"})()
+    nt.Run(a).launch("m", "hello")
+    assert seen == {"cwd": "/Users/x/socrates", "pwd": "/Users/x/socrates"}
