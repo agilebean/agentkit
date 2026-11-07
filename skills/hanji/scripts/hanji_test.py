@@ -8,7 +8,7 @@ fallback (the OpenCode Go API first, then the direct DeepSeek API) and idle and 
 reuses: `opencode run --standalone --agent socrates` in the socrates folder with the brief as the
 message. Writes <out>/report.md (providers, steps, tokens, cost, and one row per hanji command with
 its duration, exit and first output line) and <out>/events.jsonl. Exit 0 when every helper write
-the agent ran verified and none failed, 1 otherwise, 5 idle or over budget, 6 every provider failed.
+(or en_to_hanji.py copy) the agent ran verified and none failed, 1 otherwise, 5 idle or over budget, 6 every provider failed.
 """
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ _spec = importlib.util.spec_from_file_location("note_test", _nt)
 note_test = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(note_test)
 
-HELPER = re.compile(r"(?:hanji_note\.py|\$P)\s+(?:--db\s+\S+\s+)?([a-z][a-z-]+)")
+HELPER = re.compile(r"(?:hanji_note\.py|en_to_hanji\.py|\$P)\s+(?:--db\s+\S+\s+)?([a-z][a-z-]+)")
 RAW = re.compile(r"(?:MacOS/hanji|\$H|\bhanji)\s+(?:--json\s+)?(?:--db\s+\S+\s+)?(?:--json\s+)?([a-z]+(?:\s+[a-z-]+)?)")
 
 
@@ -47,8 +47,11 @@ class HanjiRun(note_test.Run):
             subs = HELPER.findall(cmd) or [f"hanji {m}" for m in RAW.findall(cmd)]
             what = " + ".join(dict.fromkeys(subs)) if subs else part.get("tool", "?")
             row = {"t": round(time.time() - self.t0), "tool": part.get("tool"), "what": what, "ms": ms,
-                   "exit": ex, "status": st.get("status"), "verified": out.count('"verified": true'),
-                   "failed": st.get("status") == "error" or (ex not in (None, 0, 3)),  # 3 is "not found", an answer
+                   "exit": ex, "status": st.get("status"),
+                   # the helper prints "verified": true; en_to_hanji's report says "write verified True" per note
+                   "verified": out.count('"verified": true') + out.count("write verified True"),
+                   "failed": st.get("status") == "error" or (ex not in (None, 0, 3))  # 3 is "not found", an answer
+                   or "write verified False" in out or "hanji_note.py create exited" in out,
                    "first": " / ".join(out.strip().splitlines()[:2])[:160], "command": cmd[:600]}
             self.calls.append(row)
             self.say(f"{row['tool']} {what[:60]} {ms} ms exit {ex}{' verified x' + str(row['verified']) if row['verified'] else ''} | {row['first'][:100]}")
