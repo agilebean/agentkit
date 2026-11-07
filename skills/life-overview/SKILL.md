@@ -70,24 +70,31 @@ pass.
 Every cost and hour figure is recomputed in that pass from the record's own
 parts, never copied with its label left behind (RULES.md 208). A total and its
 parts are added up against each other, and the sentence says what the figure
-contains: "15.78 hours for each of the eight lectures, the pre-course reading and
-the course-level work included", not an average whose scope sits in another
-file.
+contains (what the total covers, and per what), never an average whose scope
+sits in another file. A cost or hour figure enters the note only where it is
+the point of its sentence.
 
 Each overview claim carries its file and date before a draft is shown.
 
 ## 2. Timeline graphic (required, top of the note)
 
 1. Copy the spec shape from the previous run: `docs/assets/<date>-life-overview-timeline.json`.
-2. Update the rows to the current chapter: stay/housing blocks, the fixed work
-   course, the top open item with its target milestone, partner search, travel out.
-   Styles: solid = booked/fixed, open = conditional, diamond = milestone,
-   red diamond = decision.
+2. Update the rows to the current chapter, for a phone screen, which is where
+   Chaehan reads the note. At most five lanes: where you are (the stay and
+   travel blocks), the goals with a dated item (partner search, work), and one
+   "Dates" lane for single dates such as a filing, a sale or a decision. The
+   title says in at most 40 characters what the chart shows ("Your winter away
+   and the March return"); lane labels and item texts are at most 18
+   characters (place names, "4 dates", "Applied AI starts"), with no booking
+   detail and no abbreviation ("7 nights", never "7n"). Styles: solid = booked or fixed, open = conditional, diamond =
+   milestone (green done, hollow open), red diamond = decision. The renderer
+   picks the lane colours and places every label, so `color`, `text_pos` and
+   `offset` are ignored.
 3. Render:
    `mamba run -n socrates python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/life_timeline.py <spec.json> docs/assets/YYYY-MM-DD-life-overview-timeline.png`
-4. Inspect the PNG before embedding (dates line up, no overlapping labels).
-   Per-item fixes: bar `text_pos` ("center"/"below"/"above"/"right"), milestone
-   `offset` ("above"), narrow-bar short labels. Rerender until clean.
+4. Inspect the PNG before embedding at phone width: read it at 390 px wide.
+   A label you cannot read, a collision, or a lane that adds nothing a reader
+   needs is cut from the spec, and the chart is rendered again.
 
 ## 3. Write the snapshot: four moves, in this order
 
@@ -117,6 +124,10 @@ section, find its detail note (`find-note`, then the link form in the
 `evernote` skill: `[<exact title>](evernote:///view/39d2f74/s365/<guid>/<guid>/)`).
 The section shows the state in one sentence, the consequence in one sentence,
 and that link. No figure that lives in the linked note appears above the link.
+A booking shows what it fixes for you: where you are from when to when, and
+what is still unbought. Its flight number, fare, seat fee, booking date and
+cancellation terms live in its detail note, which goes to the gate as
+`--linked`, so T6 finds those figures there.
 A section with no detail note says "no detail note" and keeps its facts. Do
 not compress Chaehan's facts: dates, numbers, decisions and constraints stay,
 here or in the linked note. Only world detail (study design, vendor prose,
@@ -152,21 +163,30 @@ names every object it points at.
 - Rejected: "The next month turns on ...", "What changed since the last snapshot is ...", "The KUBS grade entry is the one deadline this week", "The route is fixed until Valencia ...", "Money keeps one clock", "the daily tablet" with no name for the tablet, "Your winter clothes and the green card papers have no home in Seoul", and "The question it cannot answer ... goes to the Gayeon free consult, which is not booked". `scripts/wording_lint.py` flags these shapes.
 <!-- end verbatim -->
 
+Each bullet names its objects so a stranger knows which: "the flat you leave
+has to be emptied" does not say what goes where, and "you must still book a
+locker for your winter clothes" does.
+
 It is not a task list: a bullet that a decision or a Hand to me row of the
 Life Challenges note could replace without losing its consequence is rewritten
 or cut. The actions live in that note.
 
 **Layout.** Image line first, then `## Takeaway`, `## What you achieved`,
-then the current chapter section, `## Running in parallel` with one `###` per goal, and
+then one `##` section per goal, the current chapter's first, and
 `## Your decisions`: one sentence that links the current Life Challenges note
 by its exact title, "Your open decisions and the steps you can hand to me are
 in [<exact title>](evernote:///view/...)." The note has no task table. Rules that apply: 19,
-20 (date first in title), 40 (anchor time claims to today), 42 (bullets), 2
+20 (date first in title), 40 (anchor time claims to today: a relative time in
+the record, such as "in five days" written on 2026-11-06, becomes its date or
+is recomputed from today, and a span such as "over three months" is computed
+from the dates of the cause it names, or left out), 42 (bullets), 2
 and `scripts/wording_lint.py`; no thousand separators. The note is written to
 Chaehan as "you", which is necessary and not sufficient: the seat test in
 `AGENTS.md` core 1 is the check. The previous snapshot is a reference for the
 timeline spec only, never for voice, selection or section content: copying it
-reintroduces its defects (`memory/agentic_ai.md` failure 104).
+reintroduces its defects (`memory/agentic_ai.md` failure 104). A rework of
+today's draft never reads the draft it replaces, because that draft holds the
+defects the rework is for: it writes every section again from the record.
 
 ## 3a. The gate (runs on the finished draft, before the twin)
 
@@ -203,7 +223,8 @@ open items. Each is one of three kinds:
   single-arm stroke (`swim/src/swim/dashboard/payload.py`, counted cycles
   times two), so a published value per arm cycle is halved before it is
   compared (a study's 1.95 m per cycle is 0.98 m per stroke), and your own
-  number is never converted;
+  number is never converted. The sentence gives only the converted value,
+  never the study's own unit;
 - a drag overcome: a step your record shows was hard for you (a failure
   behind it, a fear, a habit such as frugality, a scarrend), with what it took
   from you. Name the earlier failure that made the step a risk. Name the
@@ -215,7 +236,9 @@ open items. Each is one of three kinds:
 
 For each item: what you did, what it took from you, and what it makes
 possible now, in two or three sentences addressed to you, with its detail
-note linked. Each number keeps the term of its measure: "perceived effort 8,
+note linked. Counts of students, sessions, lectures or hours stay out: they
+say how big the job was, never what it meant to you. Each number keeps the
+term of its measure: "perceived effort 8,
 now 6", never "two-thirds of the effort"; DPS, stroke rate and CSS by their
 names. Each phrase makes a claim. A claim the reader cannot picture gets its
 facts: "your 400 m went from 8:08 on 2026-09-07 to 8:04 on 2026-10-16", never

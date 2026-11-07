@@ -626,6 +626,13 @@ one will eventually be chosen.
   "Condom Thickness & Width", where yen went in as `233 엔` beside his
   `7450 원`: "why don't you use the yen symbol instead of transcribing it to
   KRW? isn't that common sense???"
+- **A date keeps its event.** "Reported 2026-10-19" dates the report, and the
+  state it reports started then only when the record says "since" or
+  "started". A standing constraint is written with its age as the record
+  gives it, never with the date the agent first heard of it. Chaehan,
+  2026-11-07, after three overviews said "off gluten since 2026-10-19 and off
+  lactose since 2026-11-03": "I'm not off gluten and lactose recently but for
+  the last 20 years".
 - **A number keeps the name of its measure.** A value is bound to the
   measure it was taken in, by that measure's own term: "perceived effort 8,
   now 6", never "two-thirds of the effort". A term of the domain (perceived
