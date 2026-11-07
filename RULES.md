@@ -980,7 +980,18 @@ established by current documentation or the user, not by third-party
 ecosystem artifacts (skills, MCP servers, plugins) and not by the agent's
 prior knowledge.
 
+A path to a service is resolved the same way: against the instruction in
+Chaehan's own words that names the path he works through, which outranks a
+skill's paraphrase of it and the request's loose wording. Where that
+instruction retired a path (the evernote skill quotes him: the MCP only, the
+CLI not even as a fallback), a request that names the retired path ("compare
+with evernote cli") runs on the path in service, or the question tool asks
+which one; the retired path is never run on the wording alone. The test: find
+his quote for the service before the first call to it.
+
 Failure mode: a named product read as a common noun, so the tool that answers the question is never resolved.
+
+Instruction basis, 2026-11-07: asked to time Hanji's activities against "evernote cli", the agent ran the Evernote shell CLI from Claude Code, on the skill's line that the CLI is "the only path outside an opencode session". Chaehan: "this is wrong. only use the evernote mcp not cli! the cli is buggy".
 
 ### 31. New or reworked notes sweep the superseded Evernote copies automatically
 
