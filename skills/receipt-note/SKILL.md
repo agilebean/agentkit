@@ -102,9 +102,11 @@ rule), then the facts.
    found" from a title lookup right after `create` is index lag, not a failure;
    retry, or hold the note's GUID.
 
-6. **Link it from where the trip lives.** Add the note as an inline richlink in
-   the itinerary note's row (or the ledger the booking belongs to), so the plan
-   and the confirmation point at each other.
+6. **Sync the itinerary.** For a travel booking, run the itinerary-sync skill
+   with the new note's guid and title: it links the note in the year's itinerary
+   row, adds its € and $ figures, and moves or adds the row in travel.md and
+   travelitinerary.csv, so the plan and the confirmation point at each other.
+   Any other receipt is linked from the ledger it belongs to.
 
 ## Sweep superseded copies
 

@@ -986,12 +986,17 @@ skill's paraphrase of it and the request's loose wording. Where that
 instruction retired a path (the evernote skill quotes him: the MCP only, the
 CLI not even as a fallback), a request that names the retired path ("compare
 with evernote cli") runs on the path in service, or the question tool asks
-which one; the retired path is never run on the wording alone. The test: find
-his quote for the service before the first call to it.
+which one; the retired path is never run on the wording alone. What the agent
+builds inherits the path: a skill or script that reads or writes the service is
+designed on the path in service, never on the retired path's library (the Thrift
+client under the Evernote CLI), and a client that lacks the path (Claude Code has
+no Evernote MCP) hands the step to the client that has it (`opencode run`, as
+`note_test.py` launches it). The test: find his quote for the service before the
+first call to it, and before the first line of a script that calls it.
 
 Failure mode: a named product read as a common noun, so the tool that answers the question is never resolved.
 
-Instruction basis, 2026-11-07: asked to time Hanji's activities against "evernote cli", the agent ran the Evernote shell CLI from Claude Code, on the skill's line that the CLI is "the only path outside an opencode session". Chaehan: "this is wrong. only use the evernote mcp not cli! the cli is buggy".
+Instruction basis, 2026-11-07: asked to time Hanji's activities against "evernote cli", the agent ran the Evernote shell CLI from Claude Code, on the skill's line that the CLI is "the only path outside an opencode session". Chaehan: "this is wrong. only use the evernote mcp not cli! the cli is buggy". The same day, the itinerary-sync skill's first script wrote the itinerary notes through the Thrift client, on the evernote skill text a session had loaded before that correction. Chaehan: "you are wrong. by default, the evernote mcp is used, not the cli! don't use thrift!"
 
 ### 31. New or reworked notes sweep the superseded Evernote copies automatically
 
