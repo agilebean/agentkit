@@ -15,11 +15,16 @@ the cut list, so the cutting is done here. Each decision becomes a section that
 opens with its first line, so every section states its point. Supporting items
 are indented under the item they support, so the hierarchy comes from the
 labels. The note gate checks the result, and its PASS stamps the exact text the
-Evernote CLI will accept.
+write may send.
 
-    python3 note_build.py init <dir> <old.md> (--guid <guid> | --title <title> --notebook <name>)
+Evernote is read and written through the Evernote MCP only. `init --guid`,
+`link` and `write` print JavaScript for one execute call in opencode, and a
+local bridge hands that call its data and checks what comes back.
+
+    python3 note_build.py init <dir> (--guid <guid> | <old.md> --title <title> --notebook <name>)
     python3 note_build.py next <dir>
-    python3 note_build.py verify <dir> <read-back.md>
+    python3 note_build.py link "<words>"
+    python3 note_build.py write <dir>
 
 `next` always prints the one step that is due, or what to fix in it.
 """
@@ -180,20 +185,10 @@ SEPARATOR = re.compile(r"\d{1,3}(?:,\d{3})+\b")
 
 
 def note_title(guid: str, d: Path) -> str:
-    """The exact title of the note with this guid, from a cache in the build folder or the Evernote CLI."""
+    """The exact title of a linked note, as the last write fetched it through the MCP ("?" when not fetched yet)."""
     cache_p = d / "links.json"
     cache = json.loads(cache_p.read_text(encoding="utf-8")) if cache_p.exists() else {}
-    if guid not in cache:
-        r = subprocess.run(CLI + ["get", guid, "--markdown"], cwd=SOCRATES, capture_output=True, text=True)
-        title = ""
-        if r.returncode == 0:
-            try:
-                title = json.loads(r.stdout).get("title") or ""
-            except ValueError:
-                title = ""
-        cache[guid] = title or ("?" if r.returncode == 0 else "")
-        cache_p.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
-    return cache[guid]
+    return cache.get(guid, "?")
 
 
 def bad_links(text: str, d: Path) -> list[str]:
@@ -424,6 +419,15 @@ def check_labels(items: list[dict], rows: list[list[str]], ds: dict[str, str]) -
     return errs
 
 
+JOINED = re.compile(r"(?<=[a-z0-9¥%)\]])([.!?])(?=[A-Z][a-z])")
+
+
+def space_sentences(text: str) -> str:
+    """Put back the space between two sentences run together ("¥340.At"), outside link targets."""
+    parts = re.split(r"(\]\([^)]*\)|https?://\S+)", text)
+    return "".join(p if i % 2 else JOINED.sub(r"\1 ", p) for i, p in enumerate(parts))
+
+
 def kept_tables(items: list[dict], d: Path) -> str:
     rows = {r[0]: r for r in effective(items, tsv(d / "labels.tsv"))}
     keep = [it for it in items if it["kind"] == "table" and (rows.get(it["id"], ["", ""]) + [""])[1].upper() in ("D", "S")]
@@ -505,7 +509,7 @@ def assemble(d: Path, items: list[dict], headings: list[str]) -> tuple[str, str,
     new = {r[0]: r for r in tsv(d / "new.tsv")}
     edits = {r[0]: r[1].replace("\\n", "\n") for r in tsv(d / "edits.tsv") if len(r) >= 2}
     titles = {r[0]: (r + [""])[1].strip() for r in tsv(d / "titles.tsv")}
-    text = lambda it: edits.get(it["id"], it["text"])
+    text = lambda it: space_sentences(edits.get(it["id"], it["text"]))
     out: list[str] = []
     where: dict[int, str] = {}
 
@@ -597,36 +601,40 @@ def cmd_init(a) -> int:
     if a.old:
         old = Path(a.old).read_text(encoding="utf-8")
     elif a.guid:
-        r = subprocess.run(CLI + ["get", a.guid, "--markdown"], cwd=SOCRATES, capture_output=True, text=True)
-        if r.returncode != 0:
-            print(f"Reading note {a.guid} failed: {r.stderr.strip()[-300:]}", file=sys.stderr)
-            return 1
-        old = json.loads(r.stdout).get("content", "")
-        if a.section:
-            old = section_of(old, a.section)
-            if old is None:
-                print(f"no heading of note {a.guid} contains {a.section!r}", file=sys.stderr)
-                return 1
-            a.guid = None  # the section becomes a new note; the old one is rebuilt on its own
+        # The note is read through the Evernote MCP, never the CLI (Chaehan, 2026-11-07): the agent runs the
+        # printed code in one execute call, and the bridge finishes the init from the get_note result.
+        args = {k: getattr(a, k) for k in ("guid", "title", "notebook", "decisions", "record", "chaehan", "section")}
+        (d / "init_args.json").write_text(json.dumps(args), encoding="utf-8")
+        port = start_bridge(d, "init")
+        print("Run this code in ONE execute call, exactly as printed. It reads the note and starts the build.\n")
+        print(EXECUTE_INIT.replace("PORT", str(port)).replace("GUID", a.guid))
+        return 0
     else:
         old = ""
+    return finish_init(d, old, {k: getattr(a, k) for k in ("guid", "title", "notebook", "decisions", "record",
+                                                            "chaehan", "section")})
+
+
+def finish_init(d: Path, old: str, a: dict) -> int:
+    """Split the old text into items and write the build folder; print step 1."""
     (d / "original.md").write_text(old, encoding="utf-8")
     items, headings = split_items(old)
     (d / "items.json").write_text(json.dumps({"items": items, "headings": headings}, ensure_ascii=False, indent=1),
                                   encoding="utf-8")
     (d / "items.tsv").write_text("".join(f"{it['id']}\t{it['line']}\t{one_line(it)}\n" for it in items), encoding="utf-8")
-    if not a.guid and not (a.title and a.notebook):
+    if not a["guid"] and not (a["title"] and a["notebook"]):
         print("init needs --guid for an existing note, or --title and --notebook for a new one", file=sys.stderr)
         return 1
-    (d / "meta.json").write_text(json.dumps({"guid": a.guid, "title": a.title, "notebook": a.notebook,
-                                             "record": [str(Path(r).resolve()) for r in a.record or []]}),
+    (d / "meta.json").write_text(json.dumps({"guid": a["guid"], "title": a["title"], "notebook": a["notebook"],
+                                             "record": [str(Path(r).resolve()) for r in a["record"] or []]}),
                                  encoding="utf-8")
-    if a.decisions:
-        (d / "decisions.md").write_text(Path(a.decisions).read_text(encoding="utf-8"), encoding="utf-8")
-    if a.chaehan:
-        (d / "chaehan.md").write_text(Path(a.chaehan).read_text(encoding="utf-8"), encoding="utf-8")
+    if a["decisions"]:
+        (d / "decisions.md").write_text(Path(a["decisions"]).read_text(encoding="utf-8"), encoding="utf-8")
+    if a["chaehan"]:
+        files = a["chaehan"] if isinstance(a["chaehan"], list) else [a["chaehan"]]
+        (d / "chaehan.md").write_text("\n\n".join(Path(f).read_text(encoding="utf-8") for f in files), encoding="utf-8")
     print(f"{len(items)} items in {d / 'items.tsv'}.\n")
-    record = "\n".join(str(Path(r).resolve()) for r in a.record or []) or "(no record file named; use the brief)"
+    record = "\n".join(str(Path(r).resolve()) for r in a["record"] or []) or "(no record file named; use the brief)"
     print(STEP1.format(d=d, me=HERE, record=record))
     return 0
 
@@ -733,23 +741,272 @@ def cmd_next(a) -> int:
     return 0
 
 
-_ENV_PY = Path.home() / "Software" / "miniforge3" / "envs" / "socrates" / "bin" / "python"
-# The env's own python skips mamba's startup and its lockfile (~2 s a call).
-CLI = ([str(_ENV_PY)] if _ENV_PY.exists() else ["mamba", "run", "-n", "socrates", "python"]) + [
-    "-m", "projects.evernote.src.evernote_api"]
+# ---- the Evernote MCP bridge ---------------------------------------------------
+# Every read and write goes through the Evernote MCP (Chaehan, 2026-11-07: "only use the evernote mcp not
+# cli! the cli is buggy"). The script cannot call the MCP; the agent in opencode can. So a command prints
+# JavaScript for ONE execute call, and a local bridge on 127.0.0.1 hands that call its data and checks
+# what comes back. Claude Code reaches it by launching opencode with note_test.py.
+
+EXECUTE_INIT = """const n = await tools.evernote.get_note({ noteId: "GUID" });
+return await (await fetch("http://127.0.0.1:PORT/init", { method: "POST", body: JSON.stringify(n) })).text();"""
+
+EXECUTE_LINK = """const r = await tools.evernote.search_notes({ query: WORDS, maxResults: N });
+return (r.hits || []).map(h => "[" + h.title + "](evernote:///view/39d2f74/s365/" + h.noteId + "/" + h.noteId + "/)").join("\\n") || "no note found; try fewer or other words";"""
+
+EXECUTE_WRITE = """// note-gate:STAMP
+const B = "http://127.0.0.1:PORT";
+const job = await (await fetch(B + "/job")).json();
+const linked = {};
+for (const g of job.linked) linked[g] = await tools.evernote.get_note({ noteId: g });
+let id = job.guid;
+const before = id ? await tools.evernote.get_note({ noteId: id }) : null;
+const plan = await (await fetch(B + "/plan", { method: "POST", body: JSON.stringify({ linked, before }) })).json();
+if (plan.error) return "REFUSED: " + plan.error + " Do not change the note any other way: report this line.";
+if (!id) {
+  let opts = { title: job.title };
+  if (job.notebook) {
+    const r = await tools.evernote.search_notebooks({ query: job.notebook, maxResults: 20 });
+    const hit = (r.hits || []).find(h => h.label === job.notebook);
+    if (!hit) return "REFUSED: no notebook named " + job.notebook;
+    opts.notebookId = hit.notebookId;
+  }
+  const made = await tools.evernote.create_note(opts);
+  id = JSON.stringify(made).match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/)[0];
+  await fetch(B + "/created", { method: "POST", body: id });
+  await tools.evernote.edit_note({ noteId: id, mode: "append", content: plan.content });
+} else {
+  await tools.evernote.edit_note({ noteId: id, mode: "replace", find: plan.find, content: plan.content });
+}
+const after = await tools.evernote.get_note({ noteId: id });
+return await (await fetch(B + "/done", { method: "POST", body: JSON.stringify({ id, after }) })).text();"""
+
+
+def enml_module():
+    """The socrates ENML converter, the one place markdown and ENML are turned into each other."""
+    if str(SOCRATES) not in sys.path:
+        sys.path.insert(0, str(SOCRATES))
+    from projects.evernote.src import enml  # noqa: E402
+    return enml
+
+
+def find_key(obj, key: str):
+    """The first value under `key` anywhere in a get_note result, whatever its wrapping."""
+    if isinstance(obj, str) and obj.lstrip().startswith(("{", "[")):
+        try:
+            return find_key(json.loads(obj), key)
+        except ValueError:
+            return None
+    if isinstance(obj, dict):
+        if key in obj and isinstance(obj[key], str):
+            return obj[key]
+        for v in obj.values():
+            r = find_key(v, key)
+            if r:
+                return r
+    if isinstance(obj, list):
+        for v in obj:
+            r = find_key(v, key)
+            if r:
+                return r
+    return None
+
+
+def find_enml(obj) -> str | None:
+    """The ENML string inside a get_note result."""
+    if isinstance(obj, str):
+        if "<en-note" in obj and not obj.lstrip().startswith(("{", "[")):
+            return obj
+        try:
+            return find_enml(json.loads(obj))
+        except ValueError:
+            return None
+    if isinstance(obj, dict):
+        for v in obj.values():
+            r = find_enml(v)
+            if r:
+                return r
+    if isinstance(obj, list):
+        for v in obj:
+            r = find_enml(v)
+            if r:
+                return r
+    return None
+
+
+def inner(enml: str) -> str:
+    """The body between <en-note ...> and </en-note>, byte for byte."""
+    m = re.search(r"<en-note[^>]*>(.*)</en-note>", enml, re.S)
+    return m.group(1) if m else ""
+
+
+LEADING_MEDIA = re.compile(r"^(?:\s*<en-media\b[^>]*/>\s*)+")
+
+
+def body_key(body: str) -> str:
+    """A fingerprint of a note body's text, images aside, to see whether anyone edited it since the build read it."""
+    import hashlib
+    text = enml_module().enml_to_markdown("<en-note>" + LEADING_MEDIA.sub("", body) + "</en-note>")
+    return hashlib.sha256(" ".join(text.split()).encode()).hexdigest()
+
+
+def plan_write(d: Path, linked: dict, before) -> dict:
+    """What the write replaces, or why it is refused: the stamp, every link's title, images that would be lost."""
+    g = gate()
+    draft = (d / "draft.md").read_text(encoding="utf-8")
+    if not (g.stamp_dir() / g.stamp_key(draft)).exists():
+        return {"error": "the draft changed after its PASS: run next again"}
+    titles = {gid: find_key(n, "title") or "" for gid, n in linked.items()}
+    cache_p = d / "links.json"
+    cache = json.loads(cache_p.read_text(encoding="utf-8")) if cache_p.exists() else {}
+    cache.update({k: v for k, v in titles.items() if v})
+    cache_p.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+    errs = []
+    for name, url in EVERNOTE_LINK.findall(draft):
+        m = GUID.search(url)
+        t = titles.get(m.group(0), "") if m else ""
+        if not t:
+            errs.append(f"link {name!r} points at no note: find it with: python3 {HERE} link <words>")
+        elif t != name:
+            errs.append(f"link {name!r} must carry the note's exact title {t!r} (edits.tsv)")
+    content = inner(enml_module().markdown_to_enml(draft))
+    plan = {"content": content}
+    if before is not None:
+        old = find_enml(before)
+        if not old:
+            return {"error": "get_note returned no ENML for the note"}
+        body = inner(old)
+        lead = LEADING_MEDIA.match(body)
+        rest = body[lead.end():] if lead else body
+        if "<en-media" in rest:
+            # An image at the top stays untouched (the replace starts after it); one inside the text would be lost.
+            errs.append("the note holds an image inside its text, which a full rewrite would drop")
+        meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
+        if meta.get("body_key") and meta["body_key"] != body_key(body):
+            errs.append("the note was edited since the build read it (Chaehan's edits): carry them into the build "
+                        "with init --guid on the current note, then write")
+        plan["find"] = rest
+    if errs:
+        return {"error": "; ".join(errs)}
+    return plan
+
+
+def done_write(d: Path, gid: str, after) -> str:
+    """Keep the guid, convert the read-back with the same converter, and verify it."""
+    meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
+    meta["guid"] = gid  # a created note is updated from now on
+    meta["body_key"] = body_key(inner(find_enml(after) or ""))  # the next write checks nobody edited it since
+    (d / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
+    back = enml_module().enml_to_markdown(find_enml(after) or "")
+    (d / "readback.md").write_text(back, encoding="utf-8")
+    import contextlib
+    import io
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = cmd_verify(argparse.Namespace(dir=str(d), readback=str(d / "readback.md")))
+    title = find_key(after, "title") or meta.get("title") or ""
+    return json.dumps({"guid": gid, "title": title, "written": True}) + "\n" + buf.getvalue() + ("" if rc == 0 else "VERIFY FAILED\n")
+
+
+def start_bridge(d: Path, mode: str) -> int:
+    """Start the bridge for one execute call in the background; return its port."""
+    import socket
+    with socket.socket() as sk:
+        sk.bind(("127.0.0.1", 0))
+        port = sk.getsockname()[1]
+    log = open(d / f"bridge_{mode}.log", "w")
+    env_py = Path.home() / "Software" / "miniforge3" / "envs" / "socrates" / "bin" / "python"
+    py = str(env_py) if env_py.exists() else sys.executable  # the converter needs the socrates packages
+    subprocess.Popen([py, str(HERE), "serve", str(d), "--port", str(port), "--mode", mode],
+                     stdout=log, stderr=log, start_new_session=True, env=dict(os.environ))
+    import time as _t
+    for _ in range(50):  # wait until it listens, so the execute call never races it
+        with socket.socket() as sk:
+            if sk.connect_ex(("127.0.0.1", port)) == 0:
+                break
+        _t.sleep(0.1)
+    return port
+
+
+def cmd_serve(a) -> int:
+    """The bridge: answers one execute call, then exits (10 minutes at most)."""
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    d = Path(a.dir).resolve()
+    state = {"done": False}
+
+    class H(BaseHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+
+        def reply(self, body: str) -> None:
+            data = body.encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+
+        def do_GET(self):
+            meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
+            draft = (d / "draft.md").read_text(encoding="utf-8")
+            linked = sorted({m.group(0) for _n, url in EVERNOTE_LINK.findall(draft) for m in [GUID.search(url)] if m})
+            self.reply(json.dumps({"guid": meta.get("guid"), "title": meta.get("title"),
+                                   "notebook": meta.get("notebook"), "linked": linked}))
+
+        def do_POST(self):
+            raw = self.rfile.read(int(self.headers.get("Content-Length", 0))).decode("utf-8")
+            import contextlib
+            import io
+            if self.path == "/init":
+                args = json.loads((d / "init_args.json").read_text(encoding="utf-8"))
+                enml = find_enml(raw)
+                if not enml:
+                    self.reply("get_note returned no ENML: check the guid")
+                    state["done"] = True
+                    return
+                old = enml_module().enml_to_markdown(enml)
+                key = body_key(inner(enml))
+                if args.get("section"):
+                    old = section_of(old, args["section"])
+                    if old is None:
+                        self.reply(f"no heading of the note contains {args['section']!r}")
+                        state["done"] = True
+                        return
+                    args["guid"] = None  # the section becomes a new note
+                buf = io.StringIO()
+                with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+                    finish_init(d, old, args)
+                if args.get("guid") and (d / "meta.json").exists():
+                    meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
+                    meta["body_key"] = key
+                    (d / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
+                self.reply(buf.getvalue())
+                state["done"] = True
+            elif self.path == "/plan":
+                body = json.loads(raw)
+                self.reply(json.dumps(plan_write(d, body.get("linked") or {}, body.get("before"))))
+            elif self.path == "/created":
+                meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
+                meta["guid"] = raw.strip()  # kept at once, so a failed append is retried on this note
+                (d / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
+                self.reply("ok")
+            elif self.path == "/done":
+                body = json.loads(raw)
+                self.reply(done_write(d, body["id"], body["after"]))
+                state["done"] = True
+
+    srv = HTTPServer(("127.0.0.1", a.port), H)
+    srv.timeout = 5
+    import time as _t
+    end = _t.time() + 600
+    while not state["done"] and _t.time() < end:
+        srv.handle_request()
+    return 0
 
 
 def cmd_link(a) -> int:
-    """Print the exact Evernote link for each note whose title matches the words."""
-    r = subprocess.run(CLI + ["search", a.words], cwd=SOCRATES, capture_output=True, text=True)
-    if r.returncode != 0:
-        print(r.stderr.strip()[-300:], file=sys.stderr)
-        return 1
-    hits = json.loads(r.stdout or "[]")
-    for h in hits[: a.n]:
-        print(f"[{h['title']}]({LINK_FORM.format(g=h['guid'])})")
-    if not hits:
-        print("no note found; try fewer or other words")
+    """Print the execute code that lists the exact link of each note whose title matches the words."""
+    print("Run this code in ONE execute call; copy a printed link into edits.tsv exactly.\n")
+    print(EXECUTE_LINK.replace("WORDS", json.dumps(a.words)).replace("N", str(a.n)))
     return 0
 
 
@@ -780,29 +1037,19 @@ def cmd_extract(a) -> int:
 
 
 def cmd_write(a) -> int:
-    """Write the stamped draft with the Evernote CLI, read it back, and verify the read-back."""
+    """Print the execute code that writes the stamped draft through the MCP, reads it back and verifies it."""
     d = Path(a.dir).resolve()
-    meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
-    base = CLI
-    draft = str(d / "draft.md")
-    if meta.get("guid"):
-        cmd = base + ["update", "--markdown", "--file", draft, meta["guid"]]
-    else:
-        cmd = base + ["create", "--markdown", "--file", draft, meta["title"], "--notebook", meta["notebook"]]
-    w = subprocess.run(cmd, cwd=SOCRATES, capture_output=True, text=True)
-    print(w.stdout.strip() or w.stderr.strip())
-    if w.returncode != 0:
-        print(f"The write failed (exit {w.returncode}). Exit 7 means the draft changed after its PASS: run next again.")
-        return w.returncode
-    guid = meta.get("guid") or json.loads(w.stdout).get("guid")
-    if not meta.get("guid"):
-        # A created note is updated from now on: a second write must not create it again (2026-11-07).
-        meta["guid"] = guid
-        (d / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
-    r = subprocess.run(base + ["get", guid, "--markdown"], cwd=SOCRATES, capture_output=True, text=True)
-    back = json.loads(r.stdout).get("content", "") if r.returncode == 0 else ""
-    (d / "readback.md").write_text(back, encoding="utf-8")
-    return cmd_verify(argparse.Namespace(dir=str(d), readback=str(d / "readback.md")))
+    g = gate()
+    draft = (d / "draft.md").read_text(encoding="utf-8")
+    sha = g.stamp_key(draft)
+    if not (g.stamp_dir() / sha).exists():
+        print("The draft has no PASS stamp: run next until it prints PASS, then write.")
+        return 7
+    port = start_bridge(d, "write")
+    print("Run this code in ONE execute call, exactly as printed. It writes the note, reads it back and returns "
+          "the verify result. A line starting REFUSED names what to fix before you run write again.\n")
+    print(EXECUTE_WRITE.replace("PORT", str(port)).replace("STAMP", sha))
+    return 0
 
 
 def cmd_verify(a) -> int:
@@ -829,11 +1076,15 @@ def main(argv: list[str] | None = None) -> int:
     i.add_argument("--notebook")
     i.add_argument("--decisions", help="Chaehan's decisions from the brief, one 'D1: ...' line each")
     i.add_argument("--record", action="append", help="Chaehan's record of the topic, e.g. socrates memory/travel.md")
-    i.add_argument("--chaehan", help="Chaehan's instructions and new facts from the brief, his words")
+    i.add_argument("--chaehan", action="append", help="Chaehan's instructions and new facts, his words (repeatable)")
     i.add_argument("--section", help="with --guid, --title and --notebook: build a new note from this section")
     lk = sub.add_parser("link", help="print the exact Evernote link for notes matching the words")
     lk.add_argument("words")
     lk.add_argument("-n", type=int, default=5)
+    sv = sub.add_parser("serve", help="the MCP bridge for one execute call (started by init and write)")
+    sv.add_argument("dir")
+    sv.add_argument("--port", type=int, required=True)
+    sv.add_argument("--mode", choices=("init", "write"), required=True)
     ex = sub.add_parser("extract", help="copy one old section into a findings file for a new note")
     ex.add_argument("dir")
     ex.add_argument("heading")
@@ -847,7 +1098,7 @@ def main(argv: list[str] | None = None) -> int:
     v.add_argument("readback")
     a = ap.parse_args(argv)
     return {"init": cmd_init, "next": cmd_next, "write": cmd_write, "verify": cmd_verify, "link": cmd_link,
-            "extract": cmd_extract}[a.cmd](a)
+            "extract": cmd_extract, "serve": cmd_serve}[a.cmd](a)
 
 
 if __name__ == "__main__":
