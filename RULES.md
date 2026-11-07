@@ -36,6 +36,18 @@ count describes the evidence, not the result. Where the basis changes a decision
 it is stated as that fact in the sentence it changes, never as a label in a
 heading or a bracket.
 
+Parsimony also says where detail belongs. A claim the reader cannot check or
+picture gets the facts that make it plain: "you hold the same 400 m time"
+becomes "your 400 m went from 8:08 on 2026-09-07 to 8:04 on 2026-10-16".
+A phrase that makes no claim leaves, however true: "across eight sessions and
+graded the course to a close" says nothing about what finishing the course
+means for Chaehan. The test for each phrase: would a reader ask "meaning
+what?" (add the fact) or "so what?" (cut it). Instruction basis, 2026-11-07,
+the life overview A note: "understand where you need detail like what you
+mean by hold same time that's unclear while 'across eight sessions and graded
+the course to a close' is completely unnecessary clutter. I'm repeating for
+the tenth time I want quality over quantity so no clutter".
+
 Instruction basis, 2026-10-26, "My Swim Training": the drills stood in their own
 table, then in two identical tables, while the training plan already had a
 warmup column and a cooldown slot. Chaehan: "put in utmost priority of agent
@@ -614,6 +626,13 @@ one will eventually be chosen.
   "Condom Thickness & Width", where yen went in as `233 엔` beside his
   `7450 원`: "why don't you use the yen symbol instead of transcribing it to
   KRW? isn't that common sense???"
+- **A number keeps the name of its measure.** A value is bound to the
+  measure it was taken in, by that measure's own term: "perceived effort 8,
+  now 6", never "two-thirds of the effort". A term of the domain (perceived
+  effort, stroke rate, DPS, CSS) is never paraphrased into a general word,
+  because the general word no longer says what was measured. Chaehan,
+  2026-11-07: "I didn't like the reduction of two thirds without saying it was
+  perceived effort. don't paraphrase such important terms".
 - **Identifiers are search keys and stay whole.** An email address is written
   in full, because it is what he searches his inbox for; a company name is
   spelled in full; a file is named by its complete filename.
@@ -2551,8 +2570,12 @@ rather than from the open items:
   for a good performer: his distance per stroke after months without progress;
 - a recorded drag overcome, with the price he paid in his own currency: the
   couple.net failure that made him sceptical of agencies, the frugality his
-  accommodation prices show, a 40 million won contract, and a registration
-  run in Korean that was a scarrend.
+  low-price accommodation choices show, a 40 million won contract, and a
+  registration run in Korean that was a scarrend. The habit is named as the
+  record shows it; an example of the habit is its evidence, never a figure to
+  set against the step's price ("80000 won a day against a 40 million won
+  contract" reads Chaehan's example literally). Chaehan, 2026-11-07: "you are
+  taking the 80000 won to agency fee to literally."
 
 The test: a stranger reading only the snapshot can tell what Chaehan did this
 chapter and what it took from him. A snapshot that reads as an issue list
@@ -5095,6 +5118,13 @@ milk's 3.4 g), and the base belongs there. Instruction basis, 2026-11-05:
 This is not licence to drop scope. Rule 17 still binds a datum to its subject
 and its timeframe; the base unit is what makes a comparison a comparison, not a
 qualifier that has to be repeated.
+
+The base unit is the user's own. A reference value from a study or a vendor is
+converted into the measure Chaehan uses, never the other way round: Chaehan's
+DPS is distance per arm stroke, so a study's 1.95 m per arm cycle is compared
+as 0.98 m per stroke, and Chaehan's 1.00 m is never restated as 2.0 m per
+cycle. Chaehan, 2026-11-07: "don't convert to other units mine is DPS
+which is not cycle so you must co[n]vert study results to my unit".
 
 ### 254. A perceived change carries the reason it is believable, and what does not move it
 
