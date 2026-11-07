@@ -2540,6 +2540,26 @@ Stated 2026-10-02: "you must separate the technical effort of deliverables from
 what I the human user had to go through ... you didn't infer any psychological
 aspects which is here the focus."
 
+**A status snapshot is a retrospective too.** A life overview that lists the
+open issues answers "what is open", never "how is it going". Before the issues,
+it finds what Chaehan achieved in the chapter, read from the whole record
+rather than from the open items:
+
+- a first: his first course at a top Korean university since he left Yonsei
+  in 2022;
+- a measured plateau broken, against his own baseline and against a benchmark
+  for a good performer: his distance per stroke after months without progress;
+- a recorded drag overcome, with the price he paid in his own currency: the
+  couple.net failure that made him sceptical of agencies, the frugality his
+  accommodation prices show, a 40 million won contract, and a registration
+  run in Korean that was a scarrend.
+
+The test: a stranger reading only the snapshot can tell what Chaehan did this
+chapter and what it took from him. A snapshot that reads as an issue list
+fails. Stated 2026-11-07: "the life overview is still underwhelming because it
+just covers issues. I said over and over that every response must be written
+for the human user perspective yet fail totally on that."
+
 ### 106. Lists are real lists, and a colon subheader gets its own line
 
 When text contains enumerated items (1, 2, 3 or bullets), each item sits on
@@ -4944,6 +4964,19 @@ mistake cannot recur. Name which cause it was: "I didn't know" means the
 knowledge was missing from the prompt; "I forgot" means the rule was not sticky
 enough; "I assumed" means a default was wrong. To find the rule, ask what you assumed, skipped or overwrote. Every "why didn't you" must
 produce an edit to the agent instructions.
+
+A mistake of an agent under test is fixed the same way. A run in opencode
+counts only for what opencode did: when it errs, the cause goes into the
+agent instructions or the skill, and the run is repeated in opencode until it
+gets that step right. Repairing its output from outside, by copying its files
+to the folder the brief named or finishing a step by hand, hides the defect
+and makes the test worthless. The test: every file and every note the report
+shows was put there by the opencode run. Instance, 2026-11-07, the T7 run of
+the life-overview skill: DeepSeek wrote to `$TMPDIR/claude-501/...` in place
+of the brief's `/private/tmp/claude-501/...`, and the agent copied the files
+across. Chaehan: "it's useless if you did an error of opencode like copying to
+the correct path. all commands must run from opencode so if it made a mistake
+you must fix that in the agent instructions or skills and test that it works."
 
 ### 246. A write or report waits until every source the workflow names is checked
 

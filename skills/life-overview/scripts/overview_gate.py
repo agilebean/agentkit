@@ -8,8 +8,9 @@ T3  an Open tasks section, an email address or a phone number in the overview
     (the next moves live in the Life Challenges note); no link to a
     "YYYY-MM-DD Life Challenges" (or, before 2026-11-07, "Life Problems") note;
     with --challenges, a Takeaway bullet made mostly of the words of one of
-    that note's decision options or Hand to me rows (numbers ignored). The
-    --challenges note also counts as linked for T6.
+    that note's decision questions, options, answers or Hand to me rows
+    (numbers ignored). The --challenges note also counts as linked for T6,
+    and T6 ignores the digits inside a link's address.
 T4  a body section with no note link (unless it says "no detail note");
     a note with zero links
 T5  no indented bullet anywhere
@@ -66,6 +67,8 @@ STOP = set(
 NO_LINK_SECTIONS = ("takeaway", "what went well", "open tasks", "the route")
 LINK = re.compile(r"evernote:///view/")
 FACT = re.compile(r"\d{4}-\d{2}-\d{2}|\d+(?:\.\d+)?")
+LINK_TARGET = re.compile(r"\]\([^)\s]*\)")
+LINK_ADDRESS = re.compile(r"(?:evernote|https?)://\S+")
 
 
 def words(text: str) -> set[str]:
@@ -98,25 +101,43 @@ PHONE = re.compile(r"(?<![\d.-])0\d{1,2}[-.]\d{3,4}[-.]\d{4}(?![\d.-])")
 ACTION_SECTIONS = ("your decisions", "decisions", "hand to me", "quick wins")
 
 
+ITEM = re.compile(r"(?:[-*]|\d+[.)])\s+")
+
+
 def challenges_items(md: str) -> list[str]:
-    """The decision questions and options, and the Hand to me rows, of a Life Challenges note."""
-    out, h2, table = [], "", 0
+    """Every decision question with its options or answers, and every Hand to me row, of a Life Challenges note.
+
+    Reads both layouts: a decision as a bullet ending in "?" with its options indented under it, anywhere
+    outside the Takeaway (the goal sections, from 2026-11-07), and the earlier "Your decisions" sections with
+    numbered options under a question line.
+    """
+    out, h2, table, q_indent = [], "", 0, None
     for line in md.splitlines():
         m = re.match(r"##\s+(.*)", line)
         if m:
-            h2, table = m.group(1).strip().lower(), 0
+            h2, table, q_indent = m.group(1).strip().lower(), 0, None
             continue
-        if not h2.startswith(ACTION_SECTIONS):
+        if h2.startswith("takeaway"):
             continue
         s = line.strip()
         if s.startswith("|"):
             table += 1
-            if table > 2:  # header and separator skipped
+            if h2.startswith(("hand to me", "quick wins")) and table > 2:  # header and separator skipped
                 out.append(" ".join(c.strip() for c in s.strip("|").split("|")))
+            continue
+        table = 0
+        if not s or s.startswith("#"):
+            continue
+        indent, text = len(line) - len(line.lstrip()), ITEM.sub("", s, count=1)
+        if s.endswith("?"):
+            out.append(text)
+            q_indent = indent
+        elif q_indent is not None and indent > q_indent and ITEM.match(s):
+            out.append(text)
+        elif re.match(r"\d+[.)]\s", s) and h2.startswith(ACTION_SECTIONS):
+            out.append(text)
         else:
-            table = 0
-            if re.match(r"\d+[.)]\s", s) or (s.endswith("?") and not s.startswith("#")):
-                out.append(re.sub(r"^\d+[.)]\s+", "", s))
+            q_indent = None
     return out
 
 
@@ -450,9 +471,10 @@ def stamp(text: str) -> Path:
 
 def _facts(draft: str, original: str, linked: list[str] | None) -> list[str]:
     """Numbers of the original found neither in the draft, a linked note, nor the cut list."""
-    pool = (draft + "\n" + "\n".join(linked or [])).replace(",", "")
-    have = set(FACT.findall(pool))
-    return [f"T6 fact lost: {f}" for f in sorted(set(FACT.findall(original.replace(",", ""))) - have)]
+    def plain(text: str) -> str:  # a link's address is not a fact: drop it, keep its title
+        return LINK_ADDRESS.sub("", LINK_TARGET.sub("]", text)).replace(",", "")
+    have = set(FACT.findall(plain(draft + "\n" + "\n".join(linked or []))))
+    return [f"T6 fact lost: {f}" for f in sorted(set(FACT.findall(plain(original))) - have)]
 
 
 def main(argv: list[str] | None = None) -> int:

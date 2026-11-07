@@ -35,7 +35,7 @@ Overview"); no `-NEW` or `v2` suffix.
 Read, in order — memory is ground truth (rule 35):
 
 - `memory/travelitinerary.csv` — stay windows; travel days need the user's report (rule 18)
-- `memory/_psych_obs.md` — emotional-drag patterns; feeds What went well
+- `memory/_psych_obs.md` — emotional-drag patterns; feeds What you achieved
 - `memory/_misc.md` — parking lot; scan for promotion candidates (rule 34)
 - `memory/travel.md` — stay, housing, exit decisions
 - then the chapter files: `kubs.md`, `health.md`, `swim.md`, `partner-search.md`,
@@ -47,9 +47,18 @@ Read, in order — memory is ground truth (rule 35):
   (newest "YYYY-MM-DD Life Challenges"; before 2026-11-07 "YYYY-MM-DD Life
   Problems"), because `/life` writes its answers there: it names the issues
   this note states in one sentence and links, and its Settled bullets are
-  candidates for What went well. An open action the memory files hold and the
+  candidates for What you achieved. An open action the memory files hold and the
   Challenges note does not is named in the report to Chaehan as missing there,
   never written into this note.
+- the human side of the chapter, which the open items never show (RULES.md
+  105): your academic CV (`~/Library/CloudStorage/GoogleDrive-chaehan.so@virtualfriend.chat/My Drive/1 Projects/KUBS/KUBS DT/KUBS DT S1/CV academic Chaehan So 2026.pdf`,
+  read with `markitdown`) for what a step means against your career; the swim
+  panels (`~/Software/Prototypes/swim/data/dashboard_payload.json`) and
+  `memory/swim.md` for your measured progress; the accommodation prices in
+  `memory/travel.md` against what you spent elsewhere; `memory/_psych_obs.md`
+  and your own quoted words in the chapter files for what a step cost you. A
+  measured gain is compared with your own baseline and with a published
+  benchmark for a good performer, found by web search and cited by its source.
 
 Then, for every item the memory files call open, search Evernote for the result
 before it reaches the note (RULES.md 207): the test, the form, the booking. A
@@ -85,7 +94,8 @@ Each overview claim carries its file and date before a draft is shown.
 Relevance is impact on a goal Chaehan is pursuing or a decision Chaehan has
 pending: the family, the base in Korea, health, money, work (the live goals
 are listed in `memory/` and in the brief behind this skill,
-`agentkit/docs/answer_quality_prompt.md` section 2). A cost is a symptom of
+`agentkit/docs/answer_quality_prompt.md` section 2), or something Chaehan
+achieved in the chapter, in any domain, swimming included. A cost is a symptom of
 that impact, not its definition. A fact that touches no live goal and no
 pending decision is one line in its section or out. Do the moves in order and
 write each product down before the next move; the Takeaway is written last.
@@ -122,8 +132,15 @@ the booking link belong in the Challenges note. A thread that waits on someone
 else (an office's reply, a queue, a registry) is state: it stays in its
 section with the date it has waited since, and names no next move.
 
+A decision the Challenges note holds appears here by its subject alone ("the
+Osaka landing is still open"), never with its options, the dates of its
+options, its costs or its if-then branches, and never through an earlier Life
+Problems or Life Challenges note: the current one is the only home of a next
+move.
+
 **Move 4. The Takeaway, last, from moves 1 and 2.** Four to six bullets: what
-Chaehan would say to a friend who asks "how is it going?". Between them they
+Chaehan would say to a friend who asks "how is it going?". The first bullet is the biggest thing you achieved in the
+chapter, from the What you achieved section. Between them they
 cover what the next month depends on, what is settled, what changed and why,
 and what gets worse if left alone. That list is the content, never the
 wording: no bullet names its own function. Each bullet opens on Chaehan or
@@ -139,8 +156,8 @@ It is not a task list: a bullet that a decision or a Hand to me row of the
 Life Challenges note could replace without losing its consequence is rewritten
 or cut. The actions live in that note.
 
-**Layout.** Image line first, then `## Takeaway`, the current chapter section,
-`## Running in parallel` with one `###` per goal, `## What went well`, and
+**Layout.** Image line first, then `## Takeaway`, `## What you achieved`,
+then the current chapter section, `## Running in parallel` with one `###` per goal, and
 `## Your decisions`: one sentence that links the current Life Challenges note
 by its exact title, "Your open decisions and the steps you can hand to me are
 in [<exact title>](evernote:///view/...)." The note has no task table. Rules that apply: 19,
@@ -172,14 +189,31 @@ Read by the agent, quoting the sentence:
 - T2 gist: for each section, name its conclusion, its two or three deciding facts and its reversing fact. A section where the reader has to work these out is rewritten.
 - T7 weak reader: when this skill changes, run a fresh case through the installed model (`opencode run`, the socrates agent) with this skill only, and run the mechanical gate on its output.
 
-## What went well — selection rule
+## What you achieved — selection rule
 
-Pick 3-5 items from the current chapter, prioritizing the ones that were
-emotionally dragging: decision paralysis, scarrends (high-anxiety admin),
-external dependencies, month-long loops. For each item: name the drag in plain
-words, name what unstuck it (the specific decision or hand-off), and state what
-is now true. Items already claimed in a previous overview stay out unless their
-state changed. Record, do not cheerlead.
+Three to five items, found in the whole record of the chapter, never in the
+open items. Each is one of three kinds:
+
+- a first: something you had not done before, or not since a break your
+  record names (your CV and the chapter files show it);
+- a plateau broken: a measured value that moved after a flat stretch, given as
+  the number before and after, against your own baseline and against a
+  published benchmark for a good performer, with its source. Compare like
+  units and name the unit in the sentence: the swim panels give distance per
+  single-arm stroke (`swim/src/swim/dashboard/payload.py`, counted cycles
+  times two), while most published values are per arm cycle, two strokes, so
+  your 1.00 m per stroke is 2.0 m per cycle;
+- a drag overcome: a step your record shows was hard for you (a failure
+  behind it, a fear, a habit such as frugality, a scarrend), with what it took
+  from you. Name the earlier failure that made the step a risk; set the money
+  against what you usually pay (your accommodation prices in
+  `memory/travel.md`); name who helped and how, in your own words from the
+  chapter file, never in an earlier overview's.
+
+For each item: what you did, what it took from you, and what it makes
+possible now, in two or three sentences addressed to you, with its detail
+note linked. Hours and counts support an item; they are never its point. Items already claimed in a previous overview stay out unless
+their state changed. Record, do not cheerlead.
 
 ## 4. Evernote twin
 
