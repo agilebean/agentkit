@@ -106,6 +106,39 @@ notes in the database rewrote byte-identical through it).
   two notes held one: "Korean Calendar Girls" (twelve monthly images in a table)
   and "Tax 2025 · deductible receipts".
 
+## Copying a note from Evernote
+
+`en_to_hanji.py` copies Evernote notes into Hanji and leaves each Evernote note
+as it is. It reads Evernote through the Evernote MCP only (the evernote skill),
+never through its shell CLI. Two steps:
+
+1. `python3 $HOME/Software/Prototypes/agentkit/skills/hanji/scripts/en_to_hanji.py start "<exact title>" ["<title>" ...] [--notebook NB]`
+   starts a receiver on this Mac and prints one `execute` call.
+2. Run the printed code in ONE `execute` call, exactly as printed. It finds each
+   title, reads the note and a download link for each file, and hands them to
+   the receiver, which converts the note, downloads its files, creates it with
+   the helper and returns the report (also in the `report.md` it names).
+
+The report says, per note, where it went and what was checked against the
+Evernote original: every word, every file byte for byte against its Evernote
+MD5, checkboxes, tables and web links. It also says what Hanji changed: a link
+to another note becomes its text, a file in a table cell moves below its table
+with its name left in the cell, coloured text becomes Hanji's one highlight (so
+green and red read the same), a table without a header row shows its first row
+as the header, a heading below `###` becomes `###`. A title matches exactly, or
+by its beginning when one Evernote note alone begins with it ("2026 travel
+itinerary" finds "2026 Travel Itinerary €29364"). A note is not written when a
+file fails to download or match, when Hanji already holds its title, or when no
+title matches (the report lists the nearest ones); a copy that does not read
+back as written goes to Hanji's trash. Report a note that was not moved as the
+report says; never write it into Hanji by hand. A copy creates notes and changes
+none, so it needs no dry run; `--dry-run` writes the Markdown without creating.
+Pass the report on as it is.
+
+Each note goes into the Hanji notebook named like its Evernote notebook, else
+Inbox; `--notebook` sets one for all of them. A copy does not follow later
+Evernote edits.
+
 ## What Hanji cannot do yet
 
 - **No links between notes.** Markdown links take http, https and mailto only, so

@@ -286,3 +286,16 @@ def test_skeleton_counts_data_rows(db, tmp_path, capsys) -> None:
     code, out, _ = run(db, capsys, "skeleton", "2026-11-07 Swim log")
     t = json.loads(out)["tables"]
     assert code == 0 and len(t) == 1 and t[0]["rows"] == 1 and t[0]["cols"] == 3
+
+
+@needs_hanji
+def test_a_file_name_with_markdown_characters_survives_create_and_edit(db, tmp_path, capsys) -> None:
+    # Hanji prints the stored name 김지*님.png as 김지\*님.png in Markdown
+    img = png(tmp_path / "x.png", 2, 2, b"\x07\x08\x09")
+    src = tmp_path / "in.md"
+    src.write_text(f"# Note\n\n![김지*님.png]({img})\n\n## Plan\n\nold\n")
+    code, out, err = run(db, capsys, "create", "--notebook", "Swimming", "--file", str(src))
+    assert code == 0 and json.loads(out)["verified"] is True, err
+    code, _, err = run(db, capsys, "replace-section", "Note", "Plan", "--text", "new")
+    assert code == 0, err
+    assert [a["name"] for a in md_of(db, "Note")[1]] == ["김지*님.png"]
