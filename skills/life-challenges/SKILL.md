@@ -1,6 +1,6 @@
 ---
 name: life-challenges
-description: Build or walk through Chaehan's dated Life Challenges note in Evernote - the deciding question, the decisions with their options, and the issues Chaehan can hand to the agent with /life. Use when the user says "life challenges", "my challenges", "untangle my issues", "what weighs on me", types /life, or asks how to tackle several life issues at once. A status snapshot of every domain is the life-overview skill.
+description: Build or walk through Chaehan's dated Life Challenges note in Evernote - his goals, where they pull against each other, the direction to move, the open decisions with their options, and the issues Chaehan can hand to the agent with /life. Use when the user says "life challenges", "my challenges", "untangle my issues", "what weighs on me", types /life, or asks how to tackle several life issues at once. A status snapshot of every domain is the life-overview skill.
 ---
 
 # Life Challenges
@@ -22,40 +22,48 @@ Chaehan's life. The Life Overview (the life-overview skill) says where each
 goal stands, links this note once, and repeats none of it; this note never
 reads the Overview, so the information runs one way.
 
-**Quality over quantity is the first rule here.** The note has the five
-sections below and nothing else, and each issue appears in exactly one of
-them. Drafts, call scripts and research never sit in the note: the
-walk-through makes them when Chaehan asks for the issue. Every sentence passes
-the seat test in `agentkit/AGENTS.md` core 1 and is written to Chaehan as
-"you".
+**What the note is for.** Chaehan reads it to see what he is trying to
+achieve, where his goals pull against each other, and which way to move. It
+does the work he cannot do in his head (`agentkit/docs/answer_quality_prompt.md`
+section 1, "intelligent"): it computes what can be computed, connects one
+issue to another, and ranks. It is not a feed for `/life`: the walk-through
+takes its questions from the note, the note is never written for the tool.
+Quality over quantity: a bullet stays only if it changes what Chaehan decides,
+each fact sits in one place, and what Chaehan already knows stays out. Drafts,
+call scripts and research never sit in the note. Every sentence passes the
+seat test in `agentkit/AGENTS.md` core 1 and is written to Chaehan as "you".
 
 ## The note
 
 ```
-## Takeaway                 at most 3 bullets
-## The deciding question    only when an open question changes other decisions
-## Your decisions           one ### per decision
-## Hand to me               one table
-## Settled                  one bullet per issue settled since the last note
+## Takeaway       three bullets: what you would tell a friend who asks how it is going
+## Family         one section per live goal with something open, in this order
+## Home
+## Money
+## Health
+## Work
+## Hand to me     one table
+## Settled        only when something settled since the last note
 ```
 
-Put each issue in one section, testing in this order:
+Put each issue under the goal it serves, and test it in this order:
 
 1. Done or decided since the last note: **Settled**, with its date.
-2. Chaehan has not decided whether or how to do it: **Your decisions**. An
-   issue the previous note listed as a task is a decision when Chaehan has not
-   said to do it (booking the storage unit, when a friend could keep the
-   clothes for free).
+2. Chaehan has not decided whether or how to do it: a decision under its
+   goal. An issue the previous note listed as a task is a decision when
+   Chaehan has not said to do it (booking the storage unit, when a friend
+   could keep the clothes for free).
 3. The next step is something you can prepare (a draft, a call script, a
-   lookup, a form's values) and Chaehan only approves it: **Hand to me**.
+   lookup, a form's values) and Chaehan only approves it: a row in **Hand to
+   me**. Its goal section says what is at stake, once, and the row carries
+   the action.
 4. A decided step that only Chaehan can take (placing a sell order): one
-   Takeaway bullet with its date.
+   bullet under its goal, with its date.
 5. Nothing for Chaehan or the agent to do until someone else moves (a queue,
    an office's reply, a registry's portal): out of this note. The Life
    Overview states it as a thread waiting since its date.
 
 ## Build
-
 ### 1. Gather
 
 1. Read the previous `docs/*-life-challenges.md` (before 2026-11-07:
@@ -73,26 +81,38 @@ Put each issue in one section, testing in this order:
 3. Keep an open question only when a message of Chaehan's asks it or it
    decides an action Chaehan named; ask Chaehan about any other (RULES.md 83).
 
-### 2. Your decisions
+### 2. The goal sections
 
-One `###` per decision, titled by its subject ("Storage"). Under it, in order:
+The live goals, as of 2026-11-07: a family, a home base in Korea, money,
+health, work (`agentkit/docs/answer_quality_prompt.md` section 2, and the
+memory files). A goal with nothing open gets no section. Each section holds:
 
-1. The question in your words, ending with "?": "Do you book the Gongdeok
-   storage unit, or keep the clothes and papers somewhere free?"
-2. A numbered list of two to four options, one line each, with what the option
-   costs or gives you (money, days, effort). Add the option the record does
-   not name when one exists, such as a friend or the family keeping a box.
-3. One sentence starting "Your choice depends on": the fact that tips the
-   choice. When the decision waits on the deciding question, this sentence
-   says so.
-4. At most one sentence on what makes it heavy for you, and only when that
-   changes which option fits: built from a fact on record (a date, a sum, a
-   person you dealt with) or your quoted words. Never a label such as
-   "anxiety" or "avoidance", and never a pattern from `_psych_obs.md` stated
-   as present.
+1. An opening sentence: what Chaehan wants, in the record's words ("You want
+   a partner to have children with: warm, emotionally intelligent ...").
+2. The facts that pull against it, each with the number that measures it
+   (days, money, a date) and what it costs or forecloses. Compute what the
+   record lets you compute: "from 2026-12-04 you are away for 102 days", "the
+   183-day line leaves ~9 days of slack, so 2027-03-07 is your earliest
+   return".
+3. The link to another goal when the record shows one: "the 2027-03-09
+   arrival gives your search 7 more days and fits the medicine run".
+4. The direction, as if-then from Chaehan's own priorities: "If a November
+   date goes well, move your return toward 2027-03-07; if none does, keep
+   2027-03-16."
+5. Each open decision as a bullet ending with "?", with its two to four
+   options indented under it, one line each with what the option costs or
+   gives you. Add the option the record does not name when one exists, such
+   as the family keeping a box. The walk-through asks exactly these.
 
-The walk-through puts exactly these options into the question tool, so each
-option must read as an answer Chaehan can click.
+What makes a decision heavy is written only when it changes which option
+fits, and only from a fact on record (a date, a sum, a person you dealt with)
+or Chaehan's quoted words. Never a label such as "anxiety" or "avoidance", and
+never a pattern from `_psych_obs.md` stated as present.
+
+The deciding question, when the record states that one open question changes
+other decisions (RULES.md 83: name the message), is a decision bullet in the
+goal it belongs to, worded "Your deciding question: ...?", with one sub-bullet
+per answer saying what follows.
 
 ### 3. Hand to me
 
@@ -109,20 +129,15 @@ starting it (`memory/optimize-my-life.md`, the scarrends principle):
 - Command: `/life <keyword>`, one short lowercase word that names the issue
   and is unique in the note.
 
-### 4. The deciding question
+### 4. Takeaway, last
 
-Only when the record states that one open question changes other decisions
-(RULES.md 83: name the message). The section opens with the question, ending
-with "?", and one bullet per answer says what follows from it.
+Three bullets, each at most 30 words, with you or your thing as the subject:
+what you would tell a friend who asks "how is it going?". The state of the
+goal that matters most this month and what it costs, the largest sum or the
+nearest date and the move that settles it, and the deciding question with what
+follows from it. Never a list of tasks.
 
-### 5. Takeaway, last
-
-At most three bullets, each at most 30 words, with you or an action as the
-subject: the deciding question when there is one, the decision closest to its
-date, and the issues you can hand over or the decided step only Chaehan can
-take.
-
-### 6. Gate and write
+### 5. Gate and write
 
 Write the cut list `$TMPDIR/life-challenges_cuts.md`: one line per number or
 date of the previous note that this one drops, and one per issue that left,
@@ -144,9 +159,9 @@ file that passed, read it back, and confirm the headings and the table.
 1. Read the latest `docs/*-life-challenges.md` and its Evernote note. When the
    note differs from the file, Chaehan edited it: carry the edit into the file
    first.
-2. Go through the issues: the decisions by the date that closes them, then the
-   Hand to me rows in their order. With a keyword, take only that issue.
-3. For a decision, ask the question tool with the note's question and its
+2. Go through the issues: the decision bullets (ending with "?") by the date
+   that closes them, then the Hand to me rows in their order. With a keyword, take only that issue.
+3. For a decision, ask the question tool with the bullet's question and its
    options. One question per issue.
 4. For a Hand to me row, do the "I do" part: write the draft or the script by
    the drafting rules (RULES.md 37, 85, 103, 111, 250) from the issue's own
@@ -154,7 +169,8 @@ file that passed, read it back, and confirm the headings and the table.
    appears as its last four digits; the full number goes in when Chaehan
    sends. Then ask with the question tool: approve, correct, or skip.
 5. After each answer, write it back: a decision becomes a Settled bullet with
-   Chaehan's words, or a Hand to me row for its next step; an approved draft
+   Chaehan's words (its goal section keeps what follows from it), or a Hand
+   to me row for its next step; an approved draft
    becomes "approved YYYY-MM-DD, you send it" in its row until Chaehan says it
    went out. Record the decision in the domain memory file, dated. Run the
    gate and write the note.
