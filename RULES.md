@@ -355,6 +355,8 @@ A passing test, a clean file, a zero count from `grep` — these are measurement
 **Verify at the user-facing outcome, not the intermediate artifact.**
 The user sees the rendered dashboard, not the CSV. A script sees the API response, not the database row. If you verify at an intermediate layer and stop, you haven't verified the fix — you've verified that layer. The downstream transformation (template rendering, payload generation, API serialization) may reintroduce the bug or mask your fix. Check the artifact the user actually experiences.
 
+An Evernote write read back through our own converter is such an intermediate layer: the converter forgives markup the app does not. Compare the raw ENML with the form Evernote's own editor writes (`<li><div>text</div></li>`, no line break between tags), or open the note in the app. Failure 188 in `memory/agentic_ai.md`: list items written as bare `<li>` with line breaks between them ran together in the app ("service.Photography") while every read-back passed.
+
 **Verify at the external boundary, not at the mock.**
 A mock is an intermediate artifact with the same blind spot. When the real system's acceptance rule lives only in that system (a format validator, a required header, a schema check), a test against a permissive fake proves nothing about the real call. For any seam where the external system enforces a contract, the verification that counts is the one the external system performs: a live call, or a fake that replicates the exact rejection. Green against a permissive fake while the real system rejects the same input is not a green build, it is an unexecuted failure.
 
@@ -2119,6 +2121,7 @@ Stated 2026-09-25: "why do you do such long timeouts of 600s? the max timeout sh
 - One question batch per change set (rule 62). A change set that opens three decisions asks all three in one call; splitting them into two rounds costs a full turn each.
 - One verification read after the last write, not a read after every write.
 - Close a multi-artifact turn with the call count and the measured machine time, so the ratio stays visible.
+- A run of another model (opencode on DeepSeek) reports its wall time with its result, every time, beside its steps and cost. Chaehan, 2026-11-07: "from now time the deepseek response duration".
 
 **The wait the user asks about is the turn, not the command.** When something "takes too long", the number to quote and to cut is the wall clock of the whole request as they wait: their message to the reply, model steps, tool round trips and question waits included. The command's own seconds are the breakdown, never the headline. Read the turn from the session store (`~/.local/share/opencode/opencode.db`: `session_message.time_created` to the message's `data.time.completed`, in ms), or from `date` markers around the pass. The shape to expect: a pipeline command is seconds, a turn of a few model steps is minutes. A report that answers a waiting question with the command's seconds has answered the wrong question.
 
