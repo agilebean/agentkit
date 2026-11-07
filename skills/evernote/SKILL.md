@@ -31,6 +31,8 @@ The agent never runs the shell CLI below for Evernote work, inside an opencode s
 
 **Verify every write by re-reading, on both paths.** A write can report success and not persist. Observed 2026-09-25 on the note "2026-09-11 KUBS DT Course Design - Sprint and JTBD": `replace-section` and `insert-after-heading` returned `updated: true` six times in a row while a by-guid read kept returning byte-identical content, and a scratch note in the same notebook accepted a write in the same minute. After any `update-by-title`, `replace-section`, `insert-after-heading` or `update`, read the note back by guid and confirm the new text is in it; if it is not, report that instead of reporting the note as updated.
 
+**For its first minute or two, a new note is reached by its guid.** Keep the guid `create_note` returns and read the note by it. On 2026-11-07 three title searches (`intitle:"<title>"`, the bare words, the quoted title) returned 0 hits right after `create_note`, while `notebook:"Computer"` listed the note first; the same title search found it two minutes later in 353 ms. A trash likewise shows only in `get_note` (`active: false` and its `deleted` time): `intrash:true` listed the trashed note once, and a minute later listed nothing.
+
 **Verify the whole skeleton, not only the edited cell.** Before the write, record the note's headings, table count and length; after it, read the note back and confirm each heading and table is still there. A cell-level read proves the cell and says nothing about a section the write did not intend to touch. On 2026-10-26 the 2026-10-25 row verified clean while the Training Plan table had vanished and the note had dropped from 18465 to 11057 characters.
 
 A note open in the app (the thrift update answers `RTE room has already been open`) is a lock: "Note lock recovery (RTE room)" below releases it. When the note's text changed since you read it, or the version list shows a version the agent did not write, a second writer is present. Stop the pass: read the current content, restore any missing section from the last version that had it (`listNoteVersions` then `getNoteVersion`, both on the note store), verify the skeleton again, and report the second writer. Never write over it.
@@ -247,7 +249,11 @@ absent) and no binary request body, so the file bytes cannot be PUT from
    it after), then emit the URL to the shell from `execute` with a GET:
    `fetch("http://127.0.0.1:<port>/bridge?u=" + encodeURIComponent(uploadUrl))`.
    A 404 response is expected; the request line lands in the server's access
-   log, which is the hand-off.
+   log, which is the hand-off. Each attempt takes a free port and a log file of
+   its own. On 2026-11-07 a second server started on a port the first still
+   held exited with `Address already in use`, and because both wrote to the same
+   log path, the redirect emptied the log that held the signed URL: the hand-off
+   then read as "no URL in the log". A fresh port and a fresh log worked at once.
 3. In the shell, read the log line, `urllib.parse.unquote` the value, then the
    two curl calls: `POST` with `x-goog-resumable: start` and
    `x-upload-content-length: <size>` headers returns the session URI in the
