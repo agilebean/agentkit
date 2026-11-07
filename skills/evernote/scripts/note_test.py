@@ -104,8 +104,9 @@ class Run:
         # 'Agent not found: "socrates"' (2026-11-07, hanji_test.py).
         env = dict(os.environ, NOTE_BUILD_SOCRATES=str(self.a.cwd), PWD=str(self.a.cwd))
         err = (self.out / "opencode.stderr").open("a")
-        return subprocess.Popen(cmd + [message], cwd=self.a.cwd, env=env, stdout=subprocess.PIPE, stderr=err,
-                                text=True, start_new_session=True)
+        # stdin closed: opencode reads a piped stdin as message text and waits on it, silent (2026-11-07)
+        return subprocess.Popen(cmd + [message], cwd=self.a.cwd, env=env, stdin=subprocess.DEVNULL,
+                                stdout=subprocess.PIPE, stderr=err, text=True, start_new_session=True)
 
     @staticmethod
     def stop(p: subprocess.Popen) -> None:
