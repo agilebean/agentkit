@@ -83,3 +83,15 @@ warn	\b(?:you|your \w+) (?:have|has) no\b|\bthere (?:is|are) no\b|\bnone (?:is|a
 warn	\bblurbs?\b	uncommon word: "blurb" - name the thing ("the manager's description", "the profile text")
 flag	\b(?:about|around|roughly|approximately) (?=[0-9]|(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|sixty|ninety|a hundred)\b)	approximate number: write ~N and a spread as ±N, not "about N" (AGENTS.md core 8)
 flag	\bbands?\b(?!\s+(?:play|plays|played|playing|night|nights|live))	name the range itself ("¥11000 to ¥12500 a night"): "band" is trade jargon
+# Transaction, motion and agency verbs for time, plans and objects (2026-11-07, Life Challenges: "none is good all contain extremely robotic wording which i have pondered against like what time buys")
+flag	\bbuys\b|\bwhat (?:it|that|this|time|the \w+) buys?\b|\bbuy(?:s|ing)?\s+(?:you\s+)?(?:time|(?:\d+|nine|two|more|extra|the)\s+(?:seoul\s+)?(?:days?|weeks?|nights?|months?)|seoul|your seoul|them in|a second (?:meeting|date)|the only)\b	a purchase verb for a gain or a cost: say what you gain or what it costs, with its number
+flag	\b(?:\d{4}|the year|the winter|the extension|the stay|a later exit|the exit)\s+spends?\b	a year or a stay does not spend: say how many days you use
+flag	\b(?:refund|money|decision|answer|loss|sale|it|they|dates?)\s+lands?\b|\bhow (?:they|it|the dates?) lands?\b	the event does not land: say what happens and when
+flag	\bwhat tips\b|\btips (?:it|the|this|that)\b	name the fact that decides it
+flag	\b(?:has|have) (?:a|one) (?:\d+-day )?clock\b|\bon a (?:\d+-day )?clock\b	name the deadline and what happens on it
+flag	\b(?:does not|doesn't|will not|won't|cannot|can't)\s+survive\b|\bsurvives? (?:the|it|that)\b|\bkills? (?:the|that|this|it)\b	say what happens: refused, returned, cancelled
+flag	\b(?:trip|run|stay|plan|medical|exam|scenario|winter|week|receipt|silence|calendar|filter|extension)\s+(?:loses|keeps|gains|stops|serves|answers|works|fills|decides|moves|buys|spends)\b	an object acts like a person: name who does what
+flag	\bstops? (?:being|deciding|mattering|counting)\b|\bworks? in your fav(?:o|ou)r\b|\bin (?:\S+'s|their|its) hands\b|\bhas its whole value\b|\bleaves you with nothing\b	a figure of speech: say what happens
+flag	\bprices? at\b	say what it costs
+flag	\bsits? (?:on|in|at|with)\b	a verb whose literal sense does not apply: write the fact	\b(?:chair|table|desk|seat|bench|sofa|floor)\b
+warn	\bdays? of slack\b|\bslack\b	say "spare days"
