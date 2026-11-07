@@ -243,6 +243,10 @@ NOT_NAMES = {"You", "Your", "I", "On", "In", "At", "By", "From", "If", "When", "
              "Is", "Are", "Should", "Can", "Will", "The", "A", "An", "Then", "And", "But", "Or"}
 
 
+NUMBER_WORDS = set("""one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen
+twenty thirty forty fifty hundred first second third fourth fifth half""".split())
+
+
 def invented(sentence: str, source: str) -> list[str]:
     """Numbers and names in a new sentence that neither the note nor Chaehan's record contains."""
     src = source.replace(",", "")
@@ -253,7 +257,8 @@ def invented(sentence: str, source: str) -> list[str]:
     out = [n for n in NUMBER.findall(plain.replace(",", "")) if n not in have]
     names = re.findall(r"\b[A-Z][A-Za-z-]{2,}\b", plain)
     verbs = getattr(gate(), "IMPERATIVE", set())  # "Eat Kobe beef ..." opens on a verb, not a name
-    out += [n for n in names if n not in NOT_NAMES and n.lower() not in verbs and n not in source]
+    words = NUMBER_WORDS  # "Six swims ..." opens on a number, not a name
+    out += [n for n in names if n not in NOT_NAMES and n.lower() not in verbs | words and n not in source]
     return out
 
 
