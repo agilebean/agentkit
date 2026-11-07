@@ -240,3 +240,9 @@ def test_a_created_note_is_updated_on_the_next_write(tmp_path, monkeypatch, caps
     assert json.loads((d / "meta.json").read_text())["guid"] == "g-new"
     assert nb.main(["write", str(d)]) == 0
     assert "update" in calls[-2] and "create" not in calls[-2]
+
+
+def test_a_sentence_opening_on_a_verb_or_a_number_word_is_no_invented_name() -> None:
+    assert nb.invented("Eat Kobe beef at obiobi.", "Kobe beef at obiobi") == []
+    assert nb.invented("Six swims cost ¥4200.", "swims ¥4200") == []
+    assert nb.invented("Buy the Osaka Amazing Pass.", "Osaka") == ["Amazing", "Pass"]
