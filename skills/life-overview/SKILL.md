@@ -198,22 +198,31 @@ open items. Each is one of three kinds:
   record names (your CV and the chapter files show it);
 - a plateau broken: a measured value that moved after a flat stretch, given as
   the number before and after, against your own baseline and against a
-  published benchmark for a good performer, with its source. Compare like
-  units and name the unit in the sentence: the swim panels give distance per
+  published benchmark for a good performer, with its source. The comparison
+  is made in your unit, never in the study's: the swim panels give DPS per
   single-arm stroke (`swim/src/swim/dashboard/payload.py`, counted cycles
-  times two), while most published values are per arm cycle, two strokes, so
-  your 1.00 m per stroke is 2.0 m per cycle;
+  times two), so a published value per arm cycle is halved before it is
+  compared (a study's 1.95 m per cycle is 0.98 m per stroke), and your own
+  number is never converted;
 - a drag overcome: a step your record shows was hard for you (a failure
   behind it, a fear, a habit such as frugality, a scarrend), with what it took
-  from you. Name the earlier failure that made the step a risk; set the money
-  against what you usually pay (your accommodation prices in
-  `memory/travel.md`); name who helped and how, in your own words from the
-  chapter file, never in an earlier overview's.
+  from you. Name the earlier failure that made the step a risk. Name the
+  habit the step went against, in the record's own terms: your low-price
+  accommodation choices in `memory/travel.md` show frugality, so the step is
+  one you took against your frugality; never set the example's price against
+  the step's. Name who helped and how, in your own words from the chapter
+  file, never in an earlier overview's.
 
 For each item: what you did, what it took from you, and what it makes
 possible now, in two or three sentences addressed to you, with its detail
-note linked. Hours and counts support an item; they are never its point. Items already claimed in a previous overview stay out unless
-their state changed. Record, do not cheerlead.
+note linked. Each number keeps the term of its measure: "perceived effort 8,
+now 6", never "two-thirds of the effort"; DPS, stroke rate and CSS by their
+names. Each phrase makes a claim. A claim the reader cannot picture gets its
+facts: "your 400 m went from 8:08 on 2026-09-07 to 8:04 on 2026-10-16", never
+"you hold the same 400 m time". A phrase that makes no claim leaves: "across
+eight sessions and graded the course to a close" says nothing about what the
+course means to you. Items already claimed in a previous overview stay out
+unless their state changed. Record, do not cheerlead.
 
 ## 4. Evernote twin
 
