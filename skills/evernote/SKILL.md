@@ -60,15 +60,29 @@ Alternatively: set `EVERNOTE_TOKEN` env var.
 
 Every note whose prose is written or rewritten is built with `~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py`, whatever the topic and however short. Do not draft the note yourself. The script asks for three things, one at a time, builds the note from them, runs the note gate, and writes the note. The gate's PASS stamps the text. The Evernote CLI refuses a `--markdown` or `--clean` body write without that stamp (exit 7), and the note-gate plugin refuses an MCP whole-body write without its marker. A life overview runs the life-overview skill's gate instead, whose PASS stamps the same way.
 
-1. Run `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py init $TMPDIR/<slug> --guid <guid> --record ~/Software/Prototypes/socrates/memory/<topic>.md`. The script reads the note itself. For a new note, write your findings into a file and pass it in place of `--guid`, with `--title "<title>" --notebook "<notebook>"`. The record is Chaehan's memory file for the topic: what matters in the note comes from there and from the sections he asked for, never from an old summary. When the brief names his decisions, write them to a file as `D1: ...` lines and add `--decisions <file>`.
+1. Run `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py init $TMPDIR/<slug> --guid <guid> --record ~/Software/Prototypes/socrates/memory/<topic>.md`. The script reads the note itself. For a new note, write your findings into a file and pass it in place of `--guid`, with `--title "<title>" --notebook "<notebook>"`. The record is Chaehan's memory file for the topic: what matters in the note comes from there and from the sections he asked for, never from an old summary. When the brief names his decisions, write them to a file as `D1: ...` lines and add `--decisions <file>`. When the brief has his instructions or new facts, pass them in his words with `--chaehan <file>`: the script then accepts their numbers and names. To move a section into a new note, add `--section "<heading words>" --title "<title>" --notebook "<notebook>"` to `--guid`: the section becomes the new note's old text.
 2. Run `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py next $TMPDIR/<slug>` and do what it prints. Run it again after each file you write, until it prints PASS. It asks, in this order:
    a) the decisions Chaehan makes with the note, at most five, and for every old section the decision it serves;
    b) a label for every item of the old text: decides, supports, world detail or known;
-   c) per decision, a heading, a summary line and the section's first line.
+   c) per decision, a heading, a summary line and the section's first line, and a title of 2 to 6 words for every table you keep (`titles.tsv`), which the note shows as an H3 above the table.
+
+   Labels are D (decides), S (supports), W (world detail), K (known) and M (moved: the item now lives in another note, whose exact title is its parent). An item's new wording goes into `edits.tsv` as `id<TAB>text`, a table's rows joined by `\n`; the script refuses an edit that copies its instructions, a number or name it cannot find in the note, the record, `chaehan.md` or `found.md`, a thousand separator and "about" before a number. Research for an edit goes into `found.md` in the build folder, each fact with its source URL. A link to another note comes from `note_build.py link "<words>"`, which prints the exact link; the script checks that every Evernote link names a real note by its exact title.
 3. When `next` exits 3, it lists old sections that serve none of the decisions. Ask Chaehan with the question tool whether each one stays, and write his answer into `decisions.md`. A section leaves his note only with his word.
 4. Run `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py write $TMPDIR/<slug>`. It writes the stamped draft, reads the note back, and verifies the read-back. A refusal because the note is open in the app is a lock: follow "Note lock recovery (RTE room)" below. Report the cut list (`cuts.md`) and the verify result.
 
 The script delivers Chaehan's three imperatives by construction. Items labelled world detail or known go to the cut list, so the note gets shorter. Every section opens with its first line, which states its point. Supporting items sit indented under the item they support. It also refuses a decision or sentence that copies its instructions, and a number or name that neither the note nor the record contains. Never edit `draft.md` by hand: the stamp no longer matches, and the write is refused.
+
+## Testing a note build with deepseek: run note_test.py
+
+A test of how the installed model builds a note runs one command, outside the sandbox:
+
+```
+python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_test.py --brief <brief.md> --out <folder> [--session <id>]
+```
+
+It starts `opencode run --standalone --agent socrates` in the socrates folder with the brief, on the OpenCode Go API (`opencode-go/deepseek-v4.1-flash#high`) first and the direct DeepSeek API (`deepseek/deepseek-flash#high`) as the fallback: a spent quota, an unavailable model or a cut connection moves the same session to the fallback at once. It stops the run when two `next` rounds in a row neither lower the failure count nor change the first failure, after `--idle` seconds without an event (300), or past `--budget` seconds (1500). `<folder>/report.md` names each provider and model used with its steps, tokens and cost, every `note_build.py` call with its failures, why the run ended and the agent's last message; `events.jsonl` holds the raw stream. Exit 0 means written and verified, 3 the agent asks Chaehan (continue with `--session` and his answers as the brief), 4 stuck, 5 idle or over budget, 6 every provider failed.
+
+The loop: run it, read `report.md`, change one thing (the brief, a step text, a check) against the last run, and run again. A run that is stuck names the failure it repeats; fix the setup that produces it before another run (RULES.md rule 74).
 
 ## Briefing another agent to rewrite a note
 

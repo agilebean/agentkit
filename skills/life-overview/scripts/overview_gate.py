@@ -97,7 +97,7 @@ def task_rows(md: str) -> list[str]:
 
 def check(draft: str, original: str | None = None, linked: list[str] | None = None,
           facts_only: bool = False, note: bool = False, cuts: str | None = None,
-          labels: str | None = None) -> list[str]:
+          labels: str | None = None, table_titles: bool = False) -> list[str]:
     fails: list[str] = []
     pool = list(linked or [])
     if cuts:
@@ -112,6 +112,8 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
             fails += _gists(draft)
             fails += _summary_subjects(draft)
             fails += _wording(draft)
+            if table_titles:
+                fails += _table_titles(draft)
             if labels is not None:
                 fails += _labels(draft, labels)
             if original is not None:
@@ -278,8 +280,8 @@ def _gists(md: str) -> list[str]:
         if title.lower().startswith(SUMMARY_HEADS):
             continue
         lines = [l.strip() for l in body.splitlines() if l.strip()]
-        if not lines:
-            continue
+        if not lines or all(l.startswith("|") for l in lines):
+            continue  # empty, or an H3 that titles one table
         first = lines[0]
         if re.match(r"(?:[-*]|\d+[.)]|\||!\[|<)", first) or not re.search(r"[a-z]{3}", _plain(first)):
             out.append(f"T13 section {title!r} must open with one sentence that tells you its point, "
@@ -313,6 +315,21 @@ def _summary_subjects(md: str) -> list[str]:
                 out.append(f"T15 summary sentence has no you or action as subject: {sent[:70]!r}; {SUBJECT_EXAMPLE}")
             for c in contrast(sent):
                 out.append(f"T15 summary sentence uses a contrast: {sent[:70]!r}; {c}")
+    return out
+
+
+def _table_titles(md: str) -> list[str]:
+    """T17: every table carries an H3 title on the line above it (blank lines aside)."""
+    lines = md.splitlines()
+    out = []
+    for i, line in enumerate(lines):
+        if not line.lstrip().startswith("|") or (i and lines[i - 1].lstrip().startswith("|")):
+            continue
+        j = i - 1
+        while j >= 0 and not lines[j].strip():
+            j -= 1
+        if j < 0 or not lines[j].startswith("### "):
+            out.append(f"T17 table without an H3 title above it: {line.strip()[:70]!r}")
     return out
 
 
@@ -360,9 +377,10 @@ def _labels(draft: str, labels: str) -> list[str]:
         while len(cells) < 4:
             cells.append("")
         item, label, _parent, text = cells[0].strip(), cells[1].strip().upper(), cells[2].strip(), cells[3]
-        if label not in ("D", "S", "W", "K"):
-            out.append(f"T14 item {item} has no label (D decides, S supports, W world detail, K known): {text[:50]!r}")
-        elif label in ("W", "K") and len(text.split()) >= 5 and _norm(text) in body:
+        if label not in ("D", "S", "W", "K", "M"):
+            out.append(f"T14 item {item} has no label (D decides, S supports, W world detail, K known, "
+                       f"M moved to another note): {text[:50]!r}")
+        elif label in ("W", "K", "M") and len(text.split()) >= 5 and _norm(text) in body:
             out.append(f"T14 item {item} is labelled {label} but is still in the draft: {text[:60]!r}")
     return out
 

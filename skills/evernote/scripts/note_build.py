@@ -39,7 +39,7 @@ import os
 import subprocess
 
 SOCRATES = Path(os.environ.get("NOTE_BUILD_SOCRATES") or Path.home() / "Software" / "Prototypes" / "socrates")
-LABELS = ("D", "S", "W", "K")
+LABELS = ("D", "S", "W", "K", "M")
 LINK = re.compile(r"!?\[[^\]]*\]\([^)]*\)")
 MARKER = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+")
 NUMBER = re.compile(r"\d{4}-\d{2}-\d{2}|\d+(?:\.\d+)?")
@@ -167,7 +167,64 @@ def source_text(d: Path) -> str:
     meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
     parts = [(d / "original.md").read_text(encoding="utf-8")]
     parts += [Path(r).read_text(encoding="utf-8") for r in meta.get("record") or [] if Path(r).exists()]
+    # Chaehan's words from the brief, and research with a source URL per fact.
+    parts += [(d / f).read_text(encoding="utf-8") for f in ("chaehan.md", "found.md") if (d / f).exists()]
     return "\n".join(parts)
+
+
+EVERNOTE_LINK = re.compile(r"\[([^\]]+)\]\((evernote:///view/[^)\s]+)\)")
+LINK_FORM = "evernote:///view/39d2f74/s365/{g}/{g}/"
+GUID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+APPROX = re.compile(r"\b(?:about|around|roughly|approximately)\s+(?=[~¥€$]?\d)", re.I)
+SEPARATOR = re.compile(r"\d{1,3}(?:,\d{3})+\b")
+
+
+def note_title(guid: str, d: Path) -> str:
+    """The exact title of the note with this guid, from a cache in the build folder or the Evernote CLI."""
+    cache_p = d / "links.json"
+    cache = json.loads(cache_p.read_text(encoding="utf-8")) if cache_p.exists() else {}
+    if guid not in cache:
+        r = subprocess.run(CLI + ["get", guid, "--markdown"], cwd=SOCRATES, capture_output=True, text=True)
+        title = ""
+        if r.returncode == 0:
+            try:
+                title = json.loads(r.stdout).get("title") or ""
+            except ValueError:
+                title = ""
+        cache[guid] = title or ("?" if r.returncode == 0 else "")
+        cache_p.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
+    return cache[guid]
+
+
+def bad_links(text: str, d: Path) -> list[str]:
+    """Evernote links whose guid is no note, or whose text is not that note's exact title."""
+    out = []
+    for name, url in EVERNOTE_LINK.findall(text):
+        m = GUID.search(url)
+        if not m or url != LINK_FORM.format(g=m.group(0)):
+            out.append(f"link {name!r} has the wrong form: write [<exact title>]({LINK_FORM.format(g='<guid>')})")
+            continue
+        title = note_title(m.group(0), d)
+        if not title:
+            out.append(f"link {name!r} points at no note (guid {m.group(0)}): find it with: python3 {HERE} link <words>")
+        elif title != "?" and title != name:
+            out.append(f"link {name!r} must carry the note's exact title: {title!r}")
+    return out
+
+
+def new_text_errors(label: str, s: str, source: str) -> list[str]:
+    """Checks on any text the model writes: copies, inventions, separators, approximate numbers."""
+    out = []
+    if copied(s):
+        out.append(f"{label} copies the instructions' example: write it from this note")
+    bad = invented(s, source) if source else []
+    if bad:
+        out.append(f"{label} has {', '.join(bad)}, which is not in the note, the record, chaehan.md or found.md")
+    for m in SEPARATOR.finditer(s):
+        out.append(f"{label} writes {m.group(0)!r} with a thousand separator: write the number without it (¥208333)")
+    for m in APPROX.finditer(s):
+        out.append(f"{label} writes {m.group(0).strip()!r} before a number: write ~N (~65 minutes)")
+    return out
 
 
 def _shingles(text: str, n: int = 6) -> set[tuple]:
@@ -190,9 +247,13 @@ def invented(sentence: str, source: str) -> list[str]:
     """Numbers and names in a new sentence that neither the note nor Chaehan's record contains."""
     src = source.replace(",", "")
     have = set(NUMBER.findall(src))
-    out = [n for n in NUMBER.findall(sentence.replace(",", "")) if n not in have]
-    names = re.findall(r"\b[A-Z][A-Za-z-]{2,}\b", re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", sentence))
-    out += [n for n in names if n not in NOT_NAMES and n not in source]
+    # A link to another note is checked against that note by bad_links; a link target is no fact.
+    plain = re.sub(r"\[[^\]]*\]\(evernote:[^)]*\)", "", sentence)
+    plain = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", plain)
+    out = [n for n in NUMBER.findall(plain.replace(",", "")) if n not in have]
+    names = re.findall(r"\b[A-Z][A-Za-z-]{2,}\b", plain)
+    verbs = getattr(gate(), "IMPERATIVE", set())  # "Eat Kobe beef ..." opens on a verb, not a name
+    out += [n for n in names if n not in NOT_NAMES and n.lower() not in verbs and n not in source]
     return out
 
 
@@ -239,9 +300,11 @@ decisions.md:
      id. A detail can hang on another detail.
   W  world detail: true, but you will not act on it. Market statistics, a
      second source saying the same, a price of something you will not buy, a
-     place ruled out for a reason you do not need. No parent.
+     place ruled out for a reason you do not need, an option kept only for
+     comparison, and a side trip the decisions do not need. No parent.
   K  known: you know it already, or the note says it again elsewhere, like an
      old summary line that repeats the body. No parent.
+  M  moved: it now lives in another note. Parent: that note's exact title.
 
 Your own bookings, dates, prices you paid, references and constraints are D or
 S, never W or K. The script cuts the old Summary's items itself: label them K.
@@ -273,6 +336,9 @@ what you have and what you must still do. Never write "X, not Y", and never
 write about the note itself ("the section below shows").
 
   Accepted first line: You swim three mornings a week at the Mapo pool, which opens at 06:00.
+
+Every table you keep gets a title of 2 to 6 words, written to {d}/titles.tsv
+as id<TAB>title, one line per table: {tables}
 
 Every number and name in your sentences comes from the note or the record.
 Write your own words: a sentence that repeats these instructions is refused.
@@ -327,7 +393,7 @@ def check_labels(items: list[dict], rows: list[list[str]], ds: dict[str, str]) -
             errs.append(f"labels.tsv names item {item!r}, which items.tsv does not have")
             continue
         if label not in LABELS:
-            errs.append(f"item {item}: label {label!r} is not one of D, S, W, K")
+            errs.append(f"item {item}: label {label!r} is not one of D, S, W, K, M")
             continue
         got[item] = (label, parent)
     missing = [i for i in sorted(ids, key=int) if i not in got]
@@ -341,6 +407,8 @@ def check_labels(items: list[dict], rows: list[list[str]], ds: dict[str, str]) -
         return parent in seen or loops(parent, seen + (item,))
 
     for item, (label, parent) in got.items():
+        if label == "M" and not parent.strip():
+            errs.append(f"item {item}: an M item's parent is the exact title of the note it moves to")
         if label == "D" and parent not in ds:
             errs.append(f"item {item}: a D item's parent is a decision ({', '.join(ds)}), not {parent!r}")
         if label == "S":
@@ -348,6 +416,40 @@ def check_labels(items: list[dict], rows: list[list[str]], ds: dict[str, str]) -
                 errs.append(f"item {item}: an S item's parent is a decision or a kept item (D or S), not {parent!r}")
             elif loops(item):
                 errs.append(f"item {item}: its parents lead back to itself")
+    return errs
+
+
+def kept_tables(items: list[dict], d: Path) -> str:
+    rows = {r[0]: r for r in effective(items, tsv(d / "labels.tsv"))}
+    keep = [it for it in items if it["kind"] == "table" and (rows.get(it["id"], ["", ""]) + [""])[1].upper() in ("D", "S")]
+    return "".join(f"\n  {it['id']}: {it['text'].splitlines()[0][:100]}" for it in keep) or " (none kept)"
+
+
+def check_titles(items: list[dict], d: Path) -> list[str]:
+    rows = {r[0]: r for r in effective(items, tsv(d / "labels.tsv"))}
+    titles = {r[0]: (r + [""])[1].strip() for r in tsv(d / "titles.tsv")}
+    errs = []
+    for it in items:
+        if it["kind"] != "table" or (rows.get(it["id"], ["", ""]) + [""])[1].upper() not in ("D", "S"):
+            continue
+        t = titles.get(it["id"], "")
+        if not t:
+            errs.append(f"table {it['id']} has no title: add {it['id']}<TAB><2 to 6 words> ({it['text'].splitlines()[0][:60]})")
+        elif not 2 <= len(t.split()) <= 6:
+            errs.append(f"table {it['id']} title has {len(t.split())} words, use 2 to 6: {t!r}")
+        elif copied(t):
+            errs.append(f"table {it['id']} title copies the instructions")
+    return errs
+
+
+def check_edits(items: list[dict], d: Path, source: str) -> list[str]:
+    ids = {it["id"] for it in items}
+    errs = []
+    for r in tsv(d / "edits.tsv"):
+        if len(r) < 2 or r[0] not in ids:
+            errs.append(f"edits.tsv line {r[:1]} needs an item id from items.tsv and the new text")
+            continue
+        errs += new_text_errors(f"edit of item {r[0]}", r[1].replace("\\n", "\n"), source)
     return errs
 
 
@@ -375,8 +477,10 @@ def check_new(rows: list[list[str]], ds: dict[str, str], g, source: str = "") ->
                 errs.append(f"{k} {name} uses a contrast: {c}")
             if copied(s):
                 errs.append(f"{k} {name} copies the instructions' example: write it from this note")
-            for m in re.finditer(r"\d{1,3}(?:,\d{3})+\b", s):
+            for m in SEPARATOR.finditer(s):
                 errs.append(f"{k} {name} writes {m.group(0)!r} with a thousand separator: write the number without it (¥208333)")
+            for m in APPROX.finditer(s):
+                errs.append(f"{k} {name} writes {m.group(0).strip()!r} before a number: write ~N (~65 minutes)")
             bad = invented(s, source + "\n" + "\n".join(ds.values())) if source else []
             if bad:
                 errs.append(f"{k} {name} has {', '.join(bad)}, which is not in the note or the record")
@@ -394,7 +498,8 @@ def assemble(d: Path, items: list[dict], headings: list[str]) -> tuple[str, str,
     ds = decisions(d)
     labels = {r[0]: ((r + ["", ""])[1].upper(), (r + ["", "", ""])[2]) for r in effective(items, tsv(d / "labels.tsv"))}
     new = {r[0]: r for r in tsv(d / "new.tsv")}
-    edits = {r[0]: r[1] for r in tsv(d / "edits.tsv") if len(r) >= 2}
+    edits = {r[0]: r[1].replace("\\n", "\n") for r in tsv(d / "edits.tsv") if len(r) >= 2}
+    titles = {r[0]: (r + [""])[1].strip() for r in tsv(d / "titles.tsv")}
     text = lambda it: edits.get(it["id"], it["text"])
     out: list[str] = []
     where: dict[int, str] = {}
@@ -442,18 +547,21 @@ def assemble(d: Path, items: list[dict], headings: list[str]) -> tuple[str, str,
         branch([it for it in tops if it["kind"] == "sentence"], 0)
         for it in tables:
             put("")
+            if titles.get(it["id"]):
+                put(f"### {titles[it['id']]}")
+                put("")
             for row in text(it).splitlines():
                 put(row, it["id"])
         put("")
     cuts: list[str] = []
     for it in items:
-        label = labels.get(it["id"], ("", ""))[0]
-        if label not in ("W", "K"):
+        label, parent = labels.get(it["id"], ("", ""))
+        if label not in ("W", "K", "M"):
             continue
-        why = "world detail" if label == "W" else "known or said elsewhere"
+        why = {"W": "world detail", "K": "known or said elsewhere", "M": f"moved to the note {parent!r}"}[label]
         nums = NUMBER.findall(it["text"].replace(",", ""))
         key = ", ".join(dict.fromkeys(nums)) or " ".join(one_line(it).split()[:8])
-        cuts.append(f"- {key}: cut, {why} (item {it['id']})")
+        cuts.append(f"- {key}: {'' if label == 'M' else 'cut, '}{why} (item {it['id']})")
         if it["kind"] == "table":
             cuts += ["  " + row for row in it["text"].splitlines()]
     head_nums = [n for h in headings for n in NUMBER.findall(h.replace(",", ""))]
@@ -489,6 +597,12 @@ def cmd_init(a) -> int:
             print(f"Reading note {a.guid} failed: {r.stderr.strip()[-300:]}", file=sys.stderr)
             return 1
         old = json.loads(r.stdout).get("content", "")
+        if a.section:
+            old = section_of(old, a.section)
+            if old is None:
+                print(f"no heading of note {a.guid} contains {a.section!r}", file=sys.stderr)
+                return 1
+            a.guid = None  # the section becomes a new note; the old one is rebuilt on its own
     else:
         old = ""
     (d / "original.md").write_text(old, encoding="utf-8")
@@ -504,6 +618,8 @@ def cmd_init(a) -> int:
                                  encoding="utf-8")
     if a.decisions:
         (d / "decisions.md").write_text(Path(a.decisions).read_text(encoding="utf-8"), encoding="utf-8")
+    if a.chaehan:
+        (d / "chaehan.md").write_text(Path(a.chaehan).read_text(encoding="utf-8"), encoding="utf-8")
     print(f"{len(items)} items in {d / 'items.tsv'}.\n")
     record = "\n".join(str(Path(r).resolve()) for r in a.record or []) or "(no record file named; use the brief)"
     print(STEP1.format(d=d, me=HERE, record=record))
@@ -543,13 +659,25 @@ def cmd_next(a) -> int:
         print("Fix labels.tsv:\n" + "\n".join(f"- {e}" for e in errs))
         return 2
     if not (d / "new.tsv").exists():
-        print(STEP3.format(d=d, me=HERE))
+        print(STEP3.format(d=d, me=HERE, tables=kept_tables(items, d)))
         return 2
     errs = check_new(tsv(d / "new.tsv"), ds, g, source)
     if errs:
         print("Fix new.tsv:\n" + "\n".join(f"- {e}" for e in errs))
         return 2
+    errs = check_titles(items, d)
+    if errs:
+        print("Fix titles.tsv:\n" + "\n".join(f"- {e}" for e in errs))
+        return 2
+    errs = check_edits(items, d, source + "\n" + "\n".join(ds.values()))
+    if errs:
+        print("Fix edits.tsv:\n" + "\n".join(f"- {e}" for e in errs))
+        return 2
     draft, cuts, merged, where = assemble(d, items, headings)
+    errs = bad_links(draft, d)
+    if errs:
+        print("Fix the links (edits.tsv):\n" + "\n".join(f"- {e}" for e in errs))
+        return 2
     for name, body in (("draft.md", draft), ("cuts.md", cuts), ("labels_merged.tsv", merged)):
         (d / name).write_text(body, encoding="utf-8")
     rows = effective(items, tsv(d / "labels.tsv"))
@@ -559,9 +687,16 @@ def cmd_next(a) -> int:
             if not any(it["id"] in keep_ids for it in items if it["section"] == h)
             and not mapping.get(h, "").startswith("drop")]
     original = (d / "original.md").read_text(encoding="utf-8")
-    fails = g.check(draft, original, note=True, cuts=cuts, labels=merged)
+    fails = g.check(draft, original, note=True, cuts=cuts, labels=merged, table_titles=True)
     print(f"Assembled {d / 'draft.md'}: {kept} of {len(items)} items kept, "
           f"{len(original.split())} words before, {len(draft.split())} after.")
+    empty = [k for k in ds if not any(r[1].upper() == "D" and (r + ["", ""])[2] == k for r in rows)]
+    if empty:
+        print("\nThese decisions keep no item, so their sections are a heading and one line. Label a deciding item "
+              "D with the decision as parent, or fold the decision into another one in decisions.md:")
+        for k in empty:
+            print(f"- {k}: {ds[k][:80]}  -> labels.tsv or decisions.md")
+        return 2
     if lost:
         print("\nThese sections keep none of their items, although decisions.md keeps them in the note. Label "
               "their deciding items D or S, or ask Chaehan and map them '-> drop (Chaehan, <date>)':")
@@ -581,6 +716,8 @@ def cmd_next(a) -> int:
                 hint = "  -> new.tsv, first line"
             elif f.startswith("T12"):
                 hint = "  -> labels.tsv: hang some of these items on the item they belong to (its id as parent)"
+            elif f.startswith("T17"):
+                hint = "  -> titles.tsv"
             elif f.startswith(("T6", "T7", "T14")):
                 hint = "  -> labels.tsv"
             print(f"- {f}{hint}")
@@ -591,7 +728,50 @@ def cmd_next(a) -> int:
     return 0
 
 
-CLI = ["mamba", "run", "-n", "socrates", "python", "-m", "projects.evernote.src.evernote_api"]
+_ENV_PY = Path.home() / "Software" / "miniforge3" / "envs" / "socrates" / "bin" / "python"
+# The env's own python skips mamba's startup and its lockfile (~2 s a call).
+CLI = ([str(_ENV_PY)] if _ENV_PY.exists() else ["mamba", "run", "-n", "socrates", "python"]) + [
+    "-m", "projects.evernote.src.evernote_api"]
+
+
+def cmd_link(a) -> int:
+    """Print the exact Evernote link for each note whose title matches the words."""
+    r = subprocess.run(CLI + ["search", a.words], cwd=SOCRATES, capture_output=True, text=True)
+    if r.returncode != 0:
+        print(r.stderr.strip()[-300:], file=sys.stderr)
+        return 1
+    hits = json.loads(r.stdout or "[]")
+    for h in hits[: a.n]:
+        print(f"[{h['title']}]({LINK_FORM.format(g=h['guid'])})")
+    if not hits:
+        print("no note found; try fewer or other words")
+    return 0
+
+
+def section_of(md: str, heading: str) -> str | None:
+    """The body of the first section whose heading contains the words, without its heading."""
+    lines = md.splitlines()
+    start = next((i for i, l in enumerate(lines) if re.match(r"#{1,3}\s+", l) and heading.lower() in l.lower()), None)
+    if start is None:
+        return None
+    level = len(lines[start]) - len(lines[start].lstrip("#"))
+    end = next((i for i in range(start + 1, len(lines)) if re.match(rf"#{{1,{level}}}\s+", lines[i])), len(lines))
+    return "\n".join(lines[start + 1:end]).strip() + "\n"
+
+
+def cmd_extract(a) -> int:
+    """Copy one section of the old note, word for word, into a file: the findings for a new note."""
+    d = Path(a.dir).resolve()
+    lines = (d / "original.md").read_text(encoding="utf-8").splitlines()
+    start = next((i for i, l in enumerate(lines) if re.match(r"#{1,3}\s+", l) and a.heading.lower() in l.lower()), None)
+    if start is None:
+        print(f"no heading contains {a.heading!r}", file=sys.stderr)
+        return 1
+    level = len(lines[start]) - len(lines[start].lstrip("#"))
+    end = next((i for i in range(start + 1, len(lines)) if re.match(rf"#{{1,{level}}}\s+", lines[i])), len(lines))
+    Path(a.out).write_text("\n".join(lines[start + 1:end]).strip() + "\n", encoding="utf-8")
+    print(f"{end - start - 1} lines of '{lines[start].lstrip('# ')}' written to {Path(a.out).resolve()}")
+    return 0
 
 
 def cmd_write(a) -> int:
@@ -610,6 +790,10 @@ def cmd_write(a) -> int:
         print(f"The write failed (exit {w.returncode}). Exit 7 means the draft changed after its PASS: run next again.")
         return w.returncode
     guid = meta.get("guid") or json.loads(w.stdout).get("guid")
+    if not meta.get("guid"):
+        # A created note is updated from now on: a second write must not create it again (2026-11-07).
+        meta["guid"] = guid
+        (d / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
     r = subprocess.run(base + ["get", guid, "--markdown"], cwd=SOCRATES, capture_output=True, text=True)
     back = json.loads(r.stdout).get("content", "") if r.returncode == 0 else ""
     (d / "readback.md").write_text(back, encoding="utf-8")
@@ -622,7 +806,7 @@ def cmd_verify(a) -> int:
     back = Path(a.readback).read_text(encoding="utf-8")
     fails = g.check(back, (d / "original.md").read_text(encoding="utf-8"), note=True,
                     cuts=(d / "cuts.md").read_text(encoding="utf-8"),
-                    labels=(d / "labels_merged.tsv").read_text(encoding="utf-8"))
+                    labels=(d / "labels_merged.tsv").read_text(encoding="utf-8"), table_titles=True)
     for f in fails:
         print(f)
     print("PASS" if not fails else f"FAIL ({len(fails)})")
@@ -640,6 +824,15 @@ def main(argv: list[str] | None = None) -> int:
     i.add_argument("--notebook")
     i.add_argument("--decisions", help="Chaehan's decisions from the brief, one 'D1: ...' line each")
     i.add_argument("--record", action="append", help="Chaehan's record of the topic, e.g. socrates memory/travel.md")
+    i.add_argument("--chaehan", help="Chaehan's instructions and new facts from the brief, his words")
+    i.add_argument("--section", help="with --guid, --title and --notebook: build a new note from this section")
+    lk = sub.add_parser("link", help="print the exact Evernote link for notes matching the words")
+    lk.add_argument("words")
+    lk.add_argument("-n", type=int, default=5)
+    ex = sub.add_parser("extract", help="copy one old section into a findings file for a new note")
+    ex.add_argument("dir")
+    ex.add_argument("heading")
+    ex.add_argument("out")
     n = sub.add_parser("next")
     n.add_argument("dir")
     w = sub.add_parser("write")
@@ -648,7 +841,8 @@ def main(argv: list[str] | None = None) -> int:
     v.add_argument("dir")
     v.add_argument("readback")
     a = ap.parse_args(argv)
-    return {"init": cmd_init, "next": cmd_next, "write": cmd_write, "verify": cmd_verify}[a.cmd](a)
+    return {"init": cmd_init, "next": cmd_next, "write": cmd_write, "verify": cmd_verify, "link": cmd_link,
+            "extract": cmd_extract}[a.cmd](a)
 
 
 if __name__ == "__main__":

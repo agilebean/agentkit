@@ -168,3 +168,75 @@ def test_a_first_line_that_talks_about_the_note_is_refused(tmp_path, monkeypatch
                                "Your arrival runs on the Port Liner, and the section below lists the times.\n")
     assert nb.main(["next", str(d)]) == 2
     assert "talks about the note" in capsys.readouterr().out
+
+
+def _kept_table(tmp_path, monkeypatch, capsys):
+    """A build that keeps the Market table, so the table needs a title."""
+    d = _run(tmp_path, monkeypatch, capsys)
+    (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> D1\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tS\t2\n")
+    (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
+                               "You find the landing time and the train here.\n")
+    return d
+
+
+def test_a_kept_table_needs_a_title_and_gets_an_h3(tmp_path, monkeypatch, capsys) -> None:
+    d = _kept_table(tmp_path, monkeypatch, capsys)
+    assert nb.main(["next", str(d)]) == 2 and "table 5 has no title" in capsys.readouterr().out
+    (d / "titles.tsv").write_text("5\tRates by year\n")
+    rc = nb.main(["next", str(d)])
+    assert rc == 0, capsys.readouterr().out
+    assert "### Rates by year\n\n| Year | Rate |" in (d / "draft.md").read_text()
+
+
+def test_an_edit_with_an_invented_number_or_a_separator_is_refused(tmp_path, monkeypatch, capsys) -> None:
+    d = _kept_table(tmp_path, monkeypatch, capsys)
+    (d / "titles.tsv").write_text("5\tRates by year\n")
+    (d / "edits.tsv").write_text("3\tThe Port Liner takes about 25 minutes for ¥1,340.\n")
+    assert nb.main(["next", str(d)]) == 2
+    out = capsys.readouterr().out
+    assert "25" in out and "thousand separator" in out and "~N" in out
+    (d / "chaehan.md").write_text("Chaehan, 2026-11-07: the Port Liner now takes 25 minutes.\n")
+    (d / "edits.tsv").write_text("3\tThe Port Liner takes 25 minutes for ¥340.\n")
+    assert nb.main(["next", str(d)]) == 0, capsys.readouterr().out
+
+
+def test_an_evernote_link_must_name_a_real_note_by_its_exact_title(tmp_path, monkeypatch, capsys) -> None:
+    d = _kept_table(tmp_path, monkeypatch, capsys)
+    (d / "titles.tsv").write_text("5\tRates by year\n")
+    g = "f760aa60-eb40-444d-91bc-6b6656415bb1"
+    (d / "links.json").write_text('{"%s": "2026-12-04~11 Hotel: Imperial Hotel Osaka 7n ¥141000"}' % g)
+    link = f"evernote:///view/39d2f74/s365/{g}/{g}/"
+    (d / "edits.tsv").write_text(f"2\tLand at Kobe Airport at 14:00, [the hotel]({link}).\n")
+    assert nb.main(["next", str(d)]) == 2 and "exact title" in capsys.readouterr().out
+    (d / "edits.tsv").write_text(f"2\tLand at Kobe Airport at 14:00, [2026-12-04~11 Hotel: Imperial Hotel Osaka 7n ¥141000]({link}).\n")
+    assert nb.main(["next", str(d)]) == 0, capsys.readouterr().out
+
+
+def test_extract_copies_one_section_word_for_word(tmp_path, monkeypatch, capsys) -> None:
+    d = _run(tmp_path, monkeypatch, capsys)
+    out = tmp_path / "found.md"
+    assert nb.main(["extract", str(d), "Getting there", str(out)]) == 0
+    assert out.read_text().startswith("- Land at [Kobe Airport]") and "Market" not in out.read_text()
+
+
+def test_a_created_note_is_updated_on_the_next_write(tmp_path, monkeypatch, capsys) -> None:
+    import json
+    import types
+    d = tmp_path / "w"
+    d.mkdir()
+    (d / "meta.json").write_text(json.dumps({"guid": None, "title": "2026-11-07 Pools", "notebook": "Swimming"}))
+    (d / "draft.md").write_text("## Summary\n")
+    calls = []
+
+    def run(cmd, **kw):
+        calls.append(cmd)
+        out = '{"guid": "g-new", "title": "2026-11-07 Pools"}' if "create" in cmd else '{"content": ""}'
+        return types.SimpleNamespace(returncode=0, stdout=out, stderr="")
+
+    monkeypatch.setattr(nb.subprocess, "run", run)
+    monkeypatch.setattr(nb, "cmd_verify", lambda a: 0)
+    assert nb.main(["write", str(d)]) == 0
+    assert json.loads((d / "meta.json").read_text())["guid"] == "g-new"
+    assert nb.main(["write", str(d)]) == 0
+    assert "update" in calls[-2] and "create" not in calls[-2]

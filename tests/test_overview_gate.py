@@ -90,6 +90,8 @@ Your body runs it in two stages.
 - Arousal comes first.
 - Emission follows.
 
+### Taste by source
+
 | Source | Reads as |
 | --- | --- |
 | Prostate | Sour and sharp |
@@ -308,3 +310,10 @@ def test_a_plain_summary_line_has_no_contrast() -> None:
 def test_a_contrast_in_a_section_opening_fails() -> None:
     draft = "## March stay\nYou take the hotel rather than the flat.\n- The hotel costs ¥11000 a night.\n"
     assert any(f.startswith("T13") and "contrast" in f for f in gate.check(draft, note=True))
+
+
+def test_a_table_without_an_h3_title_fails() -> None:
+    draft = "## Stay\nYou book the hotel.\n- The hotel costs ¥11000.\n\n| Hotel | Price |\n| --- | --- |\n| A | 1 |\n"
+    assert any(f.startswith("T17") for f in gate.check(draft, note=True, table_titles=True))
+    titled = draft.replace("\n\n| Hotel", "\n\n### Hotels by price\n\n| Hotel")
+    assert not any(f.startswith("T17") for f in gate.check(titled, note=True, table_titles=True))
