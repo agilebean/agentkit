@@ -45,3 +45,18 @@ def test_an_mcp_execute_call_is_recorded(tmp_path) -> None:
     r.event(tool("const t0 = Date.now(); await evernote.get_note({guid})", '{"read": 412}', None,
                  tool_name="execute"), seg)
     assert r.calls[0]["tool"] == "execute" and r.calls[0]["ms"] == 250 and r.calls[0]["failed"] is False
+
+
+def test_an_evernote_copy_report_counts_as_verified_writes(tmp_path) -> None:
+    r, seg = run(tmp_path)
+    r.event(tool("python3 x/en_to_hanji.py start \"2026 New Year's Resolutions\"", "Receiver on port 1", 0), seg)
+    rep = ("Moved 2 of 3 notes.\n## A\nMoved: Hanji notebook Inbox, id 1, write verified True.\n"
+           "## B\nMoved: Hanji notebook Inbox, id 2, write verified True.\n## C\nNot moved: no Evernote note has this exact title.")
+    r.event(tool("const B = 1; await tools.evernote.get_note({})", rep, None, tool_name="execute"), seg)
+    assert r.calls[0]["what"] == "start" and r.calls[1]["verified"] == 2
+    r.check_build()
+    assert r.written and r.verified
+    r.event(tool("const B = 1", "## D\nNot moved: hanji_note.py create exited 4: the copy did not read back", None,
+                 tool_name="execute"), seg)
+    r.check_build()
+    assert r.verified is False
