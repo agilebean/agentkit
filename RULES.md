@@ -243,8 +243,10 @@ The list covers internal working artifacts too (run sheets, session cards, flow 
 
 A chat reply is checked the same way as a file: the checker reads paths, so the finished draft is written to a temp file and run through `scripts/wording_lint.py` (agentkit) before it is sent, on every reply, not only after a correction. When a correction is fixed, its row is appended to `common_sense.md` in the same turn with Chaehan's reasoning; when the exchange carries none, ask him for it.
 
-### 3. Do not commit or push unless explicitly told to
-Never run `git commit` or `git push` unless the user says "commit", "push", or "commit and push". "Commit" alone authorizes both commit and push. Git commit amend is allowed.
+### 3. Commit and push on main when told, when satisfaction is detected, or when the work has converged
+Run `git commit` and `git push` when the user says "commit", "push" or "commit and push", when you detect satisfaction (rule 46), or when the work has converged (rule 119). Never wait for the word in the last two cases. "Commit" alone authorizes both commit and push. Git commit amend is allowed.
+
+All work happens on main. Chaehan is the only contributor, so a branch buys no isolation and costs a merge. A session that the Claude desktop app starts in a worktree commits there, merges the commit into main and pushes main in the same turn; it never ends a turn with work that sits only on a branch. The protection against concurrent sessions is the immediate commit, which leaves the next session a clean tree. Instruction basis, 2026-11-07: "i configured opencode to work only on main as i'm the only contributor and constant merging is unnecessary overhead" and "explain why you always hesitate to commit and not follow the rules for that in opencode. it creates unnecessary work for me". The always-loaded core 7 had said "Commit and push only when told", which overrode rules 46 and 119 in every session that did not open this file.
 
 The word is not a halfway permission. A run that ends on `git commit` is an unfinished run: the push happens in the same turn, and the report states the remote and the range it moved (`main -> main`, `7d83b19..e0999ec`). A report that ends "not pushed, since you said commit" misreads the authorization clause above as a bare boundary and is a defect in its own right.
 
@@ -4538,6 +4540,12 @@ dashboard, the PNG for an R chart), compare it with the sentence the user just w
 then move one number. Reading the numbers back out of the payload proves nothing: it
 cannot show a label crossing the axis line, two numbers printed over each other, or a
 curve that reads as a flat dotted line.
+
+The same holds when a corrected value is reported. Reading it back out of the payload
+proves nothing about what the reader sees: the page is reopened and captured before the
+claim, and the reply gives the file's modification time, so a view older than the fix is
+visible as such. A figure that moves twice while the reader holds a third value says
+which of their views is stale and how to refresh it.
 
 The default arrangement, which a new chart with secondary curves starts from instead of
 a blank page:
