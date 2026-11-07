@@ -80,3 +80,5 @@ warn	\b(?:if anything|in fact|in reality|actually)\b|\bthe real (?:\w+ )?(?:ques
 warn	\b(?:have|has|hold|holds|got)\s+only\b|\bonly\s+(?:have|has)\b	contrast frame: what you lack set beside what you have ("you have only a quote") - state what you have and what you must still do
 warn	\bso\b[^.;:]{1,60}\bstill\b	contrast frame: a consequence turned against the claim ("so the bed still costs") - state the figure plainly
 warn	\b(?:you|your \w+) (?:have|has) no\b|\bthere (?:is|are) no\b|\bnone (?:is|are|was|were)\b	contrast frame: an absence ("you have no pool", "none is booked") - state what you have or what you must still do
+warn	\bblurbs?\b	uncommon word: "blurb" - name the thing ("the manager's description", "the profile text")
+warn	\babout (?=[0-9])	approximate number: write ~N and a spread as ±N, not "about N" (AGENTS.md core 8)
