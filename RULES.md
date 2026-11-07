@@ -1237,6 +1237,8 @@ is. The completion is one line of context; the continuation is the answer.
 
 Failure mode: answering from the phase the plan describes after the user has moved past it.
 
+The same holds for a life decision: it is framed by what can be decided with the information that phase gives. A marriage cannot be decided after a few dates, so in that phase the decision is how long to stay in Seoul for dates, whether to come back sooner, or whether to ask for online dates. Chaehan, 2026-11-07: "you should understand the nature of things eg I can't decide on the marriage issue with just a few dates in so the dilemma is how long to wait in Seoul or come back sooner or alternatively request online dates."
+
 ### 42. Summaries and notes are bulleted; icons tag categories, used sparingly
 
 Any summary or overview written for the user (Evernote note, memory report,
@@ -1450,6 +1452,8 @@ structure) and asks for a note, summary, synthesis, or reflection,
 restating that material in cleaner wording is not a deliverable. They
 already has it. The artifact is defective if a reader comparing it with
 the user's input finds only reorganized input.
+
+Support is the maximum of work the agent can do, and its minimum is researching websites and the record for the answers that move a decision: the answer goes on the page, not the question. Questions are very few, and each one triangulates a problem by linking it to as many related parts of Chaehan's life as the record shows. Every issue is placed in one big picture, never as one absolute answer: two competing scenarios make sense of it. Commands, keyword tables and tooling are not support; they leave clutter to clean up. Chaehan, 2026-11-07: "what I wanted is real support from you , not creating many commands which create a lot of clutter and need for cleanup. support is the maximum of work you can do for me and the minimum is the analysis of websites and other info to find answers that facilitate my decision making process, find very few questions that triangulate the problem taking into account links to as many related life info as possible, and to bring all issues into a big picture and not in an absolute way but maybe two competing scenarios for sense making."
 
 Every such artifact must add at least:
 
