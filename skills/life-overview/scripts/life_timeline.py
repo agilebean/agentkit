@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a horizontal timeline chart (PNG) for a Life Overview note.
+"""Render a phone-readable timeline chart (PNG) for a Life Overview note.
 
 Usage:
     python life_timeline.py <spec.json> <out.png>
@@ -18,9 +18,13 @@ Spec shape:
   ]
 }
 
-Open bars render as pale fill + colored outline; solid bars as full color.
-Milestones render as diamonds: green filled = done, gray hollow = open,
-red = decision. Requires Pillow (socrates env).
+Each row is a lane: its label on its own line, then a full-width track. A
+lane's colour comes from its position (fixed palette order), so "color" in the
+spec is ignored. Open bars render as a pale tint with an outline in the lane
+colour; solid bars as full colour. Milestones render as diamonds: green = done,
+hollow = open, red = decision. Labels that do not fit inside a bar are packed
+on lines under the track, so "text_pos", "offset" and "label_above" are
+ignored. Requires Pillow (socrates env).
 """
 from __future__ import annotations
 
@@ -31,21 +35,28 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-W = 1700
-S = 4  # supersampling factor: everything is drawn at S× and downscaled once
+# Phone-first layout (Chaehan, 2026-11-07: "improve the chart to modern design
+# and better readability on a small device"). The PNG is 1200 px wide, which a
+# 390 pt phone screen shows at ~1:1 on a 3x display; at that scale 30 px reads
+# as ~10 pt, so no text is smaller than 28 px.
+W = 1200
+S = 3  # supersampling factor: everything is drawn at S× and downscaled once
 # at the end. PIL's 1× rasterizer breaks small Helvetica Neue joints (the 'r'
 # arm collapses into a stub - caught in the first post-Arial render, 2026-10-06).
-GUTTER = 330
-X0, X1 = 355, 1650
-ROW_H = 92
-HEADER_H = 150
+PAD = 56
+X0, X1 = PAD, W - PAD
+BAR_H = 52
+LINE_H = 40  # one line of outside labels under a track
 BG = "#FFFFFF"
-BAND = "#F6F7F9"
-GRID = "#D9DEE5"
-TEXT = "#1F2933"
-MUTED = "#6B7280"
-TODAY = "#E03131"
-DONE = "#2F9E44"
+GRID = "#ECECEA"
+TEXT = "#1B1B1A"
+MUTED = "#52514E"
+TODAY_INK = "#1B1B1A"
+DECISION = "#D03B3B"  # status red, reserved for decisions, always labelled
+DONE = "#0CA30C"
+# Lane colours in fixed order (dataviz reference categorical palette, light
+# mode; validated 2026-11-07: CVD worst adjacent dE 9.1, normal-vision 19.6).
+PALETTE = ["#2A78D6", "#EB6834", "#1BAF7A", "#EDA100", "#E87BA4", "#6250D6", "#008300"]
 
 # Font candidates in preference order; a tuple carries the TTC face index.
 # Arial never appears here - banned outright (RULES.md rule 115).
@@ -134,11 +145,49 @@ def text_w(draw: ImageDraw.ImageDraw, text: str, font) -> int:
     return box[2] - box[0]
 
 
-def dashed_vline(draw, x, y_top, y_bottom, color, dash=9, gap=7, width=3):
-    y = y_top
-    while y < y_bottom:
-        draw.rectangle([x, y, x + width - 1, min(y + dash, y_bottom)], fill=color)
-        y += dash + gap
+def luminance(hex_color: str) -> float:
+    def ch(c):
+        c = c / 255
+        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+    r, g, b = (ch(v) for v in rgb(hex_color))
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def wrap(draw, text: str, font, width: float) -> list[str]:
+    lines, cur = [], ""
+    for word in text.split():
+        trial = f"{cur} {word}".strip()
+        if cur and text_w(draw, trial, font) > width:
+            lines.append(cur)
+            cur = word
+        else:
+            cur = trial
+    return lines + ([cur] if cur else [])
+
+
+def diamond(d, x, y, r, style):
+    pts = [(x, y - r), (x + r, y), (x, y + r), (x - r, y)]
+    if style == "done":
+        d.polygon(pts, fill=DONE)
+    elif style == "decision":
+        d.polygon(pts, fill=DECISION)
+    else:
+        d.polygon(pts, fill=BG, outline=MUTED, width=3)
+
+
+def pack(labels: list[dict], draw, font) -> int:
+    """Place outside labels on lines under the track, left to right, without overlap.
+    Each label gets "x" (left edge) and "level"; returns the number of lines used."""
+    ends: list[float] = []
+    for lab in sorted(labels, key=lambda l: l["cx"]):
+        w = text_w(draw, lab["text"], font)
+        x = min(max(lab["cx"] - w / 2, X0), X1 - w)
+        level = next((i for i, e in enumerate(ends) if x >= e + 20), len(ends))
+        if level == len(ends):
+            ends.append(0)
+        ends[level] = x + w
+        lab["x"], lab["w"], lab["level"] = x, w, level
+    return len(ends)
 
 
 def main() -> int:
@@ -152,156 +201,157 @@ def main() -> int:
     def x_of(d: date) -> float:
         return X0 + (d - start).days / span * (X1 - X0)
 
-    n = len(rows)
-    axis_y = HEADER_H + n * ROW_H + 8
-    H = axis_y + 140
+    probe = ScaleDraw(ImageDraw.Draw(Image.new("RGB", (10, 10))), S)
+    f_title = load_font(46, True)
+    f_sub = load_font(30)
+    f_lane = load_font(32, True)
+    f_in = load_font(28, True)
+    f_out = load_font(28)
+    f_axis = load_font(28)
+    f_leg = load_font(28)
+
+    # Layout pass: the title's lines, each lane's packed labels, the canvas height.
+    title_lines = wrap(probe, spec["title"], f_title, X1 - X0)
+    y = 48 + len(title_lines) * 58 + (44 if spec.get("subtitle") else 0) + 28
+    axis_y = y + 40  # month labels sit above this line
+    y = axis_y + 28
+    lanes = []
+    for i, row in enumerate(rows):
+        color = PALETTE[i % len(PALETTE)]
+        header_y = y
+        track_y = header_y + 48
+        labels, inside = [], []
+        for item in row["items"]:
+            text = item.get("text", "")
+            if item["kind"] == "bar":
+                xs, xe = x_of(parse(item["start"])), x_of(parse(item["end"]))
+                if text and text_w(probe, text, f_in) <= xe - xs - 28:
+                    inside.append(item)
+                elif text:
+                    labels.append({"text": text, "cx": (xs + xe) / 2, "style": "bar"})
+            elif text:
+                labels.append({"text": text, "cx": x_of(parse(item["date"])),
+                               "style": item.get("style", "open")})
+        levels = pack(labels, probe, f_out)
+        lane_h = 48 + BAR_H + (12 + levels * LINE_H if levels else 0) + 36
+        lanes.append({"row": row, "color": color, "header_y": header_y,
+                      "track_y": track_y, "labels": labels, "inside": inside})
+        y += lane_h
+    chart_bottom = y - 20
+
+    used = {"solid": False, "open": False, "done": False, "decision": False, "milestone": False}
+    for row in rows:
+        for item in row["items"]:
+            if item["kind"] == "bar":
+                used["solid" if item.get("style", "solid") == "solid" else "open"] = True
+            else:
+                st = item.get("style", "open")
+                used[st if st in ("done", "decision") else "milestone"] = True
+    legend = [(k, t) for k, t in (("solid", "Booked"), ("open", "Open"), ("decision", "Decision"),
+                                  ("milestone", "Milestone"), ("done", "Done")) if used[k]]
+    legend_lines, lx = 1, X0
+    for _, t in legend:
+        w = 56 + text_w(probe, t, f_leg) + 36
+        if lx + w > X1:
+            legend_lines, lx = legend_lines + 1, X0
+        lx += w
+    H = int(chart_bottom + 36 + legend_lines * 52 + 36)
 
     img = Image.new("RGB", (W * S, H * S), BG)
     d = ScaleDraw(ImageDraw.Draw(img), S)
-    f_title = load_font(32, True)
-    f_sub = load_font(17)
-    f_row = load_font(20, True)
-    # in-bar label size: the "JTBD interviews" reference from the KUBS course
-    # overview (21 px at its 1900 px width) scaled to this canvas:
-    # 21 * 1700/1900 ≈ 19 (Chaehan, 2026-10-06)
-    f_bar = load_font(19, True)
-    f_bar2 = load_font(15)
-    f_ms = load_font(14, True)
-    f_axis = load_font(15)
-    f_leg = load_font(15)
 
-    # header
-    d.text((60, 40), spec["title"], font=f_title, fill=TEXT)
+    # Title and subtitle.
+    ty = 48
+    for line in title_lines:
+        d.text((X0, ty), line, font=f_title, fill=TEXT)
+        ty += 58
     if spec.get("subtitle"):
-        d.text((60, 86), spec["subtitle"], font=f_sub, fill=MUTED)
+        d.text((X0, ty + 4), spec["subtitle"], font=f_sub, fill=MUTED)
 
-    # row bands + labels
-    for i, row in enumerate(rows):
-        y_top = HEADER_H + i * ROW_H
-        if i % 2 == 1:
-            d.rectangle([0, y_top, W, y_top + ROW_H], fill=BAND)
-        d.text((GUTTER, y_top + ROW_H / 2), row["label"], font=f_row,
-               fill=TEXT, anchor="rm")
-
-    # month gridlines + labels
-    months = []
-    m = date(start.year, start.month, 1)
-    while m <= end:
-        months.append(m)
-        m = date(m.year + (m.month == 12), m.month % 12 + 1, 1)
-    for m in months:
-        if m < start:
-            continue
-        x = x_of(m)
-        d.line([x, HEADER_H - 12, x, axis_y], fill=GRID, width=1)
-        first_visible = next((mm for mm in months if mm >= start), None)
-        label = m.strftime("%b %Y") if m == first_visible else m.strftime("%b")
-        d.text((x + 8, axis_y + 10), label, font=f_axis, fill=MUTED)
-    d.line([X0 - 10, axis_y, X1, axis_y], fill=GRID, width=2)
-
-    # today marker
+    # Today's pill sits in the month row; a month label that would touch it, or
+    # its left neighbour, is skipped (the subtitle carries the dates).
+    pill_box = None
     if today and start <= today <= end:
         x_t = x_of(today)
-        dashed_vline(d, x_t, HEADER_H - 34, axis_y, TODAY)
-        d.text((x_t + 9, HEADER_H - 58), "today", font=load_font(15, True), fill=TODAY)
+        pw = text_w(d, "Today", f_in) + 28
+        px = min(max(x_t - pw / 2, X0), X1 - pw)
+        pill_box = (px, px + pw)
+    m = date(start.year, start.month, 1)
+    last_right = -1e9
+    while m <= end:
+        if m >= start:
+            x = x_of(m)
+            d.line([x, axis_y, x, chart_bottom], fill=GRID, width=2)
+            label = m.strftime("%b %Y" if m.month == 1 else "%b")
+            lw = text_w(d, label, f_axis)
+            clear = x + 8 >= last_right + 16 and x + 8 + lw <= X1
+            if pill_box and x + 8 < pill_box[1] + 12 and x + 8 + lw > pill_box[0] - 12:
+                clear = False
+            if clear:
+                d.text((x + 8, axis_y - 6), label, font=f_axis, fill=MUTED, anchor="lb")
+                last_right = x + 8 + lw
+        m = date(m.year + (m.month == 12), m.month % 12 + 1, 1)
 
-    # items
-    for i, row in enumerate(rows):
-        y_c = HEADER_H + i * ROW_H + ROW_H / 2
-        for item in row["items"]:
-            color = item.get("color", "#4C78A8")
-            if item["kind"] == "bar":
-                xs, xe = x_of(parse(item["start"])), x_of(parse(item["end"]))
-                x_end = xe
-                if item.get("arrow"):
-                    x_end = xe + 14
-                box = [xs, y_c - 17, x_end, y_c + 17]
-                if item.get("style", "solid") == "solid":
-                    d.rounded_rectangle(box, radius=9, fill=color)
-                    inside_fill, inside_font = "#FFFFFF", f_bar
-                else:
-                    d.rounded_rectangle(box, radius=9, fill=blend(color, 0.16),
-                                        outline=color, width=3)
-                    inside_fill, inside_font = blend(color, 0.85), f_bar
-                label = item.get("text", "")
-                pos = item.get("text_pos", "center")
-                if label:
-                    fits = text_w(d, label, inside_font) <= (x_end - xs) - 22 and (x_end - xs) > 60
-                    if pos == "center" and fits:
-                        d.text(((xs + x_end) / 2, y_c), label, font=inside_font,
-                               fill=inside_fill, anchor="mm")
-                    elif pos == "below":
-                        d.text(((xs + x_end) / 2, y_c + 20), label, font=f_bar2,
-                               fill=TEXT, anchor="ma")
-                    elif pos == "above":
-                        d.text(((xs + x_end) / 2, y_c - 20), label, font=f_bar2,
-                               fill=TEXT, anchor="mb")
-                    else:
-                        d.text((x_end + 12, y_c), label, font=f_bar2,
-                               fill=TEXT, anchor="lm")
-                if item.get("arrow"):
-                    tip_x = x_end + 13
-                    d.polygon([(tip_x, y_c), (x_end - 2, y_c - 11), (x_end - 2, y_c + 11)],
-                              fill=color if item.get("style", "solid") == "solid" else blend(color, 0.5))
-            else:  # milestone
-                x_m = x_of(parse(item["date"]))
-                style = item.get("style", "open")
-                floating = item.get("offset") == "above"
-                y_m = y_c - 30 if floating else y_c
-                r = 10 if floating else 13
-                if style == "done":
-                    d.polygon([(x_m, y_m - r), (x_m + r, y_m), (x_m, y_m + r), (x_m - r, y_m)],
-                              fill=DONE)
-                    label_fill = "#2B8A3E"
-                elif style == "decision":
-                    d.polygon([(x_m, y_m - r), (x_m + r, y_m), (x_m, y_m + r), (x_m - r, y_m)],
-                              fill=TODAY)
-                    label_fill = TODAY
-                else:
-                    d.polygon([(x_m, y_m - r), (x_m + r, y_m), (x_m, y_m + r), (x_m - r, y_m)],
-                              fill="#FFFFFF", outline=MUTED, width=2)
-                    label_fill = MUTED
-                if item.get("text"):
-                    if floating:
-                        d.text((x_m + 16, y_m), item["text"], font=f_ms,
-                               fill=label_fill, anchor="lm")
-                    elif item.get("label_above"):
-                        d.text((x_m, y_c - 20), item["text"], font=f_ms,
-                               fill=label_fill, anchor="mb")
-                    else:
-                        d.text((x_m, y_c + 20), item["text"], font=f_ms,
-                               fill=label_fill, anchor="ma")
+    # Today: a thin line from the month row down, under the bars and every label.
+    if pill_box:
+        d.line([x_t, axis_y, x_t, chart_bottom], fill=TODAY_INK, width=3)
+        d.rounded_rectangle([pill_box[0], axis_y - 42, pill_box[1], axis_y + 2], radius=22, fill=TODAY_INK)
+        d.text(((pill_box[0] + pill_box[1]) / 2, axis_y - 20), "Today", font=f_in, fill=BG, anchor="mm")
 
-    # legend
-    ly = axis_y + 66
-    lx = 60
-    samples = [
-        ("solid", "booked / fixed"),
-        ("open", "open / conditional"),
-        ("done", "done"),
-        ("open-ms", "milestone"),
-        ("decision", "decision"),
-    ]
-    for kind, label in samples:
+    for lane in lanes:
+        color, track_y = lane["color"], lane["track_y"]
+        yc = track_y + BAR_H / 2
+        # Lane label with its colour dot.
+        hw = text_w(d, lane["row"]["label"], f_lane)
+        d.rectangle([X0 - 4, lane["header_y"] - 2, X0 + 30 + hw + 10, lane["header_y"] + 42], fill=BG)
+        d.rounded_rectangle([X0, lane["header_y"] + 10, X0 + 18, lane["header_y"] + 28], radius=9, fill=color)
+        d.text((X0 + 30, lane["header_y"] + 19), lane["row"]["label"], font=f_lane, fill=TEXT, anchor="lm")
+        # Bars.
+        for item in lane["row"]["items"]:
+            if item["kind"] != "bar":
+                continue
+            xs, xe = x_of(parse(item["start"])), x_of(parse(item["end"]))
+            xe = max(xe, xs + 14)
+            box = [xs + 1, track_y, xe - 1, track_y + BAR_H]  # 2 px surface gap between neighbours
+            solid = item.get("style", "solid") == "solid"
+            if solid:
+                d.rounded_rectangle(box, radius=12, fill=color)
+            else:
+                d.rounded_rectangle(box, radius=12, fill=blend(color, 0.14), outline=color, width=3)
+            if item.get("arrow"):
+                tip = min(xe + 16, X1 + 30)
+                d.polygon([(tip, yc), (xe - 1, yc - 14), (xe - 1, yc + 14)],
+                          fill=color if solid else blend(color, 0.55))
+            if item in lane["inside"]:
+                ink = BG if solid and luminance(color) < 0.3 else TEXT
+                d.text(((xs + xe) / 2, yc), item["text"], font=f_in, fill=ink, anchor="mm")
+        # Milestones on the track line.
+        for item in lane["row"]["items"]:
+            if item["kind"] == "milestone":
+                diamond(d, x_of(parse(item["date"])), yc, 17, item.get("style", "open"))
+        # Outside labels, each on a white halo so a gridline or the today line never cuts it.
+        for lab in lane["labels"]:
+            ly = track_y + BAR_H + 12 + lab["level"] * LINE_H
+            ink = DECISION if lab["style"] == "decision" else TEXT
+            d.rectangle([lab["x"] - 6, ly, lab["x"] + lab["w"] + 6, ly + LINE_H - 4], fill=BG)
+            d.text((lab["x"], ly + 2), lab["text"], font=f_out, fill=ink)
+
+    # Legend: only the styles the chart uses, wrapped to the width.
+    lx, ly = X0, chart_bottom + 36 + 26
+    for kind, label in legend:
+        w = 56 + text_w(d, label, f_leg) + 36
+        if lx + w > X1:
+            lx, ly = X0, ly + 52
         if kind in ("solid", "open"):
+            sw = [lx, ly - 14, lx + 44, ly + 14]
             if kind == "solid":
-                d.rounded_rectangle([lx, ly - 8, lx + 30, ly + 8], radius=5, fill="#4C78A8")
+                d.rounded_rectangle(sw, radius=8, fill=MUTED)
             else:
-                d.rounded_rectangle([lx, ly - 8, lx + 30, ly + 8], radius=5,
-                                    fill=blend("#4C78A8", 0.16), outline="#4C78A8", width=2)
-            lx += 40
+                d.rounded_rectangle(sw, radius=8, fill=blend(MUTED, 0.14), outline=MUTED, width=3)
         else:
-            cx = lx + 12
-            if kind == "done":
-                d.polygon([(cx, ly - 10), (cx + 10, ly), (cx, ly + 10), (cx - 10, ly)], fill=DONE)
-            elif kind == "decision":
-                d.polygon([(cx, ly - 10), (cx + 10, ly), (cx, ly + 10), (cx - 10, ly)], fill=TODAY)
-            else:
-                d.polygon([(cx, ly - 10), (cx + 10, ly), (cx, ly + 10), (cx - 10, ly)],
-                          fill="#FFFFFF", outline=MUTED, width=2)
-            lx += 30
-        d.text((lx, ly), label, font=f_leg, fill=MUTED, anchor="lm")
-        lx += text_w(d, label, f_leg) + 44
+            diamond(d, lx + 22, ly, 15, "done" if kind == "done" else "decision" if kind == "decision" else "open")
+        d.text((lx + 56, ly), label, font=f_leg, fill=MUTED, anchor="lm")
+        lx += w
 
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     img = img.resize((W, H), Image.LANCZOS)
