@@ -7,6 +7,7 @@ gate = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(gate)
 
 LINK = "[Seoul Mapo storage locker](evernote:///view/39d2f74/s365/g/g/)"
+CHALLENGES_LINK = "[2026-11-07 Life Challenges](evernote:///view/39d2f74/s365/c/c/)"
 
 GOOD = f"""## Takeaway
 
@@ -18,11 +19,29 @@ GOOD = f"""## Takeaway
   - It costs 72090 won a month.
 - {LINK}
 
-## Open tasks
+## Your decisions
 
-| Thread | Next move |
-| --- | --- |
-| Seoul storage | book the 72090 won unit through the monthly link |
+Your open decisions and the steps you can hand to me are in {CHALLENGES_LINK}.
+"""
+
+CHALLENGES = """## Takeaway
+
+- You book storage before 2026-12-04.
+
+## Your decisions
+
+### Storage
+
+Do you book the Gongdeok storage unit, or keep the clothes and papers somewhere free?
+
+1. Book the Gongdeok unit: 72090 won a month.
+2. Ask the family to keep one box: free.
+
+## Hand to me
+
+| Issue | I do | You decide | Command |
+| --- | --- | --- | --- |
+| Seoul storage | book the 72090 won unit through the monthly link | approve | /life storage |
 """
 
 BAD = """## Takeaway
@@ -49,8 +68,36 @@ def test_bad_draft_names_each_failure():
     fails = gate.check(BAD)
     kinds = {f.split()[0] for f in fails}
     assert kinds == {"T3", "T4", "T5"}
-    assert any("book the 72090 won unit" in f for f in fails if f.startswith("T3"))
+    assert any("Open tasks section" in f for f in fails if f.startswith("T3"))
+    assert any("no link to the current Life Challenges note" in f for f in fails)
     assert any("'Seoul storage'" in f for f in fails if f.startswith("T4"))
+
+
+def test_takeaway_repeating_the_challenges_note_fails():
+    fails = gate.check(BAD, challenges=CHALLENGES)
+    assert any("repeats the Life Challenges note" in f and "book the 72090 won unit" in f for f in fails)
+    assert not any("repeats the Life Challenges note" in f for f in gate.check(GOOD, challenges=CHALLENGES))
+
+
+def test_contact_in_overview_fails():
+    draft = GOOD.replace("- The unit fits the clothes.", "- The unit fits the clothes; call 02-705-7361 or kej0313@korea.ac.kr.")
+    hits = [f for f in gate.check(draft) if f.startswith("T3 a contact")]
+    assert len(hits) == 2
+
+
+def test_dates_are_not_phone_numbers():
+    assert gate.PHONE.findall("2026-11-05 and 2026-12-04, 72090 won, 0.575 cbm") == []
+
+
+def test_challenges_note_counts_as_linked_for_facts():
+    original = "Bond AUD 2740 due 2026-12-12."
+    assert gate.check(GOOD, original) == ["T6 fact lost: 2026-12-12", "T6 fact lost: 2740"]
+    assert gate.check(GOOD, original, challenges=CHALLENGES + "\n| Melbourne bond | AUD 2740 by 2026-12-12 | pay | /life bond |\n") == []
+
+
+def test_legacy_life_problems_link_counts():
+    draft = GOOD.replace("2026-11-07 Life Challenges", "2026-11-06 Life Problems")
+    assert gate.check(draft) == []
 
 
 def test_fact_loss_detected_and_linked_note_counts():
@@ -67,7 +114,7 @@ def test_cli_exit_code(tmp_path, capsys):
 
 
 def test_section_may_declare_no_detail_note():
-    draft = GOOD.replace("## Open tasks", "## Health\n\n- Gluten is out since 2026-10-19 (no detail note).\n\n## Open tasks")
+    draft = GOOD.replace("## Your decisions", "## Health\n\n- Gluten is out since 2026-10-19 (no detail note).\n\n## Your decisions")
     assert gate.check(draft) == []
 
 
