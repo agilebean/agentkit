@@ -26,6 +26,16 @@ structure, read the destination for the slot it would occupy: a plan already has
 a warmup column, a note already has a section. A label that no longer names the
 function is renamed to the function, never bypassed with a new table.
 
+Clutter is descriptive structural information: words that describe the record
+itself (what it was read from, how many sources, which method, what a section
+holds, how an observation was made) instead of stating a fact Chaehan acts on.
+The test: delete the phrase. If no fact about the world or about Chaehan is lost
+and no decision changes, it was clutter. "2026-11-06 surgery read, 3 candid
+photos:" keeps its whole point as "2026-11-06 surgery read:", because the photo
+count describes the evidence, not the result. Where the basis changes a decision,
+it is stated as that fact in the sentence it changes, never as a label in a
+heading or a bracket.
+
 Instruction basis, 2026-10-26, "My Swim Training": the drills stood in their own
 table, then in two identical tables, while the training plan already had a
 warmup column and a cooldown slot. Chaehan: "put in utmost priority of agent
@@ -33,6 +43,12 @@ rules the principle of parsimony: if you can, the reduce clutter and
 complexity!" and "the whole point of making notes is to bring all to the point,
 not describe a lot. the more you remove the clutter, the more valuable becomes
 whatever is left!!!! this is common sense!!!!"
+
+Instruction basis, 2026-11-07, the JNoble Dates note: the cells opened with
+"2026-11-06 surgery read, 3 candid photos:", "... from the portrait (street photo
+10 to 15 years older):" and "..., one smoothed studio portrait:". Chaehan:
+"generalize in agent rules what i mean by clutter - it is descriptive structural
+information".
 
 ## Never change the gist of a structure
 
@@ -1873,7 +1889,9 @@ When information has a time series (test results, prices, rates, measurements, s
 
 A dated series is history: when a new observation arrives, append it. Older entries are never rewritten to match the new state, and the agent never proposes to. A table with one dated row per update is a log, not a current-state record; read it as a series, where the newest row is current and the older rows record the past.
 
-Failure mode: an older vintage used while a newer one sits in the same data.
+Two observations of one thing that disagree (two photos of one face, two readings of one meter, two versions of one document) are dated before their difference is explained, and the time between them is the first cause on the list: 10 to 15 years change a face through age, weight and makeup. The newest observation is the basis for the judgment. An older one adds only what time cannot change and never vetoes the newer one. A newest observation that is degraded (retouched, filtered, low resolution) is still read, with its discount stated; "cannot judge" is said only when no usable observation exists.
+
+Failure mode: an older vintage used while a newer one sits in the same data. Instance, 2026-11-06: a matchmaking profile held a recent portrait and a snapshot 10 to 15 years older. The agent explained their difference as either an AI filter or surgery, left age out, and wrote "cannot judge" for eyes, nose and chin. Chaehan: "you didn't get it [the] photos differ at least 10 if not 15 years which explains the differences. you can def judget eyes nose chin from the portrait."
 
 This is non-negotiable: Chaehan stated it on 2026-09-21.
 
