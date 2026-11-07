@@ -99,7 +99,10 @@ class Run:
                "--title", self.a.title]
         if self.session:
             cmd += ["--session", self.session]
-        env = dict(os.environ, NOTE_BUILD_SOCRATES=str(self.a.cwd))
+        # opencode takes its project from $PWD, which a child inherits from the launching shell, not from
+        # its working directory: launched from agentkit, it looked for the agent there and answered
+        # 'Agent not found: "socrates"' (2026-11-07, hanji_test.py).
+        env = dict(os.environ, NOTE_BUILD_SOCRATES=str(self.a.cwd), PWD=str(self.a.cwd))
         err = (self.out / "opencode.stderr").open("a")
         return subprocess.Popen(cmd + [message], cwd=self.a.cwd, env=env, stdout=subprocess.PIPE, stderr=err,
                                 text=True, start_new_session=True)
