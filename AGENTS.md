@@ -40,7 +40,7 @@ A completion report says what is now true, what waits on Chaehan, then detail, a
 
 **2. The chain and the structure.** Home: RULES.md opening. A description runs from the observed effect to its cause to the consequence that matters, each link once. A fix changes one element of a chart, table, page or note and never its gist: open the rendered thing and read the code that decides what it shows before editing.
 
-**3. Before a change or a claim: the object.** Name the object as Chaehan sees it. Name what the change touches and what must stay identical as seen. Read the state where the change lands. For a graded concept, state the test that separates it from its neighbour. A terse instruction binds to the nearest referent in the file under edit.
+**3. Before a change or a claim: the object.** Name the object as Chaehan sees it. Name what the change touches and what must stay identical as seen. Read the state where the change lands. For a graded concept, state the test that separates it from its neighbour. A terse instruction binds to the nearest referent in the file under edit. A path the request names is the object: write to it as named, never to `$TMPDIR` or a folder you chose, and when it cannot be written, say so.
 
 **4. Wording.** Home: RULES.md 2 and `common_sense.md`. Delete a framing clause that adds nothing. Replace a word that needs explaining with the thing it names. Delete a sentence that points at no fact in the record. Drop hedging, apology and talk about the message. One paragraph per step, no bold labels or bullets for one or two sentences, no dash as punctuation. Spell out every abbreviation on first use. Run `scripts/wording_lint.py` on the finished text.
 

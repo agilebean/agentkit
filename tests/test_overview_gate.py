@@ -364,3 +364,46 @@ def test_a_table_without_an_h3_title_fails() -> None:
     assert any(f.startswith("T17") for f in gate.check(draft, note=True, table_titles=True))
     titled = draft.replace("\n\n| Hotel", "\n\n### Hotels by price\n\n| Hotel")
     assert not any(f.startswith("T17") for f in gate.check(titled, note=True, table_titles=True))
+
+
+GOAL_LAYOUT = """## Takeaway
+
+- You decide where you live.
+
+## Home
+
+You want Korea as your home base.
+
+- Your deciding question: is your marriage decided in the first half of 2027?
+  - If yes, you would consider buying an apartment in the second half of 2027.
+  - If not, you rent again from September 2028.
+- Where do your winter clothes stay from 2026-12-04?
+  - The Gongdeok unit: 72090 won a month.
+  - A friend in Seoul: free, for one favour.
+
+## Hand to me
+
+| Issue | I do | You decide | Command |
+| --- | --- | --- | --- |
+| TAS email | draft the No Response email | approve it, then you send it | `/life tas` |
+"""
+
+
+def test_goal_layout_items_include_questions_options_and_answers():
+    items = gate.challenges_items(GOAL_LAYOUT)
+    assert "Your deciding question: is your marriage decided in the first half of 2027?" in items
+    assert "If yes, you would consider buying an apartment in the second half of 2027." in items
+    assert "A friend in Seoul: free, for one favour." in items
+    assert any(i.startswith("TAS email") for i in items)
+    assert "You decide where you live." not in items and "You want Korea as your home base." not in items
+
+
+def test_takeaway_restating_the_deciding_question_fails():
+    draft = GOOD.replace("- Your clothes and papers",
+                         "- If your marriage is decided in the first half of 2027, you would consider buying an apartment.\n- Your clothes and papers")
+    assert any("repeats the Life Challenges note" in f for f in gate.check(draft, challenges=GOAL_LAYOUT))
+
+
+def test_link_address_digits_are_not_facts():
+    original = "Book it in [Seoul Mapo storage locker](evernote:///view/39d2f74/s365/431a56de-0a63/431a56de-0a63/), 0.575 cbm."
+    assert gate.check(GOOD, original, ["0.575 cbm"]) == []
