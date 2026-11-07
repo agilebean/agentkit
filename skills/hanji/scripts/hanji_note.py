@@ -31,6 +31,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import unicodedata
 from collections import Counter
 from pathlib import Path
 
@@ -213,6 +214,12 @@ def esc_cell(v: str) -> str:
 
 # ---------------------------------------------------------------- attachments
 
+def unescape_name(name: str) -> str:
+    """An attachment's name as stored: Hanji prints `*`, `_` and the like escaped in Markdown,
+    and keeps a name in composed Unicode (NFC) where macOS and Evernote often hand it decomposed."""
+    return unicodedata.normalize("NFC", re.sub(r"\\([!-/:-@\[-`{-~])", r"\1", name))
+
+
 def is_att_line(line: str) -> re.Match | None:
     m = ATT_RE.match(line)
     if not m:
@@ -236,7 +243,8 @@ def segments(md: str) -> list[tuple[str, object]]:
             if "\n".join(buf).strip():
                 out.append(("text", "\n".join(buf).strip("\n") + "\n"))
             buf = []
-            out.append(("att", {"name": m.group(2), "target": m.group(3), "image": bool(m.group(1))}))
+            out.append(("att", {"name": unescape_name(m.group(2)), "target": m.group(3),
+                                "image": bool(m.group(1))}))
         else:
             buf.append(ln)
     if "\n".join(buf).strip():
@@ -268,7 +276,7 @@ def placeholder_view(md: str) -> tuple[str, list[tuple[str, str]]]:
     for i, ln in enumerate(lines):
         m = None if mask[i] else ATT_RE.match(ln)
         if m and m.group(3).startswith("blobs/"):
-            atts.append((m.group(2), m.group(3)[len("blobs/"):]))
+            atts.append((unescape_name(m.group(2)), m.group(3)[len("blobs/"):]))
             out.append(f"HANJIATTACHMENT{len(atts)}")
         else:
             out.append(ln)
