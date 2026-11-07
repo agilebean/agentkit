@@ -1,18 +1,23 @@
 ---
 name: life-challenges
-description: Build or walk through Chaehan's dated Life Challenges note in Evernote - his goals, where they pull against each other, the direction to move, the open decisions with their options, and the issues Chaehan can hand to the agent with /life. Use when the user says "life challenges", "my challenges", "untangle my issues", "what weighs on me", types /life, or asks how to tackle several life issues at once. A status snapshot of every domain is the life-overview skill.
+description: Build or walk through Chaehan's dated Life Challenges note in Evernote - the dilemma of the moment as two competing ways to handle it, the few questions that decide between them, and the answers researched for every open issue, in plain words. Use when the user says "life challenges", "my challenges", "untangle my issues", "what weighs on me", types /life, or asks how to tackle several life issues at once. A status snapshot of every domain is the life-overview skill.
 ---
 
 # Life Challenges
 
 One dated note, "YYYY-MM-DD Life Challenges" in the Evernote notebook
 "Chaehan's Life", with its source `socrates/docs/YYYY-MM-DD-life-challenges.md`.
+The model is the note Chaehan accepted on 2026-11-07, "2026-11-07 Life
+Challenges - D plain words" (source: `docs/2026-11-07-life-challenges.md`).
+Read it before you write a word.
+
 It is made in two passes:
 
-1. **Build.** Write the note from the record. Chaehan reads it in Evernote.
-2. **Walk-through.** `/life` takes Chaehan through the note's decisions and
-   issues one at a time with the question tool and writes each answer back
-   into the same note. `/life <keyword>` runs one issue.
+1. **Build.** Write the note from the record and from research. Chaehan reads
+   it in Evernote.
+2. **Walk-through.** The bare `/life` command takes Chaehan through the note's
+   questions and open actions one at a time with the question tool and writes
+   each answer back into the same note. There are no per-issue keywords.
 
 The walk-through refines the note in place. A new build on a later day gets a
 new date and leaves every earlier note untouched (RULES.md 31).
@@ -22,48 +27,56 @@ Chaehan's life. The Life Overview (the life-overview skill) says where each
 goal stands, links this note once, and repeats none of it; this note never
 reads the Overview, so the information runs one way.
 
-**What the note is for.** Chaehan reads it to see what he is trying to
-achieve, where his goals pull against each other, and which way to move. It
-does the work he cannot do in his head (`agentkit/docs/answer_quality_prompt.md`
-section 1, "intelligent"): it computes what can be computed, connects one
-issue to another, and ranks. It is not a feed for `/life`: the walk-through
-takes its questions from the note, the note is never written for the tool.
-Quality over quantity: a bullet stays only if it changes what Chaehan decides,
-each fact sits in one place, and what Chaehan already knows stays out. Drafts,
-call scripts and research never sit in the note. Every sentence passes the
-seat test in `agentkit/AGENTS.md` core 1 and is written to Chaehan as "you".
+## What Chaehan wants from it
+
+In his words, 2026-11-07: "support is the maximum of work you can do for me and
+the minimum is the analysis of websites and other info to find answers that
+facilitate my decision making process, find very few questions that
+triangulate the problem taking into account links to as many related life info
+as possible, and to bring all issues into a big picture and not in an absolute
+way but maybe two competing scenarios for sense making." And: "you should
+understand the nature of things eg I can't decide on the marriage issue with
+just a few dates in so the dilemma is how long to wait in Seoul or come back
+sooner or alternatively request online dates." (RULES.md 41 and 47.)
+
+So, in this order:
+
+1. Do the work. For every open issue, find the answer on the web and in the
+   record, and write the answer with its source. The note holds no command, no
+   keyword, no draft and no "I can do this for you".
+2. Frame the big decision by what the current phase can decide.
+3. Ask very few questions: one to three, each linking several parts of
+   Chaehan's life.
+4. Show the big picture as two competing ways, never one absolute answer.
+5. Quality over quantity: a sentence stays only if it changes what Chaehan
+   decides. Chaehan's own dates, numbers and decisions stay exact; what he
+   already knows stays out.
+6. Plain words, by the section below. Chaehan rejected three notes on
+   2026-11-07 for wording alone.
 
 ## The note
 
 ```
-## Takeaway       three bullets: what you would tell a friend who asks how it is going
-## Family         one section per live goal with something open, in this order
-## Home
-## Money
-## Health
-## Work
-## Hand to me     one table
-## Settled        only when something settled since the last note
+## Takeaway                     three bullets: where you stand, the choice, the actions
+## Two ways to handle <...>      exactly two ### ways, each with what it costs you
+## What decides between them     one to three questions, each with "If yes" and "If no"
+## Your <area>                   one section per area with something open
 ```
 
-Put each issue under the goal it serves, and test it in this order:
+The area sections name Chaehan's areas: "Your health before you leave", "Your
+money", "Your home and work", or whatever the issues need. Put each issue in
+one place:
 
-1. Done or decided since the last note: **Settled**, with its date.
-2. Chaehan has not decided whether or how to do it: a decision under its
-   goal. An issue the previous note listed as a task is a decision when
-   Chaehan has not said to do it (booking the storage unit, when a friend
-   could keep the clothes for free).
-3. The next step is something you can prepare (a draft, a call script, a
-   lookup, a form's values) and Chaehan only approves it: a row in **Hand to
-   me**. Its goal section says what is at stake, once, and the row carries
-   the action.
-4. A decided step that only Chaehan can take (placing a sell order): one
-   bullet under its goal, with its date.
-5. Nothing for Chaehan or the agent to do until someone else moves (a queue,
-   an office's reply, a registry's portal): out of this note. The Life
-   Overview states it as a thread waiting since its date.
+1. It belongs to the dilemma: under one of the two ways, as a cost or a gain.
+2. It is an open action or a found answer: one bullet in its area section,
+   with its source, and indented under it what it means for you or what you
+   do.
+3. It is settled since the last note, or nothing is for Chaehan or the agent
+   to do until someone else moves (a queue, an office's reply, a registry's
+   portal): out of this note. The Life Overview states it.
 
 ## Build
+
 ### 1. Gather
 
 1. Read the previous `docs/*-life-challenges.md` (before 2026-11-07:
@@ -72,8 +85,6 @@ Put each issue under the goal it serves, and test it in this order:
    skill lists in its step 1, and take each open action they hold as an issue
    to place. Never read the Life Overview: it links this note, and a line read
    back from it looks confirmed twice (`memory/agentic_ai.md` failure 166).
-   An issue the Overview's report named as missing here is placed like any
-   other.
 2. Ask Chaehan which issues of the previous note are done since it, with the
    question tool: one multiSelect question per four issues. Never decide that
    an issue is done or open from a missing record (core 5). Write what Chaehan
@@ -81,98 +92,112 @@ Put each issue under the goal it serves, and test it in this order:
 3. Keep an open question only when a message of Chaehan's asks it or it
    decides an action Chaehan named; ask Chaehan about any other (RULES.md 83).
 
-### 2. The goal sections
+### 2. Find the dilemma of the moment
 
-The live goals, as of 2026-11-07: a family, a home base in Korea, money,
-health, work (`agentkit/docs/answer_quality_prompt.md` section 2, and the
-memory files). A goal with nothing open gets no section. Each section holds:
+Name the decision the current phase can make that touches the most other
+issues. A decision that needs information the phase cannot give is framed by
+what it can give: after a few dates the marriage cannot be decided, so the
+decision is how long to stay in Seoul, whether to come back sooner, or whether
+to date by video. The two ways are the two ends of that decision.
 
-1. An opening sentence: what Chaehan wants, in the record's words ("You want
-   a partner to have children with: warm, emotionally intelligent ...").
-2. The facts that pull against it, each with the number that measures it
-   (days, money, a date) and what it costs or forecloses. Compute what the
-   record lets you compute: "from 2026-12-04 you are away for 102 days", "the
-   183-day line leaves ~9 days of slack, so 2027-03-07 is your earliest
-   return".
-3. The link to another goal when the record shows one: "the 2027-03-09
-   arrival gives your search 7 more days and fits the medicine run".
-4. The direction, as if-then from Chaehan's own priorities: "If a November
-   date goes well, move your return toward 2027-03-07; if none does, keep
-   2027-03-16."
-5. Each open decision as a bullet ending with "?", with its two to four
-   options indented under it, one line each with what the option costs or
-   gives you. Add the option the record does not name when one exists, such
-   as the family keeping a box. The walk-through asks exactly these.
+### 3. Research
 
-What makes a decision heavy is written only when it changes which option
-fits, and only from a fact on record (a date, a sum, a person you dealt with)
-or Chaehan's quoted words. Never a label such as "anxiety" or "avoidance", and
-never a pattern from `_psych_obs.md` stated as present.
+For each open issue, search the web (Korean and English queries) and the
+record for the answer that moves it, and read the page you cite. A claim from
+another run, a summary or a search snippet is checked on its own page before
+it enters the note: on 2026-11-07 a sub-run invented a date and an approval
+Chaehan never gave. What you could not check is written as unconfirmed, in a
+sentence that says what is unknown ("it is not confirmed whether the rule
+applies to pills in your luggage").
 
-The deciding question, when the record states that one open question changes
-other decisions (RULES.md 83: name the message), is a decision bullet in the
-goal it belongs to, worded "Your deciding question: ...?", with one sub-bullet
-per answer saying what follows.
+### 4. Write
 
-### 3. Hand to me
+1. The two ways: each `###` opens with what you do in that way. Its bullets
+   say what it costs you and what it gives you, with the number from the
+   record (days, money, a date). Compute what the record lets you compute:
+   "from 2026-12-04 you are away for 102 days", "2027-03-07 is the earliest
+   return your 183-day limit allows".
+2. The questions: one to three bullets ending with "?", each linking several
+   areas, with "If yes" and "If no" sub-bullets saying what follows.
+3. The area sections: each opens with one sentence whose subject is you; one
+   bullet per found answer or open action, with its source in parentheses;
+   indented under it, what it means for you or what you do. At most seven
+   bullets at one level.
+4. The Takeaway, last: three bullets of at most 30 words, each with you as
+   the subject: where you stand, the choice, and the actions you can take
+   now.
 
-One table, ranked by what each issue takes off you for the effort of
-starting it (`memory/optimize-my-life.md`, the scarrends principle):
+## Plain words
 
-`Issue | I do | You decide | Command`
+Read RULES.md rule 2 and `agentkit/common_sense.md` table one before the first
+sentence. Then:
 
-- I do: what you prepare, in one line ("draft the No Response email to the
-  Form 911 address").
-- You decide: what Chaehan must do with it ("approve or correct the draft,
-  then you send it"). Nothing goes out before Chaehan has read the final text
-  (RULES.md 84).
-- Command: `/life <keyword>`, one short lowercase word that names the issue
-  and is unique in the note.
+- The verb is what Chaehan does. Time, a year, a plan, a trip, a receipt, a
+  decision or a message never buys, spends, lands, loses, keeps, decides or
+  works. A deadline is a date, never a clock.
+- Chaehan's rejected forms and the accepted ones, from 2026-11-07:
 
-### 4. Takeaway, last
+  | Rejected | Accepted |
+  |---|---|
+  | You can buy your Seoul dates in December | If a November date goes well, you can stay in Seoul into December |
+  | 2027 spends all nine days of slack | You use all nine spare days of 2027, so your autumn stay in Seoul cannot get longer |
+  | The receipt stops deciding the tax question | If you file the letter again on 국민신문고, you get a case number and an answer within 7 to 14 days |
+  | The pharmacy trip loses that errand | With tadalafil and Atobamib prescribed in Seoul, you would need the trip only for L-citrulline and pycnogenol |
+  | What tips it | You need two answers, and you can have both before you leave Seoul |
 
-Three bullets, each at most 30 words, with you or your thing as the subject:
-what you would tell a friend who asks "how is it going?". The state of the
-goal that matters most this month and what it costs, the largest sum or the
-nearest date and the move that settles it, and the deciding question with what
-follows from it. Never a list of tasks.
+- No contrast frame ("X, not Y", "instead of"), no object's absence where
+  Chaehan's action belongs ("you must still find a place for your winter
+  clothes"), no label in place of a sentence ("Direction 1", "Scenario 2"),
+  no thousand separators, and "~" for an approximate number.
+- Run `python3 ~/Software/Prototypes/agentkit/scripts/wording_lint.py` on the
+  draft and fix every flag and warn. Then read every sentence aloud: a
+  sentence a friend would not say at a table is rewritten, whether or not the
+  checker caught it.
 
-### 5. Gate and write
+## Gate and write
 
-Write the cut list `$TMPDIR/life-challenges_cuts.md`: one line per number or
-date of the previous note that this one drops, and one per issue that left,
-`- <numbers or issue name>: <why it left>`. A number that belongs to an issue
-still open is never world detail. Then run:
-
-```
-python ~/Software/Prototypes/agentkit/skills/life-challenges/scripts/challenges_gate.py docs/YYYY-MM-DD-life-challenges.md --original <previous note .md> --cuts $TMPDIR/life-challenges_cuts.md
-```
-
-A failure goes back to the step that made the sentence it names. A PASS
-prints the `note-gate:` stamp the Evernote write needs; it proves the form,
-not the content. Then read the draft once for the seat test and for any
-sentence that repeats another. Write the note with the evernote skill from the
-file that passed, read it back, and confirm the headings and the table.
+1. Write the cut list `$TMPDIR/life-challenges_cuts.md`: one line per number or
+   date of the previous note that this one drops, and one per issue that
+   left, `- <numbers or issue name>: <why it left>`. A number that belongs to
+   an issue still open is never world detail.
+2. Run the gate where `~/.local/state/agentkit/note-gate` is writable, so its
+   stamp lands where the Evernote write checks it:
+   `python3 ~/Software/Prototypes/agentkit/skills/life-challenges/scripts/challenges_gate.py docs/YYYY-MM-DD-life-challenges.md --original <previous note .md> --cuts $TMPDIR/life-challenges_cuts.md`.
+   A failure goes back to the step that made the sentence it names. A PASS
+   prints `note-gate:<sha>` and proves the form, not the content.
+3. Convert the file to ENML with `markdown_to_enml` from
+   `socrates/projects/evernote/src/enml.py`.
+4. Write through the Evernote MCP only (the evernote skill; never the shell
+   CLI). From Claude Code, launch the socrates agent in the socrates folder
+   with `PWD` set to it: `opencode run --standalone --auto --agent socrates
+   -m opencode-go/deepseek-v4.1-flash#high --format json "<prompt>" < /dev/null`.
+   On "Go usage limit exceeded", relaunch with `-m deepseek/deepseek-flash#high`.
+   The prompt asks for one `execute` call whose first line is
+   `// note-gate:<sha>`: `create_note` takes no body, so it creates the note
+   and appends the ENML with `edit_note` in the same call, then reads the note
+   back and returns the counts of `<h2`, `<h3` and `<li`. Compare them with
+   the ENML file.
 
 ## Walk-through (`/life`)
 
 1. Read the latest `docs/*-life-challenges.md` and its Evernote note. When the
    note differs from the file, Chaehan edited it: carry the edit into the file
-   first.
-2. Go through the issues: the decision bullets (ending with "?") by the date
-   that closes them, then the Hand to me rows in their order. With a keyword, take only that issue.
-3. For a decision, ask the question tool with the bullet's question and its
+   first. A note older than its file is the reverse case and is not yours to
+   repair: never write the file into the note outside the Build pass, and ask
+   before anything is written.
+2. Go through the questions under "What decides between them", then the open
+   actions in the area sections, in the order the note gives them.
+3. For a question, ask the question tool with the question and its answers as
    options. One question per issue.
-4. For a Hand to me row, do the "I do" part: write the draft or the script by
-   the drafting rules (RULES.md 37, 85, 103, 111, 250) from the issue's own
-   record, and show it in the chat as plain text. A social security number
+4. For an action you can do the work on (a draft, a call script, a lookup), do
+   it from the issue's own record by the drafting rules (RULES.md 37, 85, 103,
+   111, 250), and show it in the chat as plain text. A social security number
    appears as its last four digits; the full number goes in when Chaehan
-   sends. Then ask with the question tool: approve, correct, or skip.
-5. After each answer, write it back: a decision becomes a Settled bullet with
-   Chaehan's words (its goal section keeps what follows from it), or a Hand
-   to me row for its next step; an approved draft
-   becomes "approved YYYY-MM-DD, you send it" in its row until Chaehan says it
-   went out. Record the decision in the domain memory file, dated. Run the
-   gate and write the note.
+   sends. Then ask with the question tool: approve, correct, or skip. Nothing
+   goes out before Chaehan has read the final text (RULES.md 84).
+5. After each answer, record the decision in the domain memory file, dated.
+   Write the note as a surgical edit to that issue's bullet: the rest of the
+   note stays as it was. A whole-body write and the gate that stamps it belong
+   to the Build pass, not to the walk-through.
 6. Stop when Chaehan says stop, or when every issue has had its question.
    Report what moved, in one line per issue.

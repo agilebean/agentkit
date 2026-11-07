@@ -8,39 +8,40 @@ _spec.loader.exec_module(gate)
 
 GOOD = """## Takeaway
 
-- Your family search is moving, and from 2026-12-04 you are away for 102 days.
-- Your largest sum, the USD 371250 refund, waits on one email of ~5 minutes.
-- Your housing waits on the marriage, so until then you rent and decide only small things.
+- You can only meet your J Noble dates in Seoul, and from 2026-12-04 you are away for 102 days.
+- You choose between staying longer in Seoul and dating by video.
+- You can send the IRS follow-up in five minutes.
 
-## Family
+## Two ways to handle the 102 days
 
-You want a partner to have children with.
+You have two ways to handle the time away, and each one costs you something different.
 
-- From 2026-12-04 you are away for 102 days, so a woman you like in November waits until 2027-03-16.
-  - The 183-day line leaves ~9 days of slack, so 2027-03-07 is your earliest return.
-- Do you still want a second agency next to J Noble?
-  - Book the Gayeon free consult now.
-  - Wait until the four J Noble dates have happened.
+### Stay close to the search
 
-## Home
+You stay in Seoul longer, so that a second meeting can happen in person.
 
-You want Korea as your home base.
+- You would lose the Osaka hotel week of ¥141000.
 
-- Your deciding question: is your marriage decided in the first half of 2027?
-  - If yes, you would consider buying an apartment in the second half of 2027.
-  - If not, you rent again.
-- Where do your winter clothes stay from 2026-12-04?
-  - The Gongdeok unit: 72090 won a month.
-  - The family that receives your furniture: free.
+### Keep the winter and date by video
 
-## Hand to me
+You leave on 2026-12-04 and meet women by video in between.
 
-You can hand these issues to me, and each command prepares one for your approval.
+- You would ask Ms. Hyejin Kong for something J Noble does not advertise.
 
-| Issue | I do | You decide | Command |
-| --- | --- | --- | --- |
-| TAS email | draft the No Response email to the Form 911 address | approve or correct it, then you send it | `/life tas` |
-| Tax office call | write the Korean call script for 소득세과 | approve it, then you call before 2026-12-04 | `/life tax` |
+## What decides between them
+
+You need two answers, and you can have both before you leave Seoul.
+
+- Does one of your four dates lead to a second meeting you want?
+  - If yes, staying into December is worth its cost.
+  - If no, you keep the winter as booked.
+
+## Your money
+
+You can do the follow-up in five minutes.
+
+- Your refund behind the 2025 return is USD 371250.
+  - You email the Form 911 address with the subject "No Response".
 """
 
 
@@ -52,68 +53,58 @@ def test_good_note_passes():
     assert gate.check(GOOD) == []
 
 
-def test_settled_is_optional_and_last():
-    assert gate.check(GOOD + "\n## Settled\n\nYou have filed the clinic invoices.\n\n- Filed on 2026-11-06.\n") == []
-    moved = GOOD.replace("## Hand to me", "## Settled\n\nYou have filed the clinic invoices.\n\n- Filed on 2026-11-06.\n\n## Hand to me")
-    assert any(f.startswith("C4") and "Settled" in f for f in gate.check(moved))
-
-
-def test_takeaway_first_hand_to_me_required_goal_between():
+def test_layout_order_and_two_ways():
     assert any("open with" in f for f in gate.check(GOOD.replace("## Takeaway", "## Summary")))
-    assert any("Hand to me" in f for f in gate.check(GOOD[:GOOD.index("## Hand to me")]))
-    no_goal = GOOD[:GOOD.index("## Family")] + GOOD[GOOD.index("## Hand to me"):]
-    assert any("no goal section" in f for f in gate.check(no_goal))
+    assert any("second section" in f for f in gate.check(GOOD.replace("## Two ways to handle", "## Options for")))
+    one_way = GOOD.replace("### Keep the winter and date by video\n\nYou leave on 2026-12-04 and meet women by video in between.\n\n- You would ask Ms. Hyejin Kong for something J Noble does not advertise.\n\n", "")
+    assert any("1 ways" in f for f in gate.check(one_way))
+    assert any("third section" in f for f in gate.check(GOOD.replace("## What decides between them", "## Questions")))
+    assert any("no area section" in f for f in gate.check(GOOD[:GOOD.index("## Your money")]))
 
 
-def test_decision_needs_two_to_four_options():
-    one = GOOD.replace("  - Wait until the four J Noble dates have happened.\n", "")
-    assert any(f.startswith("C5") and "1 options" in f for f in gate.check(one))
-    five = GOOD.replace("  - Wait until the four J Noble dates have happened.\n",
-                        "  - Wait.\n  - Drop it.\n  - Ask J Noble.\n  - Ask a friend.\n")
-    assert any(f.startswith("C5") and "5 options" in f for f in gate.check(five))
+def test_question_needs_if_yes_and_if_no():
+    fails = gate.check(GOOD.replace("  - If no, you keep the winter as booked.\n", "  - Otherwise you keep the winter.\n"))
+    assert any(f.startswith("C5") and "If no" in f for f in fails)
+    four = GOOD.replace("- Does one of your four dates", "- Q2?\n  - If yes, a.\n  - If no, b.\n- Q3?\n  - If yes, a.\n  - If no, b.\n- Q4?\n  - If yes, a.\n  - If no, b.\n- Does one of your four dates")
+    assert any("4 questions" in f for f in gate.check(four))
 
 
 def test_label_word_fails_unless_quoted():
-    bad = GOOD.replace("You want Korea as your home base.", "You want Korea as your home base, and your avoidance shows.")
-    assert any(f.startswith("C5") and "avoidance" in f for f in gate.check(bad))
-    ok = GOOD.replace("You want Korea as your home base.", "You want Korea as your home base, \"without my fear of renting\".")
-    assert not any(f.startswith("C5") for f in gate.check(ok))
+    assert any("avoidance" in f for f in gate.check(GOOD.replace("You can do the follow-up", "Your avoidance shows. You can do the follow-up")))
+    assert not any(f.startswith("C5") for f in gate.check(GOOD.replace("You can do the follow-up", "You called it \"my fear of calls\". You can do the follow-up")))
 
 
-def test_hand_to_me_command_and_cells():
-    assert "C6" in codes(gate.check(GOOD.replace("`/life tas`", "`/lc tas`")))
-    assert any("used by" in f for f in gate.check(GOOD.replace("`/life tax`", "`/life tas`")))
-    assert any("empty cell" in f for f in gate.check(GOOD.replace("| approve or correct it, then you send it |", "|  |")))
-    assert any(f.startswith("C6") and "on demand" in f for f in gate.check(GOOD + "\n### TAS draft\n\nYou send this.\n"))
+def test_no_tooling_in_the_note():
+    assert "C6" in codes(gate.check(GOOD + "\n- Run `/life tas` for the draft.\n"))
+    assert "C6" in codes(gate.check(GOOD + "\n## Hand to me\n\nYou can hand these to me.\n\n- The TAS email.\n"))
 
 
 def test_takeaway_bullets_only_and_at_most_three():
-    four = GOOD.replace("- Your housing waits", "- You sell CRWV before 2026-12-31.\n- Your housing waits")
+    four = GOOD.replace("- You can send the IRS follow-up", "- You sell CRWV before 2026-12-31.\n- You can send the IRS follow-up")
     assert any(f.startswith("C7") and "4 bullets" in f for f in gate.check(four))
     assert "C7" in codes(gate.check(GOOD.replace("## Takeaway\n\n", "## Takeaway\n\nYou have a lot going on.\n\n")))
 
 
+def test_wording_classes_rejected_on_2026_11_07_fail():
+    for bad in ("You can buy your Seoul dates in December.", "2027 spends all nine days.", "The refund lands around February.",
+                "What tips it is the date.", "The trip loses that errand.", "1372 has a clock."):
+        fails = gate.check(GOOD.replace("- You would lose the Osaka hotel week of ¥141000.", f"- {bad}"))
+        assert any(f.startswith("T16") for f in fails), bad
+
+
 def test_empty_heading_pronoun_separator_ssn():
-    assert "C1" in codes(gate.check(GOOD.replace("## Hand to me", "## Work\n\n## Hand to me")))
-    assert "C2" in codes(gate.check(GOOD.replace("72090 won a month", "his 72090 won a month")))
-    assert "C3" in codes(gate.check(GOOD.replace("72090 won", "72,090 won")))
+    assert "C1" in codes(gate.check(GOOD + "\n## Your health\n"))
+    assert "C2" in codes(gate.check(GOOD.replace("hotel week of", "hotel week of his")))
+    assert "C3" in codes(gate.check(GOOD.replace("USD 371250", "USD 371,250")))
     assert "C8" in codes(gate.check(GOOD.replace("Form 911 address", "Form 911 address, SSN 605-98-1744")))
 
 
-def test_previous_issues_carried_in_any_format():
-    old = "## Problems\n\n| Problem | Kind |\n| --- | --- |\n| Gayeon free consult | one missing fact |\n| Furniture shipment | deadline |\n"
-    fails = gate.check(GOOD, old, "- 1: n/a\n")
-    assert any(f.startswith("C9") and "Furniture shipment" in f for f in fails)
-    assert gate.check(GOOD, old, "- Furniture shipment: the arrival is confirmed\n") == []
-    fails = gate.check(GOOD.replace("Tax office call", "Tax call"), GOOD, "- x: y\n")
-    assert any(f.startswith("C9") and "Tax office call" in f for f in fails)
-
-
-def test_lost_fact_needs_the_cut_list():
+def test_lost_fact_and_issue_need_the_cut_list():
     original = "## Storage\n\n- The unit costs 88000 won a month.\n"
     assert any(f.startswith("T6 a note built") for f in gate.check(GOOD, original))
-    assert any("88000" in f for f in gate.check(GOOD, original, "- Storage: kept\n"))
     assert gate.check(GOOD, original, "- 88000: the old price, replaced by 72090\n") == []
+    old = "## Problems\n\n| Problem | Kind |\n| --- | --- |\n| Furniture shipment | deadline |\n"
+    assert any(f.startswith("C9") and "Furniture shipment" in f for f in gate.check(GOOD, old, "- 1: n/a\n"))
 
 
 def test_pass_prints_the_note_gate_marker(tmp_path, monkeypatch, capsys):
