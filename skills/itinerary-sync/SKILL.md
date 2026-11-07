@@ -19,8 +19,10 @@ Chaehan's rules, 2026-11-07, which the script applies:
 - Dates he gives in chat go to all three records at once. A booking alone moves or adds the rows
   from its own dates. A row whose date already comes from a booking (✅ in its date cell) is never
   moved by a later date; the script reports the conflict instead.
-- A December row that both years' notes show gets the link in both; its € counts only in the
-  note of the year the stay starts.
+- A December row that both years' notes show gets the link in both. A stay that crosses the new
+  year has its € split by nights: each year's note counts the nights in its year and shows the line
+  `<provider> <year>: <n> nights × €<per night> = <€>` (Chaehan: "split by year"). A flight's €
+  counts in the year of its landing day.
 - The header is his 2026 formula: `<€/month>€/m [12m] -> €a+b+... = total | $/€=1.17`.
 - A return ticket's price is split over its two flights (`"split": 2`), as his 2026 note does (€2092/2).
 
@@ -48,7 +50,9 @@ Chaehan's rules, 2026-11-07, which the script applies:
    (city, checkin, checkout); `car` (city, checkin = pickup, checkout = return). `dates` (city,
    date). `arrive` is the local landing day. A connection is not a place: one event runs from the
    origin to the final destination, and a return ticket is two events with `"split": 2`. `price` is
-   the whole ticket's or stay's total as a bare number, with its `currency`. Leave a field `null`
+   the whole ticket's or stay's total as a bare number, with its `currency`. `eur` is that total in euros
+   when the booking or Chaehan states it (his 2026 note prices the UKO lease at €61 a night);
+   without it the script converts `price` at the day's rate. Leave a field `null`
    when the input does not give it; a missing landing day or check-in day is asked with the
    question tool, never guessed (rule 18). A booking without a note gets `text`, the line the row
    will show.

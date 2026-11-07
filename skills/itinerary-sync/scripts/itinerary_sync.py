@@ -96,6 +96,8 @@ def validate(data: dict) -> list[str]:
             errs.append(f"{p}: arrive {e['arrive']} is before depart {e['depart']}")
         if e.get("price") is not None and not isinstance(e["price"], (int, float)):
             errs.append(f"{p}: price must be a number (no currency sign, no separators)")
+        if e.get("eur") is not None and not isinstance(e["eur"], (int, float)):
+            errs.append(f"{p}: eur is the booking's total in euros, a bare number")
         if e.get("price") is not None and not e.get("currency"):
             errs.append(f"{p}: price needs currency (EUR, KRW, JPY, AUD, ...)")
         if e.get("note_guid") and not UUID.match(e["note_guid"]):
@@ -124,6 +126,8 @@ class Target:
     ref: str | None
     price_words: list[str] = field(default_factory=list)
     nights: int | None = None
+    price: float | None = None  # this event's share in its own currency
+    currency: str | None = None
 
 
 def fx_to_eur(amount: float, cur: str) -> float | None:
@@ -146,7 +150,9 @@ def targets(events: list[dict], warn: list[str]) -> list[Target]:
         if e.get("price") is not None:
             share = e["price"] / e.get("split", 1)
         eur = None
-        if share is not None:
+        if e.get("eur") is not None:
+            eur = round(e["eur"] / e.get("split", 1))
+        elif share is not None:
             v = fx_to_eur(share, e["currency"])
             if v is None:
                 warn.append(f"{e.get('note_title') or k}: no € rate for {e['currency']}, so its € cell stays empty")
@@ -157,7 +163,8 @@ def targets(events: list[dict], warn: list[str]) -> list[Target]:
             orig = f"{e['currency'].upper()} {round(share)}"
         words = [w for w in (str(round(e["price"])) if e.get("price") is not None else "", e.get("ref") or "") if w]
         common = dict(kind=k, guid=e.get("note_guid"), title=e.get("note_title"), text=e.get("text"),
-                      eur=eur, orig=orig, provider=e.get("provider"), ref=e.get("ref"), price_words=words)
+                      eur=eur, orig=orig, provider=e.get("provider"), ref=e.get("ref"), price_words=words,
+                      price=share, currency=(e.get("currency") or "").upper() or None)
         if k in TRANSPORT:
             out.append(Target(date=day(e["arrive"]), city=e["to"], marker=TRANSPORT[k], **common))
         elif k in STAY:
@@ -370,6 +377,26 @@ def add_marker(cell: list[str], marker: str, provider: str | None) -> bool:
     return True
 
 
+def eur_share(t: Target, year: int) -> tuple[int, str | None, str | None] | None:
+    """The € this target adds to the note of `year`: a stay that crosses the new year is split by
+    its nights in each year (Chaehan, 2026-11-07: "split by year"); anything else counts in the
+    year of its row."""
+    if t.eur is None:
+        return None
+    if t.kind in STAY and t.nights:
+        inside = sum(1 for i in range(t.nights) if (t.date + dt.timedelta(days=i)).year == year)
+        if inside == 0:
+            return None
+        if inside == t.nights:
+            return t.eur, t.orig, None
+        per = t.eur / t.nights
+        eur = round(per * inside)
+        orig = f"{t.currency} {round(t.price * inside / t.nights)}" if t.orig and t.price else None
+        name = t.provider or t.city
+        return eur, orig, f"{name} {year}: {inside} nights × €{per:.0f} = {eur}"
+    return (t.eur, t.orig, None) if year == t.date.year else None
+
+
 def nights_token(n: int) -> str:
     return f"{n}d" if n < 14 else f"{round(n / 7)}w"
 
@@ -516,6 +543,7 @@ class Plan:
             r.changed = True
         det = n.cell(r, "Details")
         rowtext = text(r.ref.build())
+        had_guid = bool(t.guid and t.guid in r.ref.build())
         if t.guid and det is not None and t.guid not in r.ref.build():
             det[1] = divs(det[1]) + LINK_DIV.format(g=t.guid, t=html.escape(t.title, quote=False))
             r.changed = True
@@ -524,19 +552,25 @@ class Plan:
             det[1] = divs(det[1]) + f"<div>{html.escape(t.text, quote=False)}</div>"
             r.changed = True
             log.append(f"{r.city} {r.date}: noted {t.text}")
-        word = (t.provider or "").split()[0] if t.provider else ""
-        costed = any(w and w in rowtext for w in t.price_words) or bool(
-            len(word) >= 3 and word.lower() not in GENERIC and re.search(rf"\b{re.escape(word)}\b", rowtext, re.I))
-        if t.eur is not None and n.year == t.date.year and not costed and not (t.guid and t.guid in r.ref.tr):
-            for name, val in (("€", t.eur), ("$", round(t.eur * n.rate)), ("Orig", t.orig)):
-                c = n.cell(r, name)
-                if c is not None and val is not None:
-                    c[1] = divs(c[1]) + (NUM_DIV.format(val) if name != "Orig" else f"<div>{html.escape(val)}</div>")
-            n.added_eur.append(t.eur)
-            r.changed = True
-            log.append(f"{r.city} {r.date}: €{t.eur}")
-        elif t.eur is not None and costed and n.year == t.date.year:
-            log.append(f"{r.city} {r.date}: € already in the row for {label}, not added again")
+        share = eur_share(t, n.year)
+        if share is not None:
+            eur, orig, line = share
+            prose = text(re.sub(r"<a\b.*?</a>", " ", r.ref.build(), flags=re.S))
+            word = (t.provider or "").split()[0] if t.provider else ""
+            costed = any(w and w in prose for w in t.price_words) or bool(
+                len(word) >= 3 and word.lower() not in GENERIC and re.search(rf"\b{re.escape(word)}\b", prose, re.I))
+            if costed or (line is None and had_guid):
+                log.append(f"{r.city} {r.date}: € already in the row for {label}, not added again")
+            else:
+                for name, val in (("€", eur), ("$", round(eur * n.rate)), ("Orig", orig)):
+                    c = n.cell(r, name)
+                    if c is not None and val is not None:
+                        c[1] = divs(c[1]) + (NUM_DIV.format(val) if name != "Orig" else f"<div>{html.escape(val)}</div>")
+                if line and det is not None:
+                    det[1] = divs(det[1]) + f"<div>{html.escape(line, quote=False)}</div>"
+                n.added_eur.append(eur)
+                r.changed = True
+                log.append(f"{r.city} {r.date}: €{eur}" + (f" ({line})" if line else ""))
         if r.changed and not re.search(r"\b(?:MON|TUE|WED|THU|FRI|SAT|SUN)\b", text(cells[0][1])):
             set_date(cells[0], r.date)
 
@@ -592,7 +626,7 @@ class Plan:
             terms = []
             for r in sorted(n.rows, key=lambda r: r.date):
                 c = n.cell(r, "€")
-                if r.date.year == n.year and c is not None:
+                if c is not None:  # every € in a note is that year's, a split share included
                     terms += [int(x) for x in re.findall(r">\s*(\d+)\s*<", c[1])]
             total = sum(terms)
             new = (f'<span style="{GREEN}">{round(total / 12)}€/m [12m]</span> -> '
