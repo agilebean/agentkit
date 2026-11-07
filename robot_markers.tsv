@@ -83,6 +83,7 @@ warn	\b(?:you|your \w+) (?:have|has) no\b|\bthere (?:is|are) no\b|\bnone (?:is|a
 warn	\bblurbs?\b	uncommon word: "blurb" - name the thing ("the manager's description", "the profile text")
 flag	\b(?:about|around|roughly|approximately) (?=[0-9]|(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|sixty|ninety|a hundred)\b)	approximate number: write ~N and a spread as ±N, not "about N" (AGENTS.md core 8)
 flag	\bbands?\b(?!\s+(?:play|plays|played|playing|night|nights|live))	name the range itself ("¥11000 to ¥12500 a night"): "band" is trade jargon
+flag	(?-i:(?<=[a-z0-9¥%)])[.!?](?=[A-Z][a-z]))	two sentences run together ("service.Photography"): put a space after the period
 # Transaction, motion and agency verbs for time, plans and objects (2026-11-07, Life Challenges: "none is good all contain extremely robotic wording which i have pondered against like what time buys")
 flag	\bbuys\b|\bwhat (?:it|that|this|time|the \w+) buys?\b|\bbuy(?:s|ing)?\s+(?:you\s+)?(?:time|(?:\d+|nine|two|more|extra|the)\s+(?:seoul\s+)?(?:days?|weeks?|nights?|months?)|seoul|your seoul|them in|a second (?:meeting|date)|the only)\b	a purchase verb for a gain or a cost: say what you gain or what it costs, with its number
 flag	\b(?:\d{4}|the year|the winter|the extension|the stay|a later exit|the exit)\s+spends?\b	a year or a stay does not spend: say how many days you use

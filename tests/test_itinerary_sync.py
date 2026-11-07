@@ -78,15 +78,19 @@ def test_a_date_never_moves_a_booked_row(tmp_path):
     assert [str(r.date) for r in p.csv_rows if r.city == "Seoul"] == ["2027-03-25"]
 
 
-def test_a_december_stay_links_both_notes_and_counts_euro_only_in_its_start_year(tmp_path):
+def test_a_stay_across_the_new_year_splits_its_euro_by_nights(tmp_path):
     uko = {"kind": "apartment", "city": "Melbourne", "checkin": "2026-12-12", "checkout": "2027-03-01",
-           "price": 1000, "currency": "EUR", "provider": "UKO Melbourne Central", "note_guid": BOOK,
-           "note_title": "UKO lease"}
+           "price": 1185, "currency": "AUD", "eur": 790, "provider": "UKO Melbourne Central",
+           "note_guid": BOOK, "note_title": "UKO lease"}
     p = plan(tmp_path, [uko])
     a26, a27 = applied(p, p.notes[2026]), applied(p, p.notes[2027])
     assert BOOK in a26 and BOOK in a27
-    assert ">1000<" not in a26  # the row already names UKO: costed by hand
-    assert ">1000<" not in a27 and "€/m" not in a27  # a 2026 stay adds no € to the 2027 note
+    assert ">200<" not in a26  # the 2026 row already names UKO: its 20 nights were costed by hand
+    assert ">590<" in a27 and "UKO Melbourne Central 2027: 59 nights × €10 = 590" in a27 and "AUD 885" in a27
+    assert "€590 = 590" in a27
+    p2 = its.Plan([uko], tmp_path, {G26: a26, G27: a27})
+    p2.run()
+    assert not p2.ops(p2.notes[2026]) and not p2.ops(p2.notes[2027])
 
 
 def test_a_new_city_inserts_a_row_and_a_second_run_changes_nothing(tmp_path):

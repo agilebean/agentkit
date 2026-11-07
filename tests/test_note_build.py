@@ -220,29 +220,79 @@ def test_extract_copies_one_section_word_for_word(tmp_path, monkeypatch, capsys)
     assert out.read_text().startswith("- Land at [Kobe Airport]") and "Market" not in out.read_text()
 
 
-def test_a_created_note_is_updated_on_the_next_write(tmp_path, monkeypatch, capsys) -> None:
+def _stamped_build(tmp_path, monkeypatch, capsys):
+    monkeypatch.setenv("NOTE_BUILD_SOCRATES", str(Path.home() / "Software/Prototypes/socrates/.claude/worktrees/evernote-osaka-trip-quality-b1df3d"))
+    d = _kept_table(tmp_path, monkeypatch, capsys)
+    (d / "titles.tsv").write_text("5\tRates by year\n")
+    assert nb.main(["next", str(d)]) == 0
+    return d
+
+
+def test_a_write_replaces_the_whole_body_and_a_created_note_keeps_its_guid(tmp_path, monkeypatch, capsys) -> None:
     import json
-    import types
-    d = tmp_path / "w"
-    d.mkdir()
-    (d / "meta.json").write_text(json.dumps({"guid": None, "title": "2026-11-07 Pools", "notebook": "Swimming"}))
-    (d / "draft.md").write_text("## Summary\n")
-    calls = []
-
-    def run(cmd, **kw):
-        calls.append(cmd)
-        out = '{"guid": "g-new", "title": "2026-11-07 Pools"}' if "create" in cmd else '{"content": ""}'
-        return types.SimpleNamespace(returncode=0, stdout=out, stderr="")
-
-    monkeypatch.setattr(nb.subprocess, "run", run)
-    monkeypatch.setattr(nb, "cmd_verify", lambda a: 0)
-    assert nb.main(["write", str(d)]) == 0
+    d = _stamped_build(tmp_path, monkeypatch, capsys)
+    before = {"structuredContent": {"title": "Old", "content": "<en-note><div>old body</div></en-note>"}}
+    plan = nb.plan_write(d, {}, before)
+    assert plan["find"] == "<div>old body</div>" and "<h2>Kobe Airport to Sannomiya</h2>" in plan["content"]
+    assert "<li><div>" in plan["content"]
+    after = {"structuredContent": {"title": "T", "content": "<en-note>" + plan["content"] + "</en-note>"}}
+    out = nb.done_write(d, "g-new", after)
+    assert '"written": true' in out and "PASS" in out
     assert json.loads((d / "meta.json").read_text())["guid"] == "g-new"
+
+
+def test_a_write_is_refused_for_a_wrong_link_title_or_an_unstamped_draft(tmp_path, monkeypatch, capsys) -> None:
+    d = _stamped_build(tmp_path, monkeypatch, capsys)
+    g = "f760aa60-eb40-444d-91bc-6b6656415bb1"
+    link = f"evernote:///view/39d2f74/s365/{g}/{g}/"
+    (d / "edits.tsv").write_text(f"2\tLand at Kobe Airport at 14:00, [Hotel booking]({link}).\n")
+    assert nb.main(["next", str(d)]) == 0
+    real = {g: {"structuredContent": {"title": "2026-12-04~11 Hotel: Imperial Hotel Osaka 7n ¥141000"}}}
+    assert "exact title" in nb.plan_write(d, real, None)["error"]
+    (d / "draft.md").write_text((d / "draft.md").read_text() + "\nhand edit\n")
+    assert "changed after its PASS" in nb.plan_write(d, real, None)["error"]
+
+
+def test_link_and_write_print_execute_code_for_the_mcp(tmp_path, monkeypatch, capsys) -> None:
+    assert nb.main(["link", "Imperial Hotel Osaka"]) == 0
+    out = capsys.readouterr().out
+    assert "tools.evernote.search_notes" in out and '"Imperial Hotel Osaka"' in out
+    d = _stamped_build(tmp_path, monkeypatch, capsys)
+    capsys.readouterr()
+    monkeypatch.setattr(nb, "start_bridge", lambda d, mode: 41234)
     assert nb.main(["write", str(d)]) == 0
-    assert "update" in calls[-2] and "create" not in calls[-2]
+    code = capsys.readouterr().out
+    assert "// note-gate:" in code and "127.0.0.1:41234" in code and "tools.evernote.edit_note" in code
+    assert "evernote_api" not in code
 
 
 def test_a_sentence_opening_on_a_verb_or_a_number_word_is_no_invented_name() -> None:
     assert nb.invented("Eat Kobe beef at obiobi.", "Kobe beef at obiobi") == []
     assert nb.invented("Six swims cost ¥4200.", "swims ¥4200") == []
     assert nb.invented("Buy the Osaka Amazing Pass.", "Osaka") == ["Amazing", "Pass"]
+
+
+def test_sentences_run_together_get_their_space_back_outside_links() -> None:
+    assert nb.space_sentences("Port Liner, ¥340.At JR Sannomiya.") == "Port Liner, ¥340. At JR Sannomiya."
+    assert nb.space_sentences("no shower.Photography is not welcome.") == "no shower. Photography is not welcome."
+    link = "[Kansai Mini Pass](https://www.westjr.co.jp/travel.Info/x)"
+    assert nb.space_sentences(link) == link
+    assert nb.space_sentences("Tabelog 3.5 or better.") == "Tabelog 3.5 or better."
+
+
+def test_a_top_image_stays_and_a_note_edited_since_the_read_is_refused(tmp_path, monkeypatch, capsys) -> None:
+    import json
+    d = _stamped_build(tmp_path, monkeypatch, capsys)
+    tag = '<en-media hash="606720675162a39fe5181774b33c33d9" type="image/png" width="509px" />'
+    before = {"content": f"<en-note>{tag}<h2>Old</h2><div>old body</div></en-note>"}
+    plan = nb.plan_write(d, {}, before)
+    assert plan["find"] == "<h2>Old</h2><div>old body</div>" and tag not in plan["content"]
+    inside = {"content": f"<en-note><h2>Old</h2>{tag}<div>old body</div></en-note>"}
+    assert "inside its text" in nb.plan_write(d, {}, inside)["error"]
+    meta = json.loads((d / "meta.json").read_text())
+    meta["body_key"] = nb.body_key("<h2>Old</h2><div>an earlier body</div>")
+    (d / "meta.json").write_text(json.dumps(meta))
+    assert "edited since the build read it" in nb.plan_write(d, {}, before)["error"]
+    meta["body_key"] = nb.body_key(f"{tag}<h2>Old</h2><div>old body</div>")
+    (d / "meta.json").write_text(json.dumps(meta))
+    assert "error" not in nb.plan_write(d, {}, before)
