@@ -107,6 +107,12 @@ that impact, not its definition. A fact that touches no live goal and no
 pending decision is one line in its section or out. Do the moves in order and
 write each product down before the next move; the Takeaway is written last.
 
+Order is Chaehan's priority, highest first, and it is obvious at a glance:
+Chaehan's stated order in `memory/optimize-my-life.md` ("Life priorities") leads,
+and the rest follows by how soon it bites and what it costs if left alone.
+Every list in the note follows that order: the Takeaway bullets, the What you
+achieved items and the sections.
+
 **Move 1. One sentence per live goal: where it stands now.** For each goal
 the record touches, write the sentence Chaehan would say to a friend: "The
 search is signed with J Noble, and one date has not told you whether the age
@@ -126,8 +132,7 @@ The section shows the state in one sentence, the consequence in one sentence,
 and that link. No figure that lives in the linked note appears above the link.
 A booking shows what it fixes for you: where you are from when to when, and
 what is still unbought. Its flight number, fare, seat fee, booking date and
-cancellation terms live in its detail note, which goes to the gate as
-`--linked`, so T6 finds those figures there.
+cancellation terms live in its detail note.
 A section with no detail note says "no detail note" and keeps its facts. Do
 not compress Chaehan's facts: dates, numbers, decisions and constraints stay,
 here or in the linked note. Only world detail (study design, vendor prose,
@@ -150,8 +155,11 @@ Problems or Life Challenges note: the current one is the only home of a next
 move.
 
 **Move 4. The Takeaway, last, from moves 1 and 2.** Four to six bullets: what
-Chaehan would say to a friend who asks "how is it going?". The first bullet is the biggest thing you achieved in the
-chapter, from the What you achieved section. Between them they
+Chaehan would say to a friend who asks "how is it going?", in priority order.
+The first bullets are the "Life priorities" in `memory/optimize-my-life.md`,
+one bullet each and in that order, even when nothing moved in one; each says
+where that priority stands and what you achieved in it when there is
+something. Between them they
 cover what the next month depends on, what is settled, what changed and why,
 and what gets worse if left alone. That list is the content, never the
 wording: no bullet names its own function. Each bullet opens on Chaehan or
@@ -172,7 +180,8 @@ Life Challenges note could replace without losing its consequence is rewritten
 or cut. The actions live in that note.
 
 **Layout.** Image line first, then `## Takeaway`, `## What you achieved`,
-then one `##` section per goal, the current chapter's first, and
+then one `##` section per goal in priority order (the route and the stays
+take their place in that order, never the top by default), and
 `## Your decisions`: one sentence that links the current Life Challenges note
 by its exact title, "Your open decisions and the steps you can hand to me are
 in [<exact title>](evernote:///view/...)." The note has no task table. Rules that apply: 19,
@@ -190,29 +199,30 @@ defects the rework is for: it writes every section again from the record.
 
 ## 3a. The gate (runs on the finished draft, before the twin)
 
-Seven checks. Each names the sentence it rejects; a check that cannot name one
-has not run. A failing draft goes back to the move that produced the sentence,
-never to the twin.
+One command and one read. A failure goes back to the move that wrote the
+sentence it names, never to the twin.
 
-Mechanical, T3 to T6:
+`python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/overview_gate.py docs/YYYY-MM-DD-life-overview.md --challenges <exported Life Challenges note>`
 
-`python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/overview_gate.py docs/YYYY-MM-DD-life-overview.md --original docs/<previous snapshot>.md --challenges <exported Life Challenges note> --linked <exported detail notes>`
+- T3: no Open tasks section, no email address and no phone number; a link to
+  the Life Challenges note; and no Takeaway bullet that repeats one of its
+  decisions or Hand to me rows.
+- T4: every section has a link to its detail note or says "no detail note".
 
-- T3 the draft has no Open tasks section, no email address and no phone number. It links the Life Challenges note, and no Takeaway bullet repeats a decision option or a Hand to me row of the note passed as `--challenges`. The script catches literal repeats only; a paraphrased task passes it. So also read each bullet and each section against the Challenges note: a sentence that a decision or a row could replace without losing its consequence is rewritten. Then read the bullets aloud: a reader can tell what the month depends on, and no bullet says so in those words (Move 4). The `--challenges` note also counts as linked for T6, so a number of the previous snapshot that moved there passes.
-- T4 every body section has its link or says "no detail note"; the note has at least one link.
-- T5 at least one indented bullet; read each top-level bullet and indent any that belongs under its neighbour.
-- T6 every date and number of the previous snapshot survives in the draft or in a linked note, unless the record shows it is done or replaced. List each one the script reports and say which it is.
+Its PASS prints the `note-gate:` stamp the Evernote write needs. Then read the
+draft once against Move 4 and the seat test in `AGENTS.md` core 1, and rewrite
+any sentence whose subject is not you or your thing.
 
-Read by the agent, quoting the sentence:
-
-- T1 seat: name every sentence whose subject is the agency, a study, a document or the research path, and every sentence that could be sent unchanged to a stranger. Rewrite each.
-- T2 gist: for each section, name its conclusion, its two or three deciding facts and its reversing fact. A section where the reader has to work these out is rewritten.
-- T7 weak reader: when this skill changes, run a fresh case through the installed model (`opencode run`, the socrates agent) with this skill only, and run the mechanical gate on its output.
+When this skill changes, run a fresh case in opencode on DeepSeek with this
+skill only, time it, and read its note against the change.
 
 ## What you achieved — selection rule
 
 Three to five items, found in the whole record of the chapter, never in the
-open items. Each is one of three kinds:
+open items, in priority order. An achievement Chaehan named himself in the
+record during the chapter (Chaehan's words calling it an accomplishment or a
+breakthrough, in the memory files) is always one of them; the others are
+chosen around it. Each is one of three kinds:
 
 - a first: something you had not done before, or not since a break your
   record names (your CV and the chapter files show it);

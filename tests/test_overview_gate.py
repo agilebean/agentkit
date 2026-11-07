@@ -67,7 +67,7 @@ def test_good_draft_passes():
 def test_bad_draft_names_each_failure():
     fails = gate.check(BAD)
     kinds = {f.split()[0] for f in fails}
-    assert kinds == {"T3", "T4", "T5"}
+    assert kinds == {"T3", "T4"}
     assert any("Open tasks section" in f for f in fails if f.startswith("T3"))
     assert any("no link to the current Life Challenges note" in f for f in fails)
     assert any("'Seoul storage'" in f for f in fails if f.startswith("T4"))
@@ -89,10 +89,10 @@ def test_dates_are_not_phone_numbers():
     assert gate.PHONE.findall("2026-11-05 and 2026-12-04, 72090 won, 0.575 cbm") == []
 
 
-def test_challenges_note_counts_as_linked_for_facts():
+def test_overview_no_longer_runs_t5_or_t6():
     original = "Bond AUD 2740 due 2026-12-12."
-    assert gate.check(GOOD, original) == ["T6 fact lost: 2026-12-12", "T6 fact lost: 2740"]
-    assert gate.check(GOOD, original, challenges=CHALLENGES + "\n| Melbourne bond | AUD 2740 by 2026-12-12 | pay | /life bond |\n") == []
+    flat = GOOD.replace("  - It costs 72090 won a month.", "- It costs 72090 won a month.")
+    assert gate.check(flat, original) == []
 
 
 def test_legacy_life_problems_link_counts():
@@ -102,8 +102,8 @@ def test_legacy_life_problems_link_counts():
 
 def test_fact_loss_detected_and_linked_note_counts():
     original = "Storage paid to 2023-11-06, 0.575 cbm."
-    assert gate.check(GOOD, original) == ["T6 fact lost: 0.575", "T6 fact lost: 2023-11-06"]
-    assert gate.check(GOOD, original, ["0.575 cbm, paid to 2023-11-06"]) == []
+    assert gate.check(GOOD, original, facts_only=True) == ["T6 fact lost: 0.575", "T6 fact lost: 2023-11-06"]
+    assert gate.check(GOOD, original, ["0.575 cbm, paid to 2023-11-06"], facts_only=True) == []
 
 
 def test_cli_exit_code(tmp_path, capsys):
@@ -406,4 +406,4 @@ def test_takeaway_restating_the_deciding_question_fails():
 
 def test_link_address_digits_are_not_facts():
     original = "Book it in [Seoul Mapo storage locker](evernote:///view/39d2f74/s365/431a56de-0a63/431a56de-0a63/), 0.575 cbm."
-    assert gate.check(GOOD, original, ["0.575 cbm"]) == []
+    assert gate.check(GOOD, original, ["0.575 cbm"], facts_only=True) == []
