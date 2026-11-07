@@ -113,7 +113,13 @@ notes in the database rewrote byte-identical through it).
   cross-reference names the other note by its exact title in words.
 - **No table widths.** Hanji lays tables out itself; `fit-tables` and the 939 px
   ceiling do not apply.
-- **Headings go from `#` to `###`.**
+- **Headings go from `#` to `###`**: a `####` heading comes back as `###`.
+- **No line break inside a paragraph.** A break at a line's end (`\`, two
+  spaces or `<br>`) becomes a new paragraph, so a letter's address block reads
+  with a gap between its lines. The text is kept, and the helper's check passes,
+  since it compares through Hanji's converter. Otherwise Markdown round-trips
+  with every word kept: on 2026-11-07 the 21 notes in socrates `docs/` came back
+  changed only in spelling (`~` as `\~`, `---` table rules, `*` for `_`).
 - **The note gate is Evernote-only.** `note_build.py` reads and writes Evernote.
   A Hanji note whose prose is written or rewritten follows the same three
   imperatives by hand until the gate gains a Hanji target.
