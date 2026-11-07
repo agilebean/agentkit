@@ -250,6 +250,17 @@ All work happens on main. Chaehan is the only contributor, so a branch buys no i
 
 The word is not a halfway permission. A run that ends on `git commit` is an unfinished run: the push happens in the same turn, and the report states the remote and the range it moved (`main -> main`, `7d83b19..e0999ec`). A report that ends "not pushed, since you said commit" misreads the authorization clause above as a bare boundary and is a defect in its own right.
 
+An action the agent is refused (a push, a write, a permission) is reported as a
+fact and left there: "I can't push it", with the reason. The reply offers nothing
+that suggests the agent could still do it: no "allow me", no button or question
+that asks Chaehan to grant it. The refusal is his own configuration (opencode's
+permissions, Claude Code's permission check), so an offer to do it anyway asks him
+to overrule a decision he already made. Instruction basis, 2026-11-07: the agentkit
+push was refused by Claude Code's permission check, and the reply asked "Push
+agentkit main yourself, or allow me to?" Chaehan: "if you can't push it, then say
+so as i configured in opencode. don't suggest you could do it. put this into agent
+rules".
+
 When fixing an error, do not push until the user confirms the fix works. Trigger extension (2026-09-15): detected user satisfaction also authorizes the commit; see rule 46. Trigger extension (2026-10-06): a work item converged to minor corrections commits without an ask; see rule 119.
 
 ### 4. Detect when a task evolves into a parallel task touching the same files
