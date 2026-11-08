@@ -116,3 +116,25 @@ def test_the_file_name_and_a_given_title_are_checked(tmp_path, capsys) -> None:
     good.write_text("Plain text.\n")
     assert wording.main(["--title", "2026-11-05 Semen: what she gets", str(good)]) == 2
     assert wording.main(["--title", "2026-11-05 Semen: nutritional intake", str(good)]) == 0
+
+
+def test_a_bare_ordinal_date_warns_and_a_named_series_passes() -> None:
+    """RULES.md 17: "A second meeting" in a note on a date with Dawon said Chaehan
+    had met her before; the second of the four J Noble dates was their first.
+    A warning, not a flag: "a second meeting" in a Life Challenges note means
+    meeting one woman again and is correct (Chaehan, 2026-11-08: "Warn only")."""
+    rules = _rules()
+
+    def flagged(text: str) -> bool:
+        return any(level == "warn" and re.search(r"(?i)date|meeting", match)
+                   for _line, level, match, _fix in wording.lint_text(text, rules))
+
+    assert flagged("## A second meeting")
+    assert flagged("Prepare for a second date with good questions")
+    assert flagged("2026-11-08 Date Dawon: second date tips")
+    assert not flagged("The second of the four J Noble dates, 2026-11-08: 허다원")
+    assert not flagged("Your second meeting with Dawon is on Sunday")
+    assert not flagged("your first meeting with her")
+    assert not flagged('Chaehan, 2026-11-08: "the second date is today not nov 11"')
+    assert not flagged("If a second date with her comes")
+    assert not flagged("It buys a second meeting in March with any woman from November")

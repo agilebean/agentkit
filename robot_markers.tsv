@@ -96,3 +96,4 @@ flag	\bstops? (?:being|deciding|mattering|counting)\b|\bworks? in your fav(?:o|o
 flag	\bprices? at\b	say what it costs
 flag	\bsits? (?:on|in|at|with)\b	a verb whose literal sense does not apply: write the fact	\b(?:chair|table|desk|seat|bench|sofa|floor)\b
 warn	\bdays? of slack\b|\bslack\b	say "spare days"
+warn	\b(?:first|second|third|fourth|fifth|1st|2nd|3rd|4th)\s+(?:date|meeting)s?\b(?!\s+of\b)(?!\s+with\s+(?:her\b|him\b|(?-i:[A-Z])|[가-힣]))	a bare ordinal binds to the nearest person: if it counts a series, name it ("the second of the four J Noble dates"); if it counts meetings with one woman, name her ("your first meeting with Dawon", "a second meeting with the same woman"), RULES.md 17	"[^"]*\b(?:first|second|third|fourth|fifth|1st|2nd|3rd|4th)\s+(?:date|meeting)[^"]*"|\bwith\s+(?:her|him|the same|any|each|one of)\b|\bsame (?:woman|person)\b
