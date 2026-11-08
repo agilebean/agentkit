@@ -414,3 +414,38 @@ def test_thousand_separator_fails_and_plain_numbers_pass():
     draft = GOOD.replace("- The unit fits the clothes.", "- You paid 10,000,000 won at signing.")
     assert any(f.startswith("T18") and "10,000,000" in f for f in gate.check(draft))
     assert not any(f.startswith("T18") for f in gate.check(GOOD.replace("- The unit fits the clothes.", "- You paid 10000000 won, 1.5 to 2.5 times.")))
+
+
+GROUND_DRAFT = """## Takeaway
+
+- Your furniture is at sea, and you leave Seoul in 26 days.
+
+## Furniture
+
+Your furniture left Los Angeles on 2026-09-30, and Jaekeun signed the transfers.
+"""
+
+
+def test_t19_rejects_a_name_the_sections_sources_do_not_hold():
+    sources = """## Furniture
+- memory/furniture-relocation.md:12 | shipment left Los Angeles 2026-09-30
+## Takeaway
+- computed: you leave Seoul on 2026-12-04, 26 days after 2026-11-08
+"""
+    fails = [f for f in gate.check(GROUND_DRAFT, sources=sources) if f.startswith("T19")]
+    assert len(fails) == 1 and "Jaekeun" in fails[0] and "'Furniture'" in fails[0]
+
+
+def test_t19_passes_when_each_word_has_its_line_and_counts_item_blocks():
+    sources = """## Furniture
+### Shipment
+- memory/furniture-relocation.md:12 | shipment left Los Angeles 2026-09-30; Jaekeun signed the transfers
+## Takeaway
+- computed: you leave Seoul on 2026-12-04, 26 days after 2026-11-08
+"""
+    assert not [f for f in gate.check(GROUND_DRAFT, sources=sources) if f.startswith("T19")]
+
+
+def test_t19_names_a_section_without_a_block():
+    fails = gate.check(GROUND_DRAFT, sources="## Takeaway\n- computed: 26\n")
+    assert any("section 'Furniture' has no block" in f for f in fails)

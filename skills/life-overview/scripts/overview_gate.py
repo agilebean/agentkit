@@ -14,6 +14,8 @@ T4  a body section with no note link (unless it says "no detail note");
     a note with zero links
 T5  no indented bullet anywhere
 T18 a number with a thousand separator ("10,000,000 won"; write 10000000)
+T19 with --sources: a number or name in a section that the section's block in sources.md
+    does not hold (the Takeaway may use every block)
 T6  runs only on the note paths below (removed from the life overview on
     2026-11-07: its fixes put the clutter back). T6 is a date
     or number of --original that survives neither in the draft nor in a linked
@@ -168,10 +170,74 @@ def _overview_actions(draft: str, challenges: str | None) -> list[str]:
     return out
 
 
+GROUND_NUMBER = re.compile(r"\d{4}-\d{2}-\d{2}|\d+(?:\.\d+)?")
+NOT_NAMES = set("""You Your Yours The This That These Those Its It And But Or So If When Where What Which Who
+Why How Detail Details See Today Tomorrow Yesterday Takeaway Monday Tuesday Wednesday Thursday Friday Saturday
+Sunday January February March April May June July August September October November December Jan Feb Mar Apr
+Jun Jul Aug Sep Sept Oct Nov Dec After Before Since From Until With Without For Each Every One Two Three Four
+Five Six Seven Eight Nine Ten All Both Most Some Any No Not Only Also Then Than More Less Your Here There
+In On At By Of To As Is Are Was Were Be Been Has Have Had Do Does Did Can Could Will Would Should Must May
+Might Life Overview Challenges Decisions Evernote AUD USD KRW EUR DPS LDL HDL Korea Korean""".split())
+
+
+def _sources_blocks(sources: str) -> dict[str, str]:
+    """Each heading's lines; an h3 block also counts toward its h2 parent."""
+    blocks: dict[str, list[str]] = {}
+    h2 = h3 = ""
+    for line in sources.splitlines():
+        m = re.match(r"(#{2,3})\s+(.*)", line)
+        if m:
+            if len(m.group(1)) == 2:
+                h2, h3 = m.group(2).strip().lower(), ""
+            else:
+                h3 = m.group(2).strip().lower()
+            continue
+        blocks.setdefault(h2, []).append(line)
+        if h3:
+            blocks.setdefault(h3, []).append(line)
+    return {k: "\n".join(v) for k, v in blocks.items()}
+
+
+def _claims(text: str) -> tuple[set[str], set[str]]:
+    """Numbers and names in a text, link targets and markup removed."""
+    plain = re.sub(r"\[[^\]]*\]\(evernote:[^)]*\)", "", text)
+    plain = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", plain).replace(",", "")
+    nums = set(GROUND_NUMBER.findall(plain))
+    words = re.findall(r"(?<![.!?:]\s)(?<!^)(?<!- )\b[A-Z][A-Za-z-]{2,}\b|[가-힣]{2,}", plain, re.M)
+    return nums, {w for w in words if w not in NOT_NAMES}
+
+
+def _grounding(draft: str, sources: str) -> list[str]:
+    """T19: a number or a name in a section that the section's own block of sources.md does not hold.
+
+    Each section of the note is a retelling of the record lines copied under its heading in
+    sources.md (a computed number appears there as a "computed:" line with its arithmetic). A
+    name or number found only elsewhere in the record is the joining that produced "Jaekeun
+    signed the transfers" (2026-11-08); the Takeaway may draw on every block.
+    """
+    blocks = _sources_blocks(sources)
+    everything = "\n".join(blocks.values()).replace(",", "")
+    out = []
+    for title, body in sections(draft):
+        if title.lower().startswith("your decisions"):
+            continue
+        pool = everything if title.lower().startswith("takeaway") else blocks.get(title.lower(), "").replace(",", "")
+        if not pool.strip():
+            out.append(f"T19 section {title!r} has no block in sources.md: copy the lines it retells under '## {title}'")
+            continue
+        nums, names = _claims(body)
+        have_nums = set(GROUND_NUMBER.findall(pool))
+        missing = sorted(n for n in nums if n not in have_nums) + sorted(n for n in names if n not in pool)
+        if missing:
+            out.append(f"T19 not in the sources of {title!r}: {', '.join(missing)} (copy the line that states it, "
+                       f"add a 'computed:' line, or cut it)")
+    return out
+
+
 def check(draft: str, original: str | None = None, linked: list[str] | None = None,
           facts_only: bool = False, note: bool = False, cuts: str | None = None,
           labels: str | None = None, table_titles: bool = False,
-          challenges: str | None = None) -> list[str]:
+          challenges: str | None = None, sources: str | None = None) -> list[str]:
     fails: list[str] = []
     pool = list(linked or [])
     if challenges:
@@ -196,6 +262,8 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
                 fails += _lost_rows(draft, original, cuts)
         return fails + (_facts(draft, original, pool) if original is not None else [])
     fails += _overview_actions(draft, challenges)
+    if sources is not None:
+        fails += _grounding(draft, sources)
     if not LINK.search(draft):
         fails.append("T4 the note carries no evernote:/// link")
     for title, body in sections(draft):
@@ -499,12 +567,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--cuts", help="the cut list: one line per removal, '- <numbers or words>: <destination or reason>'")
     ap.add_argument("--labels", help="note_build.py's merged label file: id, label, parent, text per item")
     ap.add_argument("--challenges", help="the current Life Challenges note, exported: T3 compares the Takeaway with it")
+    ap.add_argument("--sources", help="sources.md: the record lines each section retells; T19 checks every name and number against them")
     a = ap.parse_args(argv)
     read = lambda p: open(p, encoding="utf-8").read()
     draft = read(a.draft)
     fails = check(draft, read(a.original) if a.original else None, [read(p) for p in a.linked],
                   a.facts_only, a.note, read(a.cuts) if a.cuts else None, read(a.labels) if a.labels else None,
-                  challenges=read(a.challenges) if a.challenges else None)
+                  challenges=read(a.challenges) if a.challenges else None,
+                  sources=read(a.sources) if a.sources else None)
     if a.note and a.original and not (a.labels and a.cuts):
         fails.append("T14 a rewrite needs --labels and --cuts: build it with note_build.py "
                      "(agentkit/skills/evernote/scripts), which writes both")

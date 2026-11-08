@@ -139,6 +139,18 @@ matter. When the record holds none, the element is left out, and the note is
 right without it; an element made up to fill the place is the one way the
 note can be wrong.
 
+Every section is a retelling of copied lines. Before writing a section, copy
+into `sources.md`, beside the draft, under the section's exact heading
+(`## Partner search`), every line the section will use: the file and line
+number with the line itself (`memory/partner-search.md:26 | ...`), a calendar
+entry with its date, and a `computed:` line for every number you work out
+(`computed: 2026-12-04 is 26 days after 2026-11-08`). The section then says
+only what its block holds; the Takeaway may draw on every block. The gate's
+T19 rejects a name or a number that is not in its section's block, so a line
+about another matter never reaches a section unless you copied it there, and
+copying a line about another matter into a block is the same error as
+writing it.
+
 Relevance is impact on a goal Chaehan is pursuing or a decision Chaehan has
 pending: the family, the base in Korea, health, money, work (the live goals
 are listed in `memory/` and in the brief behind this skill,
@@ -254,7 +266,7 @@ defects the rework is for: it writes every section again from the record.
 One command and one read. A failure goes back to the move that wrote the
 sentence it names, never to the twin.
 
-`python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/overview_gate.py docs/YYYY-MM-DD-life-overview.md --challenges <exported Life Challenges note>`
+`python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/overview_gate.py docs/YYYY-MM-DD-life-overview.md --challenges <exported Life Challenges note> --sources sources.md`
 
 - T3: no Open tasks section, no email address and no phone number; a link to
   the Life Challenges note; and no Takeaway bullet that repeats one of its
@@ -263,6 +275,9 @@ sentence it names, never to the twin.
 - T5: at least one indented bullet; indent every fact that belongs under its
   neighbour.
 - T18: no number with a thousand separator ("10000000 won").
+- T19: every name and number in a section is in that section's block of
+  `sources.md`; a failure names the word, and the fix is to copy the line
+  that states it, add a `computed:` line, or cut the word.
 
 Its PASS prints the `note-gate:` stamp the Evernote write needs. Then read the
 draft once against Move 4 and the seat test in `AGENTS.md` core 1, and rewrite
@@ -282,9 +297,9 @@ two steps, and the second step never adds what the first did not find.
    university Korea's after I retired from yonsei", "a huge breakthrough with
    partner search", "several breakthroughs in swimming"), and the lines that
    record a first or a measured gain dated after the previous overview. Copy them into
-   `sources.md` beside the draft, one block per item: the file, the line
-   number and the line itself. Every step you named yourself gets a block;
-   three to five blocks in all, in priority order.
+   `sources.md` under `## What went well`, one `###` block per item: the file,
+   the line number and the line itself. Every step you named yourself gets a
+   block; three to five blocks in all, in priority order.
 2. **Retell each block.** Write one or two sentences to you that say what the
    lines in its block say: what you did and what it took from you, in plain
    words, quoting you only for a word of yours that holds the point
