@@ -77,6 +77,8 @@ the layout is held. Locate the one place that produces the difference being
 asked for, and change that. A change made before this reading is blind, and a
 blind change to a structure is a rebuild with extra steps.
 
+A request to reorder is a move. The sections and items keep their words and only their order changes, with only the words the user named changed; a tool that rewrites while it orders (note_build's step 3 writes a new summary, new headings and new first lines) is never used for a reorder. Failure 196 in `memory/agentic_ai.md`: asked to put the Osaka note in his priority order, the agent rebuilt it with note_build, and the new summary claimed two March hotel nights Chaehan never planned, put the red-light night into the summary and counted his swims. Chaehan: "your task was to rearrange not rewrite and make it worse!!!"
+
 When a defect appears after your edit, it is your edit's consequence. Shrink the
 edit; never widen it to fit the symptom. Added data crowds the axis, so the card
 is widened, so the row is wrapped, so the comparison the row carried is gone.
