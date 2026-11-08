@@ -642,10 +642,13 @@ one will eventually be chosen.
   paraphrased into the agent's sentence and never recomputed into a date: it
   stays inside Chaehan's original quote, with the date he said it ("on
   2026-11-06 you wrote: 'i have 4 dates already planned with date after
-  5d'"). When the quote gives no date, the event has none, and the agent asks.
-  This holds before any calendar is read; the calendar can confirm a date, it
-  is never needed to avoid inventing one. An event a note reports, such as a
-  flare, a date or an injury, is written with its date. 2026-11-06: a memory
+  5d'"). When the quote gives no date, the agent reads the line that names the
+  event and its day together, for a date the calendar entry or the agency's
+  date list, before it writes a day into a note or asks Chaehan; with no such
+  line the event has no date, and the agent asks. This holds before any
+  calendar is read; the calendar can confirm a date, it is never needed to
+  avoid inventing one. An event a note reports, such as a flare, a date or an
+  injury, is written with its date. 2026-11-06: a memory
   line paraphrased Chaehan's "date after 5d" into "the next one in five days";
   on 2026-11-08 the overviews printed "the next on 2026-11-11", and the second
   date was that day. Chaehan: "the second date is today not nov 11", "events
@@ -653,7 +656,10 @@ one will eventually be chosen.
   used out of context but attached to the original quote. this must be done
   independent from the calendar, as this mistake could have been avoided in
   the first place!!!" and "important facts like right shoulder flare must be
-  dated".
+  dated". 2026-11-08, after the agent asked Chaehan the day of the date with
+  허다원 and whether he was meeting her for the first time: "yes of course it is the first
+  meeting and it was today, what otherwise would you tell from my calendar
+  entry and my jnoble list? this is common sense."
 - **A fact comes from one record line about that event, never from two joined.**
   A person, a cause, a payment or a date is attached to an event only when one
   line of the record names both. Two lines about different matters that share
@@ -674,10 +680,7 @@ one will eventually be chosen.
   person, the series is missing. `scripts/wording_lint.py` warns on a bare
   "second date" or "second meeting" outside a quote, and the writer settles
   each warning with this test, because "a second meeting" that means meeting
-  one woman again is correct. A day comes from a line
-  that names the person and the day together, which for a date is the
-  calendar entry or the agency's date list, read before a day is written into
-  a note about a named person. 2026-11-08: Chaehan's "the second date is today"
+  one woman again is correct. 2026-11-08: Chaehan's "the second date is today"
   counted the four J Noble dates, and the note on Chaehan's upcoming date with
   허다원 (Dawon) titled a section "A second meeting". Chaehan:
   "i never said about a second date where did you derive that?",
