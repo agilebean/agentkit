@@ -2410,6 +2410,7 @@ Work that inspects or verifies a result produces scratch: browser screenshots, t
 - Run `git status` before finishing. Delete the untracked paths that are yours. Do not leave them for the user to clear, and never commit them.
 - Keep the files the user asked for, and the tracked artifacts the task legitimately changes. Only your scratch goes away.
 - When a scratch artifact is worth keeping, say so and leave it on purpose.
+- What the user asks to delete is deleted, never first copied into a new file. When an instruction needs it as a model, the few lines it needs are quoted in that instruction. Failure 198 in `memory/agentic_ai.md`: before trashing the experiment notes A and B, the agent saved both as docs files no one asked for. Chaehan, 2026-11-08: "why did you save the old files making clutter?"
 
 Failure mode: the task and the commit are clean, but the tree still holds untracked screenshots and temp files, and a server is still listening.
 
@@ -2768,6 +2769,8 @@ Text written as the user's own words - a script he will speak, an announcement, 
 - **Audience value.** A spoken line carries something for its listeners. In a session script that is the students' learning experience: recitals of a schedule they can read elsewhere, rhetorical contrasts, and restatements of another artifact are cut. The sheet card keeps the plan; the speech keeps the value.
 
 When a spec lives in several carriers (a script, a sheet, a design row, a syllabus) and one carrier shows a value the others contradict, ask which stands; the change is then swept through every carrier in the same pass. A repair that lands in one artifact and not its siblings comes back as the same complaint.
+
+What Chaehan said about a text passes the same provenance check, with its scope kept. A judgment of his is quoted from his message: robotic wording he named inside a note ("what time buys etc.") rejects those phrases, and the note's other sentences keep the praise he gave them. A summary that widens his words ("their wording is the kind you rejected", "take no sentence from them") puts a judgment in his mouth; before his judgment goes into an instruction or a reply, find the message and quote it. Failure 197 in `memory/agentic_ai.md`: Chaehan called the experiment notes A and B "excellent", and the agent wrote into the life-challenges skill that no sentence of theirs may be taken and told him their wording was the kind he rejected. Chaehan, 2026-11-08: "no i didn't reject their sentences, i told you they were good, don't twist my words but read my words again."
 
 Failure mode: 2026-10-04, the KUBS S3 script. The silent minute carried the invented "stand up, look at the wall, no phones, no talking" (the students keep sitting, eyes closed); the close still carried "this week is the sprint, not the book", rejected the day before and repaired in the run sheet only, plus a week recital the students gain nothing from.
 
