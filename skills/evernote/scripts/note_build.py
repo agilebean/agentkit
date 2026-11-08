@@ -274,7 +274,10 @@ they are there already: keep them and add the second part.
 
 First part: one line per decision Chaehan makes with this note, at most five,
 as "D1: <what you decide>". A decision is something you will do or choose, and
-it names places, dates and numbers from the note or the record. Take the
+it names places, dates and numbers from the note or the record. List the
+decisions in the order he acts on them, the highest priority first: the
+sections come out in that order, and a brief may fix the order for its format.
+Take the
 decisions from the record and from the note's sections, never from the old
 note's summary alone: an old summary drops what its writer thought minor.
 
