@@ -244,25 +244,45 @@ sentence. Then:
 
 ## Topic note (`/life <topic>`)
 
-When Chaehan wants to work on one challenge, `/life <topic>` builds a note on
-that challenge alone: "YYYY-MM-DD Life Challenge - <Topic>" in "Chaehan's
-Life", with its source `socrates/docs/YYYY-MM-DD-life-challenge-<topic>.md`.
+When Chaehan wants to work on one challenge, `/life <topic>` builds an
+Evernote note on that challenge alone: "YYYY-MM-DD Life Challenge - <Topic>"
+in the notebook "Chaehan's Life", with its source
+`socrates/docs/YYYY-MM-DD-life-challenge-<topic>.md`.
 The topic is in Chaehan's words ("marriage", "storage", "tax refund").
-Chaehan, 2026-11-08, on the experiment notes A and B: "what i need when i want
-to work on one specific challenge and need support", "first the scenario, then
-the research for each point". The big picture and the questions across all
+Chaehan, 2026-11-08, on the experiment notes A and B of 2026-11-07: "the A
+and B notes are actually excellent and is what i need when i want to work on
+one specific challenge and need support", "first the scenario, then the
+research for each point". The big picture and the questions across all
 challenges stay in the Life Challenges note; the topic note holds a short
 version of them in its Summary.
 
-The models are `docs/2026-11-07-life-challenges-A.md` for the scenarios and
-`docs/2026-11-07-life-challenges-B.md` for the research per point. Take their
-layout and their depth, and no sentence and no fact: their wording is the kind
-the table under "Plain words" rejects, and some of their facts were invented
-(a date on 2026-11-16, a call script Chaehan never approved).
+A and B are the model for the layout, the depth and the sentences. The
+phrases Chaehan named as robotic in them on 2026-11-07 ("what time buys etc.")
+are the rejected forms in the table under "Plain words"; write those the
+accepted way and the rest as A and B do. One scenario from A and one point
+from B, in their own words:
+
+```
+## Scenario 1: December in Seoul
+
+You stay past 2026-12-04 and keep the 2027-03-16 return, so every date in this block happens in person.
+
+- What it gains you:
+  - Family: the four J Noble dates and any follow-up meeting stay in one city inside one month, so a woman you meet in November can be met again before you fly out.
+- What it costs you:
+  - Money: the Melbourne lease starts 2026-12-12 at A$685 a week and rent runs on an empty flat, so two late weeks are A$1370 against an A$2740 bond.
+  - Home: the Samboo Tower flat ends on 2026-12-04 at 550000 won a week, so December needs a new booking at that rate or another flat.
+
+## What you found
+
+- Video dates already exist at two agencies: 엔노블, an Apgujeong agency with a 유학파·재외동포 service since 2007 and ~300 Korean members living abroad, schedules meetings around a one to two week return when told one or two months ahead, and one published case began on a video call (nnoble.co.kr, 2026-07-31); 르매리 lists meetings arranged offline or by video according to where the member lives (lemarry.co.kr).
+  - Your 102 days away fit the structure 엔노블 sells, a cluster of meetings inside a short return with video in between.
+  - You choose between keeping Gayeon as the second agency and putting the free consult on 엔노블, which answers the video question at no cost.
+```
 
 ```
 ## Summary                the big picture in one sentence, then one or two questions
-## Scenario 1: <name>     what you gain and what it costs you, per area, with numbers
+## Scenario 1: <name>     what it gains you and what it costs you, per area, with numbers
 ## Scenario 2: <name>     the same
 ## What you found         one bullet per point the scenarios rest on, with its source
 ```
@@ -276,7 +296,7 @@ the table under "Plain words" rejects, and some of their facts were invented
 3. Research every point the two scenarios rest on, as in Build step 3.
 4. Write the findings file in the layout without the Summary. Each scenario
    section opens with one sentence on what you do in it, then two bullets,
-   "What you gain:" and "What it costs you:", each with one sub-bullet per
+   "What it gains you:" and "What it costs you:", each with one sub-bullet per
    area it touches, starting with the area ("Family: ...", "Money: ...") and
    with the number from the record. Under "What you found", one bullet
    per point with its source; under it, what it means for you, and "You
