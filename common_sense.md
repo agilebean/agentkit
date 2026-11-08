@@ -411,3 +411,4 @@ sqlite3 ~/.local/share/opencode/opencode.db \
 ```
 
 Then read the row: `type = 'user'` is a message, an assistant row whose tool part is named `question` carries an answer. Run it for the full phrase list before claiming the table is complete.
+| socrates, Osaka note reply, 2026-11-08 | "your 2026-11-07 14:50 save" | "don't say save if you didn't save it as a file as the term save implies that" | "the note version Evernote recorded at 2026-11-07 14:50" | "save" names a write to a file; the state was a version the service kept, and the reader looked for a file that does not exist |

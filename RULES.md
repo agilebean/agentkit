@@ -198,7 +198,7 @@ Check every sentence against five classes of robotic text. For each class, the t
    m) a correction marker: "actually"; "in fact"; "the catch is"; "at least" without a number.
    Test: write what is true and what you do, each as its own statement ("You have a quote for the flat. You must still book it."). The forms are rows in `robot_markers.tsv` whose fix starts "contrast frame". The wording checker warns on them in prose, and the note gate fails them in a summary line and in a section's first sentence.
 
-2. **Vocabulary.** A word a person would not say aloud to a colleague about this material (leverage, robust, seamless, covered, buys, lane, facilitate). Test: say the sentence aloud. If the word needs explaining, replace it with the thing it names: the action, the number, the object.
+2. **Vocabulary.** A word a person would not say aloud to a colleague about this material (leverage, robust, seamless, covered, buys, lane, facilitate). Test: say the sentence aloud. If the word needs explaining, replace it with the thing it names: the action, the number, the object. A word can also be plain and still name the wrong mechanism: "save" is a write to a file, so a state a service keeps is named by what it is, "the note version Evernote recorded at 2026-11-07 14:50", never "the 14:50 save" (Chaehan, 2026-11-08: "don't say save if you didn't save it as a file as the term save implies that"). The same holds for "file", "export" and "download" where nothing was written to a file. Test: does the word name what happened, or a mechanism it only resembles?
 
 3. **Content.** A claim, number, name or step that is not in the source the text is written from. Test: point at the fact that supports each sentence. A sentence with no fact behind it is deleted, not softened.
 
@@ -664,6 +664,14 @@ one will eventually be chosen.
   3 wire transfers via power of attorney", another matter) and
   `furniture-relocation.md` (a customs broker clears under power of attorney).
   Chaehan: "jaekeun didn't sign the transfers - where did you get that?"
+- **A dated event in the record stays with the event it names.** A request that
+  names a person, a meeting or a place does not inherit a date from a record
+  event in the same domain until one line names both. When no line does, the
+  day is asked, never borrowed. 2026-11-08: the note "2026-11-08 Date Dawon"
+  took its day from `partner-search.md`'s "the second date is today" (the
+  second J Noble date, said on 2026-11-08) for a date with Dawon that no line
+  connects to it. Chaehan: "i never said about a second date where did you
+  derive that?"
 - **A number keeps the name of its measure.** A value is bound to the
   measure it was taken in, by that measure's own term: "perceived effort 8,
   now 6", never "two-thirds of the effort". A term of the domain (perceived
