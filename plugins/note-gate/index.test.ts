@@ -40,6 +40,31 @@ test("a surgical edit and a read are left alone", async () => {
   expect(() => call(`await tools.evernote.get_note({ noteId: "g" })`)).not.toThrow()
 })
 
+// The shape of the 2026-11-08 section rewrites (failure 201): a find/replace
+// under 6000 characters whose content is a paragraph of prose.
+const SECTION = "await tools.evernote.edit_note({ noteId: \"g\", mode: \"replace\", find: `<div><strong>Where it is</strong></div>`, " +
+  "content: `<div><strong>Where it is</strong></div><div>The pain sits at the front of the right shoulder, lateral to the long head " +
+  "of biceps. From lateral to medial you feel five structures: the deltoid, the greater tuberosity, the long head of biceps, the short " +
+  "head of biceps, and the pec major.</div>` })"
+const SENTENCE = `await tools.evernote.edit_note({ noteId: "g", mode: "replace", find: "a very small hump", content: "the greater tuberosity, a small bony hump" })`
+const ROW = "await tools.evernote.edit_note({ noteId: \"g\", mode: \"replace\", find: `<tr><td><div>2026-11-03</div></td></tr>`, " +
+  "content: `<tr><td><div>2026-11-03</div></td><td><div>6x100 m at 60, 70 and 80 percent twice, 3x50 m at 90 percent, the classic " +
+  "set, with the new catch from stretched out to a very small elbow flex and no bursa pain afterwards, 1050 m in all</div></td></tr>` })"
+
+test("a section rewritten through a small edit is a body write", async () => {
+  stamps()
+  const call = await hook()
+  expect(() => call(SECTION)).toThrow(MESSAGE)
+  expect(() => call(`// note-gate:${SHA}\n` + SECTION)).not.toThrow()
+})
+
+test("one sentence and a table row stay surgical", async () => {
+  stamps()
+  const call = await hook()
+  expect(() => call(SENTENCE)).not.toThrow()
+  expect(() => call(ROW)).not.toThrow()
+})
+
 test("a live marker lets the write through and a stale one does not", async () => {
   stamps()
   let call = await hook()

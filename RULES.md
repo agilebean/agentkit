@@ -484,7 +484,10 @@ principle and the principle is too weak.
 runs it.** Name first what that agent cannot do, from its measured record. Fix
 that at the earliest step of the work, where an error would spread into every
 later step, and at the one point every path passes, such as the write, so that
-no brief or skipped step goes around it. A smaller check stays only for what the
+no brief or skipped step goes around it. That point recognizes a write by what
+it changes, never by the call's size or shape: a rewrite split into small edits
+is still a rewrite (failure 201, where thirteen find-and-replace edits rebuilt a
+note that the gate saw as surgical). A smaller check stays only for what the
 higher fix cannot reach, and it is listed under the fix it backs up. A flat list
 with one check per defect fixes the instances again. For a weaker model, judgment
 over a whole text is moved into tasks it can do item by item, and a script
