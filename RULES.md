@@ -1144,6 +1144,24 @@ without opening the artifact. What remains is the entry. Anything that only
 makes sense as part of the event narrative is artifact content, not memory
 content.
 
+**A memory line is written so that a model cannot misuse it.** A model reads
+every memory line as a current fact about Chaehan and fills any slot an
+instruction names from the most plausible line (rule 245), so four line shapes
+are errors at write time, and `agentkit/scripts/memory_lint.py` finds them:
+a relative time outside a quote (M1: write the date, rule 17); an old value
+kept beside its replacement (M2, a review flag: state the value in force, and
+an old value that still matters becomes a dated line under a History heading);
+an agent's inference stated as fact (M3: mark it "the agent's reading" or cut
+it); a person entry with no dated event (M4: a person's role is tied to the
+event it belongs to, or a model attaches the person to the next event that
+needs a helper). The lint runs on every memory file the agent writes, before
+the commit, and M1, M3 and M4 fail it. Instruction basis, 2026-11-08: the
+overview's 19 memory files held 18 relative times, 109 old-beside-new lines,
+56 unmarked inferences and Jaekeun's undated "completed 3 wire transfers",
+which became "Jaekeun signed the transfers" for the furniture shipment.
+Chaehan: "look into the memory files if there is room for improvement for
+better ie errorfree use of the stored info."
+
 ### 34. There is no catch-all memory file: every fact lives in a file named for its topic
 
 A fact goes into the memory file of its topic (rule 118). When no file fits,
