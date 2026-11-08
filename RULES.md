@@ -1119,27 +1119,23 @@ without opening the artifact. What remains is the entry. Anything that only
 makes sense as part of the event narrative is artifact content, not memory
 content.
 
-### 34. Periodically review the memory parking lot for promotion candidates
+### 34. There is no catch-all memory file: every fact lives in a file named for its topic
 
-`memory/_misc.md` is the parking lot: facts that do not yet warrant a dedicated
-file. The creation threshold for new topic files is intentionally high
-(major life domains). The failure mode: a topic parked in `_misc.md` grows
-into a substantial domain — multiple dated entries, contacts, recurring
-decisions, artifacts — but never gets promoted because no mechanism scans the
-parking lot periodically; promotion only ever happened reactively when a
-main-topic file happened to be updated and matched a parked item.
+A fact goes into the memory file of its topic (rule 118). When no file fits,
+the agent creates `memory/{topic}.md` in lean form (rule 33), named so a
+stranger knows what is inside: `family.md` for relatives, `evernote.md` for the
+Evernote access history. A file named for no topic (`_misc.md`, a "parking
+lot", "miscellaneous", "notes") is never created and never written. A catch-all
+file mixes unrelated people and events in one place, and a model reading it
+joins them: the 2026-11-08 overview took Jaekeun's wire transfers from
+`_misc.md` and wrote them into the furniture shipment (rule 17). The test:
+every file's name says what is inside it.
 
-Rule: when reading memory (session start, or whenever `_misc.md` is loaded or
-updated), scan parked items for promotion candidates. A parked item warrants
-its own `memory/{topic}.md` when it has accumulated multiple dated entries on
-the same subject (roughly 3+), gained durable facts a future follow-up needs
-(contacts, availability, constraints, commitments), or spawned its own
-artifacts (meeting notes, decision docs, Evernote notes). When promoting:
-propose the new filename (e.g., `kubs.md`), create the file in lean form per
-rule 33 (bare minimum + one-line artifact pointers), and remove the parked
-item from `_misc.md` entirely — no [MOVED TO] marker left behind.
-
-Failure mode: a topic that has grown into its own domain left in the parking lot.
+Instruction basis, 2026-11-08: `_misc.md` was split into `family.md`,
+`evernote.md`, `friendships.md`, `startup.md`, `talks.md`, `shopping.md`,
+`googleads-mcp.md` and `optimize-my-life.md`, and deleted. Chaehan:
+"jaekeun should not be in _misc - i hate this file it should always be in a
+semantically meaningfully name file!"
 
 ### 35. Domain queries load the domain memory file before any web research or answer
 
@@ -1149,9 +1145,8 @@ matching memory file must be read BEFORE web research and before answering.
 The memory file is ground truth for the domain's facts, current states,
 constraints, and history; a web-only answer for a domain that has a memory
 file is incomplete research and will miss or contradict what the user already
-recorded. If a scan finds no matching file, state that explicitly (including
-that `_misc.md` was checked) instead of silently proceeding on web sources
-alone.
+recorded. If a scan finds no matching file, state that explicitly instead of
+silently proceeding on web sources alone.
 
 Failure: on 2026-09-09 a Mapo swim-partner query was answered from web sources
 alone while `memory/swim.md` existed with the user's training context. The
@@ -5046,6 +5041,22 @@ of the brief's `/private/tmp/claude-501/...`, and the agent copied the files
 across. Chaehan: "it's useless if you did an error of opencode like copying to
 the correct path. all commands must run from opencode so if it made a mistake
 you must fix that in the agent instructions or skills and test that it works."
+
+An instruction never asks for an element without its source and its empty
+case. A model that follows instructions treats each named element ("name who
+helped and how", "the one fact that would reverse it", "the consequence") as
+a requirement and an empty place as a failure, so where the record holds
+nothing it fills the place with the most plausible thing in its context. A
+skill therefore says where each element comes from (a line of the record
+about that same matter), says that leaving it out is correct when no such
+line exists, builds a retelling of record lines instead of a template of
+fields, and shows no example with a filled element that most cases lack. The
+test: for each element the instruction names, ask what the model writes when
+the record is silent; if the answer is "something", the instruction is
+rewritten. Instance, 2026-11-08: the life-overview rule "name who helped and
+how" produced "Jaekeun signed the transfers". Chaehan: "you must prevent that
+deepseek forcibly wants to fill out a requested variable and if it can't,
+uses tricks and hallucination. most plausible-sounding is not enough."
 
 The model is fixed: DeepSeek through opencode, with the direct DeepSeek API as
 its fallback, does the work. A stronger model is never offered as an option;

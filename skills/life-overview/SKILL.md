@@ -36,13 +36,15 @@ Read, in order — memory is ground truth (rule 35):
 
 - `memory/travelitinerary.csv` — stay windows; travel days need the user's report (rule 18)
 - `memory/_psych_obs.md` — emotional-drag patterns; feeds What went well
-- `memory/_misc.md` — parking lot; scan for promotion candidates (rule 34)
 - `memory/travel.md` — stay, housing, exit decisions
 - then the chapter files: `kubs.md`, `health.md`, `swim.md`, `partner-search.md`,
   `dating.md`, `furniture-relocation.md`, `src_shipping_ca2korea.md`, `finance.md`,
   `taxes_us.md`, `immigration.md`, `virtualfriend.md`, `virtualfriend-marketing.md`,
   `virtualfriend-architecture.md`, `startup.md`, `optimize-my-life.md`
 - `git log --oneline -15` — what moved since the last overview
+- from each chapter file, read its current state and your dated words; skip
+  its research, evidence and study sections, which serve questions asked on
+  demand and only crowd the reading
 - the calendar, for the date of every event the note names (a date, a flight,
   a deadline): the macOS Calendar database, read as `memory/kubs.md`
   describes ("KUBS DT Prep Hours"). Every event in the note has one date,
@@ -67,7 +69,8 @@ Read, in order — memory is ground truth (rule 35):
   `memory/travel.md` against what you spent elsewhere; `memory/_psych_obs.md`
   and your own quoted words in the chapter files for what a step cost you. A
   measured gain is compared with your own baseline and with a published
-  benchmark for a good performer, found by web search and cited by its source.
+  benchmark for a good performer when a study gives one, found by web search
+  and cited by its source.
 
 Then, for every item the memory files call open, search Evernote for the result
 before it reaches the note (RULES.md 207): the test, the form, the booking. A
@@ -111,6 +114,12 @@ Each overview claim carries its file and date before a draft is shown.
 
 ## 3. Write the snapshot: four moves, in this order
 
+Every element this skill asks for (a reason, a consequence, a reversing fact,
+a helper, a benchmark) comes from a line of the record about that same
+matter. When the record holds none, the element is left out, and the note is
+right without it; an element made up to fill the place is the one way the
+note can be wrong.
+
 Relevance is impact on a goal Chaehan is pursuing or a decision Chaehan has
 pending: the family, the base in Korea, health, money, work (the live goals
 are listed in `memory/` and in the brief behind this skill,
@@ -139,8 +148,9 @@ Chaehan's decision and its consequence; a refusal as what remains open.
 
 **Move 2. Under each sentence, the facts that change it.** At most three per
 goal, each a fact that would move the sentence if it were different, plus the
-one fact that would reverse it, written as a plain fact among the others and
-never labelled ("What would reverse the sentence: ..."). A fact that belongs
+fact that would reverse it when the record states one, written as a plain
+fact among the others and never labelled ("What would reverse the sentence:
+..."). When the record states none, the section has none. A fact that belongs
 under another fact is indented under it as a sub-bullet, never set beside it,
 so each section shows its facts with their details under them. An event the
 section reports (a flare, a date, an injury) is written with its date.
@@ -148,8 +158,8 @@ section reports (a flare, a date, an injury) is written with its date.
 **Move 3. Every remaining fact is detail, and gets its note.** For each
 section, find its detail note (`find-note`, then the link form in the
 `evernote` skill: `[<exact title>](evernote:///view/39d2f74/s365/<guid>/<guid>/)`).
-The section shows the state in one sentence, the consequence in one sentence,
-and that link. No figure that lives in the linked note appears above the link.
+The section shows the state in one sentence, its consequence when the record
+or the dates make it plain, and that link. No figure that lives in the linked note appears above the link.
 A booking shows what it fixes for you: where you are from when to when, and
 what is still unbought. Its flight number, fare, seat fee, booking date and
 cancellation terms live in its detail note.
@@ -180,7 +190,8 @@ The bullets follow the order above: partner search first, then health (the
 frozen sample first), work, then logistics, one bullet per block even when
 nothing moved in it; each says where that block stands and what you achieved
 in it when there is something. Between them they
-cover what the next month depends on, what is settled, what changed and why,
+cover what the next month depends on, what is settled, what changed (with its
+reason when the record gives one),
 and what gets worse if left alone. That list is the content, never the
 wording: no bullet names its own function. Each bullet opens on Chaehan or
 Chaehan's thing doing something, in the words Chaehan would say aloud, and
@@ -241,37 +252,37 @@ any sentence whose subject is not you or your thing.
 When this skill changes, run a fresh case in opencode on DeepSeek with this
 skill only, time it, and read its note against the change.
 
-## What went well — selection rule
+## What went well — retell the record, add nothing
 
-Three to five items, found in the whole record of the chapter, never in the
-open items, in priority order. An achievement Chaehan named himself in the
-record during the chapter (Chaehan's words calling it an accomplishment or a
-breakthrough, in the memory files) is always one of them; the others are
-chosen around it. Each is one of three kinds:
+What went well retells what the record already says you did. It is built in
+two steps, and the second step never adds what the first did not find.
 
-- a first: something you had not done before, or not since a break your
-  record names (your CV and the chapter files show it);
-- a plateau broken: a measured value that moved after a flat stretch, with the
-  number before and after, set against a benchmark in one clause with the
-  shortest reference ("around the DPS of elite women swimmers (Staunton
-  2025)"). The benchmark is converted into your unit (DPS per single-arm
-  stroke: a per-cycle value is halved), and the sentence gives only that
-  value;
-- a drag overcome: a step your record shows was hard for you (a failure
-  behind it, a fear, a habit such as frugality, a scarrend). Name the earlier
-  failure that made it a risk and the habit it went against, in the record's
-  own terms (your low-price accommodation choices show frugality), never a
-  price set against a price. A helper is named only where Chaehan's own words
-  about that same step name one ("organizing that phone call with Chungshup"),
-  never from a line about another matter.
+1. **Find the lines.** In the memory files, find the lines where your own
+   words call a step of this chapter an accomplishment, a breakthrough or
+   something done ("my accomplishment to finish my first course at a top
+   university Korea's after I retired from yonsei", "a huge breakthrough with
+   partner search", "several breakthroughs in swimming"), and the lines that
+   record a first or a measured gain dated after the previous overview. Copy them into
+   `sources.md` beside the draft, one block per item: the file, the line
+   number and the line itself. Every step you named yourself gets a block;
+   three to five blocks in all, in priority order.
+2. **Retell each block.** Write one or two sentences to you that say what the
+   lines in its block say: what you did and what it took from you, in plain
+   words, quoting you only for a word of yours that holds the point
+   ("scarrend"). A person, a cause, a cost, a date or a number that is not in
+   the block's lines is not in the item. Most items name no helper; an item
+   names a person only when a line in its block names that person for this
+   step. A measured gain may add one benchmark from a study you cite, in one
+   clause with the shortest reference ("around the DPS of elite women
+   swimmers (Staunton 2025)"), converted into your unit (DPS per single-arm
+   stroke: a per-cycle value is halved) and given only in it.
 
-Each item is one or two sentences addressed to you, with its detail note
-linked: what you did and what it took from you, and it stops there. No
-helpers' errands, arrival dates or later logistics follow the cost. Counts of
-students, sessions, lectures or hours stay out. Each number keeps the term of
-its measure ("perceived effort 8, now 6", never "two-thirds of the effort").
-Items already claimed in a previous overview stay out unless their state
-changed. Record, do not cheerlead.
+An item that says only what its lines say is complete. Leaving something out
+is never a failure; inventing it always is. Counts of students, sessions,
+lectures or hours stay out. Each number keeps the term of its measure
+("perceived effort 8, now 6", never "two-thirds of the effort"). Items already
+claimed in a previous overview stay out unless their state changed. Record,
+do not cheerlead.
 
 ## 4. Evernote twin
 
