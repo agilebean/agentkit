@@ -46,14 +46,25 @@ Read, in order — memory is ground truth (rule 35):
   its research, evidence and study sections, which serve questions asked on
   demand and only crowd the reading
 - the calendar, for the date of every event the note names (a date, a flight,
-  a deadline): the macOS Calendar database, read as `memory/kubs.md`
-  describes ("KUBS DT Prep Hours"). Every event in the note has one date,
-  with or without the calendar: a relative or modal phrase in the record
+  a deadline):
+  `mamba run -n socrates python projects/applecalendar/src/applecalendar_api.py events --days 56`
+  from the socrates root. It reads the macOS Calendar database read-only and
+  returns one row per occurrence, so a recurring session already appears on
+  each of its dates, and it drops the weather, birthday and suggestion
+  calendars unless you pass `--all-calendars`. The KUBS prep-hours ledger
+  keeps its own raw sweep, `memory/kubs.md`. Every event in the note has one
+  date, with or without the calendar: a relative or modal phrase in the record
   ("date after 5d", "soon") is never paraphrased or recomputed into a date;
   it is quoted with the date Chaehan said it, or the event goes without a
   date (RULES.md 17). Every fact comes from one record line about that event;
   two lines about different matters are never joined into a new fact, such as
   a helper, a cause or a payment.
+- OmniFocus, for every dated task Chaehan has taken on:
+  `mamba run -n socrates python projects/omnifocus/src/omnifocus_api.py due --days 56`,
+  and the same command with `--overdue` for what is already late. A task that
+  carries a due date and appears in no memory file is a commitment the note
+  would otherwise miss, and it enters the section its project belongs to. A
+  task with no due date has no date and never becomes one.
 - the current Life Challenges note, read in Evernote and exported to a file
   (newest "YYYY-MM-DD Life Challenges"; before 2026-11-07 "YYYY-MM-DD Life
   Problems"), because `/life` writes its answers there: it names the issues

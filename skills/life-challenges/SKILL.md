@@ -92,8 +92,14 @@ each issue in one place:
    (`docs/*-life-challenge-*.md`), `memory/travel.md`,
    `memory/travelitinerary.csv`, and every chapter file the life-overview
    skill lists in its step 1, and take each open action they hold as an issue
-   to place. Never read the Life Overview: it links this note, and a line read
-   back from it looks confirmed twice (`memory/agentic_ai.md` failure 166).
+   to place. Run the two live sources too, from the socrates root:
+   `mamba run -n socrates python projects/applecalendar/src/applecalendar_api.py events --days 56`
+   and
+   `mamba run -n socrates python projects/omnifocus/src/omnifocus_api.py due --days 56 --overdue`.
+   A dated appointment or a dated task is a commitment Chaehan has taken on,
+   so it is an issue to place whether or not a memory file mentions it. Never
+   read the Life Overview: it links this note, and a line read back from it
+   looks confirmed twice (`memory/agentic_ai.md` failure 166).
 2. Ask Chaehan which issues of the previous note are done since it, with the
    question tool: one multiSelect question per four issues. Never decide that
    an issue is done or open from a missing record (core 5). Write what Chaehan
