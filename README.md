@@ -1,6 +1,11 @@
 # agentkit
 Shared agents across projects by Chaehan So
 
+## Skills
+
+`skills/README.md` maps every skill Chaehan owns: what it does, where its
+instruction and scripts live, and where a new document about one goes.
+
 ## scripts
 
 Standalone personal scripts. `~/.local/bin` holds symlinks to these files, so the repo is the source of truth.

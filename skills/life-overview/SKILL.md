@@ -70,7 +70,9 @@ Read, in order — memory is ground truth (rule 35):
   memory file is a commitment the note would otherwise miss, and it enters
   the section its project belongs to; one that fell due in the past fortnight
   and is still open is what slipped. A task with no due date has no date and
-  never becomes one.
+  never becomes one. Both adapters state in their README why they read the
+  store and the app the way they do, and which other doors are dead ends
+  here: `projects/applecalendar/README.md`, `projects/omnifocus/README.md`.
 - the current Life Challenges note, read in Evernote and exported to a file
   (newest "YYYY-MM-DD Life Challenges"; before 2026-11-07 "YYYY-MM-DD Life
   Problems"), because `/life` writes its answers there: it names the issues
