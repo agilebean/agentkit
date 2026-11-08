@@ -28,6 +28,10 @@ local bridge hands that call its data and checks what comes back.
 
 `next` always prints the one step that is due, or what to fix in it.
 
+`init --dest hanji` builds a new note for Hanji: `write` then creates it with the
+hanji skill's hanji_note.py, reads it back and verifies it, with no execute
+call. The default destination is Evernote.
+
 A note whose Summary is not one line per section writes its Summary lines into
 `summary.md` in the build folder, one to three bullets, each checked like a
 summary line; new.tsv's summary cells are then "-". The life-challenges skill's
@@ -49,6 +53,8 @@ import os
 import subprocess
 
 SOCRATES = Path(os.environ.get("NOTE_BUILD_SOCRATES") or Path.home() / "Software" / "Prototypes" / "socrates")
+HANJI_NOTE = HERE.parents[2] / "hanji" / "scripts" / "hanji_note.py"
+DESTS = ("evernote", "hanji")
 LABELS = ("D", "S", "W", "K", "M")
 LINK = re.compile(r"!?\[[^\]]*\]\([^)]*\)")
 MARKER = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+")
@@ -630,6 +636,10 @@ def write_command(d: Path) -> str:
 def cmd_init(a) -> int:
     d = Path(a.dir).resolve()
     d.mkdir(parents=True, exist_ok=True)
+    if a.dest == "hanji" and (a.guid or not a.old):
+        print("init --dest hanji builds a new note from a file: pass the file, --title and --notebook "
+              "(an existing Hanji note is edited with the hanji skill)", file=sys.stderr)
+        return 1
     if a.old:
         old = Path(a.old).read_text(encoding="utf-8")
     elif a.guid:
@@ -644,7 +654,7 @@ def cmd_init(a) -> int:
     else:
         old = ""
     return finish_init(d, old, {k: getattr(a, k) for k in ("guid", "title", "notebook", "decisions", "record",
-                                                            "chaehan", "section")})
+                                                            "chaehan", "section", "dest")})
 
 
 def finish_init(d: Path, old: str, a: dict) -> int:
@@ -658,6 +668,7 @@ def finish_init(d: Path, old: str, a: dict) -> int:
         print("init needs --guid for an existing note, or --title and --notebook for a new one", file=sys.stderr)
         return 1
     (d / "meta.json").write_text(json.dumps({"guid": a["guid"], "title": a["title"], "notebook": a["notebook"],
+                                             "dest": a.get("dest") or "evernote",
                                              "record": [str(Path(r).resolve()) for r in a["record"] or []]}),
                                  encoding="utf-8")
     if a["decisions"]:
@@ -1082,11 +1093,49 @@ def cmd_write(a) -> int:
     if not (g.stamp_dir() / sha).exists():
         print("The draft has no PASS stamp: run next until it prints PASS, then write.")
         return 7
+    meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
+    if meta.get("dest") == "hanji":
+        return write_hanji(d, meta)
     port = start_bridge(d, "write")
     print("Run this code in ONE execute call, exactly as printed. It writes the note, reads it back and returns "
           "the verify result. A line starting REFUSED names what to fix before you run write again.\n")
     print(EXECUTE_WRITE.replace("PORT", str(port)).replace("STAMP", sha))
     return 0
+
+
+def hanji(*args: str) -> subprocess.CompletedProcess:
+    """The hanji skill's helper; NOTE_BUILD_HANJI_DB points it at a scratch database (tests)."""
+    db = os.environ.get("NOTE_BUILD_HANJI_DB")
+    return subprocess.run([sys.executable, str(HANJI_NOTE), *(["--db", db] if db else []), *args],
+                          capture_output=True, text=True)
+
+
+def write_hanji(d: Path, meta: dict) -> int:
+    """Create the stamped draft as a new Hanji note, read it back and verify it."""
+    r = hanji("create", "--notebook", meta["notebook"], "--title", meta["title"], "--file", str(d / "draft.md"))
+    if r.returncode:
+        print(f"REFUSED: {r.stderr.strip() or r.stdout.strip()}")
+        return r.returncode
+    made = json.loads(r.stdout)
+    nid = made.get("id", "")
+    if made.get("verified") is False:
+        print(f"VERIFY FAILED: Hanji's read-back of note {nid} differs from the draft: {r.stdout.strip()[:400]}")
+        return 4
+    back = hanji("get", nid or meta["title"])
+    if back.returncode:
+        print(f"REFUSED: the read-back failed: {back.stderr.strip()}")
+        return back.returncode
+    lines = back.stdout.split("\n")
+    if lines and lines[0].strip() == f"# {meta['title']}":
+        lines = lines[1:]
+    (d / "readback.md").write_text("\n".join(lines).lstrip("\n"), encoding="utf-8")
+    (d / "written.json").write_text(json.dumps({"dest": "hanji", "id": nid, "title": meta["title"]}), encoding="utf-8")
+    print(json.dumps({"dest": "hanji", "id": nid, "title": meta["title"], "written": True,
+                      "verified_by_hanji": made.get("verified")}))
+    rc = cmd_verify(argparse.Namespace(dir=str(d), readback=str(d / "readback.md")))
+    if rc:
+        print("VERIFY FAILED")
+    return rc
 
 
 def cmd_verify(a) -> int:
@@ -1115,6 +1164,7 @@ def main(argv: list[str] | None = None) -> int:
     i.add_argument("--record", action="append", help="Chaehan's record of the topic, e.g. socrates memory/travel.md")
     i.add_argument("--chaehan", action="append", help="Chaehan's instructions and new facts, his words (repeatable)")
     i.add_argument("--section", help="with --guid, --title and --notebook: build a new note from this section")
+    i.add_argument("--dest", choices=DESTS, default="evernote", help="where write puts the note (default evernote)")
     lk = sub.add_parser("link", help="print the exact Evernote link for notes matching the words")
     lk.add_argument("words")
     lk.add_argument("-n", type=int, default=5)
