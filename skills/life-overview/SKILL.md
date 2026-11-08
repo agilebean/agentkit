@@ -47,11 +47,13 @@ Read, in order — memory is ground truth (rule 35):
   demand and only crowd the reading
 - the calendar, for the date of every event the note names (a date, a flight,
   a deadline):
-  `mamba run -n socrates python projects/applecalendar/src/applecalendar_api.py events --days 56`
+  `mamba run -n socrates python projects/applecalendar/src/applecalendar_api.py events --past 14 --days 56`
   from the socrates root. It reads the macOS Calendar database read-only and
   returns one row per occurrence, so a recurring session already appears on
   each of its dates, and it drops the weather, birthday and suggestion
-  calendars unless you pass `--all-calendars`. The KUBS prep-hours ledger
+  calendars unless you pass `--all-calendars`. `--past 14` adds the fortnight
+  behind today, so an appointment that has already happened is written as
+  something you did and never as upcoming. The KUBS prep-hours ledger
   keeps its own raw sweep, `memory/kubs.md`. Every event in the note has one
   date, with or without the calendar: a relative or modal phrase in the record
   ("date after 5d", "soon") is never paraphrased or recomputed into a date;
@@ -60,11 +62,15 @@ Read, in order — memory is ground truth (rule 35):
   two lines about different matters are never joined into a new fact, such as
   a helper, a cause or a payment.
 - OmniFocus, for every dated task Chaehan has taken on:
-  `mamba run -n socrates python projects/omnifocus/src/omnifocus_api.py due --days 56`,
-  and the same command with `--overdue` for what is already late. A task that
-  carries a due date and appears in no memory file is a commitment the note
-  would otherwise miss, and it enters the section its project belongs to. A
-  task with no due date has no date and never becomes one.
+  `mamba run -n socrates python projects/omnifocus/src/omnifocus_api.py due --days 56 --past 14`,
+  the same command with `--overdue` for what is already late, and
+  `... done --days 14` for what Chaehan finished. A task completed in that window
+  is done even where a memory file still lists it open, and it never enters
+  this note as an issue. A task with a due date that appears in no
+  memory file is a commitment the note would otherwise miss, and it enters
+  the section its project belongs to; one that fell due in the past fortnight
+  and is still open is what slipped. A task with no due date has no date and
+  never becomes one.
 - the current Life Challenges note, read in Evernote and exported to a file
   (newest "YYYY-MM-DD Life Challenges"; before 2026-11-07 "YYYY-MM-DD Life
   Problems"), because `/life` writes its answers there: it names the issues

@@ -93,11 +93,16 @@ each issue in one place:
    `memory/travelitinerary.csv`, and every chapter file the life-overview
    skill lists in its step 1, and take each open action they hold as an issue
    to place. Run the two live sources too, from the socrates root:
-   `mamba run -n socrates python projects/applecalendar/src/applecalendar_api.py events --days 56`
+   `mamba run -n socrates python projects/applecalendar/src/applecalendar_api.py events --past 14 --days 56`
    and
-   `mamba run -n socrates python projects/omnifocus/src/omnifocus_api.py due --days 56 --overdue`.
+   `mamba run -n socrates python projects/omnifocus/src/omnifocus_api.py due --days 56 --overdue`,
+   plus `... omnifocus_api.py done --days 14`: a task Chaehan completed in the
+   last fortnight is settled and is not an issue to place, even where a memory
+   file still lists it open.
    A dated appointment or a dated task is a commitment Chaehan has taken on,
-   so it is an issue to place whether or not a memory file mentions it. Never
+   so it is an issue to place whether or not a memory file mentions it; an
+   appointment already behind today has happened, and it is read for whether
+   a challenge moved, never placed as an issue. Never
    read the Life Overview: it links this note, and a line read back from it
    looks confirmed twice (`memory/agentic_ai.md` failure 166).
 2. Ask Chaehan which issues of the previous note are done since it, with the
