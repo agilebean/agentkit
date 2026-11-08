@@ -121,7 +121,8 @@ each issue in one place:
    A dated appointment or a dated task is a commitment Chaehan has taken on,
    so it is an issue to place whether or not a memory file mentions it; an
    appointment already behind today has happened, and it is read for whether
-   a challenge moved, never placed as an issue. Never
+   a challenge moved, never placed as an issue. Each adapter's README states
+   the door it uses and why. Never
    read the Life Overview: it links this note, and a line read back from it
    looks confirmed twice (`memory/agentic_ai.md` failure 166).
 2. Ask Chaehan which issues of the previous note are done since it, with the
