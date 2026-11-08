@@ -1177,6 +1177,18 @@ Failure: on 2026-09-09 a Mapo swim-partner query was answered from web sources
 alone while `memory/swim.md` existed with the user's training context. The
 user: "there should be a swim memory file don't you see it?"
 
+The domain's Evernote notes are part of the record. Before answering a question
+about a prior event, treatment, booking or episode, search the topic's notebook
+for the related notes, not only the memory file. The memory file carries the
+current state; the note carries the encounter's details, often the only place a
+past injection, prescription, result or instruction was written.
+
+Failure: 2026-11-08, a question about prior shoulder injections was answered
+from memory alone while three Evernote notes existed (2019-11-20 triamcinolone,
+2025-03-20 Dr. Frenkiel, 2026-04-09 Dr. Lawson). Chaehan: "there are 3 evernotes
+for the shoulder injection how come you don't know them? you should always
+search evernote for related notes."
+
 ### 36. Third-party asks start at the smallest footprint
 
 When a plan needs another person's time — a favor, a paid engagement, a
