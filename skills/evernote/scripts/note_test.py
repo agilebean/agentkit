@@ -195,11 +195,31 @@ class Run:
                 self.verified = True
         return ""
 
+    def probe(self, model: str) -> bool:
+        """A short request before the run: does the provider answer within --probe seconds?
+
+        Chaehan, 2026-11-08: "you should test the api for availability and then max 2min timeout"."""
+        t0 = time.time()
+        try:
+            out = subprocess.run(["opencode", "run", "--standalone", "--agent", self.a.agent, "-m", model,
+                                  "--format", "json", "--title", "availability probe",
+                                  "Reply with the single word OK."],
+                                 cwd=self.a.cwd, capture_output=True, text=True, timeout=self.a.probe,
+                                 stdin=subprocess.DEVNULL)
+            ok = '"type":"text"' in out.stdout.replace(" ", "") or '"step_finish"' in out.stdout
+        except subprocess.TimeoutExpired:
+            ok = False
+        self.say(f"PROBE {model}: {'answers' if ok else 'no answer'} in {time.time() - t0:.0f} s")
+        return ok
+
     def go(self) -> int:
         message = Path(self.a.brief).read_text(encoding="utf-8").strip()
         providers = PROVIDERS[PROVIDERS.index(self.a.start):] if self.a.start in PROVIDERS else PROVIDERS
         code, why = 6, ""
         for i, model in enumerate(providers):
+            if self.a.probe and not self.probe(model):
+                why = "provider error"
+                continue
             first = message if not self.session else (message if i == 0 else
                                                       "Continue the task where you stopped, as the first message says.")
             why = self.segment(model, first)
@@ -281,7 +301,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--agent", default="socrates")
     ap.add_argument("--title", default="note build test")
     ap.add_argument("--start", default=PROVIDERS[0], help="first provider to try")
-    ap.add_argument("--idle", type=int, default=300, help="seconds without an event before the run stops")
+    ap.add_argument("--idle", type=int, default=120, help="seconds without a streamed event before the run stops (RULES.md 73: at most 120)")
+    ap.add_argument("--probe", type=int, default=60, help="seconds the availability probe may take before the run; 0 skips it")
     ap.add_argument("--budget", type=int, default=1500, help="seconds the whole run may take")
     return Run(ap.parse_args(argv)).go()
 

@@ -165,6 +165,11 @@ def wrap(draw, text: str, font, width: float) -> list[str]:
     return lines + ([cur] if cur else [])
 
 
+def shade(hex_color: str, factor: float) -> str:
+    """The colour darkened toward black by factor (0 = unchanged)."""
+    return "#%02X%02X%02X" % tuple(round(c * (1 - factor)) for c in rgb(hex_color))
+
+
 def diamond(d, x, y, r, style):
     pts = [(x, y - r), (x + r, y), (x, y + r), (x - r, y)]
     if style == "done":
@@ -306,10 +311,11 @@ def main() -> int:
         d.rectangle([X0 - 4, lane["header_y"] - 2, X0 + 30 + hw + 10, lane["header_y"] + 42], fill=BG)
         d.rounded_rectangle([X0, lane["header_y"] + 10, X0 + 18, lane["header_y"] + 28], radius=9, fill=color)
         d.text((X0 + 30, lane["header_y"] + 19), lane["row"]["label"], font=f_lane, fill=TEXT, anchor="lm")
-        # Bars.
-        for item in lane["row"]["items"]:
-            if item["kind"] != "bar":
-                continue
+        # Bars. Neighbours alternate between the lane colour and a darker shade
+        # (Chaehan, 2026-11-08: "neighboring bars should not be colored the same").
+        bars = sorted((it for it in lane["row"]["items"] if it["kind"] == "bar"), key=lambda it: it["start"])
+        for n, item in enumerate(bars):
+            color = lane["color"] if n % 2 == 0 else shade(lane["color"], 0.35)
             xs, xe = x_of(parse(item["start"])), x_of(parse(item["end"]))
             xe = max(xe, xs + 14)
             box = [xs + 1, track_y, xe - 1, track_y + BAR_H]  # 2 px surface gap between neighbours
