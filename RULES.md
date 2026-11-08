@@ -635,6 +635,15 @@ one will eventually be chosen.
   2026-11-07, after three overviews said "off gluten since 2026-10-19 and off
   lactose since 2026-11-03": "I'm not off gluten and lactose recently but for
   the last 20 years".
+- **An event's date comes from the calendar or Chaehan's words, and an event
+  carries its date.** A relative phrase in the record ("date after 5d", said
+  on 2026-11-06) is never turned into a date: the agent reads the calendar or
+  leaves the date out. An event a note reports, such as a flare, a date or an
+  injury, is written with its date. 2026-11-08: the overviews printed
+  "the next on 2026-11-11", computed from "date after 5d", and the second date
+  was that day. Chaehan: "the second date is today not nov 11, you could have
+  checked in my calendar for that!" and "important facts like right shoulder
+  flare must be dated".
 - **A number keeps the name of its measure.** A value is bound to the
   measure it was taken in, by that measure's own term: "perceived effort 8,
   now 6", never "two-thirds of the effort". A term of the domain (perceived
@@ -2097,6 +2106,13 @@ Every tool call is visible to the user. A call that runs for minutes reads as a 
 - A timeout is a signal to change the approach, not only to wait longer: narrow the step, split it, or run it in the background and report progress. Never repeat a timed-out call unchanged.
 - Application automation (Keynote and other GUI apps) counts as a tool call: if the app does not answer inside the cap, say that it is blocking instead of relaunching it.
 - Never wrap a command in `timeout`: macOS ships no such binary (only GNU coreutils' `gtimeout`, and only if installed), so the shell answers `timeout: command not found` and the command never runs at all. The timeout parameter of the shell tool is the mechanism that always exists.
+- **A model run (opencode on DeepSeek) is probed, then cut at 2 minutes of
+  silence.** Before the run, a short request checks that the provider answers.
+  During the run, the runner watches whether events still stream: two minutes
+  with no event ends it, never four or five. A long run that keeps streaming
+  is working and is left alone. Chaehan, 2026-11-08: "don't make stupidly long
+  timeouts like 4-5min, you should test the api for availability and then max
+  2min timeout but you can poll if it is streaming or not."
 - **The back door is inside the script**: `with timeout of N seconds` in AppleScript overrides the app's own 120-second default. It is the same defect as a long tool timeout, so it never goes above 60 seconds either. 2026-09-25: three Keynote builds ran 3 to 15 minutes each on `with timeout of 900 seconds` plus five foreground retries, and the fix (the row groups are 1, 2, 4, group 3 is the footer) was never reached because each attempt was allowed to hang instead of failing.
 
 - **Detection is by class and by liveness, not by one ceiling.** `plugins/shell-guard` carries four mechanisms on the command before it runs: a class ladder (app automation 20 s, inspection 10 s, build 30 s, render/pipeline 45 s, default 20 s, set from 4007 measured calls), a per-event bound requirement (an `osascript` that opens or writes a document without `with timeout of 15 seconds` is refused, because the app's own default is 120 s of silence), a supervisor (app automation and renders run as a watched child, killed at the class cap, answering with the next step rather than the harness's "retry with a larger timeout"), and a target-identity repeat guard (the same file addressed by a `nohup` or a larger-timeout rewrite is still the same attempt; the third send is refused). A supervised command killed at its cap exits 124 - that is a wedged app or pass, never a timeout to extend. 2026-10-20: the E08 bubble script sent one `open` to one quarantined copy three ways and spent 120 s in the first wedge; the same command is now refused before it runs.
@@ -5010,6 +5026,12 @@ of the brief's `/private/tmp/claude-501/...`, and the agent copied the files
 across. Chaehan: "it's useless if you did an error of opencode like copying to
 the correct path. all commands must run from opencode so if it made a mistake
 you must fix that in the agent instructions or skills and test that it works."
+
+The model is fixed: DeepSeek through opencode, with the direct DeepSeek API as
+its fallback, does the work. A stronger model is never offered as an option;
+when DeepSeek's output drifts, the instructions or the setup change. Chaehan,
+2026-11-08: "you always always let deepseek via opencode and fallback deepseek
+api do the work - so don't ask again for stronger model."
 
 ### 246. A write or report waits until every source the workflow names is checked
 
