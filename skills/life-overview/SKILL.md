@@ -299,7 +299,11 @@ two steps, and the second step never adds what the first did not find.
    record a first or a measured gain dated after the previous overview. Copy them into
    `sources.md` under `## What went well`, one `###` block per item: the file,
    the line number and the line itself. Every step you named yourself gets a
-   block; three to five blocks in all, in priority order.
+   block, whatever its date and whatever an earlier overview carried: your
+   naming it is the reason it is in. The other blocks come from the time
+   since the previous overview and stay out when an earlier overview carried
+   them, unless their state changed. Three to five blocks in all, in priority
+   order.
 2. **Retell each block.** Write one or two sentences to you that say what the
    lines in its block say: what you did and what it took from you, in plain
    words, quoting you only for a word of yours that holds the point
@@ -314,9 +318,8 @@ two steps, and the second step never adds what the first did not find.
 An item that says only what its lines say is complete. Leaving something out
 is never a failure; inventing it always is. Counts of students, sessions,
 lectures or hours stay out. Each number keeps the term of its measure
-("perceived effort 8, now 6", never "two-thirds of the effort"). Items already
-claimed in a previous overview stay out unless their state changed. Record,
-do not cheerlead.
+("perceived effort 8, now 6", never "two-thirds of the effort"). Record, do
+not cheerlead.
 
 ## 4. Evernote twin
 
