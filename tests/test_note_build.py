@@ -1,3 +1,5 @@
+import json
+import pytest
 import importlib.util
 from pathlib import Path
 
@@ -88,6 +90,44 @@ def test_a_given_summary_replaces_the_line_per_section(tmp_path, monkeypatch, ca
     draft = (d / "draft.md").read_text()
     assert draft.startswith("## Summary\n\n- You reach Sannomiya 18 minutes after you leave Kobe Airport.\n"
                             "- Do you take the Port Liner at ¥340 when you land at 14:00?\n\n## Kobe Airport")
+
+
+HANJI = "/Applications/Hanji.app/Contents/MacOS/hanji"
+
+
+def test_init_for_hanji_takes_only_a_new_note(tmp_path, capsys) -> None:
+    old = tmp_path / "old.md"
+    old.write_text(OLD)
+    assert nb.main(["init", str(tmp_path / "w"), "--guid", "g-1", "--dest", "hanji"]) == 1
+    assert "builds a new note from a file" in capsys.readouterr().err
+
+
+@pytest.mark.skipif(not Path(HANJI).is_file(), reason="Hanji.app is not installed")
+def test_a_hanji_build_creates_reads_back_and_verifies(tmp_path, monkeypatch, capsys) -> None:
+    import sys
+    sys.path.insert(0, str(_p.parents[2] / "hanji" / "scripts"))
+    import hanji_note as hn
+    monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
+    monkeypatch.setenv("TMPDIR", str(tmp_path))
+    db = str(tmp_path / "notes.db")
+    hn.Hanji(db=db)("notebook", "create", "Travel")
+    monkeypatch.setenv("NOTE_BUILD_HANJI_DB", db)
+    d = tmp_path / "w"
+    old = tmp_path / "old.md"
+    old.write_text(OLD)
+    assert nb.main(["init", str(d), str(old), "--title", "Kobe arrival", "--notebook", "Travel", "--dest", "hanji"]) == 0
+    (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n")
+    (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
+                               "You find the landing time and the train here.\n")
+    assert nb.main(["next", str(d)]) == 0, capsys.readouterr().out
+    capsys.readouterr()
+    rc = nb.main(["write", str(d)])
+    out = capsys.readouterr().out
+    assert rc == 0, out
+    assert '"dest": "hanji"' in out and "PASS" in out
+    md = hn.Hanji(db=db).markdown(json.loads((d / "written.json").read_text())["id"])
+    assert md.startswith("# Kobe arrival") and "  - The Port Liner takes 18 minutes" in md
 
 
 def test_a_new_sentence_about_an_object_is_refused(tmp_path, monkeypatch, capsys) -> None:

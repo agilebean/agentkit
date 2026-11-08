@@ -1,12 +1,31 @@
 ---
 name: life-challenges
-description: Build or walk through Chaehan's dated Life Challenges note in Evernote - the dilemma of the moment as two competing ways to handle it, the few questions that decide between them, and the answers researched for every open issue, in plain words - or, with /life <topic>, a note on one challenge with two scenarios and the research for each point. Use when the user says "life challenges", "my challenges", "untangle my issues", "what weighs on me", types /life, or asks how to tackle several life issues at once or one challenge in depth. A status snapshot of every domain is the life-overview skill.
+description: Build or walk through Chaehan's dated Life Challenges note in Evernote or Hanji - the dilemma of the moment as two competing ways to handle it, the few questions that decide between them, and the answers researched for every open issue, in plain words - or, with /life <topic>, a note on one challenge with two scenarios and the research for each point. Use when the user says "life challenges", "my challenges", "untangle my issues", "what weighs on me", types /life, or asks how to tackle several life issues at once or one challenge in depth. A status snapshot of every domain is the life-overview skill.
 ---
 
 # Life Challenges
 
-One dated note, "YYYY-MM-DD Life Challenges" in the Evernote notebook
-"Chaehan's Life", with its source `socrates/docs/YYYY-MM-DD-life-challenges.md`.
+One dated note, "YYYY-MM-DD Life Challenges" in the notebook "Chaehan's Life"
+of the note app below, with its source
+`socrates/docs/YYYY-MM-DD-life-challenges.md`.
+
+**Note app: Evernote.**
+
+That line is the switch: change it to "Note app: Hanji" and every note of this
+skill goes to Hanji. Each step that touches the note app does what its row
+says.
+
+| Step | Evernote | Hanji |
+|---|---|---|
+| Build: `note_build.py init` | `--dest evernote` | `--dest hanji` |
+| Write: `note_build.py write` | prints one `execute` call for the Evernote MCP ("Check and write", step 4) | creates the note with the hanji skill's `hanji_note.py`, reads it back and verifies it |
+| Walk-through: read the note | `get_note` through the Evernote MCP | `hanji_note.py get "<title>"` |
+| Walk-through: change one bullet | `edit_note` with `find` and `content` through the Evernote MCP | `hanji_note.py write "<title>" --file <edited text> --base <sha from get>` |
+
+Hanji has no notebook "Chaehan's Life" yet (2026-11-08: Archive, Inbox,
+Receipts, Recipes, Sports, Travel, Work), so before the first Hanji write, ask
+Chaehan which notebook takes the note. In Claude Code a Hanji write runs
+outside the sandbox, as the hanji skill says.
 The model for content and wording is the note Chaehan accepted on 2026-11-07,
 "2026-11-07 Life Challenges - D plain words" (source:
 `docs/2026-11-07-life-challenges.md`). Read it before you write a word. The
@@ -17,7 +36,7 @@ line per section, and D's two `###` ways become two bullets.
 It is made in two passes:
 
 1. **Build.** Write the note from the record and from research. Chaehan reads
-   it in Evernote.
+   it in the note app.
 2. **Walk-through.** The bare `/life` command takes Chaehan through the note's
    questions and open actions one at a time with the question tool and writes
    each answer back into the same note.
@@ -160,8 +179,9 @@ every note_build.py command where `~/.local/state/agentkit/note-gate` is
 writable, so the PASS stamp lands where the write checks it (in Claude Code,
 outside the sandbox).
 
-1. `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py init $TMPDIR/life-challenges $TMPDIR/life-challenges_findings.md --title "YYYY-MM-DD Life Challenges" --notebook "Chaehan's Life" --record <memory file>`,
-   with one `--record` per memory file you read in step 1, and `--chaehan`
+1. `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py init $TMPDIR/life-challenges $TMPDIR/life-challenges_findings.md --title "YYYY-MM-DD Life Challenges" --notebook "Chaehan's Life" --dest <evernote or hanji> --record <memory file>`,
+   with `--dest` from the note app line at the top, one `--record` per memory
+   file you read in step 1, and `--chaehan`
    with a file of Chaehan's answers from step 1, in his words.
 2. `decisions.md`: D1 is the dilemma ("Do you stay in Seoul past 2026-12-04,
    come back on 2027-03-07, or keep the winter as booked and date by video?"),
@@ -229,9 +249,11 @@ sentence. Then:
    both pass. Never edit `draft.md` by hand: its stamp no longer matches, and
    the write is refused. A PASS proves the form, not the content.
 3. Copy `draft.md` to `socrates/docs/YYYY-MM-DD-life-challenges.md`.
-4. Run `note_build.py write $TMPDIR/life-challenges`. It prints the code for
-   one `execute` call, which creates the note, reads it back and verifies it.
-   In opencode, run that code exactly as printed. From Claude Code, launch the
+4. Run `note_build.py write $TMPDIR/life-challenges`. With Hanji it creates
+   the note itself, reads it back and prints the verify result. With
+   Evernote it prints the code for one `execute` call, which creates the
+   note, reads it back and verifies it. In opencode, run that code exactly as
+   printed. From Claude Code, launch the
    socrates agent in the socrates folder with `PWD` set to it: `opencode run
    --standalone --auto --agent socrates -m opencode-go/deepseek-v4.1-flash#high
    --format json "<prompt>" < /dev/null`, whose prompt asks it to run the
@@ -244,9 +266,10 @@ sentence. Then:
 
 ## Topic note (`/life <topic>`)
 
-When Chaehan wants to work on one challenge, `/life <topic>` builds an
-Evernote note on that challenge alone: "YYYY-MM-DD Life Challenge - <Topic>"
-in the notebook "Chaehan's Life", with its source
+When Chaehan wants to work on one challenge, `/life <topic>` builds a note on
+that challenge alone and writes it to the note app named at the top:
+"YYYY-MM-DD Life Challenge - <Topic>" in the notebook "Chaehan's Life", with
+its source
 `socrates/docs/YYYY-MM-DD-life-challenge-<topic>.md`.
 The topic is in Chaehan's words ("marriage", "storage", "tax refund").
 Chaehan, 2026-11-08, on the experiment notes A and B of 2026-11-07: "the A
@@ -316,7 +339,7 @@ You stay past 2026-12-04 and keep the 2027-03-16 return, so every date in this b
 
 ## Walk-through (bare `/life`)
 
-1. Read the latest `docs/*-life-challenges.md` and its Evernote note. When the
+1. Read the latest `docs/*-life-challenges.md` and its note in the note app. When the
    note differs from the file, Chaehan edited it: carry the edit into the file
    first. A note older than its file is the reverse case and is not yours to
    repair: never write the file into the note outside the Build pass, and ask
@@ -332,8 +355,8 @@ You stay past 2026-12-04 and keep the 2027-03-16 return, so every date in this b
    sends. Then ask with the question tool: approve, correct, or skip. Nothing
    goes out before Chaehan has read the final text (RULES.md 84).
 5. After each answer, record the decision in the domain memory file, dated.
-   Write the note as a surgical edit to that issue's bullet: the rest of the
-   note stays as it was. A whole-body write and note_build.py belong to the
+   Write the note as a surgical edit to that issue's bullet, as the table at
+   the top says for the note app: the rest of the note stays as it was. A whole-body write and note_build.py belong to the
    Build pass, not to the walk-through.
 6. Stop when Chaehan says stop, or when every issue has had its question.
    Report what moved, in one line per issue.
