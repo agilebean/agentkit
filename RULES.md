@@ -635,15 +635,35 @@ one will eventually be chosen.
   2026-11-07, after three overviews said "off gluten since 2026-10-19 and off
   lactose since 2026-11-03": "I'm not off gluten and lactose recently but for
   the last 20 years".
-- **An event's date comes from the calendar or Chaehan's words, and an event
-  carries its date.** A relative phrase in the record ("date after 5d", said
-  on 2026-11-06) is never turned into a date: the agent reads the calendar or
-  leaves the date out. An event a note reports, such as a flare, a date or an
-  injury, is written with its date. 2026-11-08: the overviews printed
-  "the next on 2026-11-11", computed from "date after 5d", and the second date
-  was that day. Chaehan: "the second date is today not nov 11, you could have
-  checked in my calendar for that!" and "important facts like right shoulder
-  flare must be dated".
+- **An event gets one date, and a relative phrase never leaves its quote.**
+  When an event enters a record or a note, it is written with one absolute
+  date, YYYY-MM-DD. A relative or modal qualifier ("in five days", "date after
+  5d", "next week", "soon", "probably") is never used on its own, never
+  paraphrased into the agent's sentence and never recomputed into a date: it
+  stays inside Chaehan's original quote, with the date he said it ("on
+  2026-11-06 you wrote: 'i have 4 dates already planned with date after
+  5d'"). When the quote gives no date, the event has none, and the agent asks.
+  This holds before any calendar is read; the calendar can confirm a date, it
+  is never needed to avoid inventing one. An event a note reports, such as a
+  flare, a date or an injury, is written with its date. 2026-11-06: a memory
+  line paraphrased Chaehan's "date after 5d" into "the next one in five days";
+  on 2026-11-08 the overviews printed "the next on 2026-11-11", and the second
+  date was that day. Chaehan: "the second date is today not nov 11", "events
+  must be assigned one date, and the relative modal qualifiers can never be
+  used out of context but attached to the original quote. this must be done
+  independent from the calendar, as this mistake could have been avoided in
+  the first place!!!" and "important facts like right shoulder flare must be
+  dated".
+- **A fact comes from one record line about that event, never from two joined.**
+  A person, a cause, a payment or a date is attached to an event only when one
+  line of the record names both. Two lines about different matters that share
+  a word ("power of attorney", "transfers") are never combined into a new
+  fact, and an instruction that asks for a helper or a cause is answered from
+  such a line or left empty. 2026-11-08: the overview wrote "Jaekeun signed the
+  transfers" for the furniture shipment, joining `_misc.md` (Jaekeun "completed
+  3 wire transfers via power of attorney", another matter) and
+  `furniture-relocation.md` (a customs broker clears under power of attorney).
+  Chaehan: "jaekeun didn't sign the transfers - where did you get that?"
 - **A number keeps the name of its measure.** A value is bound to the
   measure it was taken in, by that measure's own term: "perceived effort 8,
   now 6", never "two-thirds of the effort". A term of the domain (perceived

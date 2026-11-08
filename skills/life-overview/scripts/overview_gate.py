@@ -13,6 +13,7 @@ T3  an Open tasks section, an email address or a phone number in the overview
 T4  a body section with no note link (unless it says "no detail note");
     a note with zero links
 T5  no indented bullet anywhere
+T18 a number with a thousand separator ("10,000,000 won"; write 10000000)
 T6  runs only on the note paths below (removed from the life overview on
     2026-11-07: its fixes put the clutter back). T6 is a date
     or number of --original that survives neither in the draft nor in a linked
@@ -204,6 +205,13 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
             fails.append(f"T4 section without a link to its detail note: {title!r}")
     if not re.search(r"^[ \t]{2,}- ", draft, re.M):
         fails.append("T5 no indented bullet: every point is a sibling")
+    # T18: in 9 DeepSeek runs of 2026-11-08, 3 wrote "10,000,000 won" against the
+    # skill's "no thousand separators"; a rule the model drops gets a check.
+    for line in draft.splitlines():
+        if line.lstrip().startswith("![") or "evernote:///" in line and not re.sub(r"\]\([^)]*\)", "", line).strip():
+            continue
+        for hit in re.findall(r"(?<![\d.,])\d{1,3}(?:,\d{3})+(?![\d])", re.sub(r"\]\([^)]*\)", "]", line)):
+            fails.append(f"T18 a thousand separator: {hit!r} in {line.strip()[:60]!r}")
     # T6 (every number of the previous snapshot survives) no longer runs on a
     # life overview: in six DeepSeek runs of 2026-11-07 it fired every time and
     # its fixes put the clutter back (booking figures, apartment prices, the

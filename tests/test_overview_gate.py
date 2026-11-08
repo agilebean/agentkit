@@ -408,3 +408,9 @@ def test_takeaway_restating_the_deciding_question_fails():
 def test_link_address_digits_are_not_facts():
     original = "Book it in [Seoul Mapo storage locker](evernote:///view/39d2f74/s365/431a56de-0a63/431a56de-0a63/), 0.575 cbm."
     assert gate.check(GOOD, original, ["0.575 cbm"], facts_only=True) == []
+
+
+def test_thousand_separator_fails_and_plain_numbers_pass():
+    draft = GOOD.replace("- The unit fits the clothes.", "- You paid 10,000,000 won at signing.")
+    assert any(f.startswith("T18") and "10,000,000" in f for f in gate.check(draft))
+    assert not any(f.startswith("T18") for f in gate.check(GOOD.replace("- The unit fits the clothes.", "- You paid 10000000 won, 1.5 to 2.5 times.")))

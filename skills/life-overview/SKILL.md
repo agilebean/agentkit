@@ -45,8 +45,13 @@ Read, in order — memory is ground truth (rule 35):
 - `git log --oneline -15` — what moved since the last overview
 - the calendar, for the date of every event the note names (a date, a flight,
   a deadline): the macOS Calendar database, read as `memory/kubs.md`
-  describes ("KUBS DT Prep Hours"). A relative phrase in the record ("date
-  after 5d") is never turned into a date (RULES.md 17).
+  describes ("KUBS DT Prep Hours"). Every event in the note has one date,
+  with or without the calendar: a relative or modal phrase in the record
+  ("date after 5d", "soon") is never paraphrased or recomputed into a date;
+  it is quoted with the date Chaehan said it, or the event goes without a
+  date (RULES.md 17). Every fact comes from one record line about that event;
+  two lines about different matters are never joined into a new fact, such as
+  a helper, a cause or a payment.
 - the current Life Challenges note, read in Evernote and exported to a file
   (newest "YYYY-MM-DD Life Challenges"; before 2026-11-07 "YYYY-MM-DD Life
   Problems"), because `/life` writes its answers there: it names the issues
@@ -87,10 +92,10 @@ Each overview claim carries its file and date before a draft is shown.
    Chaehan reads the note. The chart starts at the earliest item of What went
    well, so the past chapter shows: each achievement is a green done diamond
    on its date with a short label ("DPS 1.01 m", "J Noble signed", "KUBS
-   course"), and a breakthrough is never left off. At most five lanes, in
-   priority order: the Life priorities first (partner search, the frozen
-   sample), where you are (the stay and travel blocks), and one "Dates" lane
-   for single dates such as a filing or a sale. Every label says what and how
+   course"), and a breakthrough is never left off. At most five lanes, in the
+   order of the note: partner search, health (the frozen sample first), work,
+   then logistics: where you are (the stay and travel blocks) and one "Dates"
+   lane for single dates such as a filing or a sale. Every label says what and how
    long or what happened ("Melbourne 79 nights", never "Melbourne" alone);
    the title says in at most 40 characters what the chart shows; labels are at
    most 22 characters, with no booking detail and no abbreviation ("7 nights",
@@ -117,11 +122,13 @@ write each product down before the next move. The What went well section is
 written first, right after the gather and before Move 1, by its own rule
 below, while the record is fresh; the Takeaway is written last.
 
-Order is Chaehan's priority, highest first, and it is obvious at a glance:
-Chaehan's stated order in `memory/optimize-my-life.md` ("Life priorities") leads,
-and the rest follows by how soon it bites and what it costs if left alone.
-Every list in the note follows that order: the Takeaway bullets, the What went
-well items and the sections.
+Order is Chaehan's priority from Chaehan's own seat, highest first, and it is
+obvious at a glance ("Life priorities" in `memory/optimize-my-life.md`):
+partner search always first, then health (the frozen sample first in it),
+then work, then logistics (the route and stays, storage, furniture, money and
+filings). Every list in the note follows that order: the Takeaway bullets, the
+What went well items, the sections and the chart's lanes. Within a block,
+what bites sooner comes first.
 
 **Move 1. One sentence per live goal: where it stands now.** For each goal
 the record touches, write the sentence Chaehan would say to a friend: "The
@@ -169,10 +176,10 @@ move.
 
 **Move 4. The Takeaway, last, from moves 1 and 2.** Four to six bullets: what
 Chaehan would say to a friend who asks "how is it going?", in priority order.
-The first bullets are the "Life priorities" in `memory/optimize-my-life.md`,
-one bullet each and in that order, even when nothing moved in one; each says
-where that priority stands and what you achieved in it when there is
-something. Between them they
+The bullets follow the order above: partner search first, then health (the
+frozen sample first), work, then logistics, one bullet per block even when
+nothing moved in it; each says where that block stands and what you achieved
+in it when there is something. Between them they
 cover what the next month depends on, what is settled, what changed and why,
 and what gets worse if left alone. That list is the content, never the
 wording: no bullet names its own function. Each bullet opens on Chaehan or
@@ -200,8 +207,8 @@ take their place in that order, never the top by default), and
 `## Your decisions`: one sentence that links the current Life Challenges note
 by its exact title, "Your open decisions and the steps you can hand to me are
 in [<exact title>](evernote:///view/...)." The note has no task table. Rules that apply: 19,
-20 (date first in title), 40 (anchor time claims to today: an event's date
-comes from the calendar or Chaehan's words, never from a relative phrase, and
+20 (date first in title), 40 (anchor time claims to today: an event has one
+date; a relative phrase stays inside its quote with the date it was said, and
 a span such as "over three months" is computed from the dates of the cause it
 names, or left out), 42 (bullets), 2
 and `scripts/wording_lint.py`; no thousand separators. The note is written to
@@ -225,6 +232,7 @@ sentence it names, never to the twin.
 - T4: every section has a link to its detail note or says "no detail note".
 - T5: at least one indented bullet; indent every fact that belongs under its
   neighbour.
+- T18: no number with a thousand separator ("10000000 won").
 
 Its PASS prints the `note-gate:` stamp the Evernote write needs. Then read the
 draft once against Move 4 and the seat test in `AGENTS.md` core 1, and rewrite
@@ -253,7 +261,9 @@ chosen around it. Each is one of three kinds:
   behind it, a fear, a habit such as frugality, a scarrend). Name the earlier
   failure that made it a risk and the habit it went against, in the record's
   own terms (your low-price accommodation choices show frugality), never a
-  price set against a price; name who helped and how, in your own words.
+  price set against a price. A helper is named only where Chaehan's own words
+  about that same step name one ("organizing that phone call with Chungshup"),
+  never from a line about another matter.
 
 Each item is one or two sentences addressed to you, with its detail note
 linked: what you did and what it took from you, and it stops there. No
