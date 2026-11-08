@@ -143,7 +143,10 @@ the record hold it.
    areas, with "If yes" and "If no" sub-bullets saying what follows.
 3. The area sections: one bullet per found answer or open action, with its
    source in parentheses; indented under it, what it means for you or what
-   you do. At most seven bullets at one level.
+   you do. At most seven bullets at one level. An item that weighs two ways
+   to get the same thing opens with the way Chaehan would take, with its
+   number, then the condition it carries; the weaker way follows below it as
+   the fallback.
 
 ### 5. Build with note_build.py
 
@@ -179,6 +182,12 @@ sentence. Then:
 - The verb is what Chaehan does. Time, a year, a plan, a trip, a receipt, a
   decision or a message never buys, spends, lands, loses, keeps, decides or
   works. A deadline is a date, never a clock.
+- Lead with the option Chaehan would pick. When an item weighs two ways to get
+  the same thing, its first sentence names the better way with its number and
+  the condition it carries, and the weaker way comes after it as the fallback.
+  Chaehan, 2026-11-08, on the tadalafil item: "still not good as you start
+  with a less attractive option of korea." The answer in the chat follows the
+  same order: the way to plan on first, the fallbacks under it.
 - Chaehan's rejected forms and the accepted ones, from 2026-11-07:
 
   | Rejected | Accepted |
@@ -188,6 +197,7 @@ sentence. Then:
   | The receipt stops deciding the tax question | If you file the letter again on 국민신문고, you get a case number and an answer within 7 to 14 days |
   | The pharmacy trip loses that errand | With tadalafil and Atobamib prescribed in Seoul, you would need the trip only for L-citrulline and pycnogenol |
   | What tips it | You need two answers, and you can have both before you leave Seoul |
+  | You choose where to fill tadalafil, and every route enters Korea only on a Korean prescription | You buy tadalafil in Melbourne on the Australian prescription you already hold: A$340.38 for 100 tablets of 20 mg, and the bottle enters Korea only in the quantity a Korean prescription gives |
 
 - No contrast frame ("X, not Y", "instead of"), no object's absence where
   Chaehan's action belongs ("you must still find a place for your winter
