@@ -399,8 +399,8 @@ mamba run -n socrates python -m projects.evernote.src.evernote_api create-table 
 ## Cross-reference links between notes
 
 **Authoring a link in a note written from markdown.** A section that has a detail
-note carries the state in one sentence, the consequence in one sentence, and one
-link to that note. Build the link before the write:
+note carries the state in one sentence, its consequence when the record makes it
+plain, and one link to that note. Build the link before the write:
 
 1. Resolve the target: `find-note "<exact title>"` returns its guid.
 2. Write it in the markdown as `[<exact title>](evernote:///view/39d2f74/s365/<guid>/<guid>/)`. The link text is the note's exact title; `39d2f74` and `s365` are this account's user id and shard, read from the token.
