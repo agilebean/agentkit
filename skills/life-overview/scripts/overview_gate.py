@@ -1,4 +1,4 @@
-"""Mechanical gate for a life-overview draft (checks T3 and T4).
+"""Mechanical gate for a life-overview draft (checks T3 to T5).
 
 Each failure names the sentence or section it rejects. Exit 1 on any failure.
 
@@ -12,8 +12,9 @@ T3  an Open tasks section, an email address or a phone number in the overview
     (numbers ignored).
 T4  a body section with no note link (unless it says "no detail note");
     a note with zero links
-T5  and T6 run only on the note paths below (removed from the life overview on
-    2026-11-07: T5 never fired, T6's fixes put the clutter back). T6 is a date
+T5  no indented bullet anywhere
+T6  runs only on the note paths below (removed from the life overview on
+    2026-11-07: its fixes put the clutter back). T6 is a date
     or number of --original that survives neither in the draft nor in a linked
     note (thousand separators and the digits inside a link's address ignored).
 
@@ -201,12 +202,13 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
             continue
         if not LINK.search(body) and "no detail note" not in body.lower():
             fails.append(f"T4 section without a link to its detail note: {title!r}")
-    # T5 (an indented bullet) and T6 (every number of the previous snapshot
-    # survives) no longer run on a life overview: in six DeepSeek runs of
-    # 2026-11-07 T5 never fired, and T6 fired every time and its fixes put the
-    # clutter back (booking figures, apartment prices, the wrong gluten dates
-    # of failure 186). A snapshot selects; the record keeps the facts. The note
-    # paths (--note, --facts-only) keep both checks.
+    if not re.search(r"^[ \t]{2,}- ", draft, re.M):
+        fails.append("T5 no indented bullet: every point is a sibling")
+    # T6 (every number of the previous snapshot survives) no longer runs on a
+    # life overview: in six DeepSeek runs of 2026-11-07 it fired every time and
+    # its fixes put the clutter back (booking figures, apartment prices, the
+    # wrong gluten dates of failure 186). T5 was removed with it and came back
+    # on 2026-11-08: the first note built without it had no sub-bullet at all.
     return fails
 
 

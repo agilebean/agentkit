@@ -35,7 +35,7 @@ Overview"); no `-NEW` or `v2` suffix.
 Read, in order — memory is ground truth (rule 35):
 
 - `memory/travelitinerary.csv` — stay windows; travel days need the user's report (rule 18)
-- `memory/_psych_obs.md` — emotional-drag patterns; feeds What you achieved
+- `memory/_psych_obs.md` — emotional-drag patterns; feeds What went well
 - `memory/_misc.md` — parking lot; scan for promotion candidates (rule 34)
 - `memory/travel.md` — stay, housing, exit decisions
 - then the chapter files: `kubs.md`, `health.md`, `swim.md`, `partner-search.md`,
@@ -43,11 +43,15 @@ Read, in order — memory is ground truth (rule 35):
   `taxes_us.md`, `immigration.md`, `virtualfriend.md`, `virtualfriend-marketing.md`,
   `virtualfriend-architecture.md`, `startup.md`, `optimize-my-life.md`
 - `git log --oneline -15` — what moved since the last overview
+- the calendar, for the date of every event the note names (a date, a flight,
+  a deadline): the macOS Calendar database, read as `memory/kubs.md`
+  describes ("KUBS DT Prep Hours"). A relative phrase in the record ("date
+  after 5d") is never turned into a date (RULES.md 17).
 - the current Life Challenges note, read in Evernote and exported to a file
   (newest "YYYY-MM-DD Life Challenges"; before 2026-11-07 "YYYY-MM-DD Life
   Problems"), because `/life` writes its answers there: it names the issues
   this note states in one sentence and links, and its Settled bullets are
-  candidates for What you achieved. An open action the memory files hold and the
+  candidates for What went well. An open action the memory files hold and the
   Challenges note does not is named in the report to Chaehan as missing there,
   never written into this note.
 - the human side of the chapter, which the open items never show (RULES.md
@@ -80,16 +84,20 @@ Each overview claim carries its file and date before a draft is shown.
 
 1. Copy the spec shape from the previous run: `docs/assets/<date>-life-overview-timeline.json`.
 2. Update the rows to the current chapter, for a phone screen, which is where
-   Chaehan reads the note. At most five lanes: where you are (the stay and
-   travel blocks), the goals with a dated item (partner search, work), and one
-   "Dates" lane for single dates such as a filing, a sale or a decision. The
-   title says in at most 40 characters what the chart shows ("Your winter away
-   and the March return"); lane labels and item texts are at most 18
-   characters (place names, "4 dates", "Applied AI starts"), with no booking
-   detail and no abbreviation ("7 nights", never "7n"). Styles: solid = booked or fixed, open = conditional, diamond =
+   Chaehan reads the note. The chart starts at the earliest item of What went
+   well, so the past chapter shows: each achievement is a green done diamond
+   on its date with a short label ("DPS 1.01 m", "J Noble signed", "KUBS
+   course"), and a breakthrough is never left off. At most five lanes, in
+   priority order: the Life priorities first (partner search, the frozen
+   sample), where you are (the stay and travel blocks), and one "Dates" lane
+   for single dates such as a filing or a sale. Every label says what and how
+   long or what happened ("Melbourne 79 nights", never "Melbourne" alone);
+   the title says in at most 40 characters what the chart shows; labels are at
+   most 22 characters, with no booking detail and no abbreviation ("7 nights",
+   never "7n"). Styles: solid = booked or fixed, open = conditional, diamond =
    milestone (green done, hollow open), red diamond = decision. The renderer
-   picks the lane colours and places every label, so `color`, `text_pos` and
-   `offset` are ignored.
+   picks the lane colours, shades neighbouring bars apart and places every
+   label, so `color`, `text_pos` and `offset` are ignored.
 3. Render:
    `mamba run -n socrates python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/life_timeline.py <spec.json> docs/assets/YYYY-MM-DD-life-overview-timeline.png`
 4. Inspect the PNG before embedding at phone width: read it at 390 px wide.
@@ -105,13 +113,15 @@ are listed in `memory/` and in the brief behind this skill,
 achieved in the chapter, in any domain, swimming included. A cost is a symptom of
 that impact, not its definition. A fact that touches no live goal and no
 pending decision is one line in its section or out. Do the moves in order and
-write each product down before the next move; the Takeaway is written last.
+write each product down before the next move. The What went well section is
+written first, right after the gather and before Move 1, by its own rule
+below, while the record is fresh; the Takeaway is written last.
 
 Order is Chaehan's priority, highest first, and it is obvious at a glance:
 Chaehan's stated order in `memory/optimize-my-life.md` ("Life priorities") leads,
 and the rest follows by how soon it bites and what it costs if left alone.
-Every list in the note follows that order: the Takeaway bullets, the What you
-achieved items and the sections.
+Every list in the note follows that order: the Takeaway bullets, the What went
+well items and the sections.
 
 **Move 1. One sentence per live goal: where it stands now.** For each goal
 the record touches, write the sentence Chaehan would say to a friend: "The
@@ -122,8 +132,11 @@ Chaehan's decision and its consequence; a refusal as what remains open.
 
 **Move 2. Under each sentence, the facts that change it.** At most three per
 goal, each a fact that would move the sentence if it were different, plus the
-one fact that would reverse it. A fact that belongs under another fact is
-indented under it as a sub-bullet, never set beside it.
+one fact that would reverse it, written as a plain fact among the others and
+never labelled ("What would reverse the sentence: ..."). A fact that belongs
+under another fact is indented under it as a sub-bullet, never set beside it,
+so each section shows its facts with their details under them. An event the
+section reports (a flare, a date, an injury) is written with its date.
 
 **Move 3. Every remaining fact is detail, and gets its note.** For each
 section, find its detail note (`find-note`, then the link form in the
@@ -167,7 +180,9 @@ Chaehan's thing doing something, in the words Chaehan would say aloud, and
 names every object it points at.
 
 <!-- verbatim -->
-- Accepted (2026-11-05): "You fly to Osaka on 2026-12-04, in 29 days, and every flight is booked except the return from Osaka to Seoul in March." / "What you want in a partner has not changed." Later the same day: "you must still book a locker for your winter clothes" and "it is unclear if Gayeon provides women of my target age or none like couple.net, so you didn't book it yet".
+- Accepted (2026-11-05): "You fly to Osaka on 2026-12-04, in 29 days, and every flight is booked except the return from Osaka to Seoul in March." Later the same day: "you must still book a locker for your winter clothes" and "it is unclear if Gayeon provides women of my target age or none like couple.net, so you didn't book it yet".
+- Accepted (2026-11-08), a juxtaposition in plain words: "You don't buy a Seoul apartment until a marriage is decided, so the stay from 2027-03-16 is a rental." Chaehan: "this is exactly what i want, a juxtaposition with no robotic wording but still concise. mind: buy no... is unnatural, better: don't buy."
+- Rejected (2026-11-08): "What you want in a partner has not changed" ("i never said i wanted or expected it to change, nor is change normal for romantic preferences"), "What would reverse the sentence: ..." ("terrible robotic!"), "nothing is left for you to do on them" (clutter), "the manager's blurb", and "off gluten since 2026-10-19" for a diet of 25 years.
 - Rejected: "The next month turns on ...", "What changed since the last snapshot is ...", "The KUBS grade entry is the one deadline this week", "The route is fixed until Valencia ...", "Money keeps one clock", "the daily tablet" with no name for the tablet, "Your winter clothes and the green card papers have no home in Seoul", and "The question it cannot answer ... goes to the Gayeon free consult, which is not booked". `scripts/wording_lint.py` flags these shapes.
 <!-- end verbatim -->
 
@@ -179,16 +194,16 @@ It is not a task list: a bullet that a decision or a Hand to me row of the
 Life Challenges note could replace without losing its consequence is rewritten
 or cut. The actions live in that note.
 
-**Layout.** Image line first, then `## Takeaway`, `## What you achieved`,
-then one `##` section per goal in priority order (the route and the stays
+**Layout.** Image line first, then `## Takeaway`, `## What went well`, then
+one `##` section per goal in priority order (the route and the stays
 take their place in that order, never the top by default), and
 `## Your decisions`: one sentence that links the current Life Challenges note
 by its exact title, "Your open decisions and the steps you can hand to me are
 in [<exact title>](evernote:///view/...)." The note has no task table. Rules that apply: 19,
-20 (date first in title), 40 (anchor time claims to today: a relative time in
-the record, such as "in five days" written on 2026-11-06, becomes its date or
-is recomputed from today, and a span such as "over three months" is computed
-from the dates of the cause it names, or left out), 42 (bullets), 2
+20 (date first in title), 40 (anchor time claims to today: an event's date
+comes from the calendar or Chaehan's words, never from a relative phrase, and
+a span such as "over three months" is computed from the dates of the cause it
+names, or left out), 42 (bullets), 2
 and `scripts/wording_lint.py`; no thousand separators. The note is written to
 Chaehan as "you", which is necessary and not sufficient: the seat test in
 `AGENTS.md` core 1 is the check. The previous snapshot is a reference for the
@@ -208,6 +223,8 @@ sentence it names, never to the twin.
   the Life Challenges note; and no Takeaway bullet that repeats one of its
   decisions or Hand to me rows.
 - T4: every section has a link to its detail note or says "no detail note".
+- T5: at least one indented bullet; indent every fact that belongs under its
+  neighbour.
 
 Its PASS prints the `note-gate:` stamp the Evernote write needs. Then read the
 draft once against Move 4 and the seat test in `AGENTS.md` core 1, and rewrite
@@ -216,7 +233,7 @@ any sentence whose subject is not you or your thing.
 When this skill changes, run a fresh case in opencode on DeepSeek with this
 skill only, time it, and read its note against the change.
 
-## What you achieved — selection rule
+## What went well — selection rule
 
 Three to five items, found in the whole record of the chapter, never in the
 open items, in priority order. An achievement Chaehan named himself in the
@@ -226,36 +243,25 @@ chosen around it. Each is one of three kinds:
 
 - a first: something you had not done before, or not since a break your
   record names (your CV and the chapter files show it);
-- a plateau broken: a measured value that moved after a flat stretch, given as
-  the number before and after, against your own baseline and against a
-  published benchmark for a good performer, with its source. The comparison
-  is made in your unit, never in the study's: the swim panels give DPS per
-  single-arm stroke (`swim/src/swim/dashboard/payload.py`, counted cycles
-  times two), so a published value per arm cycle is halved before it is
-  compared (a study's 1.95 m per cycle is 0.98 m per stroke), and your own
-  number is never converted. The sentence gives only the converted value,
-  never the study's own unit;
+- a plateau broken: a measured value that moved after a flat stretch, with the
+  number before and after, set against a benchmark in one clause with the
+  shortest reference ("around the DPS of elite women swimmers (Staunton
+  2025)"). The benchmark is converted into your unit (DPS per single-arm
+  stroke: a per-cycle value is halved), and the sentence gives only that
+  value;
 - a drag overcome: a step your record shows was hard for you (a failure
-  behind it, a fear, a habit such as frugality, a scarrend), with what it took
-  from you. Name the earlier failure that made the step a risk. Name the
-  habit the step went against, in the record's own terms: your low-price
-  accommodation choices in `memory/travel.md` show frugality, so the step is
-  one you took against your frugality; never set the example's price against
-  the step's. Name who helped and how, in your own words from the chapter
-  file, never in an earlier overview's.
+  behind it, a fear, a habit such as frugality, a scarrend). Name the earlier
+  failure that made it a risk and the habit it went against, in the record's
+  own terms (your low-price accommodation choices show frugality), never a
+  price set against a price; name who helped and how, in your own words.
 
-For each item: what you did, what it took from you, and what it makes
-possible now, in two or three sentences addressed to you, with its detail
-note linked. Counts of students, sessions, lectures or hours stay out: they
-say how big the job was, never what it meant to you. Each number keeps the
-term of its measure: "perceived effort 8,
-now 6", never "two-thirds of the effort"; DPS, stroke rate and CSS by their
-names. Each phrase makes a claim. A claim the reader cannot picture gets its
-facts: "your 400 m went from 8:08 on 2026-09-07 to 8:04 on 2026-10-16", never
-"you hold the same 400 m time". A phrase that makes no claim leaves: "across
-eight sessions and graded the course to a close" says nothing about what the
-course means to you. Items already claimed in a previous overview stay out
-unless their state changed. Record, do not cheerlead.
+Each item is one or two sentences addressed to you, with its detail note
+linked: what you did and what it took from you, and it stops there. No
+helpers' errands, arrival dates or later logistics follow the cost. Counts of
+students, sessions, lectures or hours stay out. Each number keeps the term of
+its measure ("perceived effort 8, now 6", never "two-thirds of the effort").
+Items already claimed in a previous overview stay out unless their state
+changed. Record, do not cheerlead.
 
 ## 4. Evernote twin
 
