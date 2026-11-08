@@ -664,23 +664,26 @@ one will eventually be chosen.
   3 wire transfers via power of attorney", another matter) and
   `furniture-relocation.md` (a customs broker clears under power of attorney).
   Chaehan: "jaekeun didn't sign the transfers - where did you get that?"
-- **A dated event in the record stays with the event it names.** A request that
-  names a person, a meeting or a place does not inherit a date from a record
-  event in the same domain until one line names both. When no line does, the
-  day is asked, never borrowed. 2026-11-08: the note "2026-11-08 Date Person"
-  took its day from `plan.md`'s "the second date is today" (the
-  second Sunrise date, said on 2026-11-08) for a date with Person that no line
-  connects to it. Chaehan: "i never said about a second date where did you
-  derive that?" An ordinal binds to the sequence it counts: "the second date"
-  in `plan.md` counted the four Sunrise introductions, four meetings
-  with four different women, and read as a second date with one of them it
-  invents a history that does not exist. Write the sequence into the sentence
-  ("the second of the four Sunrise introductions"); a count of meetings with
-  one person is that only when the line counts meetings with her. Chaehan,
-  2026-11-08: "if you say second date, it implies the second date with her ...
-  isn't that common sense?" The calendar and the agency's date list are the
-  lines that name both, so they are read before a note about a named person
-  carries a day.
+- **An ordinal names its series.** "First", "second" or "last" is written
+  with what it counts: "the second of the four flat viewings", four visits to four different flats. A count of meetings with one person names that person ("your first meeting with the landlord") and comes only from a line that counts meetings with that person. A bare "second meeting" binds to the nearest person and invents a history with them.
+
+
+
+ Test: read the ordinal
+  beside the nearest person's name; if it can count meetings with that
+  person, the series is missing. `scripts/wording_lint.py` warns on a bare
+  "second date" or "second meeting" outside a quote, and the writer settles
+  each warning with this test, because "a second meeting" that means meeting
+  one woman again is correct. A day comes from a line
+  that names the person and the day together, which for a date is the
+  calendar entry or the agency's date list, read before a day is written into
+  a note about a named person. 2026-11-08: Chaehan's "the second date is today"
+  counted the four flat viewings, and the note on Chaehan's upcoming date with
+  지원 (Person) titled a section "A second meeting". Chaehan:
+  "i never said about a second date where did you derive that?",
+  "if you say second date, it implies the second date with her ... isn't that common sense?"
+  and "which implies i meet the same girl the second time, which could be
+  avoided if it said the second of the four flat viewings".
 - **A number keeps the name of its measure.** A value is bound to the
   measure it was taken in, by that measure's own term: "perceived effort 8,
   now 6", never "two-thirds of the effort". A term of the domain (perceived
