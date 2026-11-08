@@ -6,31 +6,24 @@ _spec = importlib.util.spec_from_file_location("challenges_gate", _p)
 gate = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(gate)
 
-GOOD = """## Takeaway
+GOOD = """## Summary
 
-- You can only meet your J Noble dates in Seoul, and from 2026-12-04 you are away for 102 days.
-- You choose between staying longer in Seoul and dating by video.
+- You choose between staying longer in Seoul and dating by video over the winter.
+- Your four planned dates will show which way fits.
 - You can send the IRS follow-up in five minutes.
 
-## Two ways to handle the 102 days
+## Two ways through the winter
 
-You have two ways to handle the time away, and each one costs you something different.
+You can meet your J Noble dates only in Seoul, and from 2026-12-04 you are away for 102 days.
 
-### Stay close to the search
-
-You stay in Seoul longer, so that a second meeting can happen in person.
-
-- You would lose the Osaka hotel week of ¥141000.
-
-### Keep the winter and date by video
-
-You leave on 2026-12-04 and meet women by video in between.
-
-- You would ask Ms. Hyejin Kong for something J Noble does not advertise.
+- You stay in Seoul longer, so that a second meeting can happen in person.
+  - You would lose the Osaka hotel week of ¥141000.
+- You leave on 2026-12-04 and meet women by video in between.
+  - You would ask Ms. Hyejin Kong for something J Noble does not advertise.
 
 ## What decides between them
 
-You need two answers, and you can have both before you leave Seoul.
+You can have both answers before you leave Seoul.
 
 - Does one of your four dates lead to a second meeting you want?
   - If yes, staying into December is worth its cost.
@@ -54,9 +47,9 @@ def test_good_note_passes():
 
 
 def test_layout_order_and_two_ways():
-    assert any("open with" in f for f in gate.check(GOOD.replace("## Takeaway", "## Summary")))
-    assert any("second section" in f for f in gate.check(GOOD.replace("## Two ways to handle", "## Options for")))
-    one_way = GOOD.replace("### Keep the winter and date by video\n\nYou leave on 2026-12-04 and meet women by video in between.\n\n- You would ask Ms. Hyejin Kong for something J Noble does not advertise.\n\n", "")
+    assert any("open with" in f for f in gate.check(GOOD.replace("## Summary", "## Takeaway")))
+    assert any("second section" in f for f in gate.check(GOOD.replace("## Two ways through", "## Options for")))
+    one_way = GOOD.replace("- You leave on 2026-12-04 and meet women by video in between.\n  - You would ask Ms. Hyejin Kong for something J Noble does not advertise.\n", "")
     assert any("1 ways" in f for f in gate.check(one_way))
     assert any("third section" in f for f in gate.check(GOOD.replace("## What decides between them", "## Questions")))
     assert any("no area section" in f for f in gate.check(GOOD[:GOOD.index("## Your money")]))
@@ -79,16 +72,17 @@ def test_no_tooling_in_the_note():
     assert "C6" in codes(gate.check(GOOD + "\n## Hand to me\n\nYou can hand these to me.\n\n- The TAS email.\n"))
 
 
-def test_takeaway_bullets_only_and_at_most_three():
-    four = GOOD.replace("- You can send the IRS follow-up", "- You sell CRWV before 2026-12-31.\n- You can send the IRS follow-up")
-    assert any(f.startswith("C7") and "4 bullets" in f for f in gate.check(four))
-    assert "C7" in codes(gate.check(GOOD.replace("## Takeaway\n\n", "## Takeaway\n\nYou have a lot going on.\n\n")))
+def test_summary_bullets_only_and_at_most_five():
+    extra = "".join(f"- You sell share {n} before 2026-12-31.\n" for n in range(3))
+    six = GOOD.replace("- You can send the IRS follow-up", extra + "- You can send the IRS follow-up")
+    assert any(f.startswith("C7") and "6 bullets" in f for f in gate.check(six))
+    assert "C7" in codes(gate.check(GOOD.replace("## Summary\n\n", "## Summary\n\nYou have a lot going on.\n\n")))
 
 
 def test_wording_classes_rejected_on_2026_11_07_fail():
     for bad in ("You can buy your Seoul dates in December.", "2027 spends all nine days.", "The refund lands around February.",
                 "What tips it is the date.", "The trip loses that errand.", "1372 has a clock."):
-        fails = gate.check(GOOD.replace("- You would lose the Osaka hotel week of ¥141000.", f"- {bad}"))
+        fails = gate.check(GOOD.replace("You would lose the Osaka hotel week of ¥141000.", bad))
         assert any(f.startswith("T16") for f in fails), bad
 
 
@@ -105,11 +99,16 @@ def test_lost_fact_and_issue_need_the_cut_list():
     assert gate.check(GOOD, original, "- 88000: the old price, replaced by 72090\n") == []
     old = "## Problems\n\n| Problem | Kind |\n| --- | --- |\n| Furniture shipment | deadline |\n"
     assert any(f.startswith("C9") and "Furniture shipment" in f for f in gate.check(GOOD, old, "- 1: n/a\n"))
+    note_d = "## Two ways to handle the 102 days\n\n### Stay close to the search\n\n- You stay.\n\n## Your money\n\n### Storage\n\n- The unit.\n"
+    assert gate.previous_issues(note_d) == ["Storage"]
 
 
-def test_pass_prints_the_note_gate_marker(tmp_path, monkeypatch, capsys):
-    monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path))
-    draft = tmp_path / "note.md"
+def test_pass_leaves_the_stamp_to_note_build(tmp_path, monkeypatch, capsys):
+    stamps = tmp_path / "stamps"
+    monkeypatch.setenv("NOTE_GATE_STAMPS", str(stamps))
+    draft = tmp_path / "draft.md"
     draft.write_text(GOOD, encoding="utf-8")
     assert gate.main([str(draft)]) == 0
-    assert "note-gate:" in capsys.readouterr().out
+    out = capsys.readouterr().out
+    assert "PASS" in out and "note-gate:" not in out
+    assert not stamps.exists() or not any(stamps.iterdir())

@@ -7,9 +7,12 @@ description: Build or walk through Chaehan's dated Life Challenges note in Evern
 
 One dated note, "YYYY-MM-DD Life Challenges" in the Evernote notebook
 "Chaehan's Life", with its source `socrates/docs/YYYY-MM-DD-life-challenges.md`.
-The model is the note Chaehan accepted on 2026-11-07, "2026-11-07 Life
-Challenges - D plain words" (source: `docs/2026-11-07-life-challenges.md`).
-Read it before you write a word.
+The model for content and wording is the note Chaehan accepted on 2026-11-07,
+"2026-11-07 Life Challenges - D plain words" (source:
+`docs/2026-11-07-life-challenges.md`). Read it before you write a word. The
+note is built and written with `note_build.py` (Chaehan, 2026-11-08: "Through
+note_build.py"), so its layout is that script's: D's Takeaway becomes a Summary
+line per section, and D's two `###` ways become two bullets.
 
 It is made in two passes:
 
@@ -57,15 +60,17 @@ So, in this order:
 ## The note
 
 ```
-## Takeaway                     three bullets: where you stand, the choice, the actions
-## Two ways to handle <...>      exactly two ### ways, each with what it costs you
-## What decides between them     one to three questions, each with "If yes" and "If no"
-## Your <area>                   one section per area with something open
+## Summary                      one line per section below, written by note_build.py
+## Two ways <...>               two bullets, one per way, with what it costs you under each
+## What decides between them    one to three questions, each with "If yes" and "If no"
+## Your <area>                  one section per area with something open, three at most
 ```
 
-The area sections name Chaehan's areas: "Your health before you leave", "Your
-money", "Your home and work", or whatever the issues need. Put each issue in
-one place:
+Each section is one decision of note_build.py, which takes five at most: the
+two ways, the questions, and up to three areas. More areas are merged into the
+nearest one. The area sections name Chaehan's areas: "Your health before you
+leave", "Your money", "Your home and work", or whatever the issues need. Put
+each issue in one place:
 
 1. It belongs to the dilemma: under one of the two ways, as a cost or a gain.
 2. It is an open action or a found answer: one bullet in its area section,
@@ -110,22 +115,51 @@ Chaehan never gave. What you could not check is written as unconfirmed, in a
 sentence that says what is unknown ("it is not confirmed whether the rule
 applies to pills in your luggage").
 
-### 4. Write
+### 4. Write the findings
 
-1. The two ways: each `###` opens with what you do in that way. Its bullets
-   say what it costs you and what it gives you, with the number from the
-   record (days, money, a date). Compute what the record lets you compute:
+The findings file `$TMPDIR/life-challenges_findings.md` is the text
+note_build.py builds the note from. Write it in the note's layout without the
+Summary, which note_build.py writes. Each section opens with one sentence that
+note_build.py replaces with the section's first line, so put into it the
+numbers you computed: a number appears in the note only when the findings or
+the record hold it.
+
+1. The two ways: two top-level bullets, each saying what you do in that way.
+   Under each, what it costs you and what it gives you, with the number from
+   the record (days, money, a date). Compute what the record lets you compute:
    "from 2026-12-04 you are away for 102 days", "2027-03-07 is the earliest
    return your 183-day limit allows".
 2. The questions: one to three bullets ending with "?", each linking several
    areas, with "If yes" and "If no" sub-bullets saying what follows.
-3. The area sections: each opens with one sentence whose subject is you; one
-   bullet per found answer or open action, with its source in parentheses;
-   indented under it, what it means for you or what you do. At most seven
-   bullets at one level.
-4. The Takeaway, last: three bullets of at most 30 words, each with you as
-   the subject: where you stand, the choice, and the actions you can take
-   now.
+3. The area sections: one bullet per found answer or open action, with its
+   source in parentheses; indented under it, what it means for you or what
+   you do. At most seven bullets at one level.
+
+### 5. Build with note_build.py
+
+Follow the evernote skill's section "Writing or rewriting a note's text". Run
+every note_build.py command where `~/.local/state/agentkit/note-gate` is
+writable, so the PASS stamp lands where the write checks it (in Claude Code,
+outside the sandbox).
+
+1. `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py init $TMPDIR/life-challenges $TMPDIR/life-challenges_findings.md --title "YYYY-MM-DD Life Challenges" --notebook "Chaehan's Life" --record <memory file>`,
+   with one `--record` per memory file you read in step 1, and `--chaehan`
+   with a file of Chaehan's answers from step 1, in his words.
+2. `decisions.md`: D1 is the dilemma ("Do you stay in Seoul past 2026-12-04,
+   come back on 2027-03-07, or keep the winter as booked and date by video?"),
+   D2 the answers you wait for before you choose, D3 to D5 one per area. Each
+   heading of the findings maps to its decision.
+3. `labels.tsv`: each way is D under D1, and what it costs or gives you is S
+   under the way. Each question is D under D2, and its "If yes" and "If no"
+   are S under the question. Each found answer or open action is D under its
+   area, and what it means for you is S under it. The opening sentence of each
+   findings section is K. Chaehan's own dates, numbers and decisions are never
+   W or K.
+4. `new.tsv`: D1's heading starts with "Two ways" and D2's heading is "What
+   decides between them". D1's summary line says the choice, D2's what will
+   show which way fits, and each area's the action you can take now. Each
+   first line says the section's point in other words than its summary line.
+5. Run `next` until it prints PASS.
 
 ## Plain words
 
@@ -154,29 +188,34 @@ sentence. Then:
   sentence a friend would not say at a table is rewritten, whether or not the
   checker caught it.
 
-## Gate and write
+## Check and write
 
 1. Write the cut list `$TMPDIR/life-challenges_cuts.md`: one line per number or
    date of the previous note that this one drops, and one per issue that
    left, `- <numbers or issue name>: <why it left>`. A number that belongs to
-   an issue still open is never world detail.
-2. Run the gate where `~/.local/state/agentkit/note-gate` is writable, so its
-   stamp lands where the Evernote write checks it:
-   `python3 ~/Software/Prototypes/agentkit/skills/life-challenges/scripts/challenges_gate.py docs/YYYY-MM-DD-life-challenges.md --original <previous note .md> --cuts $TMPDIR/life-challenges_cuts.md`.
-   A failure goes back to the step that made the sentence it names. A PASS
-   prints `note-gate:<sha>` and proves the form, not the content.
-3. Convert the file to ENML with `markdown_to_enml` from
-   `socrates/projects/evernote/src/enml.py`.
-4. Write through the Evernote MCP only (the evernote skill; never the shell
-   CLI). From Claude Code, launch the socrates agent in the socrates folder
-   with `PWD` set to it: `opencode run --standalone --auto --agent socrates
-   -m opencode-go/deepseek-v4.1-flash#high --format json "<prompt>" < /dev/null`.
-   On "Go usage limit exceeded", relaunch with `-m deepseek/deepseek-flash#high`.
-   The prompt asks for one `execute` call whose first line is
-   `// note-gate:<sha>`: `create_note` takes no body, so it creates the note
-   and appends the ENML with `edit_note` in the same call, then reads the note
-   back and returns the counts of `<h2`, `<h3` and `<li`. Compare them with
-   the ENML file.
+   an issue still open is never world detail. note_build.py's own `cuts.md`
+   covers the findings; this list covers the previous note.
+2. Run the check on note_build.py's draft:
+   `python3 ~/Software/Prototypes/agentkit/skills/life-challenges/scripts/challenges_gate.py $TMPDIR/life-challenges/draft.md --original <previous docs/*-life-challenges.md> --cuts $TMPDIR/life-challenges_cuts.md`.
+   A failure is fixed in the file that made the line it names: `edits.tsv` for
+   an item's wording, `new.tsv` for a summary or first line, `labels.tsv` for
+   where an item hangs, `found.md` in the build folder for a fact with its
+   source that the findings lack. Then run `next` and the check again until
+   both pass. Never edit `draft.md` by hand: its stamp no longer matches, and
+   the write is refused. A PASS proves the form, not the content.
+3. Copy `draft.md` to `socrates/docs/YYYY-MM-DD-life-challenges.md`.
+4. Run `note_build.py write $TMPDIR/life-challenges`. It prints the code for
+   one `execute` call, which creates the note, reads it back and verifies it.
+   In opencode, run that code exactly as printed. From Claude Code, launch the
+   socrates agent in the socrates folder with `PWD` set to it: `opencode run
+   --standalone --auto --agent socrates -m opencode-go/deepseek-v4.1-flash#high
+   --format json "<prompt>" < /dev/null`, whose prompt asks it to run the
+   printed code in one `execute` call and return the result; on "Go usage
+   limit exceeded", relaunch with `-m deepseek/deepseek-flash#high`. The
+   bridge that `write` starts answers that call for 10 minutes at most, so
+   launch it right away. A line starting REFUSED names what to fix; it is
+   reported, never routed around.
+5. Report the verify result and both cut lists.
 
 ## Walk-through (`/life`)
 
@@ -197,7 +236,7 @@ sentence. Then:
    goes out before Chaehan has read the final text (RULES.md 84).
 5. After each answer, record the decision in the domain memory file, dated.
    Write the note as a surgical edit to that issue's bullet: the rest of the
-   note stays as it was. A whole-body write and the gate that stamps it belong
-   to the Build pass, not to the walk-through.
+   note stays as it was. A whole-body write and note_build.py belong to the
+   Build pass, not to the walk-through.
 6. Stop when Chaehan says stop, or when every issue has had its question.
    Report what moved, in one line per issue.

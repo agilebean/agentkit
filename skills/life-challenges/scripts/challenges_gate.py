@@ -1,6 +1,8 @@
-"""Mechanical gate for a Life Challenges note (the life-challenges skill).
+"""Mechanical check of a Life Challenges note (the life-challenges skill).
 
-Each failure names the line, cell or section it rejects. Exit 1 on any failure.
+It runs on the draft.md that note_build.py assembles, after `note_build.py next`
+prints PASS. Each failure names the line, cell or section it rejects. Exit 1 on
+any failure.
 
     python challenges_gate.py <draft.md> [--original <previous note.md> --cuts <cuts.md>]
 
@@ -11,21 +13,23 @@ for a cut without a reason), and these:
 C1  a heading with nothing under it before the next heading of its level
 C2  "he", "his" or "him" in a note addressed to Chaehan
 C3  a number with a thousand separator
-C4  the layout broken: Takeaway first, then "## Two ways ..." with exactly two
-    ### ways, then "## What decides between them", then at least one area
-    section
+C4  the layout broken: the Summary first, then "## Two ways ..." with exactly
+    two top-level bullets, one per way, then "## What decides between them",
+    then at least one area section
 C5  a question under "What decides between them" without "If yes" and "If no"
     sub-bullets, no question or more than three, or a label word ("anxiety",
     "avoidance", "bias") outside quotation marks anywhere in the note
 C6  a command, keyword table or "Hand to me" section: the note holds answers,
     never tooling
-C7  a Takeaway line that is not a bullet, or more than three bullets
+C7  a Summary line that is not a bullet, or more than five bullets
 C8  a social security number written out; write its last four digits
 C9  an issue of the previous note that is neither in this note nor in the cut
-    list (only with --original)
+    list (only with --original). A previous note in the note_build layout names
+    its issues in bullets, so T6 carries this check through their numbers.
 
-A PASS writes the note-gate stamp of the life-overview gate and prints its
-marker "note-gate:<sha>", which the Evernote write path requires.
+The stamp that lets the Evernote write through is note_build.py's: its `next`
+writes it on PASS. This check writes none, so a failure here goes back into
+note_build's files and through `next` again.
 """
 
 from __future__ import annotations
@@ -150,14 +154,15 @@ def _sections(md: str) -> list[str]:
     secs = h2_sections(md)
     titles = [t.lower() for t, _ in secs]
     out = []
-    if not titles or not titles[0].startswith("takeaway"):
-        out.append("C4 the note must open with '## Takeaway'")
+    if not titles or not titles[0].startswith("summary"):
+        out.append("C4 the note must open with '## Summary', as note_build.py writes it")
     if len(titles) < 2 or not titles[1].startswith(TWO_WAYS):
         out.append("C4 the second section must be '## Two ways to handle ...', the dilemma of the moment")
     else:
-        ways = h3_sections(secs[1][1])
+        ways = re.findall(r"^[-*]\s", secs[1][1], re.M)
         if len(ways) != 2:
-            out.append(f"C4 '## {secs[1][0]}' has {len(ways)} ways; write exactly two competing ways as '###'")
+            out.append(f"C4 '## {secs[1][0]}' has {len(ways)} ways; write exactly two competing ways as "
+                       f"top-level bullets, with what each costs you under it")
     if len(titles) < 3 or not titles[2].startswith(DECIDES):
         out.append("C4 the third section must be '## What decides between them'")
     if len(titles) < 4:
@@ -201,12 +206,12 @@ def _tooling(md: str) -> list[str]:
     return out
 
 
-def _takeaway(md: str) -> list[str]:
-    body = section(md, "takeaway") or ""
-    out = [f"C7 Takeaway line is not a bullet: {l[:60]!r}" for l in _lines(body) if not BULLET.match(l)]
+def _summary(md: str) -> list[str]:
+    body = section(md, "summary") or ""
+    out = [f"C7 Summary line is not a bullet: {l[:60]!r}" for l in _lines(body) if not BULLET.match(l)]
     n = len(BULLET.findall(body))
-    if n > 3:
-        out.append(f"C7 Takeaway has {n} bullets; keep at most three")
+    if n > 5:
+        out.append(f"C7 Summary has {n} bullets; keep at most five, one per section")
     return out
 
 
@@ -224,9 +229,13 @@ def previous_issues(original: str) -> list[str]:
         _, rows = table(section(original, name))
         names += [gate._plain(r[0]).strip() for r in rows if r and r[0].strip()]
     if not names:
+        h2 = ""
         for line in original.splitlines():
+            if re.match(r"##\s", line):
+                h2 = line[3:].strip().lower()
             m = re.match(r"###\s+(?:\d+[.)]\s*)?(.*)", line)
-            if m and m.group(1).strip():
+            # The two ways of a note before 2026-11-08 were ### headings: ways, not issues.
+            if m and m.group(1).strip() and not h2.startswith(TWO_WAYS):
                 names.append(gate._plain(m.group(1)).strip())
     return names
 
@@ -240,7 +249,7 @@ def _dropped(draft: str, original: str, cuts: str | None) -> list[str]:
 def check(draft: str, original: str | None = None, cuts: str | None = None) -> list[str]:
     fails = gate.check(draft, note=True)
     fails += _empty_headings(draft) + _pronouns(draft) + _thousands(draft) + _sections(draft)
-    fails += _questions(draft) + _tooling(draft) + _takeaway(draft) + _identifiers(draft)
+    fails += _questions(draft) + _tooling(draft) + _summary(draft) + _identifiers(draft)
     if original is not None:
         if cuts is None:
             fails.append("T6 a note built on a previous one needs --cuts: one line per number it drops, with the reason")
@@ -262,13 +271,6 @@ def main(argv: list[str] | None = None) -> int:
     fails = check(draft, read(a.original) if a.original else None, read(a.cuts) if a.cuts else None)
     for f in fails:
         print(f)
-    if not fails:
-        try:
-            print(f"note-gate:{gate.stamp(draft).name}")
-        except OSError as e:
-            print(f"PASS, but the stamp was not written ({e}); the Evernote write will refuse this text "
-                  f"until the gate runs where {gate.stamp_dir()} is writable")
-            return 2
     print("PASS" if not fails else f"FAIL ({len(fails)})")
     return 1 if fails else 0
 
