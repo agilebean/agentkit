@@ -11,9 +11,10 @@ of the note app below, with its source
 
 **Note app: Evernote.**
 
-That line is the switch: change it to "Note app: Hanji" and every note of this
-skill goes to Hanji. Each step that touches the note app does what its row
-says.
+That line is the default. A command that ends in "Hanji" (`/life Hanji`,
+`/life <topic> Hanji`) writes that run's note to Hanji; when Hanji becomes the
+default, change the line to "Note app: Hanji". Each step that touches the note
+app does what its row says.
 
 | Step | Evernote | Hanji |
 |---|---|---|
@@ -35,14 +36,15 @@ line per section, and D's two `###` ways become two bullets.
 
 It is made in two passes:
 
-1. **Build.** Write the note from the record and from research. Chaehan reads
-   it in the note app.
-2. **Walk-through.** The bare `/life` command takes Chaehan through the note's
-   questions and open actions one at a time with the question tool and writes
-   each answer back into the same note.
+1. **Build.** `/life` (or `/life Hanji`) writes the note from the record and
+   from research. Chaehan reads it in the note app.
+2. **Walk-through.** At the end of a build, offer to take Chaehan through the
+   note's questions and open actions one at a time with the question tool;
+   each answer is written back into the same note.
 
 `/life <topic>` builds a separate note on one challenge (section "Topic note"
-below). It is the one command, and the topic is its only argument.
+below), and `/life <topic> Hanji` writes it to Hanji. These four forms are the
+command's only ones (Chaehan, 2026-11-08).
 
 The walk-through refines the note in place. A new build on a later day gets a
 new date and leaves every earlier note untouched (RULES.md 31).
@@ -264,6 +266,8 @@ sentence. Then:
    launch it right away. A line starting REFUSED names what to fix; it is
    reported, never routed around.
 5. Report the verify result and both cut lists.
+6. Ask with the question tool whether to walk through the note now, and run
+   the walk-through on yes.
 
 ## Topic note (`/life <topic>`)
 
@@ -336,17 +340,20 @@ You stay past 2026-12-04 and keep the 2027-03-16 return, so every date in this b
    "Can you" or "Will you" and linking several areas, each at most 30 words.
 6. Run `challenges_gate.py --topic <build folder>/draft.md`, copy the draft to
    the docs file, and write it as in "Check and write" step 4. Report the
-   verify result and the cut list.
+   verify result and the cut list, and offer the walk-through as in "Check
+   and write" step 6.
 
-## Walk-through (bare `/life`)
+## Walk-through (offered after a build)
 
-1. Read the latest `docs/*-life-challenges.md` and its note in the note app. When the
-   note differs from the file, Chaehan edited it: carry the edit into the file
-   first. A note older than its file is the reverse case and is not yours to
+1. Read the note the build wrote, in the note app it went to, and its docs
+   file. When the note differs from the file, Chaehan edited it: carry the
+   edit into the file first. A note older than its file is the reverse case and is not yours to
    repair: never write the file into the note outside the Build pass, and ask
    before anything is written.
 2. Go through the questions under "What decides between them", then the open
-   actions in the area sections, in the order the note gives them.
+   actions in the area sections, in the order the note gives them. In a topic
+   note: the questions of its Summary, then each "You choose between" under
+   what you found.
 3. For a question, ask the question tool with the question and its answers as
    options. One question per issue.
 4. For an action you can do the work on (a draft, a call script, a lookup), do

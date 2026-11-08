@@ -1,14 +1,19 @@
 ---
-description: Walk through the latest Life Challenges note, or with a topic build a note on that one challenge
+description: Build the Life Challenges note, or with a topic a note on that one challenge; Hanji as the last word writes it to Hanji
 ---
 
-Topic: $ARGUMENTS
+Arguments: $ARGUMENTS
 
-Load the life-challenges skill. When the topic above is empty, run its
-walk-through on the latest `docs/*-life-challenges.md` in the socrates repo and
-its note: one question at a time, each answer written back into the
-note. When it names a challenge, build the skill's topic note on it and
-write it to the note app the skill names at its top (Evernote or Hanji): two scenarios, then what you found for each point,
-under a Summary of the big picture and one or two questions. This is the one command (Chaehan,
-2026-11-08: "a generic slash command with /life that takes a generic argument
-which points to the topic").
+Load the life-challenges skill and read the arguments this way:
+
+- When the last word is "Hanji" (any case), this run writes its note to Hanji,
+  and the word is not part of the topic. Otherwise the note goes to the
+  skill's default note app, Evernote ("Evernote" as the last word says the
+  same).
+- With no other words, build the Life Challenges note of all challenges (the
+  skill's Build pass).
+- With other words, they name one challenge: build the skill's topic note on
+  it.
+
+Every build ends by offering the walk-through. The four forms, Chaehan,
+2026-11-08: `/life`, `/life Hanji`, `/life <topic>`, `/life <topic> Hanji`.
