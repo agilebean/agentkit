@@ -671,7 +671,16 @@ one will eventually be chosen.
   took its day from `partner-search.md`'s "the second date is today" (the
   second J Noble date, said on 2026-11-08) for a date with Dawon that no line
   connects to it. Chaehan: "i never said about a second date where did you
-  derive that?"
+  derive that?" An ordinal binds to the sequence it counts: "the second date"
+  in `partner-search.md` counted the four J Noble introductions, four meetings
+  with four different women, and read as a second date with one of them it
+  invents a history that does not exist. Write the sequence into the sentence
+  ("the second of the four J Noble introductions"); a count of meetings with
+  one person is that only when the line counts meetings with her. Chaehan,
+  2026-11-08: "if you say second date, it implies the second date with her ...
+  isn't that common sense?" The calendar and the agency's date list are the
+  lines that name both, so they are read before a note about a named person
+  carries a day.
 - **A number keeps the name of its measure.** A value is bound to the
   measure it was taken in, by that measure's own term: "perceived effort 8,
   now 6", never "two-thirds of the effort". A term of the domain (perceived
