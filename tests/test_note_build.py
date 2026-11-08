@@ -69,6 +69,27 @@ def test_a_full_build_cuts_nests_opens_each_section_and_stamps(tmp_path, monkeyp
     assert list((tmp_path / "stamps").iterdir())
 
 
+def test_a_given_summary_replaces_the_line_per_section(tmp_path, monkeypatch, capsys) -> None:
+    d = _run(tmp_path, monkeypatch, capsys)
+    (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n")
+    (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\t-\tYou find the landing time and the train here.\n")
+    (d / "summary.md").write_text("- " + "\n- ".join(["Q?"] * 4) + "\n")
+    out = (nb.main(["next", str(d)]), capsys.readouterr().out)
+    assert out[0] == 2 and "summary.md has 4 lines" in out[1]
+    (d / "summary.md").write_text("- The Port Liner decides your first hour in Kobe.\n")
+    out = (nb.main(["next", str(d)]), capsys.readouterr().out)
+    assert out[0] == 2 and "summary.md line 1 must start with You" in out[1]
+    (d / "summary.md").write_text("- You reach Sannomiya 18 minutes after you leave Kobe Airport.\n"
+                                  "- Do you take the Port Liner at ¥340 when you land at 14:00?\n")
+    rc = nb.main(["next", str(d)])
+    out = capsys.readouterr().out
+    assert rc == 0, out
+    draft = (d / "draft.md").read_text()
+    assert draft.startswith("## Summary\n\n- You reach Sannomiya 18 minutes after you leave Kobe Airport.\n"
+                            "- Do you take the Port Liner at ¥340 when you land at 14:00?\n\n## Kobe Airport")
+
+
 def test_a_new_sentence_about_an_object_is_refused(tmp_path, monkeypatch, capsys) -> None:
     d = _run(tmp_path, monkeypatch, capsys)
     (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")

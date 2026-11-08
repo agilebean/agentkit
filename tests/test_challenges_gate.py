@@ -112,3 +112,45 @@ def test_pass_leaves_the_stamp_to_note_build(tmp_path, monkeypatch, capsys):
     out = capsys.readouterr().out
     assert "PASS" in out and "note-gate:" not in out
     assert not stamps.exists() or not any(stamps.iterdir())
+
+
+TOPIC = """## Summary
+
+- You can meet your J Noble dates only in Seoul, so each week you stay costs you rent and gives you another meeting.
+- Do you want a second meeting with one of your four dates?
+
+## Scenario 1: December in Seoul
+
+You stay in Seoul past 2026-12-04, so a second meeting can happen in person.
+
+- What you gain:
+  - Family: you can meet a woman from November again before you fly out.
+- What it costs you:
+  - Money: you lose the Osaka hotel week of ¥141000.
+
+## Scenario 2: A March return
+
+You leave on 2026-12-04 and come back on 2027-03-07.
+
+- What you gain:
+  - Money: you lose nothing you booked.
+- What it costs you:
+  - Family: your four dates are your only meetings until March.
+
+## What you found
+
+You can check the video question with one consult.
+
+- 엔노블 has a service for members abroad (nnoble.co.kr).
+  - A free consult tells you whether it offers video dates.
+"""
+
+
+def test_topic_note_passes_and_its_layout_is_checked():
+    assert gate.check(TOPIC, topic=True) == []
+    assert any(f.startswith("C10") for f in gate.check(TOPIC.replace("## Scenario 2: A March return", "## Another way"), topic=True))
+    three = TOPIC.replace("- Do you want", "- Do you stay?\n- Do you go?\n- Do you want")
+    assert any("4 lines" in f for f in gate.check(three, topic=True))
+    first_q = TOPIC.replace("- You can meet your J Noble dates only in Seoul, so each week you stay costs you rent and gives you another meeting.\n", "")
+    assert any("big picture" in f for f in gate.check(first_q, topic=True))
+    assert any("what you found" in f for f in gate.check(TOPIC[:TOPIC.index("## What you found")], topic=True))

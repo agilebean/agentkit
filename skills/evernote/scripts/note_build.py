@@ -27,6 +27,11 @@ local bridge hands that call its data and checks what comes back.
     python3 note_build.py write <dir>
 
 `next` always prints the one step that is due, or what to fix in it.
+
+A note whose Summary is not one line per section writes its Summary lines into
+`summary.md` in the build folder, one to three bullets, each checked like a
+summary line; new.tsv's summary cells are then "-". The life-challenges skill's
+topic note uses it: its big picture, then the question that decides it.
 """
 
 from __future__ import annotations
@@ -462,7 +467,45 @@ def check_edits(items: list[dict], d: Path, source: str) -> list[str]:
     return errs
 
 
-def check_new(rows: list[list[str]], ds: dict[str, str], g, source: str = "") -> list[str]:
+def given_summary(d: Path) -> list[str] | None:
+    """The Summary lines from summary.md, when the note gives its own; None for one line per section."""
+    p = d / "summary.md"
+    if not p.exists():
+        return None
+    return [MARKER.sub("", l).strip() for l in p.read_text(encoding="utf-8").splitlines() if l.strip()]
+
+
+def sentence_errors(k: str, name: str, s: str, g, source: str, ds: dict[str, str]) -> list[str]:
+    errs = []
+    n = len(s.split())
+    if n > 30:
+        errs.append(f"{k} {name} has {n} words, keep at most 30: {s[:60]!r}")
+    if not g.seat(s):
+        errs.append(f"{k} {name} must start with You or Your ('You cap the hotel at ...'): {s[:70]!r}")
+    for c in g.contrast(s):
+        errs.append(f"{k} {name} uses a contrast: {c}")
+    if copied(s):
+        errs.append(f"{k} {name} copies the instructions' example: write it from this note")
+    for m in SEPARATOR.finditer(s):
+        errs.append(f"{k} {name} writes {m.group(0)!r} with a thousand separator: write the number without it (¥208333)")
+    for m in APPROX.finditer(s):
+        errs.append(f"{k} {name} writes {m.group(0).strip()!r} before a number: write ~N (~65 minutes)")
+    bad = invented(s, source + "\n" + "\n".join(ds.values())) if source else []
+    if bad:
+        errs.append(f"{k} {name} has {', '.join(bad)}, which is not in the note or the record")
+    if META.search(s):
+        errs.append(f"{k} {name} talks about the note, not about you: {s[:70]!r}; say the point itself")
+    return errs
+
+
+def check_summary(lines: list[str], ds: dict[str, str], g, source: str = "") -> list[str]:
+    if not 1 <= len(lines) <= 3:
+        return [f"summary.md has {len(lines)} lines, write one to three"]
+    return [e for i, l in enumerate(lines, 1) for e in sentence_errors("summary.md", f"line {i}", l, g, source, ds)]
+
+
+def check_new(rows: list[list[str]], ds: dict[str, str], g, source: str = "",
+              own_summary: bool = False) -> list[str]:
     errs = []
     have = {}
     for r in rows:
@@ -476,25 +519,11 @@ def check_new(rows: list[list[str]], ds: dict[str, str], g, source: str = "") ->
     for k, (_, heading, summary, first) in ((k, have[k][:4]) for k in have):
         if not 2 <= len(heading.split()) <= 6:
             errs.append(f"{k} heading has {len(heading.split())} words, use 2 to 6: {heading!r}")
-        for name, s in (("summary line", summary), ("first line", first)):
-            n = len(s.split())
-            if n > 30:
-                errs.append(f"{k} {name} has {n} words, keep at most 30: {s[:60]!r}")
-            if not g.seat(s):
-                errs.append(f"{k} {name} must start with You or Your ('You cap the hotel at ...'): {s[:70]!r}")
-            for c in g.contrast(s):
-                errs.append(f"{k} {name} uses a contrast: {c}")
-            if copied(s):
-                errs.append(f"{k} {name} copies the instructions' example: write it from this note")
-            for m in SEPARATOR.finditer(s):
-                errs.append(f"{k} {name} writes {m.group(0)!r} with a thousand separator: write the number without it (¥208333)")
-            for m in APPROX.finditer(s):
-                errs.append(f"{k} {name} writes {m.group(0).strip()!r} before a number: write ~N (~65 minutes)")
-            bad = invented(s, source + "\n" + "\n".join(ds.values())) if source else []
-            if bad:
-                errs.append(f"{k} {name} has {', '.join(bad)}, which is not in the note or the record")
-            if META.search(s):
-                errs.append(f"{k} {name} talks about the note, not about you: {s[:70]!r}; say the point itself")
+        pairs = (("first line", first),) if own_summary else (("summary line", summary), ("first line", first))
+        for name, s in pairs:
+            errs += sentence_errors(k, name, s, g, source, ds)
+        if own_summary:
+            continue
         if g.words(summary) and len(g.words(summary) & g.words(first)) / len(g.words(summary)) >= 0.6:
             errs.append(f"{k} first line repeats the summary line: say what the section shows instead")
     return errs
@@ -524,8 +553,8 @@ def assemble(d: Path, items: list[dict], headings: list[str]) -> tuple[str, str,
             put("")
     put("## Summary")
     put("")
-    for k in ds:
-        put(f"- {new[k][2]}")
+    for line in given_summary(d) or [new[k][2] for k in ds]:
+        put(f"- {line}")
     put("")
     for k in ds:
         put(f"## {new[k][1]}")
@@ -674,9 +703,14 @@ def cmd_next(a) -> int:
     if not (d / "new.tsv").exists():
         print(STEP3.format(d=d, me=HERE, tables=kept_tables(items, d)))
         return 2
-    errs = check_new(tsv(d / "new.tsv"), ds, g, source)
+    own = given_summary(d)
+    errs = check_new(tsv(d / "new.tsv"), ds, g, source, own_summary=own is not None)
     if errs:
         print("Fix new.tsv:\n" + "\n".join(f"- {e}" for e in errs))
+        return 2
+    errs = check_summary(own, ds, g, source) if own is not None else []
+    if errs:
+        print("Fix summary.md:\n" + "\n".join(f"- {e}" for e in errs))
         return 2
     errs = check_titles(items, d)
     if errs:
@@ -724,7 +758,7 @@ def cmd_next(a) -> int:
             if m and int(m.group(1)) in where:
                 hint = f"  -> write the item's new wording into edits.tsv as {where[int(m.group(1))].split(',')[0]}<TAB><text>"
             elif f.startswith(("T10", "T11", "T15")):
-                hint = "  -> new.tsv, summary line"
+                hint = "  -> summary.md" if own is not None else "  -> new.tsv, summary line"
             elif f.startswith("T13"):
                 hint = "  -> new.tsv, first line"
             elif f.startswith("T12"):

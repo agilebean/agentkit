@@ -5,6 +5,7 @@ prints PASS. Each failure names the line, cell or section it rejects. Exit 1 on
 any failure.
 
     python challenges_gate.py <draft.md> [--original <previous note.md> --cuts <cuts.md>]
+    python challenges_gate.py --topic <draft.md>
 
 It runs the note checks of the life-overview gate (T5, T8, T10 to T13, T15,
 T16), the lost-fact check T6 against the previous note with the cut list (T9
@@ -23,6 +24,10 @@ C6  a command, keyword table or "Hand to me" section: the note holds answers,
     never tooling
 C7  a Summary line that is not a bullet, or more than five bullets
 C8  a social security number written out; write its last four digits
+C10 (--topic, a note on one challenge) the layout broken: a Summary of the big
+    picture in one sentence and then one or two questions ending in "?", then
+    "## Scenario 1 ..." and "## Scenario 2 ...", then at least one section of
+    what you found. C4, C5's question rules and C7 do not apply to it.
 C9  an issue of the previous note that is neither in this note nor in the cut
     list (only with --original). A previous note in the note_build layout names
     its issues in bullets, so T6 carries this check through their numbers.
@@ -246,10 +251,32 @@ def _dropped(draft: str, original: str, cuts: str | None) -> list[str]:
             f"'- {name}: <why it left>'" for name in previous_issues(original) if name.lower() not in pool]
 
 
-def check(draft: str, original: str | None = None, cuts: str | None = None) -> list[str]:
+def _topic(md: str) -> list[str]:
+    secs = h2_sections(md)
+    titles = [t.lower() for t, _ in secs]
+    out = []
+    if not titles or not titles[0].startswith("summary"):
+        return ["C10 the note must open with '## Summary', as note_build.py writes it"]
+    lines = [re.sub(r"^\s*[-*]\s+", "", l).strip() for l in _lines(secs[0][1])]
+    asks = [l for l in lines[1:] if l.endswith("?")]
+    if not lines or lines[0].endswith("?"):
+        out.append("C10 the Summary opens with the big picture in one sentence, before any question")
+    if not 1 <= len(asks) <= 2 or len(asks) != len(lines) - 1:
+        out.append(f"C10 the Summary has {len(lines)} lines; write the big picture, then one or two questions "
+                   f"ending in '?'")
+    if len(titles) < 3 or not titles[1].startswith("scenario 1") or not titles[2].startswith("scenario 2"):
+        out.append("C10 the second and third sections must be '## Scenario 1 ...' and '## Scenario 2 ...'")
+    if len(titles) < 4:
+        out.append("C10 no section of what you found after the scenarios: one bullet per point, with its source")
+    return out
+
+
+def check(draft: str, original: str | None = None, cuts: str | None = None, topic: bool = False) -> list[str]:
     fails = gate.check(draft, note=True)
-    fails += _empty_headings(draft) + _pronouns(draft) + _thousands(draft) + _sections(draft)
-    fails += _questions(draft) + _tooling(draft) + _summary(draft) + _identifiers(draft)
+    fails += _empty_headings(draft) + _pronouns(draft) + _thousands(draft) + _tooling(draft) + _identifiers(draft)
+    if topic:
+        return fails + _topic(draft) + _questions(draft)
+    fails += _sections(draft) + _questions(draft) + _summary(draft)
     if original is not None:
         if cuts is None:
             fails.append("T6 a note built on a previous one needs --cuts: one line per number it drops, with the reason")
@@ -263,12 +290,13 @@ def check(draft: str, original: str | None = None, cuts: str | None = None) -> l
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("draft")
+    ap.add_argument("--topic", action="store_true", help="a note on one challenge, made by /life <topic>")
     ap.add_argument("--original", help="the previous note, as markdown")
     ap.add_argument("--cuts", help="the cut list: '- <numbers or issue>: <where it went or why it left>' per line")
     a = ap.parse_args(argv)
     read = lambda p: open(p, encoding="utf-8").read()
     draft = read(a.draft)
-    fails = check(draft, read(a.original) if a.original else None, read(a.cuts) if a.cuts else None)
+    fails = check(draft, read(a.original) if a.original else None, read(a.cuts) if a.cuts else None, topic=a.topic)
     for f in fails:
         print(f)
     print("PASS" if not fails else f"FAIL ({len(fails)})")
