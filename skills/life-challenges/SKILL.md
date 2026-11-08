@@ -1,6 +1,6 @@
 ---
 name: life-challenges
-description: Build or walk through Chaehan's dated Life Challenges note in Evernote - the dilemma of the moment as two competing ways to handle it, the few questions that decide between them, and the answers researched for every open issue, in plain words. Use when the user says "life challenges", "my challenges", "untangle my issues", "what weighs on me", types /life, or asks how to tackle several life issues at once. A status snapshot of every domain is the life-overview skill.
+description: Build or walk through Chaehan's dated Life Challenges note in Evernote - the dilemma of the moment as two competing ways to handle it, the few questions that decide between them, and the answers researched for every open issue, in plain words - or, with /life <topic>, a note on one challenge with two scenarios and the research for each point. Use when the user says "life challenges", "my challenges", "untangle my issues", "what weighs on me", types /life, or asks how to tackle several life issues at once or one challenge in depth. A status snapshot of every domain is the life-overview skill.
 ---
 
 # Life Challenges
@@ -20,7 +20,10 @@ It is made in two passes:
    it in Evernote.
 2. **Walk-through.** The bare `/life` command takes Chaehan through the note's
    questions and open actions one at a time with the question tool and writes
-   each answer back into the same note. There are no per-issue keywords.
+   each answer back into the same note.
+
+`/life <topic>` builds a separate note on one challenge (section "Topic note"
+below). It is the one command, and the topic is its only argument.
 
 The walk-through refines the note in place. A new build on a later day gets a
 new date and leaves every earlier note untouched (RULES.md 31).
@@ -85,7 +88,8 @@ each issue in one place:
 ### 1. Gather
 
 1. Read the previous `docs/*-life-challenges.md` (before 2026-11-07:
-   `docs/*-life-problems.md`), `memory/travel.md`,
+   `docs/*-life-problems.md`), every topic note written since it
+   (`docs/*-life-challenge-*.md`), `memory/travel.md`,
    `memory/travelitinerary.csv`, and every chapter file the life-overview
    skill lists in its step 1, and take each open action they hold as an issue
    to place. Never read the Life Overview: it links this note, and a line read
@@ -217,7 +221,59 @@ sentence. Then:
    reported, never routed around.
 5. Report the verify result and both cut lists.
 
-## Walk-through (`/life`)
+## Topic note (`/life <topic>`)
+
+When Chaehan wants to work on one challenge, `/life <topic>` builds a note on
+that challenge alone: "YYYY-MM-DD Life Challenge - <Topic>" in "Chaehan's
+Life", with its source `socrates/docs/YYYY-MM-DD-life-challenge-<topic>.md`.
+The topic is in Chaehan's words ("marriage", "storage", "tax refund").
+Chaehan, 2026-11-08, on the experiment notes A and B: "what i need when i want
+to work on one specific challenge and need support", "first the scenario, then
+the research for each point". The big picture and the questions across all
+challenges stay in the Life Challenges note; the topic note holds a short
+version of them in its Summary.
+
+The models are `docs/2026-11-07-life-challenges-A.md` for the scenarios and
+`docs/2026-11-07-life-challenges-B.md` for the research per point. Take their
+layout and their depth, and no sentence and no fact: their wording is the kind
+the table under "Plain words" rejects, and some of their facts were invented
+(a date on 2026-11-16, a call script Chaehan never approved).
+
+```
+## Summary                the big picture in one sentence, then one or two questions
+## Scenario 1: <name>     what you gain and what it costs you, per area, with numbers
+## Scenario 2: <name>     the same
+## What you found         one bullet per point the scenarios rest on, with its source
+```
+
+1. Gather the memory files of the topic and of every area it touches (family,
+   home, money, health, work), `memory/travel.md`,
+   `memory/travelitinerary.csv`, and the topic's bullets in the latest
+   `docs/*-life-challenges.md`. Keep an open question only by RULES.md 83.
+2. Name the two scenarios: the two ends of what the current phase can decide
+   on this topic, as in Build step 2.
+3. Research every point the two scenarios rest on, as in Build step 3.
+4. Write the findings file in the layout without the Summary. Each scenario
+   section opens with one sentence on what you do in it, then two bullets,
+   "What you gain:" and "What it costs you:", each with one sub-bullet per
+   area it touches, starting with the area ("Family: ...", "Money: ...") and
+   with the number from the record. Under "What you found", one bullet
+   per point with its source; under it, what it means for you, and "You
+   choose between ... and ..." where the point leaves you a choice. More than
+   seven points go into up to three sections by area ("What you found on
+   your health").
+5. Build with note_build.py as in Build step 5, in `$TMPDIR/life-challenge-<topic>`,
+   with these differences. The decisions are D1 for Scenario 1, D2 for
+   Scenario 2, and one per section of what you found. The new.tsv summary
+   cells are "-", and `summary.md` in the build folder holds the Summary:
+   first the big picture in one sentence that ties the topic to the other
+   areas of your life, then one or two questions, each starting "Do you",
+   "Can you" or "Will you" and linking several areas, each at most 30 words.
+6. Run `challenges_gate.py --topic <build folder>/draft.md`, copy the draft to
+   the docs file, and write it as in "Check and write" step 4. Report the
+   verify result and the cut list.
+
+## Walk-through (bare `/life`)
 
 1. Read the latest `docs/*-life-challenges.md` and its Evernote note. When the
    note differs from the file, Chaehan edited it: carry the edit into the file
