@@ -117,8 +117,8 @@ Each overview claim carries its file and date before a draft is shown.
    course"), and a breakthrough is never left off. At most five lanes, in the
    order of the note: partner search, health (the frozen sample first), work,
    then logistics: where you are (the stay and travel blocks) and one "Dates"
-   lane for single dates such as a filing or a sale. Every label says what and how
-   long or what happened ("Melbourne 79 nights", never "Melbourne" alone);
+   lane for single dates such as a filing or a sale. Every label says what it is, with its length or what happened when the
+   record gives one ("Melbourne 79 nights", never "Melbourne" alone);
    the title says in at most 40 characters what the chart shows; labels are at
    most 22 characters, with no booking detail and no abbreviation ("7 nights",
    never "7n"). Styles: solid = booked or fixed, open = conditional, diamond =

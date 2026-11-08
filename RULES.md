@@ -5111,7 +5111,9 @@ line exists, builds a retelling of record lines instead of a template of
 fields, and shows no example with a filled element that most cases lack. The
 test: for each element the instruction names, ask what the model writes when
 the record is silent; if the answer is "something", the instruction is
-rewritten. Instance, 2026-11-08: the life-overview rule "name who helped and
+rewritten. `agentkit/scripts/instruction_lint.py` flags a paragraph that
+asks for such an element with no empty case; it runs on a skill, command or
+agent file whenever one is written. Instance, 2026-11-08: the life-overview rule "name who helped and
 how" produced "Jaekeun signed the transfers". Chaehan: "you must prevent that
 deepseek forcibly wants to fill out a requested variable and if it can't,
 uses tricks and hallucination. most plausible-sounding is not enough."
