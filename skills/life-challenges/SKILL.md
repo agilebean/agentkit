@@ -7,7 +7,7 @@ description: Build or walk through Chaehan's dated Life Challenges note in Evern
 
 One dated note, "YYYY-MM-DD Life Challenges" in the notebook "Chaehan's Life"
 of the note app below, with its source
-`socrates/docs/YYYY-MM-DD-life-challenges.md`.
+`socrates/life/YYYY-MM-DD-life-challenges.md`.
 
 **Note app: Evernote.**
 
@@ -29,7 +29,7 @@ Chaehan which notebook takes the note. In Claude Code a Hanji write runs
 outside the sandbox, as the hanji skill says.
 The model for content and wording is the note Chaehan accepted on 2026-11-07,
 "2026-11-07 Life Challenges - D plain words" (source:
-`docs/2026-11-07-life-challenges.md`). Read it before you write a word. The
+`life/2026-11-07-life-challenges.md`). Read it before you write a word. The
 note is built and written with `note_build.py` (Chaehan, 2026-11-08: "Through
 note_build.py"), so its layout is that script's: D's Takeaway becomes a Summary
 line per section, and D's two `###` ways become two bullets.
@@ -108,9 +108,9 @@ each issue in one place:
 
 ### 1. Gather
 
-1. Read the previous `docs/*-life-challenges.md` (before 2026-11-07:
-   `docs/*-life-problems.md`), every topic note written since it
-   (`docs/*-life-challenge-*.md`), `memory/travel.md`,
+1. Read the previous `life/*-life-challenges.md` (before 2026-11-07:
+   `life/*-life-problems.md`), every topic note written since it
+   (`life/*-life-challenge-*.md`), `memory/travel.md`,
    `memory/travelitinerary.csv`, and every chapter file the life-overview
    skill lists in its step 1, and take each open action they hold as an issue
    to place. Run the two live sources too, from the socrates root:
@@ -244,14 +244,14 @@ sentence. Then:
    an issue still open is never world detail. note_build.py's own `cuts.md`
    covers the findings; this list covers the previous note.
 2. Run the check on note_build.py's draft:
-   `python3 ~/Software/Prototypes/agentkit/skills/life-challenges/scripts/challenges_gate.py $TMPDIR/life-challenges/draft.md --original <previous docs/*-life-challenges.md> --cuts $TMPDIR/life-challenges_cuts.md`.
+   `python3 ~/Software/Prototypes/agentkit/skills/life-challenges/scripts/challenges_gate.py $TMPDIR/life-challenges/draft.md --original <previous life/*-life-challenges.md> --cuts $TMPDIR/life-challenges_cuts.md`.
    A failure is fixed in the file that made the line it names: `edits.tsv` for
    an item's wording, `new.tsv` for a summary or first line, `labels.tsv` for
    where an item hangs, `found.md` in the build folder for a fact with its
    source that the findings lack. Then run `next` and the check again until
    both pass. Never edit `draft.md` by hand: its stamp no longer matches, and
    the write is refused. A PASS proves the form, not the content.
-3. Copy `draft.md` to `socrates/docs/YYYY-MM-DD-life-challenges.md`.
+3. Copy `draft.md` to `socrates/life/YYYY-MM-DD-life-challenges.md`.
 4. Run `note_build.py write $TMPDIR/life-challenges`. With Hanji it creates
    the note itself, reads it back and prints the verify result. With
    Evernote it prints the code for one `execute` call, which creates the
@@ -275,7 +275,7 @@ When Chaehan wants to work on one challenge, `/life <topic>` builds a note on
 that challenge alone and writes it to the note app named at the top:
 "YYYY-MM-DD Life Challenge - <Topic>" in the notebook "Chaehan's Life", with
 its source
-`socrates/docs/YYYY-MM-DD-life-challenge-<topic>.md`.
+`socrates/life/YYYY-MM-DD-life-challenge-<topic>.md`.
 The topic is in Chaehan's words ("marriage", "storage", "tax refund").
 Chaehan, 2026-11-08, on the experiment notes A and B of 2026-11-07: "the A
 and B notes are actually excellent and is what i need when i want to work on
@@ -318,7 +318,7 @@ You stay past 2026-12-04 and keep the 2027-03-16 return, so every date in this b
 1. Gather the memory files of the topic and of every area it touches (family,
    home, money, health, work), `memory/travel.md`,
    `memory/travelitinerary.csv`, and the topic's bullets in the latest
-   `docs/*-life-challenges.md`. Keep an open question only by RULES.md 83.
+   `life/*-life-challenges.md`. Keep an open question only by RULES.md 83.
 2. Name the two scenarios: the two ends of what the current phase can decide
    on this topic, as in Build step 2.
 3. Research every point the two scenarios rest on, as in Build step 3.

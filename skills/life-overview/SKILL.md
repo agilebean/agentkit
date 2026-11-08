@@ -16,7 +16,7 @@ overview's issues, and an agent's question listed in both was taken as
 Chaehan's (`memory/agentic_ai.md` failure 166).
 
 The current snapshot is the source of truth at
-`socrates/docs/YYYY-MM-DD-life-overview.md`, with a twin in the Evernote
+`socrates/life/YYYY-MM-DD-life-overview.md`, with a twin in the Evernote
 notebook "Chaehan's Life". Run everything from the socrates repo root
 (`~/Software/Prototypes/socrates`).
 
@@ -27,7 +27,7 @@ Every earlier snapshot, note and local file, stays untouched: a dated snapshot
 records what Chaehan believed on that date and is never superseded, folded,
 trashed or renamed (RULES.md 31). A rework of today's draft keeps today's date;
 a rework on a later day issues a new date. The local file and the note have
-the same title stem (`docs/YYYY-MM-DD-life-overview.md` for "YYYY-MM-DD Life
+the same title stem (`life/YYYY-MM-DD-life-overview.md` for "YYYY-MM-DD Life
 Overview"); no `-NEW` or `v2` suffix.
 
 ## 1. Gather state
@@ -109,7 +109,7 @@ Each overview claim carries its file and date before a draft is shown.
 
 ## 2. Timeline graphic (required, top of the note)
 
-1. Copy the spec shape from the previous run: `docs/assets/<date>-life-overview-timeline.json`.
+1. Copy the spec shape from the previous run: `life/assets/<date>-life-overview-timeline.json`.
 2. Update the rows to the current chapter, for a phone screen, which is where
    Chaehan reads the note. The chart starts at the earliest item of What went
    well, so the past chapter shows: each achievement is a green done diamond
@@ -126,7 +126,7 @@ Each overview claim carries its file and date before a draft is shown.
    picks the lane colours, shades neighbouring bars apart and places every
    label, so `color`, `text_pos` and `offset` are ignored.
 3. Render:
-   `mamba run -n socrates python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/life_timeline.py <spec.json> docs/assets/YYYY-MM-DD-life-overview-timeline.png`
+   `mamba run -n socrates python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/life_timeline.py <spec.json> life/assets/YYYY-MM-DD-life-overview-timeline.png`
 4. Inspect the PNG before embedding at phone width: read it at 390 px wide.
    A label you cannot read, a collision, or a lane that adds nothing a reader
    needs is cut from the spec, and the chart is rendered again.
@@ -266,7 +266,7 @@ defects the rework is for: it writes every section again from the record.
 One command and one read. A failure goes back to the move that wrote the
 sentence it names, never to the twin.
 
-`python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/overview_gate.py docs/YYYY-MM-DD-life-overview.md --challenges <exported Life Challenges note> --sources sources.md`
+`python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/overview_gate.py life/YYYY-MM-DD-life-overview.md --challenges <exported Life Challenges note> --sources sources.md`
 
 - T3: no Open tasks section, no email address and no phone number; a link to
   the Life Challenges note; and no Takeaway bullet that repeats one of its
@@ -336,9 +336,9 @@ used (the user's "never use the cli fallback", 2026-09-26).
 1. Create (or update) the note with the markdown WITHOUT the image line — the
    `![...]` line converts to a dead `<img src>`. With the image as the first
    line, `tail -n +3` strips it:
-   `create --markdown "YYYY-MM-DD Life Overview" "$(tail -n +3 docs/YYYY-MM-DD-life-overview.md)" --notebook "Chaehan's Life"`
+   `create --markdown "YYYY-MM-DD Life Overview" "$(tail -n +3 life/YYYY-MM-DD-life-overview.md)" --notebook "Chaehan's Life"`
 2. Embed the graphic above the Takeaway:
-   `embed-image "YYYY-MM-DD Life Overview" docs/assets/YYYY-MM-DD-life-overview-timeline.png --top`
+   `embed-image "YYYY-MM-DD Life Overview" life/assets/YYYY-MM-DD-life-overview-timeline.png --top`
    Text updates orphan the attachment; re-running embed reuses it by hash
    (idempotent), so always re-embed after a text update.
 3. Verify: read the note back; `en-media` appears before the first heading; one
