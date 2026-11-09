@@ -119,10 +119,13 @@ stroke and your LDL. You set it on 2026-11-09: "only important or distinct
 changes like DPS and LDL with data vis", "I told you only the first two ...
 make the vertically shortest chart possible", "show the curve for LDL not
 stupid bar charts ... you need 2-3 data points in the past to show the trend
-change", and "your point was increase so show the min on the left with
-number". The renderer shows each card's best reading in large type, the change
-from the worst reading as a pill, and the numbers of the worst and the best
-readings only; dates, deadlines, firsts, counts and hours never enter it.
+change", "your point was increase so show the min on the left with number",
+and "it should make a baseline from 3 data points so it is not a random pick.
+both for dps and ldl". The renderer shows each card's best reading in large
+type, a baseline (the mean of the three oldest readings in the series) as a
+dashed line numbered at the left, and the change from the baseline to the best
+as a pill; only the baseline and the best carry numbers, and dates, deadlines,
+firsts, counts and hours never enter it.
 
 1. Write the spec to `life/assets/YYYY-MM-DD-life-overview-chart.json`: one
    key, `widgets`, holding these two cards in this order, each with `goal`
@@ -136,8 +139,9 @@ readings only; dates, deadlines, firsts, counts and hours never enter it.
      Test Summary". When the record has a newer reading than the note's last
      filled cell (`memory/health.md`), that reading is the latest and its line
      is cited; the blank cell is named in the report to Chaehan, never filled.
-   The renderer computes the best, the worst and the change, so none of them
-   is written into the spec.
+   The renderer computes the baseline, the best and the change, so none of
+   them is written into the spec, and the series sets the baseline: its three
+   oldest readings come first.
 2. Render:
    `python3 ~/Software/Prototypes/agentkit/skills/life-overview/scripts/life_widgets.py life/assets/YYYY-MM-DD-life-overview-chart.json life/assets/YYYY-MM-DD-life-overview-chart.png`
 3. Look at the PNG as it shows 390 px wide; a number that touches a line or a
