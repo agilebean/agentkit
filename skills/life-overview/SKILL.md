@@ -41,7 +41,8 @@ Read, in order — memory is ground truth (rule 35):
   `dating.md`, `furniture-relocation.md`, `src_shipping_ca2korea.md`, `finance.md`,
   `taxes_us.md`, `immigration.md`, `virtualfriend.md`, `virtualfriend-marketing.md`,
   `virtualfriend-architecture.md`, `startup.md`, `optimize-my-life.md`
-- `git log --oneline -15` — what moved since the last overview
+- `git log --oneline --since='14 days ago' -- memory/` — what moved in the 14
+  days before today
 - from each chapter file, read its current state and your dated words; skip
   its research, evidence and study sections, which serve questions asked on
   demand and only crowd the reading
@@ -139,6 +140,11 @@ matter. When the record holds none, the element is left out, and the note is
 right without it; an element made up to fill the place is the one way the
 note can be wrong.
 
+Where a rule below leaves open how a sentence reads from your seat, a pair
+under it sets the line not to write against the line to write, with what
+makes the difference for you. A pair shows a shape: its facts are from 2026-11 and reach a note only
+through a line copied into `sources.md`.
+
 Every section is a retelling of copied lines. Before writing a section, copy
 into `sources.md`, beside the draft, under the section's exact heading
 (`## Partner search`), every line the section will use: the file and line
@@ -177,14 +183,34 @@ gap is the problem." Its subject is Chaehan's decision, body, money or time,
 never the agency, the contract or the file. A closed door is written as
 Chaehan's decision and its consequence; a refusal as what remains open.
 
+- Not: "Your rule of 2026-11-06: if the marriage is decided in the first half of 2027 you would consider buying an apartment in the second half."
+  Write (accepted 2026-11-08): "You don't buy a Seoul apartment until a marriage is decided, so the stay from 2027-03-16 is a rental."
+  Your decision and what it means for you, in one plain sentence; a label such as "Your rule of" reads like a file.
+
 **Move 2. Under each sentence, the facts that change it.** At most three per
 goal, each a fact that would move the sentence if it were different, plus the
 fact that would reverse it when the record states one, written as a plain
 fact among the others and never labelled ("What would reverse the sentence:
 ..."). When the record states none, the section has none. A fact that belongs
 under another fact is indented under it as a sub-bullet, never set beside it,
-so each section shows its facts with their details under them. An event the
-section reports (a flare, a date, an injury) is written with its date.
+so each section shows its facts with their details under them; the test is
+that the fact matters to you only because of the fact above it. An event the
+section reports (a flare, a date, an injury) is written with its date. A fact
+earns its line by changing what you do or expect; one that you already know,
+that has stopped mattering, or that is true for everyone, stays out.
+
+- Not: "You step down from 800 to 400 mg of celecoxib a day, and a rebound in the next 24 to 48 hours is the falling plasma level, not a worse injury."
+  Write: "You step down from 800 to 400 mg of celecoxib a day." as the bullet, with "A rebound in the next 24 to 48 hours is the falling plasma level, not a worse injury." indented under it.
+  The rebound matters only because of the step down, so it sits under it.
+- Not: "Your furniture takes 25 to 40 days door to door, so it is due about now."
+  Write: "Your furniture was due between 2026-10-25 and 2026-11-09, and no arrival is recorded."
+  "About now" changes with the day you read it; the two dates do not.
+- Not: "You put this second in your own order on 2026-11-07, directly after the partner search."
+  You set that order yourself and the note's order shows it, so the line tells you nothing.
+- Not: "You enter the grades inside the 2026-10-19 to 2026-10-30 window, and the essay carried 35 percent of the course grade."
+  The window has closed and the weighting is the course's rule; neither changes anything you do.
+- Not: "A business one-way bought close to the date costs more than one bought early."
+  True of every flight, so it says nothing about yours; what is yours is that the return is still unbought.
 
 **Move 3. Every remaining fact is detail, and gets its note.** For each
 section, find its detail note (`find-note`, then the link form in the
@@ -226,7 +252,12 @@ reason when the record gives one),
 and what gets worse if left alone. That list is the content, never the
 wording: no bullet names its own function. Each bullet opens on Chaehan or
 Chaehan's thing doing something, in the words Chaehan would say aloud, and
-names every object it points at.
+names every object it points at. A bullet holds one matter: the block's first
+matter, with the rest left to its section.
+
+- Not: "You hold four frozen vials at CHA Gangnam whose storage runs out on 2026-11-11: you pay 450000 won for another year or the sample is discarded, and your shoulder keeps the swim pull out until the squeeze stops hurting."
+  Write: "Your four frozen vials at CHA Gangnam run out of storage on 2026-11-11: you pay 450000 won for another year or the sample is discarded."
+  The shoulder is a second matter joined by "and"; the Health section holds it.
 
 <!-- verbatim -->
 - Accepted (2026-11-05): "You fly to Osaka on 2026-12-04, in 29 days, and every flight is booked except the return from Osaka to Seoul in March." Later the same day: "you must still book a locker for your winter clothes" and "it is unclear if Gayeon provides women of my target age or none like couple.net, so you didn't book it yet".
@@ -296,14 +327,14 @@ two steps, and the second step never adds what the first did not find.
    something done ("my accomplishment to finish my first course at a top
    university Korea's after I retired from yonsei", "a huge breakthrough with
    partner search", "several breakthroughs in swimming"), and the lines that
-   record a first or a measured gain dated after the previous overview. Copy them into
-   `sources.md` under `## What went well`, one `###` block per item: the file,
-   the line number and the line itself. Every step you named yourself gets a
-   block, whatever its date and whatever an earlier overview carried: your
-   naming it is the reason it is in. The other blocks come from the time
-   since the previous overview and stay out when an earlier overview carried
-   them, unless their state changed. Three to five blocks in all, in priority
-   order.
+   record a first or a measured gain dated in the 14 days before today. Copy
+   them into `sources.md` under `## What went well`, one `###` block per item:
+   the file, the line number and the line itself. Every step you named
+   yourself gets a block, whatever its date: your naming it is the reason it
+   is in. The other blocks come from those 14 days, whether or not an earlier
+   overview showed them, because earlier overviews include test runs and
+   none of them decides what this one shows. Three to five blocks in all, in
+   priority order.
 2. **Retell each block.** Write one or two sentences to you that say what the
    lines in its block say: what you did and what it took from you, in plain
    words, quoting you only for a word of yours that holds the point
@@ -312,8 +343,18 @@ two steps, and the second step never adds what the first did not find.
    names a person only when a line in its block names that person for this
    step. A measured gain may add one benchmark from a study you cite, in one
    clause with the shortest reference ("around the DPS of elite women
-   swimmers (Staunton 2025)"), converted into your unit (DPS per single-arm
-   stroke: a per-cycle value is halved) and given only in it.
+   swimmers (Staunton 2025)", never the event, the year and the field the
+   study measured), converted into your unit (DPS per single-arm stroke: a
+   per-cycle value is halved) and given only in it. An item ends at what the
+   step took from you: what came before it and who else was around it are
+   other matters.
+
+   - Not: "You taught Design Thinking at KUBS from 2026-09-28 to 2026-10-22, your first course at a top Korean university since you left Yonsei in 2022; the grades went in inside the 2026-10-19 to 2026-10-30 window."
+     Write: "You finished your first course at a top Korean university since you left Yonsei in 2022."
+     What the step means against your career is the point; the course dates and the grading window are admin.
+   - Not: "You emptied the Venice Beach storage on 2026-09-30, ending a $231 a month drain you had carried since 2024. It cost you the custom dinner table and the Steelcase desk you left behind, and the decision had waited behind the Melbourne shipment you voided in 2025 ..."
+     Write: the same item, stopped after "the Steelcase desk you left behind".
+     The item ends at what it cost you; the history before it is another matter.
 
 An item that says only what its lines say is complete. Leaving something out
 is never a failure; inventing it always is. Counts of students, sessions,

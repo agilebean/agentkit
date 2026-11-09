@@ -47,8 +47,8 @@ def paragraphs(text: str):
 def lint(text: str) -> list[tuple[int, str]]:
     out = []
     for n, para in paragraphs(text):
-        if para.lstrip().startswith(("|", "name:", "description:", "0 ", "- **")) and "---" not in para[:4]:
-            continue  # tables, frontmatter, exit-code lists and rule lists are not slot requests
+        if para.lstrip().startswith(("|", "name:", "description:", "0 ", "- **", "- Not:")) and "---" not in para[:4]:
+            continue  # tables, frontmatter, exit-code lists, rule lists and Not/Write example pairs are not slot requests
         para = re.sub(r'"[^"]*"|`[^`]*`', '""', para)  # quoted examples are not requests
         m = ASK.search(para)
         if m and not EMPTY.search(para):
