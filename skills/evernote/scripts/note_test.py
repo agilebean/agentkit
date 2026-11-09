@@ -205,7 +205,10 @@ class Run:
                                   "--format", "json", "--title", "availability probe",
                                   "Reply with the single word OK."],
                                  cwd=self.a.cwd, capture_output=True, text=True, timeout=self.a.probe,
-                                 stdin=subprocess.DEVNULL)
+                                 stdin=subprocess.DEVNULL,
+                                 # opencode finds the agent through $PWD, as in launch(): launched from agentkit,
+                                 # the probe failed in 1 s with no answer (2026-11-09)
+                                 env=dict(os.environ, PWD=str(self.a.cwd)))
             ok = '"type":"text"' in out.stdout.replace(" ", "") or '"step_finish"' in out.stdout
         except subprocess.TimeoutExpired:
             ok = False
