@@ -48,9 +48,10 @@ Read, in order — memory is ground truth (rule 35):
   demand and only crowd the reading
 - the calendar, for the date of every event the note names (a date, a flight,
   a deadline):
-  `mamba run -n socrates python projects/applecalendar/src/applecalendar_api.py events --past 14 --days 56 > calendar.txt`
-  from the socrates root, written to `calendar.txt` beside the draft and read
-  whole, as is the OmniFocus output below (`omnifocus.txt`): a `head` or
+  `mamba run -n socrates python projects/applecalendar/src/applecalendar_api.py events --past 14 --days 56 > "$TMPDIR/calendar.txt"`
+  from the socrates root, written to `$TMPDIR/calendar.txt` and read whole,
+  as is the OmniFocus output below (`$TMPDIR/omnifocus.txt`), never into the
+  repository, since both are copies of your calendar and tasks: a `head` or
   `tail` cut drops the weeks in the middle, and with them the next J Noble
   date (2026-11-09 test run). It reads the macOS Calendar database read-only and
   returns one row per occurrence, so a recurring session already appears on
@@ -66,7 +67,7 @@ Read, in order — memory is ground truth (rule 35):
   two lines about different matters are never joined into a new fact, such as
   a helper, a cause or a payment.
 - OmniFocus, for every dated task Chaehan has taken on:
-  `mamba run -n socrates python projects/omnifocus/src/omnifocus_api.py due --days 56 --past 14 > omnifocus.txt`,
+  `mamba run -n socrates python projects/omnifocus/src/omnifocus_api.py due --days 56 --past 14 > "$TMPDIR/omnifocus.txt"`,
   the same command with `--overdue` for what is already late, and
   `... done --days 14` for what Chaehan finished. A task completed in that window
   is done even where a memory file still lists it open, and it never enters
