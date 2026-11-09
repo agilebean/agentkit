@@ -577,6 +577,40 @@ def overlap_pairs(d: Path, items: list[dict]) -> list[tuple[str, str, str, str]]
     return [(a, b, ta, tb) for _, a, b, ta, tb in scored[:OVERLAP_MAX_PAIRS]]
 
 
+def misplaced(d: Path, items: list[dict]) -> list[str]:
+    """Details that share more words with another line of their section than with the line they hang under."""
+    rows = effective(items, tsv(d / "labels.tsv"))
+    lab = {r[0]: ((r + ["", ""])[1].upper(), (r + ["", "", ""])[2]) for r in rows}
+    text = dict(kept_lines(d, items))
+
+    def root(i: str, seen: tuple = ()) -> str:
+        parent = lab.get(i, ("", ""))[1]
+        return parent if parent not in lab or parent in seen else root(parent, seen + (i,))
+
+    def under(i: str, top: str) -> bool:
+        while i in lab and i != top:
+            i = lab[i][1]
+        return i == top
+
+    out = []
+    for i, (label, parent) in lab.items():
+        if label != "S" or parent not in text or i not in text:
+            continue
+        k = root(i)
+        mine = content_words(text[i])
+        fit = len(mine & content_words(text[parent]))
+        others = [(len(mine & content_words(text[j])), j) for j in text
+                  if j not in (i, parent) and not under(j, i) and (j == k or (j in lab and root(j) == k))]
+        best = max(others, default=(0, ""))
+        if best[0] > fit:
+            j = best[1]
+            shared = ", ".join(sorted(mine & content_words(text[j])))
+            where = f"label it D under {k}" if j == k else f"hang it under item {j} (S)"
+            out.append(f"item {i} hangs under item {parent} but supports {'the first line of ' + k if j == k else 'item ' + j} "
+                       f"more ({shared}): {where}")
+    return out
+
+
 def check_overlaps(d: Path, items: list[dict], pairs: list[tuple[str, str, str, str]]) -> tuple[list[str], list[str]]:
     """Errors in overlaps.tsv, and the listed pairs that have no verdict yet."""
     verdicts = {}
@@ -935,6 +969,10 @@ def cmd_next(a) -> int:
     errs = check_edits(items, d, source + "\n" + "\n".join(ds.values()))
     if errs:
         print("Fix edits.tsv:\n" + "\n".join(f"- {e}" for e in errs))
+        return 2
+    errs = misplaced(d, items)
+    if errs:
+        print("Fix labels.tsv: a detail hangs under the line it supports.\n" + "\n".join(f"- {e}" for e in errs))
         return 2
     pairs = overlap_pairs(d, items)
     errs, missing = check_overlaps(d, items, pairs)
