@@ -246,7 +246,7 @@ def _shingles(text: str, n: int = 6) -> set[tuple]:
 
 def copied(sentence: str) -> bool:
     """True when the sentence repeats six words in a row of this script's own instructions."""
-    own = _shingles(STEP1 + STEP2 + STEP3)
+    own = _shingles(STEP1 + STEP2 + STEP3 + STEP4)
     return bool(_shingles(sentence) & own)
 
 
@@ -276,7 +276,12 @@ def invented(sentence: str, source: str) -> list[str]:
 
 # ---- steps ------------------------------------------------------------------
 
-STEP1 = """Step 1 of 3: decisions, and where each old section goes.
+STEP1 = """Step 1 of 4: decisions, and where each old section goes.
+
+Every note is written in the life overview's style. Read its section
+"3. Write the snapshot" in ~/Software/Prototypes/agentkit/skills/life-overview/SKILL.md:
+Moves 1 to 3 and the accepted and rejected lines. The Takeaway's life order,
+the Life Challenges link and its gate belong to the overview alone.
 
 Read the whole old note, {d}/original.md, and Chaehan's record of the topic:
 {record}
@@ -295,6 +300,11 @@ note's summary alone: an old summary drops what its writer thought minor.
 A question that Chaehan's own observations have settled (what he felt,
 measured or tested) is written as settled: the decision is what he does with
 the answer, and the candidates his observations ruled out leave the note.
+Lines Chaehan wrote out for a section are that section, as he wrote them:
+his first sentence becomes its first line in step 3, each of his bullets is
+an item labelled D, each indented bullet an S under the bullet above it, and
+nothing else is added to it. They reach the build as items through init's
+--new file.
 
 Second part: one line for every heading of the old note, as
 "<heading exactly as written> -> D<n>". Every section Chaehan has in his note
@@ -312,7 +322,7 @@ said yes. The old Summary needs no line.
 Then run: python3 {me} next {d}
 """
 
-STEP2 = """Step 2 of 3: labels.
+STEP2 = """Step 2 of 4: labels.
 
 {d}/items.tsv lists the {n} items of the old note, one per line: id, line, text.
 Write {d}/labels.tsv with one line per item: id<TAB>label<TAB>parent.
@@ -348,8 +358,9 @@ in edits.tsv or as the section's first line in step 3.
 Your own bookings, dates, prices you paid, references and constraints are D or
 S, never W or K. The script cuts the old Summary's items itself: label them K.
 Test every item before you label it D or S: if it were deleted, would
-Chaehan do anything differently, or lose a fact of his own (his date, his
-number, his words)? If neither, it is W or K, however true or interesting.
+Chaehan decide or do anything differently, or be unable to act? If not, it
+is W or K, however true, interesting or his own: his facts that no point of
+the note needs stay in his memory record or in the note it links.
 A note that was rewritten before still loses whatever fails the test.
 To fix a label later, append a corrected line: the last line for an item wins. A table is one item and is labelled as a whole.
 
@@ -361,7 +372,7 @@ To fix a label later, append a corrected line: the last line for an item wins. A
 Then run: python3 {me} next {d}
 """
 
-STEP3 = """Step 3 of 3: the new sentences.
+STEP3 = """Step 3 of 4: the new sentences.
 
 Write {d}/new.tsv with one line per decision:
 D1<TAB>heading<TAB>summary line<TAB>first line
@@ -392,6 +403,26 @@ Write your own words: a sentence that repeats these instructions is refused.
   Rejected: The clothes have no home after 2026-12-04.
   Accepted: You must still book a locker for your winter clothes before 2026-12-04.
 
+Then run: python3 {me} next {d}
+"""
+
+
+STEP4 = """Step 4 of 4: overlaps.
+
+Chaehan's first rule for a note: cut the overlaps. An overlap is a fact said
+twice, or a second line that says more of the same. Each pair below shares
+words. Judge each pair and append one line per pair to {d}/overlaps.tsv:
+
+  a<TAB>b<TAB>same<TAB>c     when one says what the other says, or more of the
+                             same; c is the item you cut (an item id), and you
+                             append c<TAB>K<TAB> to labels.tsv.
+  a<TAB>b<TAB>different      when each tells Chaehan something the other does not.
+
+D1, D2 ... are the sections' first lines. A first line states its section's
+point: when it overlaps an item, cut the item. Cut, never reword: a line
+reworded to get past this step is the same overlap.
+
+{pairs}
 Then run: python3 {me} next {d}
 """
 
@@ -498,6 +529,63 @@ def check_new_facts(items: list[dict], rows: list[list[str]], d: Path, source: s
         if bad:
             out.append(f"item {it['id']}: {', '.join(bad)} in {s[:70]!r}")
     return out
+
+
+OVERLAP_STOP = set("""that this with from your have when what which into than then them they their there these those
+been were will would could should about after before over under while where only also more most such each other every
+some same just very much many does done gets give gives gave takes take make makes made both once until because""".split())
+OVERLAP_MIN = 0.25  # shared content words over the shorter line's
+OVERLAP_MAX_PAIRS = 12
+
+
+def content_words(s: str) -> set[str]:
+    """The words that carry a line's content: no link, no date, no small word."""
+    s = re.sub(r"\[[^\]]*\]\([^)]*\)", " ", s)
+    s = re.sub(r"\d{4}-\d{2}(?:-\d{2})?", " ", s)
+    words = re.findall(r"[a-z][a-z'-]{3,}|\d+(?:\.\d+)?%?", s.lower())
+    return {re.sub(r"(?:'s|s)$", "", w) for w in words if w not in OVERLAP_STOP}
+
+
+def overlap_pairs(d: Path, items: list[dict]) -> list[tuple[str, str, str, str]]:
+    """Pairs of kept lines (items and each section's first line) that share enough words to say the same thing."""
+    rows = effective(items, tsv(d / "labels.tsv"))
+    kept = {r[0] for r in rows if len(r) > 1 and r[1].upper() in ("D", "S")}
+    edits = {r[0]: r[1] for r in tsv(d / "edits.tsv") if len(r) >= 2}
+    lines = [(r[0], r[3]) for r in tsv(d / "new.tsv") if len(r) >= 4]
+    lines += [(it["id"], edits.get(it["id"], it["text"])) for it in items if it["id"] in kept and it["kind"] == "sentence"]
+    scored = []
+    for i, (a, ta) in enumerate(lines):
+        for b, tb in lines[i + 1:]:
+            wa, wb = content_words(ta), content_words(tb)
+            shared = wa & wb
+            if len(shared) >= 2 and wa and wb and len(shared) / min(len(wa), len(wb)) >= OVERLAP_MIN:
+                scored.append((len(shared) / min(len(wa), len(wb)), a, b, ta, tb))
+    scored.sort(key=lambda x: -x[0])
+    return [(a, b, ta, tb) for _, a, b, ta, tb in scored[:OVERLAP_MAX_PAIRS]]
+
+
+def check_overlaps(d: Path, items: list[dict], pairs: list[tuple[str, str, str, str]]) -> tuple[list[str], list[str]]:
+    """Errors in overlaps.tsv, and the listed pairs that have no verdict yet."""
+    verdicts = {}
+    for r in tsv(d / "overlaps.tsv"):
+        if len(r) >= 3:
+            verdicts[frozenset(r[:2])] = (r[2].lower(), (r + [""])[3])
+    labels = {r[0]: r[1].upper() for r in effective(items, tsv(d / "labels.tsv")) if len(r) > 1}
+    errs, missing = [], []
+    for key, (verdict, cut) in verdicts.items():
+        if verdict == "same" and cut in labels and labels[cut] in ("D", "S"):
+            errs.append(f"you judged {' and '.join(sorted(key))} the same, but item {cut} is still kept: "
+                        f"append '{cut}<TAB>K<TAB>' to labels.tsv")
+        if verdict == "same" and cut not in key:
+            errs.append(f"{' and '.join(sorted(key))}: the item you cut must be one of the two, an item id")
+        if verdict == "same" and re.fullmatch(r"D\d+", cut or ""):
+            errs.append(f"{' and '.join(sorted(key))}: a first line states its section's point; cut the item")
+        if verdict not in ("same", "different"):
+            errs.append(f"{' and '.join(sorted(key))}: the verdict is 'same' or 'different', not {verdict!r}")
+    for a, b, ta, tb in pairs:
+        if frozenset((a, b)) not in verdicts:
+            missing.append(f"  {a}  {ta}\n  {b}  {tb}\n")
+    return errs, missing
 
 
 JOINED = re.compile(r"(?<=[a-z0-9¥%)\]])([.!?])(?=[A-Z][a-z])")
@@ -812,6 +900,14 @@ def cmd_next(a) -> int:
     errs = check_edits(items, d, source + "\n" + "\n".join(ds.values()))
     if errs:
         print("Fix edits.tsv:\n" + "\n".join(f"- {e}" for e in errs))
+        return 2
+    pairs = overlap_pairs(d, items)
+    errs, missing = check_overlaps(d, items, pairs)
+    if errs or missing:
+        if errs:
+            print("Fix overlaps.tsv or labels.tsv:\n" + "\n".join(f"- {e}" for e in errs))
+        if missing:
+            print(STEP4.format(d=d, me=HERE, pairs="\n".join(missing)))
         return 2
     draft, cuts, merged, where = assemble(d, items, headings)
     errs = bad_links(draft, d)

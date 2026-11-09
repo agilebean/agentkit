@@ -778,6 +778,15 @@ text is selected by `AGENTS.md` core 1; this rule governs how it reads.
 - **Cut restatement, keep numbers.** Each fact appears once, in the place
   where it does the most work. Concrete numbers, dates, names, and places
   survive every cut. Repeated descriptions of the same option do not.
+- **Quality over quantity: only the relevant points, overlaps cut first.** A
+  note keeps the points that change what Chaehan decides or does. The cuts
+  run in this order: a fact said twice, a second fact that says more of the
+  same, then detail that obscures the point. Chaehan's facts that no point
+  needs stay in his memory record or the linked note. Chaehan, 2026-11-09,
+  after a 737-word shoulder note that he cut to its point, one fact and one
+  detail per section: "only relevant points not clutter (more of the same)
+  or unnecessary detail (obscuring the point). most important cut the
+  overlaps" (failure 205).
 
 Detection signal: if a note reads like the transcript of an analysis
 (reframe, enumeration, assumptions, reveal), it is in the wrong order. The
@@ -3022,7 +3031,7 @@ A task survives its own sub-steps the same way. When Chaehan answers a question 
 
 ### 136. A specification applies to its class
 
-A specification the user states governs every instance of the class it names, not the instance at hand. Enumerate the class before acting, apply it to all of it in the same pass, and name the sweep in the report ("all 21 pages", "every carrier of the reading"). When the class is ambiguous, name the class you inferred and the count you are acting on; a question costs one turn, a half-applied spec costs a repeat report. 2026-10-09: "all pasted slides should be on a white background" was applied to the named slide while another stayed transparent - "why didn't you register that all pasted slides should be on a white background?" An instruction on one constraint of a tool names the class of constraints that tool puts on the sessions: list them from the transcripts before calling the instruction done, where a bypass repeated command by command (`dangerouslyDisableSandbox`) marks a setting not yet changed, and settle them all in the same pass. 2026-11-06: "the sandbox proxy cutoff is unacceptable, find a different solution, and if too effortful switch off the sandbox" got a streaming fix for the cutoff alone, while 104 commands in three days bypassed the sandbox for its other refusals; Chaehan: "i had instructed to deactivate the sandbox as it constrains the sessions in an unnecessary way" (failure 187).
+A specification the user states governs every instance of the class it names, not the instance at hand. Enumerate the class before acting, apply it to all of it in the same pass, and name the sweep in the report ("all 21 pages", "every carrier of the reading"). When the class is ambiguous, name the class you inferred and the count you are acting on; a question costs one turn, a half-applied spec costs a repeat report. 2026-10-09: "all pasted slides should be on a white background" was applied to the named slide while another stayed transparent - "why didn't you register that all pasted slides should be on a white background?" An instruction on one constraint of a tool names the class of constraints that tool puts on the sessions: list them from the transcripts before calling the instruction done, where a bypass repeated command by command (`dangerouslyDisableSandbox`) marks a setting not yet changed, and settle them all in the same pass. A writing standard Chaehan set on one kind of note governs every note he reads, and his asking whether it holds only there is the signal that it holds everywhere: 2026-11-09, "i wonder is that all only applied in the life overview and life challenges skill?" was answered as a question about checks, and Chaehan: "you should have inferred that the writing style of life overview should be used as general style" (failure 205). 2026-11-06: "the sandbox proxy cutoff is unacceptable, find a different solution, and if too effortful switch off the sandbox" got a streaming fix for the cutoff alone, while 104 commands in three days bypassed the sandbox for its other refusals; Chaehan: "i had instructed to deactivate the sandbox as it constrains the sessions in an unnecessary way" (failure 187).
 
 ### 137. Verification must be differential and able to fail
 
