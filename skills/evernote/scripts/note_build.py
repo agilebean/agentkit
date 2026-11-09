@@ -413,14 +413,21 @@ Chaehan's first rule for a note: cut the overlaps. An overlap is a fact said
 twice, or a second line that says more of the same. Each pair below shares
 words. Judge each pair and append one line per pair to {d}/overlaps.tsv:
 
-  a<TAB>b<TAB>same<TAB>c     when one says what the other says, or more of the
-                             same; c is the item you cut (an item id), and you
-                             append c<TAB>K<TAB> to labels.tsv.
-  a<TAB>b<TAB>different      when each tells Chaehan something the other does not.
+  a<TAB>b<TAB>same<TAB>c        when one says what the other says, or more of
+                                the same; c is the item you cut (an item id),
+                                and you append c<TAB>K<TAB> to labels.tsv.
+  a<TAB>b<TAB>partial<TAB>c     when both repeat one fact and each adds its own;
+                                the repeated fact leaves line c (edits.tsv for
+                                an item, new.tsv for a first line), which keeps
+                                only what it alone says. The script measures
+                                the pair again.
+  a<TAB>b<TAB>different<TAB>w   when each tells Chaehan something the other
+                                does not; w is the words one line says that
+                                the other does not, copied from that line.
 
 D1, D2 ... are the sections' first lines. A first line states its section's
-point: when it overlaps an item, cut the item. Cut, never reword: a line
-reworded to get past this step is the same overlap.
+point: when it overlaps an item, cut the item. Never reword a line to get
+past this step: only the repeated fact leaves, the rest stays as it was.
 
 {pairs}
 Then run: python3 {me} next {d}
@@ -546,13 +553,19 @@ def content_words(s: str) -> set[str]:
     return {re.sub(r"(?:'s|s)$", "", w) for w in words if w not in OVERLAP_STOP}
 
 
-def overlap_pairs(d: Path, items: list[dict]) -> list[tuple[str, str, str, str]]:
-    """Pairs of kept lines (items and each section's first line) that share enough words to say the same thing."""
+def kept_lines(d: Path, items: list[dict]) -> list[tuple[str, str]]:
+    """Each section's first line (D1, D2 ...) and every kept sentence item, in the wording the draft will use."""
     rows = effective(items, tsv(d / "labels.tsv"))
     kept = {r[0] for r in rows if len(r) > 1 and r[1].upper() in ("D", "S")}
     edits = {r[0]: r[1] for r in tsv(d / "edits.tsv") if len(r) >= 2}
     lines = [(r[0], r[3]) for r in tsv(d / "new.tsv") if len(r) >= 4]
-    lines += [(it["id"], edits.get(it["id"], it["text"])) for it in items if it["id"] in kept and it["kind"] == "sentence"]
+    return lines + [(it["id"], edits.get(it["id"], it["text"])) for it in items
+                    if it["id"] in kept and it["kind"] == "sentence"]
+
+
+def overlap_pairs(d: Path, items: list[dict]) -> list[tuple[str, str, str, str]]:
+    """Pairs of kept lines (items and each section's first line) that share enough words to say the same thing."""
+    lines = kept_lines(d, items)
     scored = []
     for i, (a, ta) in enumerate(lines):
         for b, tb in lines[i + 1:]:
@@ -571,8 +584,30 @@ def check_overlaps(d: Path, items: list[dict], pairs: list[tuple[str, str, str, 
         if len(r) >= 3:
             verdicts[frozenset(r[:2])] = (r[2].lower(), (r + [""])[3])
     labels = {r[0]: r[1].upper() for r in effective(items, tsv(d / "labels.tsv")) if len(r) > 1}
+    text = dict(kept_lines(d, items))
+    listed = {frozenset((a, b)): (ta, tb) for a, b, ta, tb in pairs}
     errs, missing = [], []
     for key, (verdict, cut) in verdicts.items():
+        name = " and ".join(sorted(key))
+        if verdict == "different" and all(k in text for k in key):
+            # A "different" names what one line adds, copied from it: a verdict without it was given to
+            # every pair alike (14 of 14 on 2026-11-09), so it is no judgment.
+            a, b = sorted(key)
+            words = cut.strip().lower()
+            in_a, in_b = bool(words) and words in text[a].lower(), bool(words) and words in text[b].lower()
+            if not words or in_a == in_b:
+                errs.append(f"{name}: name the words one line says that the other does not, copied from that line: "
+                            f"{a}<TAB>{b}<TAB>different<TAB><words>")
+            elif not content_words(words) - content_words(text[b] if in_a else text[a]):
+                errs.append(f"{name}: {cut!r} adds nothing the other line lacks; judge the pair same or partial")
+        if verdict == "partial" and cut not in key:
+            errs.append(f"{name}: the line that gives up the shared fact must be one of the two")
+        elif verdict == "partial" and key in listed:
+            ta, tb = listed[key]
+            shared = ", ".join(sorted(content_words(ta) & content_words(tb)))
+            errs.append(f"{name} still share {shared}: take the shared fact out of {cut} "
+                        f"({'new.tsv, its first line' if re.fullmatch(r'D[0-9]+', cut) else 'edits.tsv'}) "
+                        f"and keep what only it says")
         if verdict == "same" and cut in labels and labels[cut] in ("D", "S"):
             errs.append(f"you judged {' and '.join(sorted(key))} the same, but item {cut} is still kept: "
                         f"append '{cut}<TAB>K<TAB>' to labels.tsv")
@@ -580,8 +615,8 @@ def check_overlaps(d: Path, items: list[dict], pairs: list[tuple[str, str, str, 
             errs.append(f"{' and '.join(sorted(key))}: the item you cut must be one of the two, an item id")
         if verdict == "same" and re.fullmatch(r"D\d+", cut or ""):
             errs.append(f"{' and '.join(sorted(key))}: a first line states its section's point; cut the item")
-        if verdict not in ("same", "different"):
-            errs.append(f"{' and '.join(sorted(key))}: the verdict is 'same' or 'different', not {verdict!r}")
+        if verdict not in ("same", "partial", "different"):
+            errs.append(f"{name}: the verdict is 'same', 'partial' or 'different', not {verdict!r}")
     for a, b, ta, tb in pairs:
         if frozenset((a, b)) not in verdicts:
             missing.append(f"  {a}  {ta}\n  {b}  {tb}\n")
