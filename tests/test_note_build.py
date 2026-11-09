@@ -33,6 +33,14 @@ def test_items_keep_links_whole_and_a_table_is_one_item() -> None:
     assert headings == ["Summary", "Getting there", "Market"]
 
 
+
+def _no_overlaps(d) -> None:
+    """For a test about something else: judge every listed overlap different."""
+    items = json.loads((d / "items.json").read_text())["items"]
+    pairs = nb.overlap_pairs(d, items)
+    (d / "overlaps.tsv").write_text("".join(f"{a}\t{b}\tdifferent\n" for a, b, _, _ in pairs))
+
+
 def _run(tmp_path, monkeypatch, capsys):
     monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
     d = tmp_path / "w"
@@ -44,9 +52,9 @@ def _run(tmp_path, monkeypatch, capsys):
 
 def test_each_step_is_asked_for_in_turn_and_bad_labels_are_refused(tmp_path, monkeypatch, capsys) -> None:
     d = _run(tmp_path, monkeypatch, capsys)
-    assert nb.main(["next", str(d)]) == 2 and "Step 1 of 3" in capsys.readouterr().out
+    assert nb.main(["next", str(d)]) == 2 and "Step 1 of 4" in capsys.readouterr().out
     (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
-    assert nb.main(["next", str(d)]) == 2 and "Step 2 of 3" in capsys.readouterr().out
+    assert nb.main(["next", str(d)]) == 2 and "Step 2 of 4" in capsys.readouterr().out
     (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD9\n")
     out = (nb.main(["next", str(d)]), capsys.readouterr().out)
     assert out[0] == 2 and "have no label" in out[1] and "parent is a decision" in out[1]
@@ -162,6 +170,7 @@ def test_an_item_deeper_than_three_levels_is_placed_at_the_third(tmp_path, monke
     (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tS\t3\n5\tW\t\n")
     (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
                                "You land at 14:00 and reach Sannomiya in 18 minutes.\n")
+    _no_overlaps(d)
     assert nb.main(["next", str(d)]) == 0, capsys.readouterr().out
 
 
@@ -173,6 +182,7 @@ def test_the_old_summary_is_cut_by_the_script(tmp_path, monkeypatch, capsys) -> 
     (d / "labels.tsv").write_text("1\tS\t2\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n")
     (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
                                "You land at 14:00 and reach Sannomiya in 18 minutes.\n")
+    _no_overlaps(d)
     assert nb.main(["next", str(d)]) == 0, capsys.readouterr().out
     assert "not a booking" not in (d / "draft.md").read_text()
 
@@ -194,6 +204,7 @@ def test_a_mapped_section_that_keeps_nothing_is_refused(tmp_path, monkeypatch, c
     (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n")
     (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
                                "You land at 14:00 and reach Sannomiya in 18 minutes.\n")
+    _no_overlaps(d)
     assert nb.main(["next", str(d)]) == 2
     assert "Market" in capsys.readouterr().out
 
@@ -387,6 +398,7 @@ def test_new_facts_become_items_and_carry_a_decision_no_old_section_holds(tmp_pa
                                "You land at 14:00 and reach Sannomiya in 18 minutes.\n"
                                "D2\tThe first train\tYou catch a Port Liner within 6 minutes of landing.\t"
                                "Take the next train after 14:00 without a timetable.\n")
+    _no_overlaps(d)
     rc = nb.main(["next", str(d)])
     out = capsys.readouterr().out
     assert rc == 0, out
@@ -436,3 +448,28 @@ def test_more_than_three_facts_at_the_top_of_a_section_are_refused(tmp_path, mon
 def test_a_pasted_phrase_with_a_small_letter_is_refused() -> None:
     errs = nb.new_text_errors("edit of item 41", "possible either the same cause or a strain", "")
     assert any("small letter" in e for e in errs)
+
+
+def test_overlaps_are_listed_judged_and_cut_never_reworded(tmp_path, monkeypatch, capsys) -> None:
+    # Chaehan, 2026-11-09: "most important cut the overlaps".
+    d = _run(tmp_path, monkeypatch, capsys)
+    (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n")
+    (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
+                               "You land at 14:00 and reach Sannomiya in 18 minutes.\n")
+    assert nb.main(["next", str(d)]) == 2
+    out = capsys.readouterr().out
+    assert "Step 4 of 4: overlaps" in out and "D1  You land at 14:00" in out and "3  The Port Liner takes 18 minutes" in out
+    (d / "overlaps.tsv").write_text("D1\t3\tsame\t3\nD1\t2\tdifferent\n")
+    assert nb.main(["next", str(d)]) == 2
+    assert "item 3 is still kept" in capsys.readouterr().out
+    (d / "overlaps.tsv").write_text("D1\t3\tsame\tD1\n")
+    assert nb.main(["next", str(d)]) == 2
+    assert "cut the item" in capsys.readouterr().out
+    (d / "overlaps.tsv").write_text("D1\t3\tsame\t3\nD1\t2\tdifferent\n")
+    with open(d / "labels.tsv", "a") as f:
+        f.write("3\tK\t\n")
+    rc = nb.main(["next", str(d)])
+    out = capsys.readouterr().out
+    assert rc == 0, out
+    assert "Port Liner takes 18 minutes" not in (d / "draft.md").read_text()
