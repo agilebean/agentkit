@@ -174,7 +174,7 @@ def test_an_item_deeper_than_three_levels_is_placed_at_the_third(tmp_path, monke
     (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
     (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tS\t3\n5\tW\t\n")
     (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
-                               "You land at 14:00 and reach Sannomiya in 18 minutes.\n")
+                               "You find the landing time and the train here.\n")
     _no_overlaps(d)
     assert nb.main(["next", str(d)]) == 0, capsys.readouterr().out
 
@@ -186,7 +186,7 @@ def test_the_old_summary_is_cut_by_the_script(tmp_path, monkeypatch, capsys) -> 
     (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
     (d / "labels.tsv").write_text("1\tS\t2\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n")
     (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
-                               "You land at 14:00 and reach Sannomiya in 18 minutes.\n")
+                               "You find the landing time and the train here.\n")
     _no_overlaps(d)
     assert nb.main(["next", str(d)]) == 0, capsys.readouterr().out
     assert "not a booking" not in (d / "draft.md").read_text()
@@ -208,7 +208,7 @@ def test_a_mapped_section_that_keeps_nothing_is_refused(tmp_path, monkeypatch, c
     (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> D1\n")
     (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n")
     (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
-                               "You land at 14:00 and reach Sannomiya in 18 minutes.\n")
+                               "You find the landing time and the train here.\n")
     _no_overlaps(d)
     assert nb.main(["next", str(d)]) == 2
     assert "Market" in capsys.readouterr().out
@@ -400,7 +400,7 @@ def test_new_facts_become_items_and_carry_a_decision_no_old_section_holds(tmp_pa
                                     "Getting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
     (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n6\tD\tD2\n")
     (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
-                               "You land at 14:00 and reach Sannomiya in 18 minutes.\n"
+                               "You find the landing time and the train here.\n"
                                "D2\tThe first train\tYou catch a Port Liner within 6 minutes of landing.\t"
                                "Take the next train after 14:00 without a timetable.\n")
     _no_overlaps(d)
@@ -459,7 +459,7 @@ def test_overlaps_are_listed_judged_and_cut_never_reworded(tmp_path, monkeypatch
     # Chaehan, 2026-11-09: "most important cut the overlaps".
     d = _run(tmp_path, monkeypatch, capsys)
     (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
-    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tD\tD1\n4\tW\t\n5\tW\t\n")
     (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
                                "You land at 14:00 and reach Sannomiya in 18 minutes.\n")
     assert nb.main(["next", str(d)]) == 2
@@ -486,7 +486,7 @@ def test_a_different_verdict_quotes_what_one_line_adds_and_a_partial_one_is_meas
     # celecoxib section both repeated the 400 mg days while each added a fact of its own.
     d = _run(tmp_path, monkeypatch, capsys)
     (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
-    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tD\tD1\n4\tW\t\n5\tW\t\n")
     (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
                                "You land at 14:00 and reach Sannomiya in 18 minutes.\n")
     (d / "overlaps.tsv").write_text("2\tD1\tdifferent\tyou land\n3\tD1\tdifferent\tthe moon\n")
@@ -498,7 +498,20 @@ def test_a_different_verdict_quotes_what_one_line_adds_and_a_partial_one_is_meas
     assert nb.main(["next", str(d)]) == 2
     assert "3 and D1 still share" in capsys.readouterr().out
     (d / "edits.tsv").write_text("3\tThe Port Liner costs ¥340.\n")
-    rc = nb.main(["next", str(d)])
+    nb.main(["next", str(d)])
     out = capsys.readouterr().out
-    assert rc == 0, out
+    assert "still share" not in out and "Assembled" in out, out
     assert "The Port Liner costs ¥340." in (d / "draft.md").read_text()
+
+
+def test_a_detail_hangs_under_the_line_it_supports(tmp_path, monkeypatch, capsys) -> None:
+    # 2026-11-09, DeepSeek's sixth shoulder note: "Your bursa stays quiet" and the injection history hung under the
+    # shot's timing, while they support the section's first line (the bursa or swim link left open).
+    d = _run(tmp_path, monkeypatch, capsys)
+    (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n")
+    (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
+                               "You reach Sannomiya in 18 minutes by the Port Liner.\n")
+    assert nb.main(["next", str(d)]) == 2
+    out = capsys.readouterr().out
+    assert "item 3 hangs under item 2 but supports the first line of D1 more" in out and "label it D under D1" in out
