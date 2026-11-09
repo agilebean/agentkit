@@ -10,14 +10,17 @@ and LDL with data vis", "I told you only the first two. it is too big the goal
 is quality over quantity so make the vertically shortest chart possible",
 "show the curve for LDL not stupid bar charts ... you need 2-3 data points in
 the past to show the trend change" and, for distance per stroke, "the 0.92! is
-useless your point was increase so show the min on the left with number".
+useless your point was increase so show the min on the left with number", then
+"ideally for the charts, it should make a baseline from 3 data points so it is
+not a random pick. both for dps and ldl".
 
 So the chart is one row of two cards and nothing above them. Each card holds
-its measure's name, its best value in large type with the change from the
-worst reading as a pill, and the curve of every dated reading. Only the worst
-and the best readings carry their numbers; the first and last dates sit under
-the curve. Everything shown is computed here from the series, so the spec
-holds the readings and nothing derived.
+its measure's name, its best value in large type, the change from the baseline
+as a pill, and the curve of every dated reading. The baseline is the mean of
+the three oldest readings in the series, drawn as a dashed line with its number
+at the left; only the baseline and the best reading carry numbers, and the
+first and last dates sit under the curve. Everything shown is computed here
+from the series, so the spec holds the readings and nothing derived.
 
 Spec shape:
 {
@@ -61,6 +64,11 @@ def number(v: float) -> str:
     return f"{v:g}"
 
 
+def decimals(vals: list[float]) -> int:
+    """The baseline is rounded to the precision the readings are given in."""
+    return max((len(f"{v:g}".split(".")[1]) if "." in f"{v:g}" else 0) for v in vals)
+
+
 def axis_date(iso: str, span_years: bool) -> str:
     d = date.fromisoformat(iso)
     return d.strftime("%b %Y") if span_years else d.strftime("%b %-d")
@@ -71,8 +79,8 @@ def card(draw, w, x, y, colour):
     vals = [v for _, v in series]
     higher = w.get("better", "higher") == "higher"
     best_i = vals.index(max(vals) if higher else min(vals))
-    worst_i = vals.index(min(vals) if higher else max(vals))
-    best, worst = vals[best_i], vals[worst_i]
+    best = vals[best_i]
+    baseline = round(sum(vals[:3]) / len(vals[:3]), decimals(vals))
 
     draw.rounded_rectangle([x, y, x + COL, y + CARD_H], radius=22, fill=CARD, outline=EDGE, width=2)
     draw.text((x + PAD, y + PAD - 4), w["label"], font=font(32, BOLD), fill=INK)
@@ -82,7 +90,7 @@ def card(draw, w, x, y, colour):
     draw.text((x + PAD, vy), number(best), font=font(72, BOLD), fill=colour)
     vw = draw.textlength(number(best), font=font(72, BOLD))
     draw.text((x + PAD + vw + 10, vy + 40), w.get("unit", ""), font=font(28), fill=GREY)
-    change = (best - worst) / abs(worst) * 100
+    change = (best - baseline) / abs(baseline) * 100
     text = f"{'+' if change > 0 else '-'}{abs(change):.0f}%"
     f = font(30, BOLD)
     tw = draw.textlength(text, font=f)
@@ -90,18 +98,22 @@ def card(draw, w, x, y, colour):
     draw.rounded_rectangle([xr - tw - 28, vy + 16, xr, vy + 62], radius=18, fill=GOOD)
     draw.text((xr - tw - 14, vy + 39), text, font=f, fill=WHITE, anchor="lm")
 
-    # The curve: room above and below for the two labelled readings.
-    x0, x1 = x + PAD + 56, x + COL - PAD - 56
+    # The curve: room at the left for the baseline's number, above and below for the best.
+    x0, x1 = x + PAD + 72, x + COL - PAD - 56
     y0, y1 = y + 206, y + 290
     ords = [date.fromisoformat(d).toordinal() for d, _ in series]
     lo, hi = min(vals), max(vals)
     sx = lambda o: x0 + (o - ords[0]) / max(ords[-1] - ords[0], 1) * (x1 - x0)
     sy = lambda v: y1 - (v - lo) / max(hi - lo, 1e-9) * (y1 - y0)
     pts = [(sx(o), sy(v)) for o, v in zip(ords, vals)]
+    by = sy(baseline)
+    for dx in range(int(x0), int(x1), 22):  # the baseline, dashed
+        draw.line([(dx, by), (min(dx + 12, x1), by)], fill=GREY, width=3)
+    draw.text((x0 - 12, by), number(baseline), font=font(30, BOLD), fill=GREY, anchor="rm")
     draw.line(pts, fill=colour, width=5, joint="curve")
     for px, py in pts:
         draw.ellipse([px - 6, py - 6, px + 6, py + 6], fill=colour)
-    for i in (worst_i, best_i):
+    for i in (best_i,):
         px, py = pts[i]
         draw.ellipse([px - 11, py - 11, px + 11, py + 11], fill=colour)
         if vals[i] == hi:  # the high reading carries its number above the dot
