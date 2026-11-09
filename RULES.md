@@ -1157,8 +1157,14 @@ an old value that still matters becomes a dated line under a History heading);
 an agent's inference stated as fact (M3: mark it "the agent's reading" or cut
 it); a person entry with no dated event (M4: a person's role is tied to the
 event it belongs to, or a model attaches the person to the next event that
-needs a helper). The lint runs on every memory file the agent writes, before
-the commit, and M1, M3 and M4 fail it. Instruction basis, 2026-11-08: the
+needs a helper); a quote addressed to the agent (M5, a review flag: a note that
+retells the line quotes the instruction to its reader, so the line records the
+fact it states, dated, with Chaehan's own key words quoted, and a rule goes to
+RULES.md or the skill). The lint runs on every memory file the agent writes,
+before the commit, and M1, M3 and M4 fail it. 2026-11-09: three overview runs
+quoted "my accomplishment to finish my first course at a top university
+Korea's after I retired from yonsei", a sentence Chaehan had written to the
+agent. Instruction basis, 2026-11-08: the
 overview's 19 memory files held 18 relative times, 109 old-beside-new lines,
 56 unmarked inferences and Jaekeun's undated "completed 3 wire transfers",
 which became "Jaekeun signed the transfers" for the furniture shipment.

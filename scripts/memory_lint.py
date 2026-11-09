@@ -20,6 +20,10 @@ M4  a person entry with no date and no event ("- **Name:** ..."): a person's rol
     event in one line, or a model attaches the person to the next event it needs a helper for (Jaekeun's
     wire transfers in the furniture shipment, 2026-11-08).
 
+M5  a quote addressed to the agent ("i told you", "you forgot", "why didn't you"), a review flag: a note
+    that retells the line quotes the instruction to its reader. Record the fact or the rule it states,
+    dated, with Chaehan's own key words quoted; a rule moves to RULES.md or the skill.
+
 Lines under a heading named History, Log, Archive or Evidence are history and are not flagged for M2.
 """
 from __future__ import annotations
@@ -40,6 +44,9 @@ PERSON = re.compile(r"^\s*- \*\*(?!(?:Phone|Fax|Email|Hours|Address|Website|Web|
 DATED = re.compile(r"\d{4}-\d{2}(?:-\d{2})?|\b(?:19|20)\d\d\b")
 HISTORY = re.compile(r"^#{1,4}\s+.*\b(history|log|archive|evidence)\b", re.I)
 QUOTE = re.compile(r'"[^"]*"|“[^”]*”')
+TO_AGENT = re.compile(r"\b(i told you|told you|you forgot|you must|you should|you mustn't|you did|you didn't|"
+                      r"why didn'?t you|why don'?t you|can'?t you|don'?t you|you're wrong|you broke|you missed|"
+                      r"you could have|you still)\b", re.I)
 
 
 def lint(text: str) -> list[tuple[int, str, str]]:
@@ -56,6 +63,10 @@ def lint(text: str) -> list[tuple[int, str, str]]:
         m = INFER.search(bare)
         if m and not MARKED.search(line):
             out.append((n, "M3", f"inference {m.group(0)!r} stated as fact: mark it as the agent's reading or cut it"))
+        for q in re.findall(r'"([^"]{8,})"', line):
+            if TO_AGENT.search(q):
+                out.append((n, "M5", f"quote addressed to the agent: record the fact it states: {q[:50]!r}"))
+                break
         if PERSON.match(line) and not DATED.search(line):
             out.append((n, "M4", "person entry with no date or event: tie the role to a dated event"))
     return out
@@ -78,7 +89,7 @@ def main(argv: list[str] | None = None) -> int:
             counts[code] = counts.get(code, 0) + 1
     print(f"memory_lint: {len(paths)} file(s), {total} line(s) flagged " + " ".join(f"{k}={v}" for k, v in sorted(counts.items())))
     # M2 is a review flag: a line can name what it replaced while stating the value in force.
-    return 2 if any(k != "M2" for k in counts) else 0
+    return 2 if any(k not in ("M2", "M5") for k in counts) else 0
 
 
 if __name__ == "__main__":
