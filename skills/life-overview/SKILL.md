@@ -1,6 +1,6 @@
 ---
 name: life-overview
-description: Create or refresh the user's dated Life Overview — whole-life status snapshot with a chart of what falls due and which numbers moved, what-went-well section, and one link to the Life Challenges note, which holds the open decisions and next moves. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
+description: Create or refresh the user's dated Life Overview — whole-life status snapshot with a chart of the numbers that moved, what-went-well section, and one link to the Life Challenges note, which holds the open decisions and next moves. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
 ---
 
 # Life Overview
@@ -113,55 +113,38 @@ Each overview claim carries its file and date before a draft is shown.
 
 ## 2. Chart (required, top of the note)
 
-The chart is a grid of widgets, two per row, that shows what falls due soon
-and which of your numbers moved; you chose it on 2026-11-09 from three
-DeepSeek variants ("I prefer B but two widgets per row with the top widgets
-of A merged into it but more concisely"). It never repeats the sections: a
-widget holds a date or a number and never a sentence. Build it once the What
-went well blocks of section 3 exist, since its firsts come from them; the
-note still opens with it.
+The chart shows which of your numbers moved, as the 2026-11-09 variant B drew
+them, two cards per row. You narrowed it on 2026-11-09: "only important or
+distinct changes like DPS and LDL with data vis. the rest is useless just take
+the top summaries not these stupid simple data points". So it holds measures
+only: never a date, a deadline, a calendar entry, a first, a count of
+sessions, students or dates met, or hours. Those belong to the note's text.
 
 1. Write the spec to `life/assets/YYYY-MM-DD-life-overview-chart.json`:
-   `title` (at most 40 characters, what the chart shows), `subtitle`, `today`
-   and `widgets`, one of three kinds:
-   - `due`: something dated ahead of today within 30 days, from a calendar
-     row, an OmniFocus task or a memory line that states its date: `label`
-     (at most 26 characters, what it is), `date`, and a `note` only when its
-     line gives one short fact ("450000 won a year"). Each goal gets exactly
-     one: the item with the nearest date in that goal, whatever its kind (a
-     date, a decision, a filing, a flight).
-   - `measure`: a number of yours that moved, with two dated values in the
-     record (the swim panels in
-     `~/Software/Prototypes/swim/data/dashboard_payload.json`, `memory/swim.md`,
-     `memory/health.md`): `label`, `value`, `unit`, `date`, `before`,
-     `before_date` when the record dates it, `better` ("higher" or "lower"),
-     and `series` (`[[date, value], ...]`) only when the record lists three or
-     more dated values. Distance per stroke always comes from the swim
-     panels, never from a memory line that rounds it: its series is
-     `python3 -c "import json;p=[p for p in json.load(open('$HOME/Software/Prototypes/swim/data/dashboard_payload.json'))['panels'] if p['panel_id']=='continuous_benchmark'][0];print([[q['date'],q['value']] for t in p['traces'] if t['name']=='DPS (m/stroke)' for q in t['points']])"`,
-     `before` is its first point, and when the best point is not the latest
-     the widget shows the best with its date and the label says so ("Best
-     distance per stroke"). A measure keeps its name in the label and in the
-     unit, never an abbreviation ("Perceived effort at the same 400 m", unit
-     "out of 10", never "PE"); hours, counts of sessions, students or dates
-     met are not measures and stay off.
-   - `first`: a step you named yourself, from a What went well block: `label`
-     and the `date` its line gives.
-   Every widget also has a `source`: the file and line, or the command and
-   its row, that states each of its values. A widget whose value has no line
-   stays off; the renderer computes the days left and the change in percent,
-   so neither is written into the spec. Widgets run in your priority order
-   (partner search, health with the frozen sample first, work, logistics),
-   and within a goal: due, then measures, then firsts. The chart holds eight
-   widgets: partner search two (its due and its first), health four (its due
-   and three measures), work one (its first, or its due when it has no
-   first), logistics one (its due). A goal with fewer leaves its places
-   empty; no other goal takes them.
+   `title` ("How far you have come"), `subtitle` ("Life Overview
+   YYYY-MM-DD · your numbers that moved") and `widgets`, one card per number
+   of yours that moved, each with `goal`, `label`, `value`, `unit`, `before`,
+   `before_date` when the record dates it, `better` ("higher" or "lower"),
+   `source` (the file and line, or the command, that states each value) and:
+   - `"vis": "line"` with `series` (`[[date, value], ...]`) for an important
+     change the record holds as three or more dated readings. Distance per
+     stroke is one, always from the swim panels and never from a memory line
+     that rounds it:
+     `python3 -c "import json;p=[p for p in json.load(open('$HOME/Software/Prototypes/swim/data/dashboard_payload.json'))['panels'] if p['panel_id']=='continuous_benchmark'][0];print([[q['date'],q['value']] for t in p['traces'] if t['name']=='DPS (m/stroke)' for q in t['points']])"`;
+     `before` is its first reading, `value` the best, and `note` says so
+     ("best Oct 20") when the best is not the latest.
+   - `"vis": "bars"` for an important change the record holds as two dated
+     values, such as LDL before and after the Atobamib tablet, with `date`.
+   - no `vis` for any other number that moved: the card shows its summary
+     alone (perceived effort at the same 400 m, "out of 10").
+   A label keeps the measure's name, never an abbreviation ("PE"). A number
+   whose value has no record line stays off; the renderer computes the change
+   in percent, so it is never written into the spec. Cards run in your
+   priority order; six at most.
 2. Render:
-   `mamba run -n socrates python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/life_widgets.py life/assets/YYYY-MM-DD-life-overview-chart.json life/assets/YYYY-MM-DD-life-overview-chart.png`
-3. Look at the PNG as it shows 390 px wide. A label that wraps past two lines
-   is shortened; a widget that tells you nothing the note's first screen
-   needs is cut; then render again.
+   `python3 ~/Software/Prototypes/agentkit/skills/life-overview/scripts/life_widgets.py life/assets/YYYY-MM-DD-life-overview-chart.json life/assets/YYYY-MM-DD-life-overview-chart.png`
+3. Look at the PNG as it shows 390 px wide: a label that runs past its card is
+   shortened, and the chart is rendered again.
 
 ## 3. Write the snapshot: four moves, in this order
 
