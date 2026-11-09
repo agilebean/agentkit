@@ -357,3 +357,82 @@ def test_a_top_image_stays_and_a_note_edited_since_the_read_is_refused(tmp_path,
     meta["body_key"] = nb.body_key(f"{tag}<h2>Old</h2><div>old body</div>")
     (d / "meta.json").write_text(json.dumps(meta))
     assert "error" not in nb.plan_write(d, {}, before)
+
+
+def _run_new(tmp_path, monkeypatch, facts: str, found: str = ""):
+    monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
+    d = tmp_path / "w"
+    old, new = tmp_path / "old.md", tmp_path / "new.md"
+    old.write_text(OLD)
+    new.write_text(facts)
+    assert nb.main(["init", str(d), str(old), "--guid", "g-1", "--new", str(new)]) == 0
+    if found:
+        (d / "found.md").write_text(found)
+    return d
+
+
+def test_new_facts_become_items_and_carry_a_decision_no_old_section_holds(tmp_path, monkeypatch, capsys) -> None:
+    # 2026-11-08: a note update with facts the old note did not hold had no slot, so deepseek left the build
+    # ("D2 has no section of the old note behind it") and rewrote the note in small edits (failure 201).
+    d = _run_new(tmp_path, monkeypatch, "The Port Liner runs every 6 minutes from 05:30.\n",
+                 found="Port Liner timetable: every 6 minutes from 05:30. https://www.knkcorp.co.jp\n")
+    items = json.loads((d / "items.json").read_text())["items"]
+    assert items[-1]["section"] == nb.NEW_HEAD and "every 6 minutes" in items[-1]["text"]
+    assert "every 6 minutes" not in (d / "original.md").read_text()
+    (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\n"
+                                    "D2: Which Port Liner do you take after landing at 14:00?\n"
+                                    "Getting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n6\tD\tD2\n")
+    (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
+                               "You land at 14:00 and reach Sannomiya in 18 minutes.\n"
+                               "D2\tThe first train\tYou catch a Port Liner within 6 minutes of landing.\t"
+                               "Take the next train after 14:00 without a timetable.\n")
+    rc = nb.main(["next", str(d)])
+    out = capsys.readouterr().out
+    assert rc == 0, out
+    assert "every 6 minutes from 05:30" in (d / "draft.md").read_text()
+
+
+def test_a_new_fact_without_a_source_line_is_refused(tmp_path, monkeypatch, capsys) -> None:
+    d = _run_new(tmp_path, monkeypatch, "The Port Liner runs every 6 minutes from 05:30.\n")
+    (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\n"
+                                    "Getting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n6\tS\t3\n")
+    assert nb.main(["next", str(d)]) == 2
+    out = capsys.readouterr().out
+    assert "Fix the new facts" in out and "05:30" in out
+
+
+def test_more_than_three_supporting_items_under_one_item_are_refused(tmp_path, monkeypatch, capsys) -> None:
+    facts = "".join(f"The Port Liner car {n} has {n} doors.\n" for n in (1, 2, 3, 4))
+    d = _run_new(tmp_path, monkeypatch, facts, found=facts)
+    (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\n"
+                                    "Getting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tK\t\n4\tW\t\n5\tW\t\n6\tS\t2\n7\tS\t2\n8\tS\t2\n9\tS\t2\n")
+    assert nb.main(["next", str(d)]) == 2
+    assert "item 2 carries 4 supporting items" in capsys.readouterr().out
+
+
+def test_an_image_at_the_foot_stays_like_one_at_the_top(tmp_path, monkeypatch, capsys) -> None:
+    d = _stamped_build(tmp_path, monkeypatch, capsys)
+    tag = '<en-media type="image/png" hash="221100627706631fb4a4eda2b7f836d0" />'
+    foot = {"content": f"<en-note><h2>Old</h2><div>old body</div>{tag}<div><br/></div></en-note>"}
+    plan = nb.plan_write(d, {}, foot)
+    assert "error" not in plan and plan["find"] == "<h2>Old</h2><div>old body</div>" and tag not in plan["content"]
+
+
+def test_more_than_three_facts_at_the_top_of_a_section_are_refused(tmp_path, monkeypatch, capsys) -> None:
+    # The life overview's Move 2: at most three facts under each point. DeepSeek's 2026-11-09 shoulder note kept
+    # seven at the top of one section, a third of its items cut where Chaehan asked for quality over quantity.
+    facts = "".join(f"The Port Liner car {n} has {n} doors.\n" for n in (1, 2, 3))
+    d = _run_new(tmp_path, monkeypatch, facts, found=facts)
+    (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\n"
+                                    "Getting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tK\t\n4\tW\t\n5\tW\t\n6\tD\tD1\n7\tD\tD1\n8\tS\tD1\n")
+    assert nb.main(["next", str(d)]) == 2
+    assert "D1 keeps 4 items at the top of its section" in capsys.readouterr().out
+
+
+def test_a_pasted_phrase_with_a_small_letter_is_refused() -> None:
+    errs = nb.new_text_errors("edit of item 41", "possible either the same cause or a strain", "")
+    assert any("small letter" in e for e in errs)

@@ -229,3 +229,10 @@ test("a command that only mentions osascript stays out of the app class", async 
   expect(e.command).toContain("__agentkit_rc=$?")
   expect(e.timeout).toBe(10_000)
 })
+
+test("a fix-loop checker may run again after each edit", async () => {
+  // note_build.py's loop reruns `next` after every file; its fifth run was refused on 2026-11-09 (failure 202).
+  const h = await setup()
+  const cmd = "python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py next /tmp/b"
+  for (let i = 0; i < 6; i++) expect((await h.shell(cmd)).command).not.toContain("Blocked")
+})

@@ -5103,7 +5103,11 @@ counts only for what opencode did: when it errs, the cause goes into the
 agent instructions or the skill, and the run is repeated in opencode until it
 gets that step right. Repairing its output from outside, by copying its files
 to the folder the brief named or finishing a step by hand, hides the defect
-and makes the test worthless. The test: every file and every note the report
+and makes the test worthless. A note DeepSeek wrote that Chaehan rejects is
+such a test, also when his words are "fix it": the cause goes into the
+instructions and tools DeepSeek uses, and DeepSeek rewrites the note through
+`note_test.py`. A note the stronger model writes itself repairs one output and
+says nothing about the next one (failure 202). The test: every file and every note the report
 shows was put there by the opencode run. Instance, 2026-11-07, the T7 run of
 the life-overview skill: DeepSeek wrote to `$TMPDIR/claude-501/...` in place
 of the brief's `/private/tmp/claude-501/...`, and the agent copied the files

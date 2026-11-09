@@ -60,6 +60,10 @@ LINK = re.compile(r"!?\[[^\]]*\]\([^)]*\)")
 MARKER = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+")
 NUMBER = re.compile(r"\d{4}-\d{2}-\d{2}|\d+(?:\.\d+)?")
 SUMMARY_HEADS = ("summary", "takeaway", "tl;dr")
+# The heading under which init --new puts facts the note does not hold yet (a finding, a test result).
+NEW_HEAD = "New facts"
+# At most this many supporting items hang under one item: the life overview's "at most three" (Move 2).
+MAX_KIDS = 3
 # A sentence about the note instead of about you: copied from the instruction's
 # own words in the first deepseek run ("the section below ranks ...").
 META = re.compile(r"\b(?:the|this) (?:section|note|table|list)\b|\bbelow (?:shows|lists|ranks|compares|prices|covers)\b",
@@ -226,6 +230,8 @@ def new_text_errors(label: str, s: str, source: str) -> list[str]:
     bad = invented(s, source) if source else []
     if bad:
         out.append(f"{label} has {', '.join(bad)}, which is not in the note, the record, chaehan.md or found.md")
+    if s[:1].islower():
+        out.append(f"{label} starts with a small letter: write a whole sentence of your own, not a pasted phrase")
     for m in SEPARATOR.finditer(s):
         out.append(f"{label} writes {m.group(0)!r} with a thousand separator: write the number without it (¥208333)")
     for m in APPROX.finditer(s):
@@ -286,12 +292,16 @@ sections come out in that order, and a brief may fix the order for its format.
 Take the
 decisions from the record and from the note's sections, never from the old
 note's summary alone: an old summary drops what its writer thought minor.
+A question that Chaehan's own observations have settled (what he felt,
+measured or tested) is written as settled: the decision is what he does with
+the answer, and the candidates his observations ruled out leave the note.
 
 Second part: one line for every heading of the old note, as
 "<heading exactly as written> -> D<n>". Every section Chaehan has in his note
 is there because he asked for it. A section that serves none of your decisions
 gets "<heading> -> ask": the script then stops, and you ask Chaehan with the
-question tool whether it leaves his note. Write his answer back as
+question tool whether it leaves his note. The "New facts" heading, which
+init --new adds, needs no line: its items are labelled one by one in step 2. Write his answer back as
 "<heading> -> D<n>", or as "<heading> -> drop (Chaehan, <date>)" only when he
 said yes. The old Summary needs no line.
 
@@ -310,8 +320,16 @@ Label each item on its own, by what it does for one of the decisions in
 decisions.md:
 
   D  decides: it changes a decision. Parent: that decision, D1 to D{k}.
-  S  supports: a detail you need to act on a kept item. Parent: that item's
-     id. A detail can hang on another detail.
+     At most three per decision: the three whose deletion would change most
+     what Chaehan does.
+  S  supports: a fact that would change the kept item above it if it were
+     different. Parent: that item's id. A detail can hang on another detail.
+     At most three hang under one item: keep the three that change it most.
+     Only a detail that passes the deletion test below may be folded into
+     its parent's wording as a parenthesis (edits.tsv, the detail labelled
+     K); a detail that fails the test is cut, never folded. A sentence
+     Chaehan called clutter leaves the note, whole or as a clause. How a test, a drug or a study works is W unless a
+     decision changes with it.
   W  world detail: true, but you will not act on it. Market statistics, a
      second source saying the same, a price of something you will not buy, a
      place ruled out for a reason you do not need, an option kept only for
@@ -320,10 +338,20 @@ decisions.md:
      old summary line that repeats the body. No parent.
   M  moved: it now lives in another note. Parent: that note's exact title.
 
+Where a decision asks how two things connect (a cause, an earlier episode
+and this one) and no line of the record, chaehan.md or found.md states the
+link, one sentence says the link is open and names the possibilities, and
+nothing fills the gap: a connection the record does not state is an
+invention, however plausible. Write that sentence as an item's new wording
+in edits.tsv or as the section's first line in step 3.
+
 Your own bookings, dates, prices you paid, references and constraints are D or
 S, never W or K. The script cuts the old Summary's items itself: label them K.
-To fix a label later, append a corrected line: the last line for an item wins. A table is one item and is labelled as a whole. Keep only what
-you act on: most notes lose a third of their items or more.
+Test every item before you label it D or S: if it were deleted, would
+Chaehan do anything differently, or lose a fact of his own (his date, his
+number, his words)? If neither, it is W or K, however true or interesting.
+A note that was rewritten before still loses whatever fails the test.
+To fix a label later, append a corrected line: the last line for an item wins. A table is one item and is labelled as a whole.
 
   Accepted lines:
   7<TAB>D<TAB>D1     Your flight leaves Seoul at 09:40 on 2027-01-12.
@@ -354,7 +382,10 @@ write about the note itself ("the section below shows").
 Every table you keep gets a title of 2 to 6 words, written to {d}/titles.tsv
 as id<TAB>title, one line per table: {tables}
 
-Every number and name in your sentences comes from the note or the record.
+Every number and name in your sentences comes from the note or the record,
+and a number you restate keeps what it counts in the line it comes from:
+"two nights at ¥20000" is ¥40000 in total, never ¥40000 a night. A rewording
+that changes what a number counts is wrong even when every digit is there.
 Write your own words: a sentence that repeats these instructions is refused.
 
   The form, from another note:
@@ -365,7 +396,8 @@ Then run: python3 {me} next {d}
 """
 
 
-def check_decisions(ds: dict[str, str], mapping: dict[str, str], headings: list[str], source: str) -> tuple[list[str], list[str]]:
+def check_decisions(ds: dict[str, str], mapping: dict[str, str], headings: list[str], source: str,
+                    has_new: bool = False) -> tuple[list[str], list[str]]:
     """Errors in decisions.md, and the old sections whose fate the agent must ask Chaehan about."""
     errs = []
     if not ds:
@@ -378,11 +410,13 @@ def check_decisions(ds: dict[str, str], mapping: dict[str, str], headings: list[
         bad = invented(text, source)
         if bad:
             errs.append(f"{k} names {', '.join(bad)}, which neither the note nor the record contains: {text[:60]!r}")
-    body = [h for h in headings if not h.lower().startswith(SUMMARY_HEADS)]
+    body = [h for h in headings if not h.lower().startswith(SUMMARY_HEADS) and h != NEW_HEAD]
     missing = [h for h in body if h not in mapping]
     if missing:
         errs.append("decisions.md has no '<heading> -> D<n>' line for: " + "; ".join(missing))
     for h, target in mapping.items():
+        if h == NEW_HEAD:
+            continue
         if h not in body:
             errs.append(f"decisions.md maps {h!r}, which is not a heading of the old note (copy it exactly)")
         elif not (target in ds or target == "ask" or target.startswith("drop")):
@@ -390,7 +424,8 @@ def check_decisions(ds: dict[str, str], mapping: dict[str, str], headings: list[
         elif target.startswith("drop") and "chaehan" not in target.lower():
             errs.append(f"{h!r} is dropped without Chaehan's answer: write '-> ask' and ask him")
     for k in ds:
-        if mapping and k not in mapping.values():
+        # A decision that only new facts carry is checked later: it must keep a D item of its own.
+        if mapping and k not in mapping.values() and not has_new:
             errs.append(f"{k} has no section of the old note behind it: map a section to it, or remove it")
     asks = [h for h, target in mapping.items() if target == "ask"]
     return errs, asks
@@ -420,6 +455,23 @@ def check_labels(items: list[dict], rows: list[list[str]], ds: dict[str, str]) -
             return False
         return parent in seen or loops(parent, seen + (item,))
 
+    under: dict[str, list[str]] = {}
+    top: dict[str, list[str]] = {}
+    for item, (label, parent) in got.items():
+        if label == "S" and parent in got:
+            under.setdefault(parent, []).append(item)
+        if label in ("D", "S") and parent in ds:
+            top.setdefault(parent, []).append(item)
+    for k, its in sorted(top.items()):
+        if len(its) > MAX_KIDS:
+            errs.append(f"{k} keeps {len(its)} items at the top of its section ({', '.join(its)}): keep the "
+                        f"{MAX_KIDS} whose deletion would change what Chaehan does; hang a detail that passes that test "
+                        f"under the item it qualifies (S) and label the rest W or K")
+    for parent, kids_ in sorted(under.items(), key=lambda kv: int(kv[0])):
+        if len(kids_) > MAX_KIDS:
+            errs.append(f"item {parent} carries {len(kids_)} supporting items ({', '.join(kids_)}): keep the "
+                        f"{MAX_KIDS} that would change it most and label the rest W or K; only a detail that would "
+                        f"change it may go into item {parent}'s wording as a parenthesis (edits.tsv)")
     for item, (label, parent) in got.items():
         if label == "M" and not parent.strip():
             errs.append(f"item {item}: an M item's parent is the exact title of the note it moves to")
@@ -431,6 +483,21 @@ def check_labels(items: list[dict], rows: list[list[str]], ds: dict[str, str]) -
             elif loops(item):
                 errs.append(f"item {item}: its parents lead back to itself")
     return errs
+
+
+def check_new_facts(items: list[dict], rows: list[list[str]], d: Path, source: str) -> list[str]:
+    """Numbers and names in a kept new fact that neither the record, chaehan.md nor found.md holds."""
+    keep = {r[0] for r in rows if len(r) > 1 and r[1].upper() in ("D", "S")}
+    edits = {r[0] for r in tsv(d / "edits.tsv") if len(r) >= 2}
+    out = []
+    for it in items:
+        if it["section"] != NEW_HEAD or it["id"] not in keep or it["id"] in edits or it["kind"] != "sentence":
+            continue
+        s = it["text"]
+        bad = invented(s[:1].lower() + s[1:], source)  # a sentence's first word is no name
+        if bad:
+            out.append(f"item {it['id']}: {', '.join(bad)} in {s[:70]!r}")
+    return out
 
 
 JOINED = re.compile(r"(?<=[a-z0-9¥%)\]])([.!?])(?=[A-Z][a-z])")
@@ -556,8 +623,9 @@ def assemble(d: Path, items: list[dict], headings: list[str]) -> tuple[str, str,
         if item:
             where[len(out)] = item
 
+    in_place = bool(json.loads((d / "meta.json").read_text(encoding="utf-8")).get("guid"))
     for it in items:
-        if it["kind"] == "image" and labels.get(it["id"], ("W",))[0] in "DS":
+        if it["kind"] == "image" and not in_place and labels.get(it["id"], ("W",))[0] in "DS":
             put(text(it), it["id"])
             put("")
     put("## Summary")
@@ -603,7 +671,7 @@ def assemble(d: Path, items: list[dict], headings: list[str]) -> tuple[str, str,
     cuts: list[str] = []
     for it in items:
         label, parent = labels.get(it["id"], ("", ""))
-        if label not in ("W", "K", "M"):
+        if label not in ("W", "K", "M") or (it["kind"] == "image" and in_place):
             continue
         why = {"W": "world detail", "K": "known or said elsewhere", "M": f"moved to the note {parent!r}"}[label]
         nums = NUMBER.findall(it["text"].replace(",", ""))
@@ -645,7 +713,7 @@ def cmd_init(a) -> int:
     elif a.guid:
         # The note is read through the Evernote MCP, never the CLI (Chaehan, 2026-11-07): the agent runs the
         # printed code in one execute call, and the bridge finishes the init from the get_note result.
-        args = {k: getattr(a, k) for k in ("guid", "title", "notebook", "decisions", "record", "chaehan", "section")}
+        args = {k: getattr(a, k) for k in ("guid", "title", "notebook", "decisions", "record", "chaehan", "section", "new")}
         (d / "init_args.json").write_text(json.dumps(args), encoding="utf-8")
         port = start_bridge(d, "init")
         print("Run this code in ONE execute call, exactly as printed. It reads the note and starts the build.\n")
@@ -654,13 +722,18 @@ def cmd_init(a) -> int:
     else:
         old = ""
     return finish_init(d, old, {k: getattr(a, k) for k in ("guid", "title", "notebook", "decisions", "record",
-                                                            "chaehan", "section", "dest")})
+                                                            "chaehan", "section", "dest", "new")})
 
 
 def finish_init(d: Path, old: str, a: dict) -> int:
     """Split the old text into items and write the build folder; print step 1."""
     (d / "original.md").write_text(old, encoding="utf-8")
-    items, headings = split_items(old)
+    new = a.get("new") or []
+    new = new if isinstance(new, list) else [new]
+    added = "\n\n".join(Path(f).read_text(encoding="utf-8").strip() for f in new)
+    if added:
+        (d / "new_facts.md").write_text(added + "\n", encoding="utf-8")
+    items, headings = split_items(old.rstrip() + (f"\n\n## {NEW_HEAD}\n\n{added}\n" if added else "\n"))
     (d / "items.json").write_text(json.dumps({"items": items, "headings": headings}, ensure_ascii=False, indent=1),
                                   encoding="utf-8")
     (d / "items.tsv").write_text("".join(f"{it['id']}\t{it['line']}\t{one_line(it)}\n" for it in items), encoding="utf-8")
@@ -668,7 +741,7 @@ def finish_init(d: Path, old: str, a: dict) -> int:
         print("init needs --guid for an existing note, or --title and --notebook for a new one", file=sys.stderr)
         return 1
     (d / "meta.json").write_text(json.dumps({"guid": a["guid"], "title": a["title"], "notebook": a["notebook"],
-                                             "dest": a.get("dest") or "evernote",
+                                             "dest": a.get("dest") or "evernote", "new": bool(added),
                                              "record": [str(Path(r).resolve()) for r in a["record"] or []]}),
                                  encoding="utf-8")
     if a["decisions"]:
@@ -695,7 +768,7 @@ def cmd_next(a) -> int:
         return 2
     source = source_text(d)
     mapping = section_map(d)
-    errs, asks = check_decisions(ds, mapping, headings, source)
+    errs, asks = check_decisions(ds, mapping, headings, source, has_new=bool(meta.get("new")))
     if errs:
         print("Fix decisions.md:\n" + "\n".join(f"- {e}" for e in errs))
         return 2
@@ -713,6 +786,12 @@ def cmd_next(a) -> int:
     errs = check_labels(items, effective(items, tsv(d / "labels.tsv")), ds)
     if errs:
         print("Fix labels.tsv:\n" + "\n".join(f"- {e}" for e in errs))
+        return 2
+    errs = check_new_facts(items, effective(items, tsv(d / "labels.tsv")), d, source)
+    if errs:
+        print("Fix the new facts: a number or name with no line behind it in Chaehan's record, chaehan.md or "
+              "found.md is an invention. Add the line it comes from to found.md with its source, or label the "
+              "item W:\n" + "\n".join(f"- {e}" for e in errs))
         return 2
     if not (d / "new.tsv").exists():
         print(STEP3.format(d=d, me=HERE, tables=kept_tables(items, d)))
@@ -746,7 +825,7 @@ def cmd_next(a) -> int:
     keep_ids = {r[0] for r in rows if r[1].upper() in ("D", "S")}
     lost = [h for h in dict.fromkeys(it["section"] for it in items if not old_summary(it))
             if not any(it["id"] in keep_ids for it in items if it["section"] == h)
-            and not mapping.get(h, "").startswith("drop")]
+            and not mapping.get(h, "").startswith("drop") and h != NEW_HEAD]
     original = (d / "original.md").read_text(encoding="utf-8")
     fails = g.check(draft, original, note=True, cuts=cuts, labels=merged, table_titles=True)
     print(f"Assembled {d / 'draft.md'}: {kept} of {len(items)} items kept, "
@@ -888,6 +967,8 @@ def inner(enml: str) -> str:
 
 
 LEADING_MEDIA = re.compile(r"^(?:\s*<en-media\b[^>]*/>\s*)+")
+# Images at the foot of a note, where Chaehan put a picture, with the empty lines Evernote keeps after them.
+TRAILING_MEDIA = re.compile(r"(?:\s*<en-media\b[^>]*/>\s*(?:<div>\s*<br\s*/>\s*</div>\s*)*)+$")
 
 
 def body_key(body: str) -> str:
@@ -925,8 +1006,11 @@ def plan_write(d: Path, linked: dict, before) -> dict:
         body = inner(old)
         lead = LEADING_MEDIA.match(body)
         rest = body[lead.end():] if lead else body
+        trail = TRAILING_MEDIA.search(rest)
+        rest = rest[:trail.start()] if trail else rest
         if "<en-media" in rest:
-            # An image at the top stays untouched (the replace starts after it); one inside the text would be lost.
+            # Images at the top and at the foot stay untouched (the replace runs between them); one inside the
+            # text would be lost.
             errs.append("the note holds an image inside its text, which a full rewrite would drop")
         meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
         if meta.get("body_key") and meta["body_key"] != body_key(body):
@@ -1163,6 +1247,8 @@ def main(argv: list[str] | None = None) -> int:
     i.add_argument("--decisions", help="Chaehan's decisions from the brief, one 'D1: ...' line each")
     i.add_argument("--record", action="append", help="Chaehan's record of the topic, e.g. socrates memory/travel.md")
     i.add_argument("--chaehan", action="append", help="Chaehan's instructions and new facts, his words (repeatable)")
+    i.add_argument("--new", action="append", help="facts the note does not hold yet, one per line; they become items "
+                                                  "under 'New facts' and are checked against the record (repeatable)")
     i.add_argument("--section", help="with --guid, --title and --notebook: build a new note from this section")
     i.add_argument("--dest", choices=DESTS, default="evernote", help="where write puts the note (default evernote)")
     lk = sub.add_parser("link", help="print the exact Evernote link for notes matching the words")

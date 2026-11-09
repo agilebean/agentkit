@@ -189,6 +189,13 @@ const TURN_GAP_MS = 15 * 60_000
 const GO_GATE_LADDER = [15, 30, 60, 100, 200]
 const REPEAT_WARN_AT = 3
 const REPEAT_DENY_AT = 4
+// A checker that a fix loop reruns after every edit is new work on each run: its
+// inputs changed in between. The evernote skill's note_build.py says "run it
+// again after each file you write, until it prints PASS"; on 2026-11-09 its
+// fifth `next` was refused as a repeat and DeepSeek went to read the script's
+// source instead (socrates failure 202).
+export const LOOP_CHECKER =
+  /\bnote_build\.py\s+next\b|\boverview_gate\.py\b|\bwording_lint\.py\b|\bmemory_lint\.py\b|\binstruction_lint\.py\b|\bpytest\b|\bbun\s+test\b/
 const MAX_LEDGERS = 50
 const MAX_SEEN = 500
 
@@ -435,7 +442,7 @@ export default Plugin.define({
       const seen = (led.seen.get(key) ?? 0) + 1
       if (led.seen.size > MAX_SEEN) led.seen.clear()
       led.seen.set(key, seen)
-      if (seen >= REPEAT_DENY_AT) {
+      if (seen >= REPEAT_DENY_AT && !LOOP_CHECKER.test(cmd)) {
         deny(
           event,
           `Blocked by agentkit.shell-guard: this exact command has run ${seen} ` +
@@ -477,7 +484,7 @@ export default Plugin.define({
 
       const { base, gate } = ledgerLine(sid, led, Date.now())
       let line = gate ? `${base}\n${gate}` : base
-      if (seen === REPEAT_WARN_AT) {
+      if (seen === REPEAT_WARN_AT && !LOOP_CHECKER.test(cmd)) {
         line +=
           `\n[agentkit] this exact command is on its ${seen}rd run this turn ` +
           `(RULES 73). The fourth is refused: rename the approach instead.`
