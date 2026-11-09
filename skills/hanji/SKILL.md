@@ -11,7 +11,7 @@ Hanji is Chaehan's Evernote replacement, built by Denis Huber against
 the PATH, which this Mac has not done (2026-11-07), so the skill calls it by path:
 
 ```
-H=/Applications/Hanji.app/Contents/MacOS/hanji        # 0.8.1, schema 32 on 2026-11-07
+H=/Applications/Hanji.app/Contents/MacOS/hanji        # 0.10.0 beta, schema 43 on 2026-11-09
 P="python3 $HOME/Software/Prototypes/agentkit/skills/hanji/scripts/hanji_note.py"
 ```
 
@@ -118,6 +118,20 @@ never through its shell CLI. Two steps:
    title, reads the note and a download link for each file, and hands them to
    the receiver, which converts the note, downloads its files, creates it with
    the helper and returns the report (also in the `report.md` it names).
+
+**A note with many files meets Evernote's attachment rate limit.** Each `get_attachment` call returns a
+link that expires 300 s after it is issued, and the server refuses a burst of them ("Rate limit exceeded:
+`get_attachment` is being called faster than allowed. Wait about 60 seconds"). A note with dozens of files
+cannot be read by the printed code at all: on 2026-11-09 the 77-file "HCMC Hotel/Apt" failed at its first
+attachment twice, a minute apart. Read such a note in batches instead, and hand the whole set to the
+converter in one pass: fetch the note and its links 20 to 30 at a time, POST each batch's
+`{hash: downloadUrl}` to a small local HTTP server that merges them into `/tmp/en_acc.json`, then call
+`en_to_hanji.run_import(payload, out, None, None, False)` with `{notes: [{title, matches, note, files:
+[{hash, got: {downloadUrl}}]}], notebooks}` instead of a receiver, or POST the same payload to a receiver
+started by `start`. The links serve one import, so import within 5 minutes of the first batch or fetch the
+oldest batch again. Measured on "HCMC Hotel/Apt": 77 links in three batches, 78 s of fetching, then 58 s to
+download, convert, write and verify all 77 files byte-identical. The limit is per account, so a batch that
+follows a run of attachment calls minutes earlier starts exhausted whatever it asks for.
 
 The report says, per note, where it went and what was checked against the
 Evernote original: every word, every file byte for byte against its Evernote
