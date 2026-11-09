@@ -1,6 +1,6 @@
 ---
 name: life-overview
-description: Create or refresh the user's dated Life Overview — whole-life status snapshot with a timeline graphic, what-went-well section, and one link to the Life Challenges note, which holds the open decisions and next moves. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
+description: Create or refresh the user's dated Life Overview — whole-life status snapshot with a chart of what falls due and which numbers moved, what-went-well section, and one link to the Life Challenges note, which holds the open decisions and next moves. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
 ---
 
 # Life Overview
@@ -48,8 +48,11 @@ Read, in order — memory is ground truth (rule 35):
   demand and only crowd the reading
 - the calendar, for the date of every event the note names (a date, a flight,
   a deadline):
-  `mamba run -n socrates python projects/applecalendar/src/applecalendar_api.py events --past 14 --days 56`
-  from the socrates root. It reads the macOS Calendar database read-only and
+  `mamba run -n socrates python projects/applecalendar/src/applecalendar_api.py events --past 14 --days 56 > calendar.txt`
+  from the socrates root, written to `calendar.txt` beside the draft and read
+  whole, as is the OmniFocus output below (`omnifocus.txt`): a `head` or
+  `tail` cut drops the weeks in the middle, and with them the next J Noble
+  date (2026-11-09 test run). It reads the macOS Calendar database read-only and
   returns one row per occurrence, so a recurring session already appears on
   each of its dates, and it drops the weather, birthday and suggestion
   calendars unless you pass `--all-calendars`. `--past 14` adds the fortnight
@@ -63,7 +66,7 @@ Read, in order — memory is ground truth (rule 35):
   two lines about different matters are never joined into a new fact, such as
   a helper, a cause or a payment.
 - OmniFocus, for every dated task Chaehan has taken on:
-  `mamba run -n socrates python projects/omnifocus/src/omnifocus_api.py due --days 56 --past 14`,
+  `mamba run -n socrates python projects/omnifocus/src/omnifocus_api.py due --days 56 --past 14 > omnifocus.txt`,
   the same command with `--overdue` for what is already late, and
   `... done --days 14` for what Chaehan finished. A task completed in that window
   is done even where a memory file still lists it open, and it never enters
@@ -108,29 +111,57 @@ the point of its sentence.
 
 Each overview claim carries its file and date before a draft is shown.
 
-## 2. Timeline graphic (required, top of the note)
+## 2. Chart (required, top of the note)
 
-1. Copy the spec shape from the previous run: `life/assets/<date>-life-overview-timeline.json`.
-2. Update the rows to the current chapter, for a phone screen, which is where
-   Chaehan reads the note. The chart starts at the earliest item of What went
-   well, so the past chapter shows: each achievement is a green done diamond
-   on its date with a short label ("DPS 1.01 m", "J Noble signed", "KUBS
-   course"), and a breakthrough is never left off. At most five lanes, in the
-   order of the note: partner search, health (the frozen sample first), work,
-   then logistics: where you are (the stay and travel blocks) and one "Dates"
-   lane for single dates such as a filing or a sale. Every label says what it is, with its length or what happened when the
-   record gives one ("Melbourne 79 nights", never "Melbourne" alone);
-   the title says in at most 40 characters what the chart shows; labels are at
-   most 22 characters, with no booking detail and no abbreviation ("7 nights",
-   never "7n"). Styles: solid = booked or fixed, open = conditional, diamond =
-   milestone (green done, hollow open), red diamond = decision. The renderer
-   picks the lane colours, shades neighbouring bars apart and places every
-   label, so `color`, `text_pos` and `offset` are ignored.
-3. Render:
-   `mamba run -n socrates python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/life_timeline.py <spec.json> life/assets/YYYY-MM-DD-life-overview-timeline.png`
-4. Inspect the PNG before embedding at phone width: read it at 390 px wide.
-   A label you cannot read, a collision, or a lane that adds nothing a reader
-   needs is cut from the spec, and the chart is rendered again.
+The chart is a grid of widgets, two per row, that shows what falls due soon
+and which of your numbers moved; you chose it on 2026-11-09 from three
+DeepSeek variants ("I prefer B but two widgets per row with the top widgets
+of A merged into it but more concisely"). It never repeats the sections: a
+widget holds a date or a number and never a sentence. Build it once the What
+went well blocks of section 3 exist, since its firsts come from them; the
+note still opens with it.
+
+1. Write the spec to `life/assets/YYYY-MM-DD-life-overview-chart.json`:
+   `title` (at most 40 characters, what the chart shows), `subtitle`, `today`
+   and `widgets`, one of three kinds:
+   - `due`: something dated ahead of today within 30 days, from a calendar
+     row, an OmniFocus task or a memory line that states its date: `label`
+     (at most 26 characters, what it is), `date`, and a `note` only when its
+     line gives one short fact ("450000 won a year"). Each goal gets exactly
+     one: the item with the nearest date in that goal, whatever its kind (a
+     date, a decision, a filing, a flight).
+   - `measure`: a number of yours that moved, with two dated values in the
+     record (the swim panels in
+     `~/Software/Prototypes/swim/data/dashboard_payload.json`, `memory/swim.md`,
+     `memory/health.md`): `label`, `value`, `unit`, `date`, `before`,
+     `before_date` when the record dates it, `better` ("higher" or "lower"),
+     and `series` (`[[date, value], ...]`) only when the record lists three or
+     more dated values. Distance per stroke always comes from the swim
+     panels, never from a memory line that rounds it: its series is
+     `python3 -c "import json;p=[p for p in json.load(open('$HOME/Software/Prototypes/swim/data/dashboard_payload.json'))['panels'] if p['panel_id']=='continuous_benchmark'][0];print([[q['date'],q['value']] for t in p['traces'] if t['name']=='DPS (m/stroke)' for q in t['points']])"`,
+     `before` is its first point, and when the best point is not the latest
+     the widget shows the best with its date and the label says so ("Best
+     distance per stroke"). A measure keeps its name in the label and in the
+     unit, never an abbreviation ("Perceived effort at the same 400 m", unit
+     "out of 10", never "PE"); hours, counts of sessions, students or dates
+     met are not measures and stay off.
+   - `first`: a step you named yourself, from a What went well block: `label`
+     and the `date` its line gives.
+   Every widget also has a `source`: the file and line, or the command and
+   its row, that states each of its values. A widget whose value has no line
+   stays off; the renderer computes the days left and the change in percent,
+   so neither is written into the spec. Widgets run in your priority order
+   (partner search, health with the frozen sample first, work, logistics),
+   and within a goal: due, then measures, then firsts. The chart holds eight
+   widgets: partner search two (its due and its first), health four (its due
+   and three measures), work one (its first, or its due when it has no
+   first), logistics one (its due). A goal with fewer leaves its places
+   empty; no other goal takes them.
+2. Render:
+   `mamba run -n socrates python ~/Software/Prototypes/agentkit/skills/life-overview/scripts/life_widgets.py life/assets/YYYY-MM-DD-life-overview-chart.json life/assets/YYYY-MM-DD-life-overview-chart.png`
+3. Look at the PNG as it shows 390 px wide. A label that wraps past two lines
+   is shortened; a widget that tells you nothing the note's first screen
+   needs is cut; then render again.
 
 ## 3. Write the snapshot: four moves, in this order
 
@@ -286,8 +317,8 @@ a span such as "over three months" is computed from the dates of the cause it
 names, or left out), 42 (bullets), 2
 and `scripts/wording_lint.py`; no thousand separators. The note is written to
 Chaehan as "you", which is necessary and not sufficient: the seat test in
-`AGENTS.md` core 1 is the check. The previous snapshot is a reference for the
-timeline spec only, never for voice, selection or section content: copying it
+`AGENTS.md` core 1 is the check. The previous snapshot is never a reference
+for voice, selection, section content or the chart: copying it
 reintroduces its defects (`memory/agentic_ai.md` failure 104). A rework of
 today's draft never reads the draft it replaces, because that draft holds the
 defects the rework is for: it writes every section again from the record.
@@ -382,7 +413,7 @@ used (the user's "never use the cli fallback", 2026-09-26).
    line, `tail -n +3` strips it:
    `create --markdown "YYYY-MM-DD Life Overview" "$(tail -n +3 life/YYYY-MM-DD-life-overview.md)" --notebook "Chaehan's Life"`
 2. Embed the graphic above the Takeaway:
-   `embed-image "YYYY-MM-DD Life Overview" life/assets/YYYY-MM-DD-life-overview-timeline.png --top`
+   `embed-image "YYYY-MM-DD Life Overview" life/assets/YYYY-MM-DD-life-overview-chart.png --top`
    Text updates orphan the attachment; re-running embed reuses it by hash
    (idempotent), so always re-embed after a text update.
 3. Verify: read the note back; `en-media` appears before the first heading; one
