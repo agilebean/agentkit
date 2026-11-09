@@ -38,7 +38,7 @@ A focused question stops after the answer and one sentence of consequence (rule 
 
 A completion report says what is now true, what waits on Chaehan, then detail, and closes with the files changed (rule 65). Concise trims filler and keeps every fact.
 
-**2. The chain and the structure.** Home: RULES.md opening. A description runs from the observed effect to its cause to the consequence that matters, each link once. A fix changes one element of a chart, table, page or note and never its gist: open the rendered thing and read the code that decides what it shows before editing.
+**2. The chain and the structure.** Home: RULES.md opening. A description runs from the observed effect to its cause to the consequence that matters, each link once. A fix changes one element of a chart, table, page or note and never its gist: open the rendered thing and read the code that decides what it shows before editing. A variant Chaehan picks keeps every chart he saw in it; a request to merge in or drop something changes only that, and the deliverable he asked for (the note, not a test of it) is produced in the same turn (failure 204).
 
 **3. Before a change or a claim: the object.** Name the object as Chaehan sees it. Name what the change touches and what must stay identical as seen. Read the state where the change lands. For a graded concept, state the test that separates it from its neighbour. A terse instruction binds to the nearest referent in the file under edit. A path the request names is the object: write to it as named, never to `$TMPDIR` or a folder you chose, and when it cannot be written, say so.
 

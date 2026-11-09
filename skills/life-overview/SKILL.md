@@ -1,6 +1,6 @@
 ---
 name: life-overview
-description: Create or refresh the user's dated Life Overview — whole-life status snapshot with a chart of the numbers that moved, what-went-well section, and one link to the Life Challenges note, which holds the open decisions and next moves. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
+description: Create or refresh the user's dated Life Overview — whole-life status snapshot with two curves (distance per stroke and LDL), what-went-well section, and one link to the Life Challenges note, which holds the open decisions and next moves. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
 ---
 
 # Life Overview
@@ -113,38 +113,34 @@ Each overview claim carries its file and date before a draft is shown.
 
 ## 2. Chart (required, top of the note)
 
-The chart shows which of your numbers moved, as the 2026-11-09 variant B drew
-them, two cards per row. You narrowed it on 2026-11-09: "only important or
-distinct changes like DPS and LDL with data vis. the rest is useless just take
-the top summaries not these stupid simple data points". So it holds measures
-only: never a date, a deadline, a calendar entry, a first, a count of
-sessions, students or dates met, or hours. Those belong to the note's text.
+The chart is one row of two curves and nothing above them: your distance per
+stroke and your LDL. You set it on 2026-11-09: "only important or distinct
+changes like DPS and LDL with data vis", "I told you only the first two ...
+make the vertically shortest chart possible", "show the curve for LDL not
+stupid bar charts ... you need 2-3 data points in the past to show the trend
+change", and "your point was increase so show the min on the left with
+number". The renderer shows each card's best reading in large type, the change
+from the worst reading as a pill, and the numbers of the worst and the best
+readings only; dates, deadlines, firsts, counts and hours never enter it.
 
-1. Write the spec to `life/assets/YYYY-MM-DD-life-overview-chart.json`:
-   `title` ("How far you have come"), `subtitle` ("Life Overview
-   YYYY-MM-DD · your numbers that moved") and `widgets`, one card per number
-   of yours that moved, each with `goal`, `label`, `value`, `unit`, `before`,
-   `before_date` when the record dates it, `better` ("higher" or "lower"),
-   `source` (the file and line, or the command, that states each value) and:
-   - `"vis": "line"` with `series` (`[[date, value], ...]`) for an important
-     change the record holds as three or more dated readings. Distance per
-     stroke is one, always from the swim panels and never from a memory line
-     that rounds it:
-     `python3 -c "import json;p=[p for p in json.load(open('$HOME/Software/Prototypes/swim/data/dashboard_payload.json'))['panels'] if p['panel_id']=='continuous_benchmark'][0];print([[q['date'],q['value']] for t in p['traces'] if t['name']=='DPS (m/stroke)' for q in t['points']])"`;
-     `before` is its first reading, `value` the best, and `note` says so
-     ("best Oct 20") when the best is not the latest.
-   - `"vis": "bars"` for an important change the record holds as two dated
-     values, such as LDL before and after the Atobamib tablet, with `date`.
-   - no `vis` for any other number that moved: the card shows its summary
-     alone (perceived effort at the same 400 m, "out of 10").
-   A label keeps the measure's name, never an abbreviation ("PE"). A number
-   whose value has no record line stays off; the renderer computes the change
-   in percent, so it is never written into the spec. Cards run in your
-   priority order; six at most.
+1. Write the spec to `life/assets/YYYY-MM-DD-life-overview-chart.json`: one
+   key, `widgets`, holding these two cards in this order, each with `goal`
+   ("Health"), `label`, `unit`, `better`, `series` (`[[date, value], ...]`,
+   oldest first) and `source` (where each reading comes from):
+   - "Distance per stroke", "m per stroke", "higher": every reading of the swim
+     panels, never a memory line that rounds it:
+     `python3 -c "import json;p=[p for p in json.load(open('$HOME/Software/Prototypes/swim/data/dashboard_payload.json'))['panels'] if p['panel_id']=='continuous_benchmark'][0];print([[q['date'],q['value']] for t in p['traces'] if t['name']=='DPS (m/stroke)' for q in t['points']])"`
+   - "LDL cholesterol", "mg/dL", "lower": the latest LDL reading and the three
+     before it, from the LDL column of the Evernote note "Cholesterol Blood
+     Test Summary". When the record has a newer reading than the note's last
+     filled cell (`memory/health.md`), that reading is the latest and its line
+     is cited; the blank cell is named in the report to Chaehan, never filled.
+   The renderer computes the best, the worst and the change, so none of them
+   is written into the spec.
 2. Render:
    `python3 ~/Software/Prototypes/agentkit/skills/life-overview/scripts/life_widgets.py life/assets/YYYY-MM-DD-life-overview-chart.json life/assets/YYYY-MM-DD-life-overview-chart.png`
-3. Look at the PNG as it shows 390 px wide: a label that runs past its card is
-   shortened, and the chart is rendered again.
+3. Look at the PNG as it shows 390 px wide; a number that touches a line or a
+   date is a renderer defect to report, not a reason to change the spec.
 
 ## 3. Write the snapshot: four moves, in this order
 
