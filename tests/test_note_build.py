@@ -37,8 +37,13 @@ def test_items_keep_links_whole_and_a_table_is_one_item() -> None:
 def _no_overlaps(d) -> None:
     """For a test about something else: judge every listed overlap different."""
     items = json.loads((d / "items.json").read_text())["items"]
-    pairs = nb.overlap_pairs(d, items)
-    (d / "overlaps.tsv").write_text("".join(f"{a}\t{b}\tdifferent\n" for a, b, _, _ in pairs))
+    lines = []
+    for a, b, ta, tb in nb.overlap_pairs(d, items):
+        x, y = sorted((a, b))
+        tx, ty = (ta, tb) if x == a else (tb, ta)
+        own = [w for w in sorted(nb.content_words(ty) - nb.content_words(tx)) if w in ty.lower() and w not in tx.lower()]
+        lines.append(f"{x}\t{y}\tdifferent\t{own[0]}\n")
+    (d / "overlaps.tsv").write_text("".join(lines))
 
 
 def _run(tmp_path, monkeypatch, capsys):
@@ -462,14 +467,38 @@ def test_overlaps_are_listed_judged_and_cut_never_reworded(tmp_path, monkeypatch
     assert "Step 4 of 4: overlaps" in out and "D1  You land at 14:00" in out and "3  The Port Liner takes 18 minutes" in out
     (d / "overlaps.tsv").write_text("D1\t3\tsame\t3\nD1\t2\tdifferent\n")
     assert nb.main(["next", str(d)]) == 2
-    assert "item 3 is still kept" in capsys.readouterr().out
+    out = capsys.readouterr().out
+    assert "item 3 is still kept" in out and "name the words one line says" in out
     (d / "overlaps.tsv").write_text("D1\t3\tsame\tD1\n")
     assert nb.main(["next", str(d)]) == 2
     assert "cut the item" in capsys.readouterr().out
-    (d / "overlaps.tsv").write_text("D1\t3\tsame\t3\nD1\t2\tdifferent\n")
+    (d / "overlaps.tsv").write_text("2\tD1\tdifferent\tsannomiya in 18 minutes\nD1\t3\tsame\t3\n")
     with open(d / "labels.tsv", "a") as f:
         f.write("3\tK\t\n")
     rc = nb.main(["next", str(d)])
     out = capsys.readouterr().out
     assert rc == 0, out
     assert "Port Liner takes 18 minutes" not in (d / "draft.md").read_text()
+
+
+def test_a_different_verdict_quotes_what_one_line_adds_and_a_partial_one_is_measured_again(tmp_path, monkeypatch, capsys) -> None:
+    # 2026-11-09: DeepSeek judged all 14 listed pairs "different" in two runs; the first line and an item of the
+    # celecoxib section both repeated the 400 mg days while each added a fact of its own.
+    d = _run(tmp_path, monkeypatch, capsys)
+    (d / "decisions.md").write_text("D1: How do you get from Kobe Airport to Sannomiya?\nGetting there -> D1\nMarket -> drop (Chaehan, 2026-11-06)\n")
+    (d / "labels.tsv").write_text("1\tK\t\n2\tD\tD1\n3\tS\t2\n4\tW\t\n5\tW\t\n")
+    (d / "new.tsv").write_text("D1\tKobe Airport to Sannomiya\tTake the Port Liner from Kobe Airport, 18 minutes for ¥340.\t"
+                               "You land at 14:00 and reach Sannomiya in 18 minutes.\n")
+    (d / "overlaps.tsv").write_text("2\tD1\tdifferent\tyou land\n3\tD1\tdifferent\tthe moon\n")
+    assert nb.main(["next", str(d)]) == 2
+    out = capsys.readouterr().out
+    assert "2 and D1: 'you land' adds nothing the other line lacks" in out
+    assert "3 and D1: name the words one line says" in out
+    (d / "overlaps.tsv").write_text("2\tD1\tdifferent\tkobe airport\n3\tD1\tpartial\t3\n")
+    assert nb.main(["next", str(d)]) == 2
+    assert "3 and D1 still share" in capsys.readouterr().out
+    (d / "edits.tsv").write_text("3\tThe Port Liner costs ¥340.\n")
+    rc = nb.main(["next", str(d)])
+    out = capsys.readouterr().out
+    assert rc == 0, out
+    assert "The Port Liner costs ¥340." in (d / "draft.md").read_text()
