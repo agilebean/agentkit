@@ -2,6 +2,12 @@
 """Test a note build by deepseek in opencode, reproducibly, and report which provider and model did the work.
 
     python3 note_test.py --brief brief.md --out <folder> [--session ses_...] [--cwd ~/Software/Prototypes/socrates]
+    python3 note_test.py --write <build folder> --out <folder>
+
+`--write` is the path Claude Code takes to Evernote: it cannot call the Evernote MCP itself, so after
+`note_build.py init --as-is` (or a build) printed PASS, this one command has the agent in opencode run the
+folder's `write` and its execute call, and the outcome comes from the folder's own read-back and verify.
+`--expect <file> ...` judges a run that writes no note (a read, an export) by the files it must leave.
 
 The run is the installed path: `opencode run --standalone --agent socrates` with the brief as the message, so
 the agent reads the evernote skill and drives note_build.py itself. Providers, in order: the OpenCode Go API
@@ -34,6 +40,11 @@ PROVIDER_ERROR = re.compile(r"quota|usage limit|unavailable|rate.?limit|\b429\b|
                             r"overloaded|provider\.", re.I)
 SOCRATES = Path.home() / "Software" / "Prototypes" / "socrates"
 SUBS = ("init", "next", "write", "verify", "link", "extract")
+# The folder travels in $NOTE_BUILD_WRITE: on 2026-11-10 DeepSeek retyped a 150-character scratch path with two
+# letters doubled, and its first write failed on a folder that did not exist.
+WRITE_BRIEF = ("Evernote write. Run `python3 {nb} write \"$NOTE_BUILD_WRITE\"` and run the code it prints in ONE "
+               "execute call, exactly as printed. The printed code is complete: do not read the script. Change "
+               "nothing else, ask nothing, and end with the lines the call returned.")
 
 
 def classify_next(out: str) -> tuple[str, list[str]]:
@@ -139,6 +150,8 @@ class Run:
         # its working directory: launched from agentkit, it looked for the agent there and answered
         # 'Agent not found: "socrates"' (2026-11-07, hanji_test.py).
         env = dict(os.environ, NOTE_BUILD_SOCRATES=str(self.a.cwd), PWD=str(self.a.cwd))
+        if getattr(self.a, "write", None):
+            env["NOTE_BUILD_WRITE"] = str(Path(self.a.write).resolve())
         err = (self.out / "opencode.stderr").open("a")
         # stdin closed: opencode reads a piped stdin as message text and waits on it, silent (2026-11-07)
         return subprocess.Popen(cmd + [message], cwd=self.a.cwd, env=env, stdin=subprocess.DEVNULL,
@@ -254,7 +267,10 @@ class Run:
         return ok
 
     def go(self) -> int:
-        message = Path(self.a.brief).read_text(encoding="utf-8").strip()
+        if self.a.write:
+            message = WRITE_BRIEF.format(nb=Path(__file__).with_name("note_build.py"), d=Path(self.a.write).resolve())
+        else:
+            message = Path(self.a.brief).read_text(encoding="utf-8").strip()
         providers = PROVIDERS[PROVIDERS.index(self.a.start):] if self.a.start in PROVIDERS else PROVIDERS
         code, why = 6, ""
         for i, model in enumerate(providers):
@@ -293,9 +309,26 @@ class Run:
         self.say(f"DONE exit {code} ({why}); report {self.out / 'report.md'}")
         return code
 
+    def expected(self) -> bool:
+        """Every file --expect names exists, is not empty and was written during this run."""
+        return all(p.is_file() and p.stat().st_size and p.stat().st_mtime > self.t0
+                   for p in map(Path, self.a.expect or []))
+
     def check_build(self) -> None:
         """Read the outcome from the build folder: opencode can move a slow write out of the event stream."""
+        if self.a.expect:
+            self.written = self.verified = self.expected()
+            self.say(f"expected files: {'all written' if self.verified else 'missing'}")
+            return
         if not self.a.build:
+            return
+        res = Path(self.a.build) / "write_result.txt"
+        if res.exists() and res.stat().st_mtime > self.t0:
+            # The bridge's own verdict: the text verify and the photo checks of this write.
+            out = res.read_text(encoding="utf-8")
+            self.written = '"written": true' in out
+            self.verified = self.written and "PASS" in out and "VERIFY FAILED" not in out
+            self.say(f"build folder: written, {out.strip().splitlines()[-1][:160]}")
             return
         back = Path(self.a.build) / "readback.md"
         if back.exists() and back.stat().st_mtime > self.t0:
@@ -311,7 +344,8 @@ class Run:
         lines = [f"# Note build test, {time.strftime('%Y-%m-%d %H:%M')}", "",
                  f"Outcome: exit {code}, {why}; written {self.written}, verified {self.verified}; "
                  f"{time.time() - self.t0:.0f} s wall; session {self.session}.", "",
-                 f"Brief: {Path(self.a.brief).resolve()}; project folder {self.a.cwd}; agent {self.a.agent}.", "",
+                 f"Brief: {Path(self.a.brief).resolve() if self.a.brief else 'write ' + str(self.a.write)}; "
+                 f"project folder {self.a.cwd}; agent {self.a.agent}.", "",
                  "## Providers used", "", "| Model | Start | End | Steps | Tokens | Cost USD | Ended because |",
                  "| --- | --- | --- | --- | --- | --- | --- |"]
         lines += [f"| {s['model']} | {hm(s['start'])} | {hm(s['end'] or time.time())} | {s['steps']} | {s['tokens']} | "
@@ -346,7 +380,9 @@ class Run:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--brief", required=True, help="the message the agent gets, as a file")
+    ap.add_argument("--brief", help="the message the agent gets, as a file")
+    ap.add_argument("--write", help="a build folder whose draft passed the gate: the agent writes it, nothing else")
+    ap.add_argument("--expect", nargs="+", help="files the run must leave; they decide the outcome of a run without a note write")
     ap.add_argument("--out", required=True, help="folder for report.md and events.jsonl")
     ap.add_argument("--session", help="continue this opencode session, e.g. with Chaehan's answers as the brief")
     ap.add_argument("--cwd", default=str(SOCRATES), help="the project folder the agent runs in")
@@ -359,7 +395,12 @@ def main(argv: list[str] | None = None) -> int:
                     help="seconds the availability probe may take; a one-word answer costs 2-4 s, so 8 s is a ping "
                          "and a provider that misses it is down. 0 skips the probe")
     ap.add_argument("--budget", type=int, default=1500, help="seconds the whole run may take")
-    return Run(ap.parse_args(argv)).go()
+    a = ap.parse_args(argv)
+    if not (a.brief or a.write):
+        ap.error("give --brief, or --write with a build folder")
+    if a.write and not a.build:
+        a.build = a.write  # the folder's write_result.txt decides the outcome
+    return Run(a).go()
 
 
 if __name__ == "__main__":

@@ -80,3 +80,21 @@ test("the shell tool is not this plugin's", async () => {
   await (plugin as any).setup({ tool: { hook: async (_n: string, f: any) => { fn = f } } })
   expect(() => fn({ tool: "shell", input: { command: CREATE } })).not.toThrow()
 })
+
+test("a stamp in the fallback folder a sandboxed gate writes is read", async () => {
+  const home = mkdtempSync(join(tmpdir(), "note-gate-home-"))
+  const dir = join(home, ".cache/agentkit/note-gate")
+  require("node:fs").mkdirSync(dir, { recursive: true })
+  writeFileSync(join(dir, SHA), "")
+  const old = { home: process.env.HOME, stamps: process.env.NOTE_GATE_STAMPS }
+  process.env.HOME = home
+  delete process.env.NOTE_GATE_STAMPS
+  try {
+    const call = await hook()
+    expect(() => call(`// note-gate:${SHA}\n` + CREATE)).not.toThrow()
+    expect(() => call(`// note-gate:${"0".repeat(64)}\n` + CREATE)).toThrow(MESSAGE)
+  } finally {
+    process.env.HOME = old.home
+    if (old.stamps) process.env.NOTE_GATE_STAMPS = old.stamps
+  }
+})

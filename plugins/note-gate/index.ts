@@ -23,8 +23,18 @@ import { join } from "node:path"
 
 const MAX_AGE_MS = 3 * 60 * 60 * 1000
 
+// $HOME first: the runtime caches homedir(), and the gate (Python) reads $HOME too.
+const home = () => process.env.HOME || homedir()
+
 export function stampDir(): string {
-  return process.env.NOTE_GATE_STAMPS || join(homedir(), ".local/state/agentkit/note-gate")
+  return process.env.NOTE_GATE_STAMPS || join(home(), ".local/state/agentkit/note-gate")
+}
+
+// The gate stamps into ~/.cache/agentkit/note-gate when the main folder cannot be written (Claude Code's
+// sandbox allows ~/.cache, not ~/.local/state), so both are read. $NOTE_GATE_STAMPS names the one folder.
+export function stampDirs(): string[] {
+  if (process.env.NOTE_GATE_STAMPS) return [process.env.NOTE_GATE_STAMPS]
+  return [stampDir(), join(home(), ".cache/agentkit/note-gate")]
 }
 
 export const PROSE_MAX = 200
@@ -52,8 +62,10 @@ export function isBodyWrite(code: string): boolean {
 
 export function hasLiveStamp(code: string, now: number = Date.now()): boolean {
   for (const m of code.matchAll(/note-gate:([0-9a-f]{64})/g)) {
-    const f = join(stampDir(), m[1])
-    if (existsSync(f) && now - statSync(f).mtimeMs < MAX_AGE_MS) return true
+    for (const dir of stampDirs()) {
+      const f = join(dir, m[1])
+      if (existsSync(f) && now - statSync(f).mtimeMs < MAX_AGE_MS) return true
+    }
   }
   return false
 }

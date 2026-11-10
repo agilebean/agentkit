@@ -42,7 +42,9 @@ and --cuts: a rewrite is a selection, and a brief cannot switch that off.
 A PASS writes a stamp: an empty file named by the SHA-256 of the draft's text
 with its image lines dropped and its ends stripped (stamp_key), in
 $NOTE_GATE_STAMPS or ~/.local/state/agentkit/note-gate, and prints the marker
-"note-gate:<sha>". The socrates Evernote CLI computes the same key and refuses a
+"note-gate:<sha>". Where that folder cannot be written (Claude Code's sandbox
+allows ~/.cache but not ~/.local/state), the stamp goes to
+~/.cache/agentkit/note-gate instead, and every reader checks both folders. The socrates Evernote CLI computes the same key and refuses a
 markdown or clean body write without a stamp; the note-gate plugin refuses an
 MCP whole-body write whose code does not carry a marker of a stamp under 3 hours
 old. The key drops image lines because a body write never carries its images:
@@ -534,6 +536,22 @@ def stamp_dir() -> Path:
     return Path(os.environ.get("NOTE_GATE_STAMPS") or Path.home() / ".local/state/agentkit/note-gate")
 
 
+def stamp_dirs() -> list[Path]:
+    """Every folder a stamp may sit in: the main one, then the fallback a sandboxed agent can write.
+
+    Claude Code's sandbox refuses writes to ~/.local/state and allows ~/.cache, so a gate run there stamped
+    nothing and needed the sandbox lifted (2026-11-10). $NOTE_GATE_STAMPS (tests) names the one folder."""
+    if os.environ.get("NOTE_GATE_STAMPS"):
+        return [stamp_dir()]
+    return [stamp_dir(), Path.home() / ".cache/agentkit/note-gate"]
+
+
+def stamped(text: str) -> bool:
+    """Whether this text passed the gate: its stamp exists in any stamp folder."""
+    key = stamp_key(text)
+    return any((d / key).exists() for d in stamp_dirs())
+
+
 def stamp_key(text: str) -> str:
     """The contract with the Evernote CLI: SHA-256 of the text without image lines, ends stripped."""
     body = "\n".join(l for l in text.splitlines() if not re.fullmatch(r"\s*!\[[^\]]*\]\([^)]*\)\s*", l))
@@ -542,11 +560,17 @@ def stamp_key(text: str) -> str:
 
 def stamp(text: str) -> Path:
     """Record that this text passed the gate (the Evernote CLI and the note-gate plugin read it)."""
-    d = stamp_dir()
-    d.mkdir(parents=True, exist_ok=True)
-    f = d / stamp_key(text)
-    f.touch()
-    return f
+    err = None
+    for d in stamp_dirs():
+        try:
+            d.mkdir(parents=True, exist_ok=True)
+            f = d / stamp_key(text)
+            f.touch()
+            return f
+        except OSError as e:  # a folder the sandbox refuses: try the next one
+            err = e
+    raise SystemExit(f"The gate passed, but no stamp folder can be written ({err}). Run the same command "
+                     f"outside the sandbox.")
 
 
 def _facts(draft: str, original: str, linked: list[str] | None) -> list[str]:
