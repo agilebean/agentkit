@@ -92,6 +92,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--start", default=note_test.PROVIDERS[0])
     ap.add_argument("--idle", type=int, default=300)
     ap.add_argument("--budget", type=int, default=1200)
+    # note_test.Run reads every option of note_test's own parser; one missing here crashes the run before launch
+    # (2026-11-10, --probe: AttributeError at the first provider).
+    ap.add_argument("--probe", type=int, default=60, help="seconds the availability probe may take; 0 skips it")
     a = ap.parse_args(argv)
     a.build = None
     return HanjiRun(a).go()

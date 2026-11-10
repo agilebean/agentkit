@@ -60,3 +60,14 @@ def test_an_evernote_copy_report_counts_as_verified_writes(tmp_path) -> None:
                  tool_name="execute"), seg)
     r.check_build()
     assert r.verified is False
+
+
+def test_the_runner_accepts_every_option_note_test_reads(monkeypatch, tmp_path) -> None:
+    """note_test.Run reads its options from self.a; an option missing from hanji_test's parser crashed the
+    2026-11-10 run before launch (AttributeError on probe)."""
+    import re
+    seen = {}
+    monkeypatch.setattr(ht.HanjiRun, "go", lambda self: seen.update(a=self.a) or 0)
+    assert ht.main(["--brief", "b.md", "--out", str(tmp_path)]) == 0
+    names = set(re.findall(r"self\.a\.([a-z_]+)", Path(ht.note_test.__file__).read_text(encoding="utf-8")))
+    assert names and not [n for n in sorted(names) if not hasattr(seen["a"], n)]
