@@ -1,6 +1,6 @@
 ---
 name: life-overview
-description: Create or refresh the user's dated Life Overview — whole-life status snapshot with two curves (distance per stroke and LDL), what-went-well section, and one link to the Life Challenges note, which holds the open decisions and next moves. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
+description: Create or refresh the user's dated Life Overview — whole-life status snapshot with 2, 4 or 6 curves of the most important changes over the last 6 to 12 months, what-went-well section, and one link to the Life Challenges note, which holds the open decisions and next moves. Use when the user says "create a life overview", "life overview", "refresh the life overview", or asks for a full status across life domains.
 ---
 
 # Life Overview
@@ -114,38 +114,58 @@ Each overview claim carries its file and date before a draft is shown.
 
 ## 2. Chart (required, top of the note)
 
-The chart is one row of two curves and nothing above them: your distance per
-stroke and your LDL. You set it on 2026-11-09: "only important or distinct
-changes like DPS and LDL with data vis", "I told you only the first two ...
-make the vertically shortest chart possible", "show the curve for LDL not
-stupid bar charts ... you need 2-3 data points in the past to show the trend
-change", "your point was increase so show the min on the left with number",
-and "it should make a baseline from 3 data points so it is not a random pick.
-both for dps and ldl". The renderer shows each card's best reading in large
+The chart holds 2, 4 or 6 cards and nothing above them, each card one of the
+most important changes in your life, compared over a 6 to 12 month window —
+the measures are chosen from the record on the day, never fixed in advance
+(Chaehan, 2026-11-10: "the skill should not have hardcoded the content of what
+is shown! change that! it shows 2,4 or 6 of the most important life changes,
+and compares them over a longer period of 6-12 monts as the dps and ldl did").
+Distance per stroke and LDL were the first two it showed, on 2026-11-09, and
+they stay in only while they qualify like any other measure: "only important
+or distinct changes like DPS and LDL with data vis", "you need 2-3 data points
+in the past to show the trend change", "your point was increase so show the min
+on the left with number", "it should make a baseline from 3 data points so it
+is not a random pick". The renderer shows each card's best reading in large
 type, a baseline (the mean of the three oldest readings in the series) as a
 dashed line numbered at the left, and the change from the baseline to the best
 as a pill; only the baseline and the best carry numbers, and dates, deadlines,
 firsts, counts and hours never enter it.
 
+Which cards:
+
+- A measure qualifies when it bears on a live goal (health, work, money, the
+  partner search, swimming) and moved distinctly inside the window. One that
+  held flat, or that no live goal turns on, is not in the chart.
+- Its readings are dated and come from a record that holds them, cited in the
+  card's `source`: two in use are the swim dashboard payload
+  (`~/Software/Prototypes/swim/data/dashboard_payload.json`, panel
+  `continuous_benchmark`, trace `DPS (m/stroke)`, every reading) and the LDL
+  column of the Evernote note "Cholesterol Blood Test Summary" (the latest
+  reading and the three before it; when `memory/health.md` holds a newer one,
+  that one is the latest and its line is cited, and the blank cell is named in
+  the report to Chaehan, never filled). Another measure takes the record that
+  holds it, and a measure the record gives no dated readings for is not in the
+  chart.
+- The series is the record's own readings inside the 6 to 12 month window,
+  oldest first, at least three of them, and never a memory line that rounds a
+  reading.
+- The count is 2, 4 or 6: as many as qualify, up to six, and with three or
+  five qualifying the weakest is dropped rather than a fourth or sixth made up.
+  Cards run in Chaehan's priority order (partner search, health, work,
+  logistics) and the renderer lays them in rows of two.
+
 1. Write the spec to `life/assets/YYYY-MM-DD-life-overview-chart.json`: one
-   key, `widgets`, holding these two cards in this order, each with `goal`
-   ("Health"), `label`, `unit`, `better`, `series` (`[[date, value], ...]`,
-   oldest first) and `source` (where each reading comes from):
-   - "Distance per stroke", "m per stroke", "higher": every reading of the swim
-     panels, never a memory line that rounds it:
-     `python3 -c "import json;p=[p for p in json.load(open('$HOME/Software/Prototypes/swim/data/dashboard_payload.json'))['panels'] if p['panel_id']=='continuous_benchmark'][0];print([[q['date'],q['value']] for t in p['traces'] if t['name']=='DPS (m/stroke)' for q in t['points']])"`
-   - "LDL cholesterol", "mg/dL", "lower": the latest LDL reading and the three
-     before it, from the LDL column of the Evernote note "Cholesterol Blood
-     Test Summary". When the record has a newer reading than the note's last
-     filled cell (`memory/health.md`), that reading is the latest and its line
-     is cited; the blank cell is named in the report to Chaehan, never filled.
-   The renderer computes the baseline, the best and the change, so none of
-   them is written into the spec, and the series sets the baseline: its three
-   oldest readings come first.
+   key, `widgets`, holding each card in that order with `goal` (the life
+   domain, such as "Health"), `label`, `unit`, `better` ("higher" or "lower"),
+   `series` (`[[date, value], ...]`, oldest first) and `source`. The renderer
+   computes the baseline, the best and the change, so none of them is written
+   into the spec.
 2. Render:
    `python3 ~/Software/Prototypes/agentkit/skills/life-overview/scripts/life_widgets.py life/assets/YYYY-MM-DD-life-overview-chart.json life/assets/YYYY-MM-DD-life-overview-chart.png`
-3. Look at the PNG as it shows 390 px wide; a number that touches a line or a
-   date is a renderer defect to report, not a reason to change the spec.
+3. Look at the PNG at the note's width; a number that touches a line, a date or
+   a neighbouring card is a renderer defect to report, not a reason to change
+   the spec. A card is 186 px tall and two fit a row of 1200 px, so two cards
+   make 210 px, four make 416 px and six make 622 px.
 
 ## 3. Write the snapshot: four moves, in this order
 
