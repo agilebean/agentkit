@@ -28,6 +28,11 @@ local bridge hands that call its data and checks what comes back.
 
 `next` always prints the one step that is due, or what to fix in it.
 
+`init --as-is <file>` takes a text written elsewhere (by Claude in Claude Code, or by Chaehan) as the note:
+no selection steps, only the gate. `next` reruns the gate after an edit of draft.md, and `write` writes it.
+Image lines at the top of a draft that point at files on this Mac (`![name](</path/with spaces.jpg>)`) are
+uploaded by `write` through the MCP and put above the text, in the same execute call.
+
 `init --dest hanji` builds a new note for Hanji: `write` then creates it with the
 hanji skill's hanji_note.py, reads it back and verifies it, with no execute
 call. The default destination is Evernote.
@@ -848,6 +853,48 @@ def kids(items: list[dict], labels: dict, parent: dict) -> list[dict]:
     return [it for it in items if labels.get(it["id"]) == ("S", parent["id"])]
 
 
+# A photo for the top of the note: an image line of its own above the first text, pointing at a file on this
+# Mac. The angle-bracket form carries a path with spaces.
+LOCAL_IMAGE = re.compile(r"^\s*!\[([^\]]*)\]\((?:<([^>]+)>|((?:/|~/)[^)\s]*))\)\s*$")
+MIME = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".gif": "image/gif",
+        ".heic": "image/heic", ".webp": "image/webp", ".pdf": "application/pdf"}
+
+
+def image_info(path: Path) -> dict:
+    """What the MCP upload needs about one file: MD5, size, type, name, and the pixel size when readable."""
+    import hashlib
+    data = path.read_bytes()
+    info = {"path": str(path), "name": path.name, "hash": hashlib.md5(data).hexdigest(), "size": len(data),
+            "mime": MIME.get(path.suffix.lower(), "application/octet-stream")}
+    try:
+        from PIL import Image
+        with Image.open(path) as im:
+            info["width"], info["height"] = im.size
+    except Exception:
+        pass
+    return info
+
+
+def local_images(draft: str) -> tuple[list[dict], str, list[str]]:
+    """The photos at the top of the draft, the draft without their lines, and what is wrong with any of them."""
+    imgs, keep, errs, top = [], [], [], True
+    for line in draft.split("\n"):
+        m = LOCAL_IMAGE.match(line)
+        if m:
+            path = Path(os.path.expanduser(m.group(2) or m.group(3)))
+            if not top:
+                errs.append(f"the image {path.name} stands below the text: write puts new images above it only")
+            elif not path.is_file():
+                errs.append(f"no file {path}")
+            else:
+                imgs.append(image_info(path))
+            continue
+        if line.strip():
+            top = False
+        keep.append(line)
+    return imgs, "\n".join(keep).lstrip("\n"), errs
+
+
 def write_command(d: Path) -> str:
     meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
     base = f"cd {SOCRATES} && mamba run -n socrates python -m projects.evernote.src.evernote_api"
@@ -861,6 +908,8 @@ def write_command(d: Path) -> str:
 def cmd_init(a) -> int:
     d = Path(a.dir).resolve()
     d.mkdir(parents=True, exist_ok=True)
+    if a.as_is:
+        return init_as_is(d, a)
     if a.dest == "hanji" and (a.guid or not a.old):
         print("init --dest hanji builds a new note from a file: pass the file, --title and --notebook "
               "(an existing Hanji note is edited with the hanji skill)", file=sys.stderr)
@@ -880,6 +929,42 @@ def cmd_init(a) -> int:
         old = ""
     return finish_init(d, old, {k: getattr(a, k) for k in ("guid", "title", "notebook", "decisions", "record",
                                                             "chaehan", "section", "dest", "new")})
+
+
+def init_as_is(d: Path, a) -> int:
+    """A text written elsewhere becomes the note as it stands; only the gate checks it (Chaehan, 2026-11-10:
+    "fix the evernote skill so it can be used by you as well")."""
+    if not a.guid and not (a.title and a.notebook):
+        print("init --as-is needs --guid for an existing note, or --title and --notebook for a new one",
+              file=sys.stderr)
+        return 1
+    text = Path(a.as_is).read_text(encoding="utf-8")
+    for name, body in (("draft.md", text), ("original.md", text), ("cuts.md", ""), ("labels_merged.tsv", "")):
+        (d / name).write_text(body, encoding="utf-8")
+    (d / "meta.json").write_text(json.dumps({"guid": a.guid, "title": a.title, "notebook": a.notebook,
+                                             "dest": a.dest, "new": False, "as_is": True,
+                                             "record": [str(Path(r).resolve()) for r in a.record or []]}),
+                                 encoding="utf-8")
+    return check_as_is(d)
+
+
+def check_as_is(d: Path) -> int:
+    """Run the gate on draft.md as it stands; on PASS stamp it and print the write command."""
+    g = gate()
+    draft = (d / "draft.md").read_text(encoding="utf-8")
+    _imgs, text, errs = local_images(draft)
+    # The read-back is checked against this text; photo lines leave it, since their paths are no facts.
+    (d / "original.md").write_text(text, encoding="utf-8")
+    fails = errs + g.check(text, None, note=True, table_titles=True)
+    if fails:
+        print(f"The gate fails the text. Edit {d / 'draft.md'}, then run next again:")
+        for f in fails:
+            print(f"- {f}")
+        return 1
+    print(f"note-gate:{g.stamp(draft).name}")
+    print(f"\nPASS. The note text is stamped. Write it to Evernote, read it back and verify it with:\n"
+          f"python3 {HERE} write {d}")
+    return 0
 
 
 def finish_init(d: Path, old: str, a: dict) -> int:
@@ -914,6 +999,8 @@ def finish_init(d: Path, old: str, a: dict) -> int:
 
 def cmd_next(a) -> int:
     d = Path(a.dir).resolve()
+    if json.loads((d / "meta.json").read_text(encoding="utf-8")).get("as_is"):
+        return check_as_is(d)
     data = json.loads((d / "items.json").read_text(encoding="utf-8"))
     items, headings = data["items"], data["headings"]
     g = gate()
@@ -1066,6 +1153,10 @@ if (!id) {
     if (!hit) return "REFUSED: no notebook named " + job.notebook;
     opts.notebookId = hit.notebookId;
   }
+  // A second note with the same title is a duplicate (RULES.md 31): update that note instead.
+  const same = await tools.evernote.search_notes({ query: 'intitle:"' + job.title + '"', maxResults: 10 });
+  const dup = (same.hits || []).find(h => h.title === job.title);
+  if (dup) return "REFUSED: a note titled " + job.title + " exists already (" + dup.noteId + "): update it with init --guid, or choose another title.";
   const made = await tools.evernote.create_note(opts);
   id = JSON.stringify(made).match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/)[0];
   await fetch(B + "/created", { method: "POST", body: id });
@@ -1073,8 +1164,26 @@ if (!id) {
 } else {
   await tools.evernote.edit_note({ noteId: id, mode: "replace", find: plan.find, content: plan.content });
 }
+// Photos for the top: the bytes go up through the bridge, the tags go in before finalize binds them.
+const up = {};
+for (const im of plan.images) {
+  const s = await tools.evernote.start_attachment_upload({ noteId: id, hash: im.hash, sizeBytes: im.size });
+  up[im.hash] = s.alreadyUploaded ? "already uploaded" :
+    await (await fetch(B + "/upload", { method: "POST", body: JSON.stringify({ hash: im.hash, url: s.uploadUrl }) })).text();
+}
+if (plan.images.length) {
+  await tools.evernote.edit_note({ noteId: id, mode: "prepend",
+    content: plan.images.map(im => '<div><en-media hash="' + im.hash + '" type="' + im.mime + '"/></div>').join("") });
+  for (const im of plan.images) {
+    const f = { noteId: id, hash: im.hash, sizeBytes: im.size, mimeType: im.mime, filename: im.name };
+    if (im.width) { f.width = im.width; f.height = im.height; }
+    await tools.evernote.finalize_attachment(f);
+  }
+}
 const after = await tools.evernote.get_note({ noteId: id });
-return await (await fetch(B + "/done", { method: "POST", body: JSON.stringify({ id, after }) })).text();"""
+const got = {};
+for (const im of plan.images) got[im.hash] = await tools.evernote.get_attachment({ noteId: id, hash: im.hash });
+return await (await fetch(B + "/done", { method: "POST", body: JSON.stringify({ id, after, up, got }) })).text();"""
 
 
 def enml_module():
@@ -1135,7 +1244,9 @@ def inner(enml: str) -> str:
     return m.group(1) if m else ""
 
 
-LEADING_MEDIA = re.compile(r"^(?:\s*<en-media\b[^>]*/>\s*)+")
+# Images at the top of a note, bare or each in its own <div>, the form write's prepend gives them (2026-11-10: a
+# second write of a note with two such photos was refused as "an image inside its text").
+LEADING_MEDIA = re.compile(r"^(?:\s*(?:<div>\s*)?<en-media\b[^>]*/>\s*(?:</div>\s*)?)+")
 # Images at the foot of a note, where Chaehan put a picture, with the empty lines Evernote keeps after them.
 TRAILING_MEDIA = re.compile(r"(?:\s*<en-media\b[^>]*/>\s*(?:<div>\s*<br\s*/>\s*</div>\s*)*)+$")
 
@@ -1151,14 +1262,16 @@ def plan_write(d: Path, linked: dict, before) -> dict:
     """What the write replaces, or why it is refused: the stamp, every link's title, images that would be lost."""
     g = gate()
     draft = (d / "draft.md").read_text(encoding="utf-8")
-    if not (g.stamp_dir() / g.stamp_key(draft)).exists():
+    if not g.stamped(draft):
         return {"error": "the draft changed after its PASS: run next again"}
+    images, draft, img_errs = local_images(draft)
+    (d / "images.json").write_text(json.dumps(images), encoding="utf-8")
     titles = {gid: find_key(n, "title") or "" for gid, n in linked.items()}
     cache_p = d / "links.json"
     cache = json.loads(cache_p.read_text(encoding="utf-8")) if cache_p.exists() else {}
     cache.update({k: v for k, v in titles.items() if v})
     cache_p.write_text(json.dumps(cache, ensure_ascii=False), encoding="utf-8")
-    errs = []
+    errs = list(img_errs)
     for name, url in EVERNOTE_LINK.findall(draft):
         m = GUID.search(url)
         t = titles.get(m.group(0), "") if m else ""
@@ -1167,12 +1280,17 @@ def plan_write(d: Path, linked: dict, before) -> dict:
         elif t != name:
             errs.append(f"link {name!r} must carry the note's exact title {t!r} (edits.tsv)")
     content = inner(enml_module().markdown_to_enml(draft))
-    plan = {"content": content}
+    plan = {"content": content, "images": [{k: v for k, v in im.items() if k != "path"} for im in images]}
     if before is not None:
         old = find_enml(before)
         if not old:
             return {"error": "get_note returned no ENML for the note"}
         body = inner(old)
+        # A photo the note holds already is not put in again: a second write of the same build would double it.
+        have = set(re.findall(r'hash="([0-9a-f]{32})"', body))
+        images = [im for im in images if im["hash"] not in have]
+        (d / "images.json").write_text(json.dumps(images), encoding="utf-8")
+        plan["images"] = [{k: v for k, v in im.items() if k != "path"} for im in images]
         lead = LEADING_MEDIA.match(body)
         rest = body[lead.end():] if lead else body
         trail = TRAILING_MEDIA.search(rest)
@@ -1191,7 +1309,58 @@ def plan_write(d: Path, linked: dict, before) -> dict:
     return plan
 
 
-def done_write(d: Path, gid: str, after) -> str:
+def gcs_upload(url: str, path: Path) -> str:
+    """Put a file's bytes at the signed upload URL start_attachment_upload gave: a resumable start, then one PUT.
+
+    The execute sandbox has no binary request body, so the bridge does this step (evernote skill, "the binary
+    bridge"); the headers are the ones of the curl calls that worked on 2026-11-10."""
+    import urllib.request
+    data = path.read_bytes()
+    start = urllib.request.Request(url, data=b"", method="POST", headers={
+        "x-goog-resumable": "start", "x-upload-content-length": str(len(data)), "Content-Length": "0"})
+    with urllib.request.urlopen(start, timeout=60) as r:
+        loc = r.headers.get("Location")
+    if not loc:
+        return "no upload session"
+    put = urllib.request.Request(loc, data=data, method="PUT", headers={
+        "Content-Length": str(len(data)), "x-upload-content-length": str(len(data))})
+    with urllib.request.urlopen(put, timeout=600) as r:
+        return f"PUT {r.status}"
+
+
+def check_images(d: Path, after, got: dict) -> list[str]:
+    """The photos of this write: at the top of the note in their order, no broken tag, each download its MD5."""
+    import hashlib
+    import urllib.request
+    p = d / "images.json"
+    images = json.loads(p.read_text(encoding="utf-8")) if p.exists() else []
+    body = inner(find_enml(after) or "")
+    lead = re.findall(r'hash="([0-9a-f]{32})"', (LEADING_MEDIA.match(body) or [""])[0])
+    if not images:  # every photo of the draft was in the note already, or the draft has none
+        return [f"images: {len(lead)} at the top, none new"] if lead else []
+    want = [im["hash"] for im in images]
+    out = []
+    if lead[:len(want)] != want:
+        out.append(f"IMAGES FAILED: the note opens with {lead[:len(want)]}, not {want}")
+    if "<img" in body:
+        out.append("IMAGES FAILED: the note holds a broken <img> tag")
+    ok = 0
+    for im in images:
+        url = find_key(got.get(im["hash"]), "downloadUrl") or ""
+        try:
+            with urllib.request.urlopen(url, timeout=120) as r:
+                same = hashlib.md5(r.read()).hexdigest() == im["hash"]
+        except Exception as e:  # an expired or refused link is reported, never retried here
+            out.append(f"IMAGES FAILED: {im['name']} could not be downloaded ({e})")
+            continue
+        ok += same
+        if not same:
+            out.append(f"IMAGES FAILED: {im['name']} downloads with another MD5")
+    out.insert(0, f"images: {len(lead)} at the top, {ok} of {len(images)} downloads match their MD5")
+    return out
+
+
+def done_write(d: Path, gid: str, after, got: dict | None = None, up: dict | None = None) -> str:
     """Keep the guid, convert the read-back with the same converter, and verify it."""
     meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
     meta["guid"] = gid  # a created note is updated from now on
@@ -1205,7 +1374,14 @@ def done_write(d: Path, gid: str, after) -> str:
     with contextlib.redirect_stdout(buf):
         rc = cmd_verify(argparse.Namespace(dir=str(d), readback=str(d / "readback.md")))
     title = find_key(after, "title") or meta.get("title") or ""
-    return json.dumps({"guid": gid, "title": title, "written": True}) + "\n" + buf.getvalue() + ("" if rc == 0 else "VERIFY FAILED\n")
+    imgs = check_images(d, after, got or {})
+    if up:
+        imgs.insert(0, "uploads: " + ", ".join(f"{h[:8]} {v}" for h, v in up.items()))
+    failed = rc != 0 or any(l.startswith("IMAGES FAILED") for l in imgs)
+    result = (json.dumps({"guid": gid, "title": title, "written": True}) + "\n" + buf.getvalue()
+              + "".join(l + "\n" for l in imgs) + ("VERIFY FAILED\n" if failed else ""))
+    (d / "write_result.txt").write_text(result, encoding="utf-8")  # note_test.py --write reads the verdict here
+    return result
 
 
 def start_bridge(d: Path, mode: str) -> int:
@@ -1290,9 +1466,17 @@ def cmd_serve(a) -> int:
                 meta["guid"] = raw.strip()  # kept at once, so a failed append is retried on this note
                 (d / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
                 self.reply("ok")
+            elif self.path == "/upload":
+                body = json.loads(raw)
+                images = json.loads((d / "images.json").read_text(encoding="utf-8"))
+                im = next((i for i in images if i["hash"] == body.get("hash")), None)
+                try:
+                    self.reply(gcs_upload(body["url"], Path(im["path"])) if im else "no such image in this write")
+                except Exception as e:
+                    self.reply(f"upload failed: {e}")
             elif self.path == "/done":
                 body = json.loads(raw)
-                self.reply(done_write(d, body["id"], body["after"]))
+                self.reply(done_write(d, body["id"], body["after"], body.get("got"), body.get("up")))
                 state["done"] = True
 
     srv = HTTPServer(("127.0.0.1", a.port), H)
@@ -1343,7 +1527,7 @@ def cmd_write(a) -> int:
     g = gate()
     draft = (d / "draft.md").read_text(encoding="utf-8")
     sha = g.stamp_key(draft)
-    if not (g.stamp_dir() / sha).exists():
+    if not g.stamped(draft):
         print("The draft has no PASS stamp: run next until it prints PASS, then write.")
         return 7
     meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
@@ -1365,7 +1549,17 @@ def hanji(*args: str) -> subprocess.CompletedProcess:
 
 def write_hanji(d: Path, meta: dict) -> int:
     """Create the stamped draft as a new Hanji note, read it back and verify it."""
-    r = hanji("create", "--notebook", meta["notebook"], "--title", meta["title"], "--file", str(d / "draft.md"))
+    # Hanji names a file by the line's alt text and reads its type from that name, so a photo line goes in with
+    # the file's own name (2026-11-10: "![us](<...png>)" became a file "us" of no image type).
+    lines = []
+    for line in (d / "draft.md").read_text(encoding="utf-8").split("\n"):
+        m = LOCAL_IMAGE.match(line)
+        if m:
+            path = Path(os.path.expanduser(m.group(2) or m.group(3)))
+            line = f"![{path.name}](<{path}>)"
+        lines.append(line)
+    (d / "draft_hanji.md").write_text("\n".join(lines), encoding="utf-8")
+    r = hanji("create", "--notebook", meta["notebook"], "--title", meta["title"], "--file", str(d / "draft_hanji.md"))
     if r.returncode:
         print(f"REFUSED: {r.stderr.strip() or r.stdout.strip()}")
         return r.returncode
@@ -1420,6 +1614,8 @@ def main(argv: list[str] | None = None) -> int:
                                                   "under 'New facts' and are checked against the record (repeatable)")
     i.add_argument("--section", help="with --guid, --title and --notebook: build a new note from this section")
     i.add_argument("--dest", choices=DESTS, default="evernote", help="where write puts the note (default evernote)")
+    i.add_argument("--as-is", dest="as_is", help="a text written elsewhere (Claude, Chaehan) is the note: only the gate "
+                   "checks it; photo lines at its top are uploaded by write")
     lk = sub.add_parser("link", help="print the exact Evernote link for notes matching the words")
     lk.add_argument("words")
     lk.add_argument("-n", type=int, default=5)

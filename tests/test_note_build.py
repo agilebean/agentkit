@@ -515,3 +515,197 @@ def test_a_detail_hangs_under_the_line_it_supports(tmp_path, monkeypatch, capsys
     assert nb.main(["next", str(d)]) == 2
     out = capsys.readouterr().out
     assert "item 3 hangs under item 2 but supports the first line of D1 more" in out and "label it D under D1" in out
+
+
+# ---- a text written elsewhere (init --as-is), photos at the top, the duplicate check, the stamp fallback ----
+
+AS_IS = """## Takeaway
+
+- You meet her on 2026-11-10 after your swim, on the Tuesday she offered herself.
+
+## Her interest
+
+You saw her invite you to her exhibition from 2026-11-21.
+
+- She asked twice to attend your class.
+"""
+
+
+def _photo(tmp_path, name="photo of us.png", color=(200, 30, 30)):
+    from PIL import Image
+    p = tmp_path / name
+    Image.new("RGB", (40, 30), color).save(p)
+    return p
+
+
+def _as_is(tmp_path, monkeypatch, text):
+    monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
+    monkeypatch.setenv("NOTE_BUILD_SOCRATES", str(Path.home() / "Software/Prototypes/socrates/.claude/worktrees/evernote-osaka-trip-quality-b1df3d"))
+    src = tmp_path / "mine.md"
+    src.write_text(text)
+    d = tmp_path / "w"
+    rc = nb.main(["init", str(d), "--as-is", str(src), "--title", "2026-11-10 Test", "--notebook", "Affinity"])
+    return d, rc
+
+
+def test_a_text_written_elsewhere_is_gated_stamped_and_written_with_its_photos(tmp_path, monkeypatch, capsys) -> None:
+    import hashlib
+    img = _photo(tmp_path)
+    d, rc = _as_is(tmp_path, monkeypatch, f"![us](<{img}>)\n\n" + AS_IS)
+    out = capsys.readouterr().out
+    assert rc == 0 and "PASS" in out and "note-gate:" in out
+    plan = nb.plan_write(d, {}, None)
+    assert "error" not in plan and "<img" not in plan["content"] and "<h2>Her interest</h2>" in plan["content"]
+    md5 = hashlib.md5(img.read_bytes()).hexdigest()
+    assert plan["images"] == [{"name": img.name, "hash": md5, "size": img.stat().st_size, "mime": "image/png",
+                               "width": 40, "height": 30}]
+    tag = f'<div><en-media hash="{md5}" type="image/png"/></div>'
+    after = {"structuredContent": {"title": "2026-11-10 Test", "content": "<en-note>" + tag + plan["content"] + "</en-note>"}}
+    done = nb.done_write(d, "g-new", after, {md5: {"downloadUrl": img.as_uri()}}, {md5: "PUT 200"})
+    assert "PASS" in done and "1 at the top, 1 of 1 downloads match" in done and "VERIFY FAILED" not in done
+    plain = {"structuredContent": {"content": "<en-note>" + plan["content"] + "</en-note>"}}
+    assert "IMAGES FAILED" in nb.done_write(d, "g-new", plain, {}) and "VERIFY FAILED" in nb.done_write(d, "g-new", plain, {})
+
+
+def test_a_photo_below_the_text_is_refused_and_an_edit_of_the_draft_reruns_the_gate(tmp_path, monkeypatch, capsys) -> None:
+    img = _photo(tmp_path)
+    d, rc = _as_is(tmp_path, monkeypatch, AS_IS + f"\n![us](<{img}>)\n")
+    assert rc == 1 and "stands below the text" in capsys.readouterr().out
+    (d / "draft.md").write_text(f"![us](<{img}>)\n\n" + AS_IS)
+    assert nb.main(["next", str(d)]) == 0 and "PASS" in capsys.readouterr().out
+
+
+def test_the_bridge_uploads_a_photo_with_a_resumable_start_and_one_put(tmp_path) -> None:
+    import threading
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    img = _photo(tmp_path)
+    seen = {}
+
+    class H(BaseHTTPRequestHandler):
+        def log_message(self, *a):
+            pass
+
+        def do_POST(self):
+            seen["start"] = self.headers.get("x-goog-resumable"), self.headers.get("x-upload-content-length")
+            self.send_response(200)
+            self.send_header("Location", f"http://127.0.0.1:{self.server.server_port}/session")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+
+        def do_PUT(self):
+            seen["body"] = self.rfile.read(int(self.headers["Content-Length"]))
+            self.send_response(200)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+
+    srv = HTTPServer(("127.0.0.1", 0), H)
+    threading.Thread(target=lambda: [srv.handle_request() for _ in range(2)], daemon=True).start()
+    assert nb.gcs_upload(f"http://127.0.0.1:{srv.server_port}/signed?x=1", img) == "PUT 200"
+    assert seen["start"] == ("start", str(img.stat().st_size)) and seen["body"] == img.read_bytes()
+
+
+def test_a_new_note_whose_title_evernote_holds_already_is_refused() -> None:
+    code = nb.EXECUTE_WRITE
+    assert code.index("search_notes") < code.index("create_note") and "exists already" in code
+    assert code.index("start_attachment_upload") < code.index('mode: "prepend"') < code.index("finalize_attachment")
+
+
+def test_the_gate_stamps_into_the_cache_folder_where_the_main_one_cannot_be_written(tmp_path, monkeypatch) -> None:
+    g = nb.gate()
+    monkeypatch.delenv("NOTE_GATE_STAMPS", raising=False)
+    monkeypatch.setenv("HOME", str(tmp_path))
+    (tmp_path / ".local").mkdir()
+    (tmp_path / ".local/state").write_text("a file where the folder would go, as a refused write")
+    f = g.stamp("You meet her today.")
+    assert f.parent == tmp_path / ".cache/agentkit/note-gate" and g.stamped("You meet her today.")
+    assert not g.stamped("You meet her tomorrow.")
+
+
+def test_a_second_write_does_not_put_in_again_a_photo_the_note_holds(tmp_path, monkeypatch, capsys) -> None:
+    import hashlib
+    img, other = _photo(tmp_path), _photo(tmp_path, "second.png", (10, 200, 10))
+    d, rc = _as_is(tmp_path, monkeypatch, f"![us](<{img}>)\n\n![two](<{other}>)\n\n" + AS_IS)
+    assert rc == 0
+    held = hashlib.md5(img.read_bytes()).hexdigest()
+    before = {"structuredContent": {"content": f'<en-note><en-media hash="{held}" type="image/png"/><div>old</div></en-note>'}}
+    plan = nb.plan_write(d, {}, before)
+    assert [im["name"] for im in plan["images"]] == ["second.png"]
+
+
+def test_the_write_run_takes_its_folder_from_the_environment_and_its_verdict_from_the_folder(tmp_path, monkeypatch) -> None:
+    import importlib.util as u
+    spec = u.spec_from_file_location("note_test", Path(nb.__file__).with_name("note_test.py"))
+    nt = u.module_from_spec(spec)
+    spec.loader.exec_module(nt)
+    assert '"$NOTE_BUILD_WRITE"' in nt.WRITE_BRIEF and "do not read the script" in nt.WRITE_BRIEF
+    seen = {}
+    monkeypatch.setattr(nt.Run, "go", lambda self: seen.update(a=self.a) or 0)
+    assert nt.main(["--write", str(tmp_path), "--out", str(tmp_path / "run")]) == 0
+    assert seen["a"].build == str(tmp_path)
+    with pytest.raises(SystemExit):
+        nt.main(["--out", str(tmp_path / "run")])
+    r = nt.Run(seen["a"])
+    r.say = lambda *x: None
+    (tmp_path / "write_result.txt").write_text('{"guid": "g", "written": true}\nPASS\nimages: 2 at the top, 2 of 2 downloads match their MD5\n')
+    r.check_build()
+    assert r.written and r.verified
+    (tmp_path / "write_result.txt").write_text('{"guid": "g", "written": true}\nPASS\nIMAGES FAILED: x\nVERIFY FAILED\n')
+    r.check_build()
+    assert r.written and not r.verified
+
+
+def test_photos_the_write_put_at_the_top_in_divs_stay_at_the_top_on_the_next_write(tmp_path, monkeypatch, capsys) -> None:
+    import hashlib
+    img = _photo(tmp_path)
+    d, rc = _as_is(tmp_path, monkeypatch, f"![us](<{img}>)\n\n" + AS_IS)
+    h = hashlib.md5(img.read_bytes()).hexdigest()
+    top = f'<div><en-media hash="{h}" type="image/png"/></div><div><en-media hash="{"1" * 32}" type="image/png"/></div>'
+    before = {"structuredContent": {"content": f"<en-note>{top}<h2>Takeaway</h2><div>old</div></en-note>"}}
+    plan = nb.plan_write(d, {}, before)
+    assert "error" not in plan and plan["find"] == "<h2>Takeaway</h2><div>old</div>" and plan["images"] == []
+
+
+def test_the_printed_execute_code_parses_as_javascript(tmp_path) -> None:
+    """2026-11-10: two lines lost their escaped quotes when Python printed them, and the execute call failed to parse."""
+    import shutil
+    import subprocess
+    if not shutil.which("node"):
+        pytest.skip("node is not installed")
+    for name in ("EXECUTE_WRITE", "EXECUTE_INIT", "EXECUTE_LINK"):
+        code = getattr(nb, name).replace("PORT", "41234").replace("STAMP", "0" * 64).replace("GUID", "g")
+        code = code.replace("WORDS", '"x"').replace("N }", "5 }")
+        f = tmp_path / f"{name}.mjs"
+        f.write_text("export default async function run(tools, fetch) {\n" + code + "\n}\n")
+        r = subprocess.run(["node", "--check", str(f)], capture_output=True, text=True)
+        assert r.returncode == 0, (name, r.stderr[-400:])
+
+
+def test_a_text_written_elsewhere_goes_to_hanji_with_a_photo_whose_path_has_a_space(tmp_path, monkeypatch, capsys) -> None:
+    import importlib.util as u
+    import shutil
+    if not Path("/Applications/Hanji.app/Contents/MacOS/hanji").exists():
+        pytest.skip("Hanji.app is not installed")
+    spec = u.spec_from_file_location("hanji_note", nb.HANJI_NOTE)
+    hn = u.module_from_spec(spec)
+    spec.loader.exec_module(hn)
+    (tmp_path / "tmp").mkdir()
+    monkeypatch.setenv("TMPDIR", str(tmp_path / "tmp"))
+    db = str(tmp_path / "notes.db")
+    hn.Hanji(db=db)("notebook", "create", "Affinity")
+    monkeypatch.setenv("NOTE_BUILD_HANJI_DB", db)
+    img = _photo(tmp_path, "photo of us.png")
+    monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
+    src = tmp_path / "mine.md"
+    src.write_text(f"![us](<{img}>)\n\n" + AS_IS)
+    d = tmp_path / "w"
+    assert nb.main(["init", str(d), "--as-is", str(src), "--title", "2026-11-10 Test", "--notebook", "Affinity",
+                    "--dest", "hanji"]) == 0
+    capsys.readouterr()
+    rc = nb.main(["write", str(d)])
+    out = capsys.readouterr().out
+    assert rc == 0, out[-600:]
+    h = hn.Hanji(db=db)
+    nid, _ = hn.resolve(h, "2026-11-10 Test")
+    atts = h.attachments(nid)
+    assert [(x["name"], x["mime"]) for x in atts] == [("photo of us.png", "image/png")]
+    assert [l for l in h.markdown(nid).split("\n") if l.strip()][1].startswith("![photo of us.png](blobs/")

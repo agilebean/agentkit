@@ -61,7 +61,10 @@ class HanjiRun(note_test.Run):
         return super().event(e, seg)
 
     def check_build(self) -> None:
-        """Written and verified come from the helper's own output, not a build folder."""
+        """Written and verified come from the helper's own output, not a build folder, or from --expect."""
+        if self.a.expect:
+            self.written = self.verified = self.expected()
+            return
         self.written = any(c["verified"] for c in self.calls)
         self.verified = self.written and not any(c["failed"] for c in self.calls)
 
@@ -84,6 +87,8 @@ class HanjiRun(note_test.Run):
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--brief", required=True)
+    ap.add_argument("--expect", nargs="+", help="files the run must leave; they decide the outcome of a run that "
+                    "writes no Hanji note (a read, an export, an Evernote write)")
     ap.add_argument("--out", required=True)
     ap.add_argument("--session")
     ap.add_argument("--cwd", default=str(note_test.SOCRATES))
@@ -94,9 +99,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--budget", type=int, default=1200)
     # note_test.Run reads every option of note_test's own parser; one missing here crashes the run before launch
     # (2026-11-10, --probe: AttributeError at the first provider).
-    ap.add_argument("--probe", type=int, default=60, help="seconds the availability probe may take; 0 skips it")
+    ap.add_argument("--probe", type=int, default=8, help="seconds the availability probe may take (note_test.py: 8 s is a ping); 0 skips it")
     a = ap.parse_args(argv)
-    a.build = None
+    a.build, a.write = None, None
     return HanjiRun(a).go()
 
 
