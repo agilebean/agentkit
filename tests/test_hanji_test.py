@@ -17,7 +17,7 @@ def tool(command, out, exit_code, tool_name="shell", status="completed", start=1
 
 def run(tmp_path):
     a = types.SimpleNamespace(out=str(tmp_path), session=None, cwd="", agent="socrates", title="", start="",
-                              idle=300, budget=1200, build=None, brief="")
+                              idle=300, budget=1200, build=None, brief="", expect=None, write=None, probe=0)
     r = ht.HanjiRun(a)
     r.say = lambda *x: None
     return r, {"steps": 0, "cost": 0.0, "tokens": 0}
@@ -71,3 +71,14 @@ def test_the_runner_accepts_every_option_note_test_reads(monkeypatch, tmp_path) 
     assert ht.main(["--brief", "b.md", "--out", str(tmp_path)]) == 0
     names = set(re.findall(r"self\.a\.([a-z_]+)", Path(ht.note_test.__file__).read_text(encoding="utf-8")))
     assert names and not [n for n in sorted(names) if not hasattr(seen["a"], n)]
+
+
+def test_expected_files_decide_a_run_that_writes_no_hanji_note(tmp_path) -> None:
+    r, seg = run(tmp_path)
+    out = tmp_path / "feedback.md"
+    r.a.expect = [str(out)]
+    r.check_build()
+    assert r.written is False and r.verified is False
+    out.write_text("word for word")
+    r.check_build()
+    assert r.written and r.verified

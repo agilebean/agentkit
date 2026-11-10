@@ -39,7 +39,14 @@ APP_BIN = "/Applications/Hanji.app/Contents/MacOS/hanji"
 ID_RE = re.compile(r"^[0-9a-f]{32}$")
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 FENCE_RE = re.compile(r"^\s*(```|~~~)")
-ATT_RE = re.compile(r"^\s*(!?)\[([^\]]*)\]\(([^)\s]+)\)\s*$")
+# A file line: `![name](target)`, or `![name](<target with spaces>)` for a local path with spaces (2026-11-10:
+# note_build's photo lines carry such paths, and the plain form dropped the photo).
+ATT_RE = re.compile(r"^\s*(!?)\[([^\]]*)\]\((?:<([^>]+)>|([^)\s]+))\)\s*$")
+
+
+def att_target(m: re.Match) -> str:
+    """The target of a file line, in either form."""
+    return m.group(3) or m.group(4)
 SEP_RE = re.compile(r"^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$")
 
 
@@ -224,7 +231,7 @@ def is_att_line(line: str) -> re.Match | None:
     m = ATT_RE.match(line)
     if not m:
         return None
-    target = m.group(3)
+    target = att_target(m)
     if target.startswith("blobs/"):
         return m
     if re.match(r"^[a-z]+:", target):  # http, https, mailto: a link, not a file
@@ -243,7 +250,7 @@ def segments(md: str) -> list[tuple[str, object]]:
             if "\n".join(buf).strip():
                 out.append(("text", "\n".join(buf).strip("\n") + "\n"))
             buf = []
-            out.append(("att", {"name": unescape_name(m.group(2)), "target": m.group(3),
+            out.append(("att", {"name": unescape_name(m.group(2)), "target": att_target(m),
                                 "image": bool(m.group(1))}))
         else:
             buf.append(ln)
@@ -275,8 +282,8 @@ def placeholder_view(md: str) -> tuple[str, list[tuple[str, str]]]:
     atts, out = [], []
     for i, ln in enumerate(lines):
         m = None if mask[i] else ATT_RE.match(ln)
-        if m and m.group(3).startswith("blobs/"):
-            atts.append((unescape_name(m.group(2)), m.group(3)[len("blobs/"):]))
+        if m and att_target(m).startswith("blobs/"):
+            atts.append((unescape_name(m.group(2)), att_target(m)[len("blobs/"):]))
             out.append(f"HANJIATTACHMENT{len(atts)}")
         else:
             out.append(ln)
