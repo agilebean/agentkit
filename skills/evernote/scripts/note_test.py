@@ -49,6 +49,42 @@ def classify_next(out: str) -> tuple[str, list[str]]:
     return "other", []
 
 
+def step_times(events: Path) -> dict:
+    """Split one run's wall time into model steps and tool calls, from its event stream.
+
+    Each `step_finish` closes a model turn and the gap to the next `step_start` is the tool call that
+    turn asked for. Measured 2026-11-10 on two life-overview runs (73 steps, 584 s; 38 steps, 312 s):
+    about 5 s of model and 2.6 s of tool plumbing per step, whatever the tool, so the wall time
+    follows the step count and nothing else.
+    """
+    try:
+        rows = [json.loads(l) for l in events.read_text(encoding="utf-8").splitlines() if l.strip()]
+    except (OSError, ValueError):
+        return {}
+    starts = [r for r in rows if r.get("type") == "step_start"]
+    fins = [r for r in rows if r.get("type") == "step_finish"]
+    if not fins:
+        return {}
+    tools: dict[str, list[str]] = {}
+    for r in rows:
+        if r.get("type") == "tool_use":
+            part = r.get("part") or {}
+            tools.setdefault(part.get("messageID"), []).append(part.get("tool") or "?")
+    model = sum((f["timestamp"] - s["timestamp"]) / 1000 for s, f in zip(starts, fins))
+    steps, per, gaps = [], {}, 0.0
+    for i, (s, f) in enumerate(zip(starts, fins)):
+        part = f.get("part") or {}
+        what = ",".join(tools.get(part.get("messageID"), [])) or "(text)"
+        steps.append({"n": i + 1, "s": (f["timestamp"] - s["timestamp"]) / 1000, "what": what,
+                      "reason": part.get("reason")})
+        if i + 1 < len(fins):
+            g = (starts[i + 1]["timestamp"] - f["timestamp"]) / 1000
+            gaps += g
+            per.setdefault(what, []).append(g)
+    return {"steps": steps, "model": model, "tool": gaps, "per": per,
+            "span": (fins[-1]["timestamp"] - starts[0]["timestamp"]) / 1000}
+
+
 def _norm(line: str) -> str:
     return re.sub(r"\d+", "#", line)[:120]
 
@@ -196,9 +232,11 @@ class Run:
         return ""
 
     def probe(self, model: str) -> bool:
-        """A short request before the run: does the provider answer within --probe seconds?
+        """A one-word ping before the run: does the provider answer within --probe seconds?
 
-        Chaehan, 2026-11-08: "you should test the api for availability and then max 2min timeout"."""
+        Chaehan, 2026-11-08: "you should test the api for availability and then max 2min timeout", and
+        2026-11-10: "fix the probe it costs just a few seconds as a ping". Measured 2-4 s a provider
+        through the same `opencode run` path the build uses, so the default cap is 8 s."""
         t0 = time.time()
         try:
             out = subprocess.run(["opencode", "run", "--standalone", "--agent", self.a.agent, "-m", model,
@@ -290,6 +328,18 @@ class Run:
         stuck = self.rounds.stuck()
         if stuck:
             lines += ["", "## Stuck on", ""] + stuck
+        tm = step_times(self.out / "events.jsonl")
+        if tm:
+            n = len(tm["steps"])
+            lines += ["", "## Where the time went", "",
+                      f"{n} timed steps took {tm['model']:.0f} s of model time and {tm['tool']:.0f} s of tool calls: "
+                      f"{tm['model'] / n:.1f} s a step against {tm['tool'] / max(n - 1, 1):.1f} s a tool call.", "",
+                      "| Step's tool | Calls | Tool time (s) | Avg (s) |", "| --- | --- | --- | --- |"]
+            lines += [f"| {k} | {len(v)} | {sum(v):.0f} | {sum(v) / len(v):.1f} |"
+                      for k, v in sorted(tm["per"].items(), key=lambda kv: -sum(kv[1]))]
+            lines += ["", "| Slowest step | s | What |", "| --- | --- | --- |"]
+            lines += [f"| {x['n']} | {x['s']:.1f} | {x['what']} |"
+                      for x in sorted(tm["steps"], key=lambda x: -x["s"])[:8]]
         lines += ["", "## The agent's last message", "", self.last_text.strip() or "(none)", ""]
         (self.out / "report.md").write_text("\n".join(lines), encoding="utf-8")
 
@@ -305,7 +355,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--title", default="note build test")
     ap.add_argument("--start", default=PROVIDERS[0], help="first provider to try")
     ap.add_argument("--idle", type=int, default=120, help="seconds without a streamed event before the run stops (RULES.md 73: at most 120)")
-    ap.add_argument("--probe", type=int, default=60, help="seconds the availability probe may take before the run; 0 skips it")
+    ap.add_argument("--probe", type=int, default=8,
+                    help="seconds the availability probe may take; a one-word answer costs 2-4 s, so 8 s is a ping "
+                         "and a provider that misses it is down. 0 skips the probe")
     ap.add_argument("--budget", type=int, default=1500, help="seconds the whole run may take")
     return Run(ap.parse_args(argv)).go()
 
