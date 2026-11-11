@@ -239,8 +239,12 @@ def _grounding(draft: str, sources: str) -> list[str]:
 def check(draft: str, original: str | None = None, linked: list[str] | None = None,
           facts_only: bool = False, note: bool = False, cuts: str | None = None,
           labels: str | None = None, table_titles: bool = False,
-          challenges: str | None = None, sources: str | None = None) -> list[str]:
+          challenges: str | None = None, sources: str | None = None,
+          verbatim: str | None = None) -> list[str]:
+    """`verbatim` is text Chaehan wrote that the note carries as he wrote it: its lines are exempt from the form
+    checks (T5, T12, T13, T16), and T20 fails when one of its sentences is missing or changed."""
     fails: list[str] = []
+    is_v = _verbatim_test(verbatim)
     pool = list(linked or [])
     if challenges:
         pool.append(challenges)
@@ -249,13 +253,15 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
         pool.append(cuts)
     if facts_only or note:
         if note:
-            fails += _prose_sections(draft)
+            fails += _prose_sections(draft, is_v)
             fails += _empty_items(draft)
             fails += _summary(draft)
-            fails += _flat_lists(draft)
-            fails += _gists(draft)
+            fails += _flat_lists(draft, is_v)
+            fails += _gists(draft, is_v)
             fails += _summary_subjects(draft)
-            fails += _wording(draft)
+            fails += _wording(draft, is_v)
+            if verbatim:
+                fails += _verbatim_kept(draft, verbatim)
             if table_titles:
                 fails += _table_titles(draft)
             if labels is not None:
@@ -290,10 +296,49 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
     return fails
 
 
-def _prose_sections(md: str) -> list[str]:
+# ---- Chaehan's own words (2026-11-10: the gate turned his feedback paragraph into six bullets and demanded a
+# lead line; "Fix the gate so it stops reshaping your verbatim words" - "Yes, fix it") ----
+
+def _flat(text: str) -> str:
+    """Text as words only: list markers, heading marks, markdown and line breaks gone, lower case."""
+    lines = [re.sub(r"^\s*(?:[-*+]|\d+[.)]|#{1,6})\s+", "", l) for l in text.splitlines()]
+    return " ".join(_plain(" ".join(lines)).split()).lower()
+
+
+def _verbatim_test(verbatim: str | None):
+    """A test for one line of the draft: True when it is Chaehan's own words, copied from `verbatim`."""
+    if not verbatim:
+        return lambda line: False
+    whole = _flat(verbatim)
+
+    def is_v(line: str) -> bool:
+        f = _flat(line)
+        return len(f.split()) >= 3 and f in whole
+    return is_v
+
+
+def _verbatim_kept(draft: str, verbatim: str) -> list[str]:
+    """T20: every paragraph Chaehan wrote is in the draft as one unbroken run of his words.
+
+    A paragraph may become list items (markers and line breaks do not count), but a word added, changed or
+    dropped breaks the run, and the sentence where it breaks is named."""
+    have = _flat(draft)
+    out = []
+    for para in re.split(r"\n\s*\n|\n(?=\s*(?:[-*+]|\d+[.)])\s)", verbatim):
+        if not _flat(para) or _flat(para) in have:
+            continue
+        sents = [s for s in re.split(r"(?<=[.!?])\s+", para.strip()) if _flat(s)]
+        bad = next((s for s in sents if _flat(s) not in have), None)
+        if bad is None:  # each sentence is there, but something stands between two of them
+            bad = next((s for prev, s in zip(sents, sents[1:]) if _flat(prev + " " + s) not in have), sents[0])
+        out.append(f"T20 your words are missing or changed: {bad.strip()[:70]!r}; keep them as you wrote them")
+    return out
+
+
+def _prose_sections(md: str, is_v=lambda l: False) -> list[str]:
     out = []
     for title, body in sections(md):
-        lines = [l for l in body.splitlines() if l.strip()]
+        lines = [l for l in body.splitlines() if l.strip() and not is_v(l)]
         if any(re.match(r"\s*(?:[-*]|\d+[.)]|[a-z]\))\s", l) for l in lines):
             continue
         prose = " ".join(l for l in lines if not l.lstrip().startswith("|"))
@@ -356,9 +401,10 @@ def _summary(md: str) -> list[str]:
     return out
 
 
-def _flat_lists(md: str) -> list[str]:
+def _flat_lists(md: str, is_v=lambda l: False) -> list[str]:
     out = []
     for title, body in sections(md):
+        body = "\n".join(l for l in body.splitlines() if not is_v(l))  # his own list counts as he wrote it
         runs: dict[tuple[int, int], int] = {}
         stack: list[tuple[int, int]] = []
         for i, l in enumerate(body.splitlines()):
@@ -421,7 +467,7 @@ def seat(sentence: str) -> bool:
     return False
 
 
-def _gists(md: str) -> list[str]:
+def _gists(md: str, is_v=lambda l: False) -> list[str]:
     out = []
     for title, body in sections(md):
         if title.lower().startswith(SUMMARY_HEADS):
@@ -429,6 +475,8 @@ def _gists(md: str) -> list[str]:
         lines = [l.strip() for l in body.splitlines() if l.strip()]
         if not lines or all(l.startswith("|") for l in lines):
             continue  # empty, or an H3 that titles one table
+        if is_v(lines[0]):
+            continue  # a section that opens with his own words opens as he wrote it
         first = lines[0]
         if re.match(r"(?:[-*]|\d+[.)]|\||!\[|<)", first) or not re.search(r"[a-z]{3}", _plain(first)):
             out.append(f"T13 section {title!r} must open with one sentence that tells you its point, "
@@ -496,12 +544,12 @@ def contrast(sentence: str) -> list[str]:
     return [f"{fix} ({m.group(0).strip()!r})" for _level, pat, fix, _exc in rules for m in [pat.search(sentence)] if m]
 
 
-def _wording(md: str) -> list[str]:
+def _wording(md: str, is_v=lambda l: False) -> list[str]:
     lint = _lint()
     lines = md.splitlines()
     table = lambda n: lines[n - 1].lstrip().startswith("|")
     out = [f"T16 line {n}: '{words_}' - {fix}" for n, level, words_, fix in lint.lint_text(md, lint.load_robot_markers())
-           if level == "flag" and not table(n)]
+           if level == "flag" and not table(n) and not is_v(lines[n - 1])]
     for n, char, line in lint.script_hits(md):
         outside = re.sub(r"\([^)]*\)", "", re.sub(r"\]\([^)]*\)", "]", lines[n - 1]))
         if not table(n) and lint.HAN.search(outside):
@@ -592,13 +640,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--labels", help="note_build.py's merged label file: id, label, parent, text per item")
     ap.add_argument("--challenges", help="the current Life Challenges note, exported: T3 compares the Takeaway with it")
     ap.add_argument("--sources", help="sources.md: the record lines each section retells; T19 checks every name and number against them")
+    ap.add_argument("--verbatim", help="Chaehan's own words the note carries as he wrote them: exempt from the form "
+                    "checks, and T20 fails when one of their sentences is missing or changed")
     a = ap.parse_args(argv)
     read = lambda p: open(p, encoding="utf-8").read()
     draft = read(a.draft)
     fails = check(draft, read(a.original) if a.original else None, [read(p) for p in a.linked],
                   a.facts_only, a.note, read(a.cuts) if a.cuts else None, read(a.labels) if a.labels else None,
                   challenges=read(a.challenges) if a.challenges else None,
-                  sources=read(a.sources) if a.sources else None)
+                  sources=read(a.sources) if a.sources else None,
+                  verbatim=read(a.verbatim) if a.verbatim else None)
     if a.note and a.original and not (a.labels and a.cuts):
         fails.append("T14 a rewrite needs --labels and --cuts: build it with note_build.py "
                      "(agentkit/skills/evernote/scripts), which writes both")
