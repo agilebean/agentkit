@@ -709,3 +709,128 @@ def test_a_text_written_elsewhere_goes_to_hanji_with_a_photo_whose_path_has_a_sp
     atts = h.attachments(nid)
     assert [(x["name"], x["mime"]) for x in atts] == [("photo of us.png", "image/png")]
     assert [l for l in h.markdown(nid).split("\n") if l.strip()][1].startswith("![photo of us.png](blobs/")
+
+
+# ---- Chaehan's own words stand as he wrote them (--verbatim) ----
+
+HIS = """**2026-11-08** the second swim test, 400 m in 6:58. Went better than expected. My legs were tired from pilates, although the pace held. I felt the last 100 m were the strongest.
+
+The pool was cold; the lane was crowded after 13:00."""
+
+WITH_HIS = """## Takeaway
+
+- You swam the 400 m in 6:58 on 2026-11-08, your best this month.
+
+## Your feedback
+
+""" + HIS + """
+
+## Next test
+
+You test again on 2026-11-15, in the 13:00 slot.
+
+- Book the lane before you go.
+"""
+
+
+def test_his_own_words_keep_their_form_and_are_checked_for_loss_only(tmp_path) -> None:
+    g = nb.gate()
+    plain = g.check(WITH_HIS, None, note=True, table_titles=True)
+    assert any(f.startswith("T5") for f in plain) and any(f.startswith("T13") and "Your feedback" in f for f in plain)
+    assert g.check(WITH_HIS, None, note=True, table_titles=True, verbatim=HIS) == []
+    changed = WITH_HIS.replace("Went better than expected.", "It went better than expected.")
+    fails = g.check(changed, None, note=True, table_titles=True, verbatim=HIS)
+    assert [f for f in fails if f.startswith("T20")] == ["T20 your words are missing or changed: 'Went better than "
+                                                         "expected.'; keep them as you wrote them"]
+    import re
+    bulleted = WITH_HIS.replace(HIS, "\n".join("- " + s for s in re.split(r"(?<=[.;])\s+", HIS.replace("\n\n", " "))))
+    assert not [f for f in g.check(bulleted, None, note=True, table_titles=True, verbatim=HIS) if f.startswith("T20")]
+
+
+def test_his_own_list_of_more_than_seven_items_stands(tmp_path) -> None:
+    g = nb.gate()
+    items = "\n".join(f"- Lap {i} felt slower than lap {i - 1} by a second" for i in range(2, 11))
+    md = WITH_HIS.replace(HIS, "You wrote this list after the test.\n\n" + items)
+    assert any(f.startswith("T12") for f in g.check(md, None, note=True, table_titles=True))
+    assert not [f for f in g.check(md, None, note=True, table_titles=True, verbatim=items) if f.startswith("T12")]
+
+
+def test_init_as_is_with_his_words_passes_and_its_read_back_verifies(tmp_path, monkeypatch, capsys) -> None:
+    monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
+    monkeypatch.setenv("NOTE_BUILD_SOCRATES", str(Path.home() / "Software/Prototypes/socrates/.claude/worktrees/evernote-osaka-trip-quality-b1df3d"))
+    (tmp_path / "his.md").write_text(HIS)
+    (tmp_path / "mine.md").write_text(WITH_HIS)
+    d = tmp_path / "w"
+    args = ["init", str(d), "--as-is", str(tmp_path / "mine.md"), "--title", "2026-11-08 Swim", "--notebook", "Swimming"]
+    assert nb.main(args) == 1  # without his words named, the gate reshapes them
+    capsys.readouterr()
+    assert nb.main(args + ["--verbatim", str(tmp_path / "his.md")]) == 0 and "PASS" in capsys.readouterr().out
+    plan = nb.plan_write(d, {}, None)
+    after = {"structuredContent": {"content": "<en-note><div><br/></div>" + plan["content"] + "</en-note>"}}
+    assert "PASS" in nb.done_write(d, "g", after, {})
+
+
+def test_photos_after_an_empty_first_line_still_stand_at_the_top() -> None:
+    body = '<div><br/></div><div><en-media hash="' + "a" * 32 + '" type="image/png"/></div><h2>Takeaway</h2>'
+    m = nb.LEADING_MEDIA.match(body)
+    assert m and body[m.end():] == "<h2>Takeaway</h2>"
+
+
+def test_a_rewrite_by_guid_needs_the_text_it_started_from_and_refuses_an_edit_since(tmp_path, monkeypatch, capsys) -> None:
+    monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
+    monkeypatch.setenv("NOTE_BUILD_SOCRATES", str(Path.home() / "Software/Prototypes/socrates/.claude/worktrees/evernote-osaka-trip-quality-b1df3d"))
+    (tmp_path / "his.md").write_text(HIS)
+    (tmp_path / "mine.md").write_text(WITH_HIS)
+    base = WITH_HIS.replace(HIS, "- Went better than expected.")
+    (tmp_path / "base.md").write_text(base)
+    d = tmp_path / "w"
+    args = ["init", str(d), "--as-is", str(tmp_path / "mine.md"), "--guid", "g-1", "--verbatim", str(tmp_path / "his.md")]
+    assert nb.main(args) == 1 and "--base" in capsys.readouterr().err
+    assert nb.main(args + ["--base", str(tmp_path / "base.md")]) == 0
+    enml = nb.enml_module().markdown_to_enml(base)
+    photo = '<div><en-media hash="' + "b" * 32 + '" type="image/png"/></div>'
+    before = {"structuredContent": {"content": enml.replace("<en-note>", "<en-note>" + photo, 1)}}
+    plan = nb.plan_write(d, {}, before)
+    assert "error" not in plan and photo not in plan["find"]
+    edited = {"structuredContent": {"content": before["structuredContent"]["content"].replace("Book the lane", "Book a lane")}}
+    assert "edited since" in nb.plan_write(d, {}, edited)["error"]
+
+
+def _section_build(tmp_path, monkeypatch, base_md):
+    monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
+    monkeypatch.setenv("NOTE_BUILD_SOCRATES", str(Path.home() / "Software/Prototypes/socrates/.claude/worktrees/evernote-osaka-trip-quality-b1df3d"))
+    (tmp_path / "his.md").write_text(HIS)
+    (tmp_path / "sec.md").write_text("## Your feedback\n\n" + HIS)
+    (tmp_path / "base.md").write_text(base_md)
+    d = tmp_path / "w"
+    assert nb.main(["init", str(d), "--as-is", str(tmp_path / "sec.md"), "--guid", "g-1", "--base", str(tmp_path / "base.md"),
+                    "--verbatim", str(tmp_path / "his.md"), "--replace-section", "Your feedback"]) == 0
+    return d
+
+
+def test_a_section_write_replaces_one_section_and_keeps_his_edits_and_photos_around_it(tmp_path, monkeypatch, capsys) -> None:
+    base = WITH_HIS.replace(HIS, "You wrote this after the test.\n\n- Went better than expected.")
+    d = _section_build(tmp_path, monkeypatch, base)
+    enml = nb.enml_module().markdown_to_enml(base)
+    photos = '<table><tr><td><en-media hash="' + "c" * 32 + '" type="image/png"/></td></tr></table>'
+    his_edit = "<ol><li><div>his own list</div></li></ol>" + photos
+    raw = enml.replace("<en-note>", "<en-note>" + his_edit, 1).replace("<h2>Your feedback</h2>",
+                                                                        '<h2 style="--en-nodeId:x;">Your feedback</h2>')
+    plan = nb.plan_write(d, {}, {"structuredContent": {"content": raw}})
+    assert "error" not in plan and plan["find"].startswith('<h2 style="--en-nodeId:x;">Your feedback</h2>')
+    assert "Next test" not in plan["find"] and "his own list" not in plan["find"] and "Went better" in plan["content"]
+    after = {"structuredContent": {"content": raw.replace(plan["find"], plan["content"])}}
+    assert "PASS: the section reads back" in nb.done_write(d, "g-1", after)
+    broken = {"structuredContent": {"content": after["structuredContent"]["content"].replace("his own list", "a list")}}
+    out = nb.done_write(d, "g-1", broken)
+    assert "the rest of the note changed" in out and "VERIFY FAILED" in out
+
+
+def test_a_section_edited_since_or_holding_an_image_is_refused(tmp_path, monkeypatch, capsys) -> None:
+    base = WITH_HIS.replace(HIS, "You wrote this after the test.\n\n- Went better than expected.")
+    d = _section_build(tmp_path, monkeypatch, base)
+    enml = nb.enml_module().markdown_to_enml(base)
+    edited = enml.replace("Went better than expected.", "Went much better than expected.")
+    assert "edited since" in nb.plan_write(d, {}, {"structuredContent": {"content": edited}})["error"]
+    img = enml.replace("<h2>Your feedback</h2>", '<h2>Your feedback</h2><en-media hash="' + "d" * 32 + '" type="image/png"/>')
+    assert "holds an image" in nb.plan_write(d, {}, {"structuredContent": {"content": img}})["error"]
