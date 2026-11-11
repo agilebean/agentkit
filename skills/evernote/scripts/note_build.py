@@ -895,6 +895,20 @@ def local_images(draft: str) -> tuple[list[dict], str, list[str]]:
     return imgs, "\n".join(keep).lstrip("\n"), errs
 
 
+def verbatim_text(d: Path) -> str | None:
+    """Chaehan's own words the note carries as he wrote them (init --verbatim), or None."""
+    p = d / "verbatim.md"
+    return p.read_text(encoding="utf-8") if p.exists() else None
+
+
+def keep_verbatim(d: Path, files) -> None:
+    """Store the --verbatim files in the build folder, where next, write and verify find them."""
+    files = [files] if isinstance(files, str) else list(files or [])
+    if files:
+        (d / "verbatim.md").write_text("\n\n".join(Path(f).read_text(encoding="utf-8").strip() for f in files) + "\n",
+                                       encoding="utf-8")
+
+
 def write_command(d: Path) -> str:
     meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
     base = f"cd {SOCRATES} && mamba run -n socrates python -m projects.evernote.src.evernote_api"
@@ -919,7 +933,8 @@ def cmd_init(a) -> int:
     elif a.guid:
         # The note is read through the Evernote MCP, never the CLI (Chaehan, 2026-11-07): the agent runs the
         # printed code in one execute call, and the bridge finishes the init from the get_note result.
-        args = {k: getattr(a, k) for k in ("guid", "title", "notebook", "decisions", "record", "chaehan", "section", "new")}
+        args = {k: getattr(a, k) for k in ("guid", "title", "notebook", "decisions", "record", "chaehan", "section", "new",
+                                           "verbatim")}
         (d / "init_args.json").write_text(json.dumps(args), encoding="utf-8")
         port = start_bridge(d, "init")
         print("Run this code in ONE execute call, exactly as printed. It reads the note and starts the build.\n")
@@ -928,7 +943,7 @@ def cmd_init(a) -> int:
     else:
         old = ""
     return finish_init(d, old, {k: getattr(a, k) for k in ("guid", "title", "notebook", "decisions", "record",
-                                                            "chaehan", "section", "dest", "new")})
+                                                            "chaehan", "section", "dest", "new", "verbatim")})
 
 
 def init_as_is(d: Path, a) -> int:
@@ -938,10 +953,33 @@ def init_as_is(d: Path, a) -> int:
         print("init --as-is needs --guid for an existing note, or --title and --notebook for a new one",
               file=sys.stderr)
         return 1
+    if a.guid and not a.base:
+        print("init --as-is --guid needs --base <file>: the note's text as you read it (the readback.md of its last "
+              "write, or its markdown export), so the write never covers an edit made in Evernote since",
+              file=sys.stderr)
+        return 1
     text = Path(a.as_is).read_text(encoding="utf-8")
+    keep_verbatim(d, a.verbatim)
+    meta_section = {}
+    if a.replace_section:
+        # One section of the note is written; every other byte of it stays (Chaehan's own edits, images in a
+        # table). The draft is that section, under its heading, so the gate reads it as one.
+        if not a.guid:
+            print("init --replace-section needs --guid and --base", file=sys.stderr)
+            return 1
+        h = a.replace_section
+        body = re.sub(rf"^\s*#{{1,3}}\s+{re.escape(h)}\s*\n", "", text, count=1)
+        text = f"## {h}\n\n{body.strip()}\n"
+        old = section_of(Path(a.base).read_text(encoding="utf-8"), h)
+        if old is None:
+            print(f"the base has no section {h!r}", file=sys.stderr)
+            return 1
+        meta_section = {"replace_section": h, "section_key": text_key(old)}
     for name, body in (("draft.md", text), ("original.md", text), ("cuts.md", ""), ("labels_merged.tsv", "")):
         (d / name).write_text(body, encoding="utf-8")
-    (d / "meta.json").write_text(json.dumps({"guid": a.guid, "title": a.title, "notebook": a.notebook,
+    meta_base = {"body_key": text_key(Path(a.base).read_text(encoding="utf-8"))} if a.base and not meta_section else {}
+    meta_base.update(meta_section)
+    (d / "meta.json").write_text(json.dumps({**meta_base, "guid": a.guid, "title": a.title, "notebook": a.notebook,
                                              "dest": a.dest, "new": False, "as_is": True,
                                              "record": [str(Path(r).resolve()) for r in a.record or []]}),
                                  encoding="utf-8")
@@ -955,7 +993,7 @@ def check_as_is(d: Path) -> int:
     _imgs, text, errs = local_images(draft)
     # The read-back is checked against this text; photo lines leave it, since their paths are no facts.
     (d / "original.md").write_text(text, encoding="utf-8")
-    fails = errs + g.check(text, None, note=True, table_titles=True)
+    fails = errs + g.check(text, None, note=True, table_titles=True, verbatim=verbatim_text(d))
     if fails:
         print(f"The gate fails the text. Edit {d / 'draft.md'}, then run next again:")
         for f in fails:
@@ -970,6 +1008,7 @@ def check_as_is(d: Path) -> int:
 def finish_init(d: Path, old: str, a: dict) -> int:
     """Split the old text into items and write the build folder; print step 1."""
     (d / "original.md").write_text(old, encoding="utf-8")
+    keep_verbatim(d, a.get("verbatim"))
     new = a.get("new") or []
     new = new if isinstance(new, list) else [new]
     added = "\n\n".join(Path(f).read_text(encoding="utf-8").strip() for f in new)
@@ -1083,7 +1122,7 @@ def cmd_next(a) -> int:
             if not any(it["id"] in keep_ids for it in items if it["section"] == h)
             and not mapping.get(h, "").startswith("drop") and h != NEW_HEAD]
     original = (d / "original.md").read_text(encoding="utf-8")
-    fails = g.check(draft, original, note=True, cuts=cuts, labels=merged, table_titles=True)
+    fails = g.check(draft, original, note=True, cuts=cuts, labels=merged, table_titles=True, verbatim=verbatim_text(d))
     print(f"Assembled {d / 'draft.md'}: {kept} of {len(items)} items kept, "
           f"{len(original.split())} words before, {len(draft.split())} after.")
     empty = [k for k in ds if not any(r[1].upper() == "D" and (r + ["", ""])[2] == k for r in rows)]
@@ -1246,9 +1285,17 @@ def inner(enml: str) -> str:
 
 # Images at the top of a note, bare or each in its own <div>, the form write's prepend gives them (2026-11-10: a
 # second write of a note with two such photos was refused as "an image inside its text").
-LEADING_MEDIA = re.compile(r"^(?:\s*(?:<div>\s*)?<en-media\b[^>]*/>\s*(?:</div>\s*)?)+")
+# An empty line (<div><br/></div>) may stand before them: the body a new note starts with.
+LEADING_MEDIA = re.compile(r"^(?:\s*(?:<div>\s*(?:<br\s*/>)?\s*</div>\s*)*(?:<div>\s*)?<en-media\b[^>]*/>\s*(?:</div>\s*)?)+")
 # Images at the foot of a note, where Chaehan put a picture, with the empty lines Evernote keeps after them.
 TRAILING_MEDIA = re.compile(r"(?:\s*<en-media\b[^>]*/>\s*(?:<div>\s*<br\s*/>\s*</div>\s*)*)+$")
+
+
+def text_key(md: str) -> str:
+    """body_key for a note's text read through the converter (a readback.md): its words, images aside."""
+    import hashlib
+    text = "\n".join(l for l in md.splitlines() if not re.fullmatch(r"\s*!\[[^\]]*\]\([^)]*\)\s*", l))
+    return hashlib.sha256(" ".join(text.split()).encode()).hexdigest()
 
 
 def body_key(body: str) -> str:
@@ -1266,6 +1313,9 @@ def plan_write(d: Path, linked: dict, before) -> dict:
         return {"error": "the draft changed after its PASS: run next again"}
     images, draft, img_errs = local_images(draft)
     (d / "images.json").write_text(json.dumps(images), encoding="utf-8")
+    meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
+    if meta.get("replace_section"):
+        return plan_section(d, meta, draft, before, img_errs + (["a section write takes no photos"] if images else []))
     titles = {gid: find_key(n, "title") or "" for gid, n in linked.items()}
     cache_p = d / "links.json"
     cache = json.loads(cache_p.read_text(encoding="utf-8")) if cache_p.exists() else {}
@@ -1360,9 +1410,70 @@ def check_images(d: Path, after, got: dict) -> list[str]:
     return out
 
 
+def section_span(enml_body: str, heading: str) -> tuple[int, int] | None:
+    """Where one section stands in a note body: from its heading to the next heading of its level or higher.
+    Evernote's app writes its own attributes into a heading (<h2 style="--en-nodeId:...">)."""
+    m = re.search(rf"<h([1-6])\b[^>]*>\s*{re.escape(heading)}\s*</h\1>", enml_body)
+    if not m:
+        return None
+    nxt = re.search(rf"<h[1-{m.group(1)}]\b", enml_body[m.end():])
+    return m.start(), m.end() + (nxt.start() if nxt else len(enml_body) - m.end())
+
+
+def section_text(enml_body: str, span: tuple[int, int]) -> str:
+    """The section's text without its heading, through the converter, as text_key reads it."""
+    md = enml_module().enml_to_markdown("<en-note>" + enml_body[span[0]:span[1]] + "</en-note>")
+    return re.sub(r"^\s*#{1,6}\s+.*\n", "", md, count=1)
+
+
+def plan_section(d: Path, meta: dict, draft: str, before, errs: list[str]) -> dict:
+    """The write of one section: its old ENML as find, the draft's section as content, nothing else touched."""
+    h = meta["replace_section"]
+    body = inner(find_enml(before) or "")
+    span = section_span(body, h)
+    if span is None:
+        errs.append(f"the note has no heading {h!r}")
+    else:
+        if "<en-media" in body[span[0]:span[1]]:
+            errs.append(f"the section {h!r} holds an image, which this write would drop")
+        if text_key(section_text(body, span)) != meta.get("section_key"):
+            errs.append(f"the section {h!r} was edited since the build read it: start again from the current note")
+    if errs:
+        return {"error": "; ".join(errs)}
+    meta["outside_key"] = text_key(enml_module().enml_to_markdown("<en-note>" + body[:span[0]] + body[span[1]:] + "</en-note>"))
+    (d / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
+    return {"find": body[span[0]:span[1]], "content": inner(enml_module().markdown_to_enml(draft)), "images": []}
+
+
+def done_section(d: Path, meta: dict, after) -> tuple[int, str]:
+    """Verify a section write: the section reads as the draft, and the rest of the note is as it was."""
+    body = inner(find_enml(after) or "")
+    span = section_span(body, meta["replace_section"])
+    if span is None:
+        return 1, f"FAIL: the note lost its heading {meta['replace_section']!r}\n"
+    draft = (d / "draft.md").read_text(encoding="utf-8")
+    want = re.sub(r"^\s*#{1,6}\s+.*\n", "", draft, count=1)
+    outside = enml_module().enml_to_markdown("<en-note>" + body[:span[0]] + body[span[1]:] + "</en-note>")
+    out = []
+    if text_key(section_text(body, span)) != text_key(want):
+        out.append("FAIL: the section does not read back as the draft")
+    if text_key(outside) != meta.get("outside_key"):
+        out.append("FAIL: the rest of the note changed")
+    (d / "readback.md").write_text(section_text(body, span), encoding="utf-8")
+    return (1 if out else 0), "".join(l + "\n" for l in out) + ("" if out else "PASS: the section reads back as the "
+                                                                     "draft and the rest of the note is unchanged\n")
+
+
 def done_write(d: Path, gid: str, after, got: dict | None = None, up: dict | None = None) -> str:
     """Keep the guid, convert the read-back with the same converter, and verify it."""
     meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
+    if meta.get("replace_section"):
+        rc, msg = done_section(d, meta, after)
+        title = find_key(after, "title") or meta.get("title") or ""
+        result = (json.dumps({"guid": gid, "title": title, "written": True}) + "\n" + msg
+                  + ("" if rc == 0 else "VERIFY FAILED\n"))
+        (d / "write_result.txt").write_text(result, encoding="utf-8")
+        return result
     meta["guid"] = gid  # a created note is updated from now on
     meta["body_key"] = body_key(inner(find_enml(after) or ""))  # the next write checks nobody edited it since
     (d / "meta.json").write_text(json.dumps(meta), encoding="utf-8")
@@ -1591,7 +1702,8 @@ def cmd_verify(a) -> int:
     back = Path(a.readback).read_text(encoding="utf-8")
     fails = g.check(back, (d / "original.md").read_text(encoding="utf-8"), note=True,
                     cuts=(d / "cuts.md").read_text(encoding="utf-8"),
-                    labels=(d / "labels_merged.tsv").read_text(encoding="utf-8"), table_titles=True)
+                    labels=(d / "labels_merged.tsv").read_text(encoding="utf-8"), table_titles=True,
+                    verbatim=verbatim_text(d))
     for f in fails:
         print(f)
     print("PASS" if not fails else f"FAIL ({len(fails)})")
@@ -1614,6 +1726,12 @@ def main(argv: list[str] | None = None) -> int:
                                                   "under 'New facts' and are checked against the record (repeatable)")
     i.add_argument("--section", help="with --guid, --title and --notebook: build a new note from this section")
     i.add_argument("--dest", choices=DESTS, default="evernote", help="where write puts the note (default evernote)")
+    i.add_argument("--verbatim", action="append", help="Chaehan's own words the note carries as he wrote them (a file, "
+                   "repeatable): the gate leaves their form alone and fails when one of their sentences is missing or changed")
+    i.add_argument("--replace-section", dest="replace_section", help="with --as-is --guid --base: write only this "
+                   "section of the note (its heading's text) and leave every other byte as it stands")
+    i.add_argument("--base", help="with --as-is --guid: the note's text as you read it; the write refuses when the "
+                   "note changed since")
     i.add_argument("--as-is", dest="as_is", help="a text written elsewhere (Claude, Chaehan) is the note: only the gate "
                    "checks it; photo lines at its top are uploaded by write")
     lk = sub.add_parser("link", help="print the exact Evernote link for notes matching the words")
