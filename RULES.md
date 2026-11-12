@@ -3759,6 +3759,8 @@ When something you committed earlier in the same session turns out to be wrong o
 
 The distinction that matters: a **new** piece of work is a new commit, however small. A **correction to work already in this session's commit** is an amendment. Committing a CI failure fix separately and pushing it leaves a red commit and a green commit in the history for one change.
 
+The force-push is allowed: on 2026-11-11 auto mode refused one as destructive, and on 2026-11-12 Chaehan, asked which way rule 193 should go, answered "I'll allow force pushes". The lease names the tip you replace, and a commit someone else built on yours is never rewritten: check `git branch -a --contains <sha>` first, and leave the history as it is when another branch holds it.
+
 Instruction basis: 2026-10-20, the E08 deck's page count. Adding the navy agenda made the deck 16 pages; the build test still asserted 15, CI failed, and I fixed the literal and pushed it as its own commit. Chaehan: "you shouldn't push such fixes but git amend them."
 
 ### 194. "Replace A with B" removes A
