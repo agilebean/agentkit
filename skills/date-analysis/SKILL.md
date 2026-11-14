@@ -1,6 +1,6 @@
 ---
 name: date-analysis
-description: Analyze the recording of one of Chaehan's dates and write the note (Evernote notebook Affinity, or Hanji) - the turning point of the date and the talk that led to it, her feelings for him, sex and past relationships decoded from indirect Korean, how they changed since the earlier meetings, how the date compares with his other dates, and what he can do better and why, in a friend's plain words with verbatim quotes and their times. Reads the transcript straight from MacWhisper ("Whisper Transcription"). Use when Chaehan asks to analyze a date or a date recording, types /date, or asks to "evernote the date".
+description: Analyze the recording of one of Chaehan's dates and write the note (Evernote notebook Affinity, or Hanji) - the turning point of the date and the talk that led to it, her feelings for him, sex and past relationships decoded from indirect Korean, how they changed since the earlier meetings, how the date compares with his other dates, and what he can do better and why, in a friend's plain words with verbatim quotes and their times. Reads the transcript Chaehan exported into the Affinity folder on Drive, and MacWhisper's database only when no such file exists. Use when Chaehan asks to analyze a date or a date recording, types /date, or asks to "evernote the date".
 ---
 
 # Date analysis
@@ -15,10 +15,16 @@ writes to Evernote; `/date <recording> Hanji` writes to Hanji instead, with
 `note_build.py init --dest hanji` (the hanji skill; Hanji has no Affinity
 notebook, so the note goes to "Chaehan's Life", as the date-1 note did).
 
-**The transcription app.** MacWhisper is the app installed as "Whisper
-Transcription" (bundle com.goodsnooze.MacWhisper): one app, two names. Every
-recording Chaehan drops on it is in its database, so step 1 always checks it
-first, before looking for an exported file.
+**The transcript.** Chaehan exports each date's transcript into the Affinity
+folder on Drive, named like the recording:
+`~/Library/CloudStorage/GoogleDrive-chaehan.so@virtualfriend.chat/My Drive/1 Projects/Affinity/<recording title>.md`.
+That file, or the file he names, is the transcript. Chaehan, 2026-11-14: "do
+not transcribe the audio again, the transcript is at ..." and "why don't you
+conclude that must be in the skill to check first the transcript existence".
+MacWhisper (the app installed as "Whisper Transcription", bundle
+com.goodsnooze.MacWhisper) is reached only when no such file exists, and then
+only through `mw_transcript.py`, which copies the app's database file and
+reads the copy; it never opens the app and never transcribes.
 
 ## What Chaehan wants from it
 
@@ -74,28 +80,33 @@ its place only when it carries one of the six points.
 Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
 `S=~/Software/Prototypes/agentkit/skills/date-analysis/scripts`.
 
-1. **Transcript.** `python3 $S/mw_transcript.py list` shows MacWhisper's
-   recent sessions (the "Whisper Transcription" app). When the recording reads "transcribed False", MacWhisper is
-   still working: wait and check again every few minutes (the log in
-   `~/Library/Containers/com.goodsnooze.MacWhisper/Data/Library/Application Support/MacWhisper/Logs/`
-   names the session when it finishes). A transcript Chaehan exported as a file
-   instead goes straight to step 3.
-2. **Name the speakers.** `python3 $S/mw_transcript.py speakers "<session>"`
-   prints each speaker's talk time and longest turns. Chaehan is the man who
-   talks about KUBS, design thinking, AI, Germany and his travels; she is the
-   woman whose life the record describes. MacWhisper splits one voice across
-   several numbers, worst in a loud bar. A speaker goes to "Other" only when
+1. **Transcript.** First `ls` the Affinity folder above for the recording's
+   title, and take any path Chaehan gave. When the file exists, it is the
+   transcript, and steps 2 and 3 run `md_turns.py` on it; MacWhisper is not
+   read. The file needs its timestamps (`*05:17:42*` under each speaker line);
+   when it has none, ask Chaehan to export it again with timestamps. Only when
+   no file exists, `python3 $S/mw_transcript.py list` shows MacWhisper's
+   recent sessions; when the recording reads "transcribed False", the app is
+   still working, so wait and check again every few minutes.
+2. **Name the speakers.** `python3 $S/md_turns.py "<file>" --speakers` (from
+   MacWhisper: `mw_transcript.py speakers "<session>"`) prints each speaker's
+   turns and longest turns. Chaehan is the man who talks about KUBS, design
+   thinking, AI, Germany and his travels; she is the woman whose life the
+   record describes. The app splits one voice across several numbers, worst in
+   a loud bar, and Chaehan's export can still file a line of hers under his
+   name: read every line by its words. A speaker goes to "Other" only when
    most of its turns are about menus, prices or serving. A speaker whose turns
    answer Chaehan about her life, about him or about the two of them is mapped
-   to her name. A mixed speaker keeps its own number (`Speaker 7`), so each of
+   to her name. A mixed speaker keeps its own number (`Speaker 3`), so each of
    its turns is read on its own. Write the mapping into `B/speakers.txt` with
    one reason per speaker; on 2026-11-11 two of her questions sat under a
    speaker described there as video subtitles, and a later run dropped them.
-3. **Export and count.**
-   `python3 $S/mw_transcript.py export "<session>" --out B/transcript.md --map "Speaker 1=Chaehan" --map "Speaker 2=Jiyoung" ...`
-   and the same with `stats --out B/stats.md`. The transcript has one line per
-   turn, `T0123 [1:02:03] Jiyoung: ...`; the time in brackets is how every
-   quote is cited.
+3. **Turns and counts.**
+   `python3 $S/md_turns.py "<file>" --out B/transcript.md --stats B/stats.md --map "Speaker 4=Other" ...`
+   (from MacWhisper: `mw_transcript.py export` and `stats` with the same
+   `--map`). The transcript has one line per timed block,
+   `T0123 [1:02:03] Jiyoung: ...`; the time in brackets is how every quote is
+   cited.
 4. **Chaehan's record.** Read her section of `memory/dating.md`, the hard
    conditions in `memory/partner-search.md`, and the earlier notes on her that
    the record names. His own words about this date, when he gave them, go into
@@ -230,7 +241,12 @@ At most 1500 words. A section holds at most seven bullets.
    sentences what it means for you. When nothing changed how she treated you,
    one sentence that says so.
 4. `## Her feelings for you`: what she revealed, in her words, outside the
-   turning point.
+   turning point, grouped under colon subheads on their own lines (rule 106):
+   what she said about you, what she asked you, what she offered or planned
+   without being asked, and what cooled and when. Chaehan, 2026-11-14: the
+   Date3-old note "had meaningful substructure in Her interest in you". A
+   group the date did not show is left out; the groups hold at most seven
+   bullets together.
 5. `## How it changed since your first meeting`: her feelings, sex and past
    relationships on each earlier meeting with her, against this one.
 6. `## Sex and past relationships`: her lines and yours, decoded; where she

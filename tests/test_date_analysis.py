@@ -12,6 +12,8 @@ import importlib.util
 import sqlite3
 from pathlib import Path
 
+import pytest
+
 SKILL = Path(__file__).resolve().parents[1] / "skills" / "date-analysis"
 
 
@@ -190,3 +192,32 @@ def test_a_sentence_opening_used_four_times_fails() -> None:
 
 def test_the_think_again_formula_is_a_marker() -> None:
     assert check.wording("You would think again if she goes quiet.\n", "")
+
+
+def _md_turns():
+    return _load("md_turns")
+
+
+def test_md_turns_reads_chaehans_export_with_its_times(tmp_path) -> None:
+    """Chaehan, 2026-11-14: the transcript is the file he exported, never MacWhisper's database again."""
+    mt = _md_turns()
+    export = ("**Chaehan**\n*00:03*\n무슨 무슨?\n\n*00:05*\n그러니까 겁나 사람 만날 때\n\n"
+              "**Jiyoung**\n*05:17:42*\n머리가 깨끗해지고 있는 중인 것 같아요\n")
+    ts = mt.turns(export, {"Speaker 4": "Other"})
+    assert [(mt.clock(s), w) for s, w, _ in ts] == [("0:00:03", "Chaehan"), ("0:00:05", "Chaehan"),
+                                                     ("5:17:42", "Jiyoung")]
+    out = tmp_path / "t.md"
+    src = tmp_path / "x.md"
+    src.write_text(export, encoding="utf-8")
+    assert mt.main([str(src), "--out", str(out)]) == 0
+    turns = check.load_turns(str(out))
+    assert turns[2] == ("5:17:42", "Jiyoung", "머리가 깨끗해지고 있는 중인 것 같아요")
+    assert check.quotes('"머리가 깨끗해지고" [5:17:42]', turns) == ([], 1)
+
+
+def test_md_turns_refuses_an_export_without_times(tmp_path) -> None:
+    mt = _md_turns()
+    src = tmp_path / "x.md"
+    src.write_text("**Chaehan**\n안녕하세요\n", encoding="utf-8")
+    with pytest.raises(SystemExit):
+        mt.main([str(src), "--out", str(tmp_path / "t.md")])
