@@ -138,3 +138,26 @@ def test_a_bare_ordinal_date_warns_and_a_named_series_passes() -> None:
     assert not flagged('Chaehan, 2026-11-08: "the second date is today not nov 11"')
     assert not flagged("If a second date with her comes")
     assert not flagged("It buys a second meeting in March with any woman from November")
+
+
+# ---- --strict and stacked marker lists (date-analysis, 2026-11-12) ----
+
+def test_strict_makes_a_warn_fail(tmp_path) -> None:
+    p = tmp_path / "note.md"
+    p.write_text("You explained the mechanism rather than the taste.\n", encoding="utf-8")
+    assert wording.main([str(p)]) == 0
+    assert wording.main(["--strict", str(p)]) == 2
+
+
+def test_markers_stack_and_the_shared_list_is_named(tmp_path) -> None:
+    extra = tmp_path / "extra.tsv"
+    extra.write_text("flag\t\\bexits?\\b\ta figure\n", encoding="utf-8")
+    p = tmp_path / "note.md"
+    p.write_text("You took no exit.\n", encoding="utf-8")
+    assert wording.main([str(p)]) == 0
+    assert wording.main(["--markers", str(extra), str(p)]) == 2
+    both = ["--markers", wording.DEFAULT_MARKERS, "--markers", str(extra)]
+    q = tmp_path / "dash.md"
+    q.write_text("Plain — dashed.\n", encoding="utf-8")
+    assert wording.main(both + [str(q)]) == 2
+    assert wording.main(["--markers", str(extra), str(q)]) == 0

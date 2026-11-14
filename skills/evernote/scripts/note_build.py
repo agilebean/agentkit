@@ -981,6 +981,7 @@ def init_as_is(d: Path, a) -> int:
     meta_base.update(meta_section)
     (d / "meta.json").write_text(json.dumps({**meta_base, "guid": a.guid, "title": a.title, "notebook": a.notebook,
                                              "dest": a.dest, "new": False, "as_is": True,
+                                             "person": getattr(a, "person", None),
                                              "record": [str(Path(r).resolve()) for r in a.record or []]}),
                                  encoding="utf-8")
     return check_as_is(d)
@@ -993,7 +994,8 @@ def check_as_is(d: Path) -> int:
     _imgs, text, errs = local_images(draft)
     # The read-back is checked against this text; photo lines leave it, since their paths are no facts.
     (d / "original.md").write_text(text, encoding="utf-8")
-    fails = errs + g.check(text, None, note=True, table_titles=True, verbatim=verbatim_text(d))
+    person = json.loads((d / "meta.json").read_text(encoding="utf-8")).get("person")
+    fails = errs + g.check(text, None, note=True, table_titles=True, verbatim=verbatim_text(d), person=person)
     if fails:
         print(f"The gate fails the text. Edit {d / 'draft.md'}, then run next again:")
         for f in fails:
@@ -1707,7 +1709,8 @@ def cmd_verify(a) -> int:
     fails = g.check(back, (d / "original.md").read_text(encoding="utf-8"), note=True,
                     cuts=(d / "cuts.md").read_text(encoding="utf-8"),
                     labels=(d / "labels_merged.tsv").read_text(encoding="utf-8"), table_titles=True,
-                    verbatim=verbatim_text(d))
+                    verbatim=verbatim_text(d),
+                    person=json.loads((d / "meta.json").read_text(encoding="utf-8")).get("person"))
     for f in fails:
         print(f)
     print("PASS" if not fails else f"FAIL ({len(fails)})")
@@ -1736,6 +1739,9 @@ def main(argv: list[str] | None = None) -> int:
                    "section of the note (its heading's text) and leave every other byte as it stands")
     i.add_argument("--base", help="with --as-is --guid: the note's text as you read it; the write refuses when the "
                    "note changed since")
+    i.add_argument("--person", help="with --as-is: the woman a date note is about (date-analysis skill); the gate "
+                   "takes she, her and her name as a subject beside you "
+                   "(Chaehan, 2026-11-12: \"she may lead\")")
     i.add_argument("--as-is", dest="as_is", help="a text written elsewhere (Claude, Chaehan) is the note: only the gate "
                    "checks it; photo lines at its top are uploaded by write")
     lk = sub.add_parser("link", help="print the exact Evernote link for notes matching the words")

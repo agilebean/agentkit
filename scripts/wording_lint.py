@@ -3,11 +3,17 @@
 in the wrong script.
 
 Usage:
-  python3 scripts/wording_lint.py [--markers PATH] FILE [FILE ...]
+  python3 scripts/wording_lint.py [--strict] [--markers PATH ...] FILE [FILE ...]
 
 Reads the shared marker list (`robot_markers.tsv`, at this repo's root) and
 reports each hit as `<file>:<line>: <level> '<matched words>' - <fix>`. A
-`flag` hit fails the run with exit 2; a `warn` hit is reported only. The list
+`flag` hit fails the run with exit 2; a `warn` hit is reported only.
+
+`--markers` may be given more than once; the lists are read together, and the
+shared list is read only when no `--markers` is given, so a skill that adds its
+own list names the shared one as well. `--strict` makes every warn a failure:
+a text Chaehan reads as a finished note (the date-analysis skill) carries no
+contrast frame and no container word at all. The list
 is the checkable subset by design: three-item runs, embedded clauses, headings
 over one sentence and colon-field blocks stay a writer's pass.
 
@@ -139,13 +145,17 @@ def lint_text(text: str, rules) -> list[tuple[int, str, str, str]]:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--markers", default=DEFAULT_MARKERS, help="override: the robot marker list to read")
+    ap.add_argument("--markers", action="append", default=[],
+                    help="a robot marker list to read; repeat for several (default: the shared list)")
+    ap.add_argument("--strict", action="store_true", help="a warn hit fails the run as a flag does")
     ap.add_argument("--title", action="append", default=[], help="a note title to check (rule 20); the files' own names are always checked")
     ap.add_argument("files", nargs="+", help="files to check")
     args = ap.parse_args(argv)
-    if not os.path.exists(args.markers):
-        sys.exit(f"wording_lint: no marker list at {args.markers}")
-    rules = load_robot_markers(args.markers)
+    rules = []
+    for path in args.markers or [DEFAULT_MARKERS]:
+        if not os.path.exists(path):
+            sys.exit(f"wording_lint: no marker list at {path}")
+        rules += load_robot_markers(path)
     flags = warns = 0
     titles = list(args.title) + [os.path.splitext(os.path.basename(p))[0] for p in args.files]
     for title in titles:
@@ -161,7 +171,7 @@ def main(argv=None) -> int:
         body = open(path, encoding="utf-8").read()
         for lineno, level, match, fix in lint_text(body, rules):
             print(f"  {path}:{lineno}: {level} '{match}' - {fix}")
-            if level == "flag":
+            if level == "flag" or args.strict:
                 flags += 1
             else:
                 warns += 1
@@ -169,7 +179,8 @@ def main(argv=None) -> int:
             print(f"  {path}:{lineno}: flag '{char}' - Han characters in your own text: "
                   f"write it in the thread's language (RULES.md 217) | {line}")
             flags += 1
-    print(f"wording_lint: {len(args.files)} file(s), {flags} flag(s), {warns} warn(s)")
+    print(f"wording_lint: {len(args.files)} file(s), {flags} flag(s), {warns} warn(s)"
+          + (" (strict: warns fail)" if args.strict else ""))
     return 2 if flags else 0
 
 
