@@ -1301,7 +1301,11 @@ def text_key(md: str) -> str:
 def body_key(body: str) -> str:
     """A fingerprint of a note body's text, images aside, to see whether anyone edited it since the build read it."""
     import hashlib
-    text = enml_module().enml_to_markdown("<en-note>" + LEADING_MEDIA.sub("", body) + "</en-note>")
+    # Images at the top and at the foot both leave, as text_key drops every image line (2026-11-14: a photo at the
+    # foot of "2026-11-07 Right shoulder flare" made the two keys differ and refused every write as an edit).
+    body = LEADING_MEDIA.sub("", body)
+    body = TRAILING_MEDIA.sub("", body)
+    text = enml_module().enml_to_markdown("<en-note>" + body + "</en-note>")
     return hashlib.sha256(" ".join(text.split()).encode()).hexdigest()
 
 
