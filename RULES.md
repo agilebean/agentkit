@@ -4356,6 +4356,22 @@ observable effects, and then goes inward to point to a principle or mechanism,
 and from there, make a deduction to a consequential effect which is of
 importance (high elbow catch prevented)."
 
+A conversation is described the same way. The effect is the change seen in the
+other person (she opened up, she let him take her hand); the cause is the talk
+that led there, read backward to where its subject first came up, which can be
+an hour earlier; the consequence is what it means for the reader. Lines filed
+one by one under topics never show such a turn, because each loses the question
+it answered and the change it led to. A long turn is judged by what was asked
+before it and what followed it, never by its length or its share of the talk.
+Instance, 2026-11-14 (failure 210): two notes on the third meeting with Jiyoung
+Kim filed her fear of men under sex and her "머리가 깨끗해지고 있는 중인 것
+같아요" under her limits, listed his six-minute answer to her own question as
+the moment he lost her, and missed that the 80 minutes before her line were one
+conversation about holding hands. Chaehan: "neither the old nor the new
+captured the extremely important and deep conversational points preceding that
+revelation which changed her whole attitude towards me, as after that she
+allowed me holding her hand."
+
 ### 214. A cue is a word the user can hold, not a description of a sensation
 
 A cue is a word or phrase the user repeats to himself while the movement runs: "needle", "bubble beard", "hold-forward", "roll-up-hold". A description of what should happen, or of a feeling, is not a cue: "heavy water on the left forearm" names a place and a sensation, and there is nothing short to repeat.
