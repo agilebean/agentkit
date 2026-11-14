@@ -80,6 +80,8 @@ The script delivers Chaehan's three imperatives by construction. Items labelled 
 
 ## A text you wrote, from Claude Code
 
+Time every Evernote and Hanji create or write from its start to the verified read-back, and report the seconds with the result (Chaehan, 2026-11-14: "you should always time the evernote and hanji creations and report them"); `note_test.py` prints the run's clock and `report.md` its steps and cost, and a Hanji helper write is timed around the command.
+
 When Chaehan asks Claude to write a note's text (an analysis, a summary) and the Evernote work to be done by the tools, the text skips note_build's selection steps and still passes the gate. Chaehan, 2026-11-10: "fix the evernote skill so it can be used by you as well". Claude Code cannot call the Evernote MCP, so the write runs in opencode, in one command:
 
 1. Write the text to a file in the note's style (section 3 of the life-overview skill). Photos for the top go above the first heading as lines of their own with their local path, `![name](</path/with spaces.jpg>)`.

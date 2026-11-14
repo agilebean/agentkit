@@ -188,6 +188,8 @@ Denis.
 
 ## Note rules
 
+Every create or write is timed from the command's start to its verified read-back, and the seconds go into the report beside `verified` (Chaehan, 2026-11-14: "you should always time the evernote and hanji creations and report them").
+
 The rules about Chaehan's notes hold in Hanji unchanged: read the evernote
 skill's "Note structure rules" (dated title as the first word, the graphic first,
 a Takeaway only for a meeting summary or an analysis of Chaehan's results, bookings as
