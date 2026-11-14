@@ -133,6 +133,15 @@ def test_note_mode_flags_prose_sections_and_passes_lists():
     assert gate.check(listed, note=True) == []
 
 
+def test_a_date_notes_turning_point_stays_prose():
+    """Chaehan, 2026-11-14: the turning point is told as a story; T5 had pushed it into a list."""
+    story = "## The turning point\nYou asked about her hand. She asked how to get past fear. She told you her fear.\n"
+    assert not any(f.startswith("T5 section is prose") for f in gate.check(story, note=True, person="Jiyoung Kim"))
+    assert any(f.startswith("T5 section is prose") for f in gate.check(story, note=True))
+    other = story.replace("The turning point", "Her feelings for you")
+    assert any(f.startswith("T5 section is prose") for f in gate.check(other, note=True, person="Jiyoung Kim"))
+
+
 ORIG = """## Assembly
 Your body runs it in two stages.
 - Arousal comes first.

@@ -196,7 +196,20 @@ Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
      relative day ("내일") stays in its quote with the day it was said.
    - **A plan agreed on the date is written as agreed**, never as still ahead.
    - **A quote from a turn under a staff label** that is hers by its words is
-     marked "(her voice, filed under staff)" after its time.
+     marked "(her voice, filed under staff)" after its time, and one filed
+     under his name "(her voice, filed under your name)". A line that speaks of
+     her life in the first person (`내가 ... 무서워한다거나`), or answers his
+     question, is hers whatever its label.
+   - **An example is not an event.** What she offers after `예를 들어서`,
+     `만약에` or `이런 거` is a case she imagines, and it is never written as
+     something she did.
+   - **A time, a duration or a role stays as she said it.** "4시에 만나서 10시"
+     is quoted, never turned into a clock time by arithmetic; a man in her
+     story keeps the role she gives him, and a role she never names is not
+     added.
+   - **A garbled line is quoted, never retold.** When the words around a line
+     do not make its sense clear, the note quotes the clear words or leaves the
+     line out.
    - **The turning point is told as a story**, in paragraphs and in time order
      from `B/turn.md`, the way a friend retells what happened: what she said,
      what you answered, what she did next. Her words are quoted where they
