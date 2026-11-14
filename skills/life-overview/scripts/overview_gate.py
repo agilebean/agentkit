@@ -246,7 +246,8 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
 
     `person` names the woman a date note is about (the date-analysis skill). Chaehan, 2026-11-12, chose that in
     such a note "she may lead": "she", "her" and her name count as a subject in T13 and T15 beside "you". T12's
-    cap of seven items stays (Chaehan, 2026-11-12, of the first date-3 note: "no quality over quantity")."""
+    cap of seven items stays (Chaehan, 2026-11-12, of the first date-3 note: "no quality over quantity"). T5
+    leaves the sections in STORY_SECTIONS to prose, since the skill tells the turning point as a story."""
     fails: list[str] = []
     is_v = _verbatim_test(verbatim)
     pool = list(linked or [])
@@ -257,7 +258,7 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
         pool.append(cuts)
     if facts_only or note:
         if note:
-            fails += _prose_sections(draft, is_v)
+            fails += _prose_sections(draft, is_v, STORY_SECTIONS if person else frozenset())
             fails += _empty_items(draft)
             fails += _summary(draft)
             extra = person_words(person)
@@ -340,9 +341,17 @@ def _verbatim_kept(draft: str, verbatim: str) -> list[str]:
     return out
 
 
-def _prose_sections(md: str, is_v=lambda l: False) -> list[str]:
+# A date note's turning point is told as a story in paragraphs (date-analysis skill; Chaehan, 2026-11-14:
+# the notes missed "the extremely important and deep conversational points preceding that revelation").
+# With `person`, T5 leaves these sections to prose.
+STORY_SECTIONS = frozenset({"The turning point"})
+
+
+def _prose_sections(md: str, is_v=lambda l: False, story: frozenset = frozenset()) -> list[str]:
     out = []
     for title, body in sections(md):
+        if title.strip() in story:
+            continue
         lines = [l for l in body.splitlines() if l.strip() and not is_v(l)]
         if any(re.match(r"\s*(?:[-*]|\d+[.)]|[a-z]\))\s", l) for l in lines):
             continue
