@@ -449,3 +449,27 @@ def test_t19_passes_when_each_word_has_its_line_and_counts_item_blocks():
 def test_t19_names_a_section_without_a_block():
     fails = gate.check(GROUND_DRAFT, sources="## Takeaway\n- computed: 26\n")
     assert any("section 'Furniture' has no block" in f for f in fails)
+
+
+# ---- a date note may lead with her (Chaehan, 2026-11-12: "she may lead") ----
+
+def test_a_date_note_may_lead_with_her() -> None:
+    extra = gate.person_words("Jiyoung Kim")
+    assert not gate.seat("She plans in small concrete steps.")
+    assert gate.seat("She plans in small concrete steps.", extra)
+    assert gate.seat("Jiyoung asked about your parents twice.", extra)
+    assert gate.seat("Her jokes are dry verdicts.", extra)
+    assert not gate.seat("The bar closed at ten.", extra)
+
+
+def test_person_lets_her_lead_and_keeps_the_seven_item_cap() -> None:
+    items = "".join(f'- She said line {i} at the bar.\n' for i in range(9))
+    md = f"## Takeaway\n\n- You met her for ten hours and she asked about your parents.\n\n## Her humor\n\nShe makes dry jokes.\n\n{items}"
+    plain = gate.check(md, None, note=True)
+    assert any(f.startswith("T12") for f in plain)
+    assert any(f.startswith("T13") for f in plain)
+    dated = gate.check(md, None, note=True, person="Jiyoung Kim")
+    assert not any(f.startswith("T13") for f in dated)
+    assert any(f.startswith("T12") for f in dated)
+    worse = md.replace("She makes dry jokes.", "The jokes, rather than the stories, carry her.")
+    assert any("contrast" in f for f in gate.check(worse, None, note=True, person="Jiyoung Kim"))

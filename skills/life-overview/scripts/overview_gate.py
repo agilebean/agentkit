@@ -240,9 +240,13 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
           facts_only: bool = False, note: bool = False, cuts: str | None = None,
           labels: str | None = None, table_titles: bool = False,
           challenges: str | None = None, sources: str | None = None,
-          verbatim: str | None = None) -> list[str]:
+          verbatim: str | None = None, person: str | None = None) -> list[str]:
     """`verbatim` is text Chaehan wrote that the note carries as he wrote it: its lines are exempt from the form
-    checks (T5, T12, T13, T16), and T20 fails when one of its sentences is missing or changed."""
+    checks (T5, T12, T13, T16), and T20 fails when one of its sentences is missing or changed.
+
+    `person` names the woman a date note is about (the date-analysis skill). Chaehan, 2026-11-12, chose that in
+    such a note "she may lead": "she", "her" and her name count as a subject in T13 and T15 beside "you". T12's
+    cap of seven items stays (Chaehan, 2026-11-12, of the first date-3 note: "no quality over quantity")."""
     fails: list[str] = []
     is_v = _verbatim_test(verbatim)
     pool = list(linked or [])
@@ -256,9 +260,10 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
             fails += _prose_sections(draft, is_v)
             fails += _empty_items(draft)
             fails += _summary(draft)
+            extra = person_words(person)
             fails += _flat_lists(draft, is_v)
-            fails += _gists(draft, is_v)
-            fails += _summary_subjects(draft)
+            fails += _gists(draft, is_v, extra)
+            fails += _summary_subjects(draft, extra)
             fails += _wording(draft, is_v)
             if verbatim:
                 fails += _verbatim_kept(draft, verbatim)
@@ -451,23 +456,32 @@ def _sentences(text: str) -> list[str]:
     return [x.strip() for x in re.split(r"(?<=[.!?])\s+(?=[A-Z0-9¥€$])", _plain(text)) if x.strip()]
 
 
-def seat(sentence: str) -> bool:
-    """True when the sentence's subject is you, your thing, or an imperative."""
+def person_words(person: str | None) -> frozenset[str]:
+    """The subject words a date note about `person` may lead with: she, her, and each part of her name."""
+    if not person:
+        return frozenset()
+    names = {p.lower() for p in re.findall(r"[A-Za-z'-]+", person)}
+    return frozenset({"she", "her", "hers", "she's", "she'll"} | names | {n + "'s" for n in names})
+
+
+def seat(sentence: str, extra: frozenset[str] = frozenset()) -> bool:
+    """True when the sentence's subject is you, your thing, or an imperative (or, in a date note, she)."""
+    subj = YOU | extra
     for clause in re.split(r"[,:;]", sentence):
         w = re.findall(r"[a-z0-9'-]+", clause.lower())
         if not w:
             continue
-        if w[0] in IMPERATIVE or YOU & set(w[:2]):
+        if w[0] in IMPERATIVE or subj & set(w[:2]):
             return True
         if w[0] in LEAD or re.match(r"\d", w[0]):
-            if YOU & set(w[:8]):
+            if subj & set(w[:8]):
                 return True
             continue
         return False
     return False
 
 
-def _gists(md: str, is_v=lambda l: False) -> list[str]:
+def _gists(md: str, is_v=lambda l: False, extra: frozenset[str] = frozenset()) -> list[str]:
     out = []
     for title, body in sections(md):
         if title.lower().startswith(SUMMARY_HEADS):
@@ -489,14 +503,14 @@ def _gists(md: str, is_v=lambda l: False) -> list[str]:
             out.append(f"T13 section {title!r} opens by talking about the note: {sent[:60]!r}; say the point itself")
         elif contrast(sent):
             out.append(f"T13 section {title!r} opens with a contrast: {sent[:60]!r}; {contrast(sent)[0]}")
-        elif not seat(sent):
+        elif not seat(sent, extra):
             out.append(f"T13 section {title!r} opens on an object, not on you: {sent[:60]!r}. Write it with you, "
                        f"your thing or an action as subject: rejected 'Osaka city has no soapland district.', "
                        f"accepted 'You will find no soapland district in Osaka city.'")
     return out
 
 
-def _summary_subjects(md: str) -> list[str]:
+def _summary_subjects(md: str, extra: frozenset[str] = frozenset()) -> list[str]:
     out = []
     summ = [b for t, b in sections(md) if t.lower().startswith(SUMMARY_HEADS)]
     if not summ:
@@ -506,7 +520,7 @@ def _summary_subjects(md: str) -> list[str]:
         for sent in _sentences(line):
             if len(sent.split()) < 4 or sent.rstrip(".") in titles:
                 continue
-            if not seat(sent):
+            if not seat(sent, extra):
                 out.append(f"T15 summary sentence has no you or action as subject: {sent[:70]!r}; {SUBJECT_EXAMPLE}")
             for c in contrast(sent):
                 out.append(f"T15 summary sentence uses a contrast: {sent[:70]!r}; {c}")

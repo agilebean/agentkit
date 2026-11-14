@@ -1,0 +1,34 @@
+# The robot markers of a date-analysis note (skills/date-analysis), on top of the
+# shared list. Every row is a figure or an analyst word that the 2026-11-10 note on
+# the second meeting with Jiyoung Kim used, and Chaehan called robotic on
+# 2026-11-12: "took no exit, mechanisms, contrasts (and had not), her own line is
+# closed". Run with the shared list and --strict, so the shared contrast frames
+# fail here too:
+#   python3 scripts/wording_lint.py --strict --markers robot_markers.tsv \
+#     --markers skills/date-analysis/date_markers.tsv draft.md
+# Columns, tab-separated: level <TAB> pattern <TAB> fix <TAB> exception (optional).
+flag	\bexits?\b	a figure: say what happened ("you stayed 8.5 hours and neither of you wanted to leave")
+flag	\b(?:her|his|your|their|my)\s+(?:own\s+)?(?:line|position|stance)\b	a figure for a person's view: say what she wants or does not want, in her words ("she would not want an open relationship herself")
+flag	\b(?:is|was|stays?|remains?)\s+(?:closed|open)\b	a door figure for a view: say what she said she would or would not do
+flag	\bmechanisms?\b	analyst word: say what you did ("you explained how mezcal is made")
+flag	\bsignals?\b|\bbehaviou?ral\b	analyst word: name what she did ("she stayed 8.5 hours and asked when you meet next")
+flag	\b(?:ran|run|runs|running|passed|pass|failed|fail)\s+(?:\w+\s+){0,2}tests?\b|\btests?\s+(?:she|you|he)\s+ran\b|\buntested\b|\btested\b	a figure: say what she asked and how you answered
+flag	\bmirror(?:s|ed)?\b|\bthe shape (?:of|your|her)\b|\bshape(?:s|d)? (?:your|her|the)\b	a figure: say the two facts and that they match
+flag	\b(?:and|but)\s+(?:had|has|have|did|does|do|was|is|were|could|would|will)\s+not\s*[.,;]	a clipped ending ("she wanted to ask and had not"): write the whole verb ("she had wanted to ask but did not dare") or two sentences
+flag	\bwhat would (?:reverse|change|overturn)\b|\b(?:this|the|my|a|our) reading\b|\bread as\b|\breads? as\b	analyst frame: say what would make you think otherwise in plain words ("you would worry if she...")
+flag	\bunder (?:the|a|her|his|your) (?:conversation|surface|talk|words)\b	a figure: say what she asked or did
+flag	\bin (?:her|his|your|their|the family's|her family's) (?:own )?language\b	a figure: say what they have in common ("her brother also works on AI")
+flag	\bsettle[sd]?\b|\bproduced\b|\bbears? on\b|\bmoot\b|\bdecisive\b|\bdisclos\w*	analyst verb: use the everyday verb ("told you", "showed", "matters for")
+flag	\bthe fact that\b|\bthe one fact\b|\bthe only (?:two )?facts?\b	a framing noun: state the fact itself
+flag	\bwhat (?:a|her|his|your) turns? does\b|\b(?:volume|function)\b|\basymmetr\w*|\bmodes?\b	analyst words for talk: say who talked, how long, about what
+flag	\banchor(?:s|ed)?\b|\bwear (?:it|this|them) down\b|\bholds? (?:the|her|your) \w+ question\b|\blanded\b	a figure: say the plain fact ("her life is in Songpa", "she laughed")
+flag	\bwindow\b	a figure: give the date or the number of days	fertility window
+flag	\bcriteri(?:on|a)\b|\bdealbreaker\b	a form word: say what she looks for in a man, or what you will not accept, in plain words
+flag	\btrait\b(?! (?:table|section))	in the running text, name the habit itself ("she counts her reasons"); the word trait stays in headings	^\s*#|^\s*\|
+flag	\bfor once\b	a filler turn: drop it or give the time
+flag	\bsequence of\b|\bin that state\b|\bthe state\b	analyst words: say what happened, and when ("after the third bar")
+flag	\bfacts? (?:about her )?that (?:change|decide|end)\b|\bcan end this\b|\bend the match\b	a frame: say what you still must ask her and why it matters to you
+flag	\b(?:evidence|indicator|marker)s? (?:of|for)\b	a lab word in a note about a person: say what she said and what it tells you about her	^\s*\|
+warn	\bstrongest\b|\bweakest\b	a ranking without its scale: say compared with what ("more than on 2026-11-09")
+flag	\bwould think again\b|\bthink otherwise\b|\bchange (?:the|your) picture\b	a guess about the future dressed as a check: give the quote that shows her the other way, or nothing
+flag	\bthe whole map\b|\breach(?:es|ed)? for\b|\bhands? (?:the|it|that) \w+ back\b|\b(?:her|his) head runs\b|\bthe body to follow\b	a figure: say what she did or said

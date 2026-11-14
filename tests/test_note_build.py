@@ -834,3 +834,20 @@ def test_a_section_edited_since_or_holding_an_image_is_refused(tmp_path, monkeyp
     assert "edited since" in nb.plan_write(d, {}, {"structuredContent": {"content": edited}})["error"]
     img = enml.replace("<h2>Your feedback</h2>", '<h2>Your feedback</h2><en-media hash="' + "d" * 32 + '" type="image/png"/>')
     assert "holds an image" in nb.plan_write(d, {}, {"structuredContent": {"content": img}})["error"]
+
+
+def test_a_date_note_keeps_her_as_subject_through_the_read_back(tmp_path, monkeypatch) -> None:
+    """--person reaches the gate at init and again when the read-back is verified (2026-11-12, Jiyoung date 3)."""
+    monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
+    import importlib.util as _u
+    spec = _u.spec_from_file_location("nb_person", Path(__file__).resolve().parents[1] / "skills" / "evernote" / "scripts" / "note_build.py")
+    nb = _u.module_from_spec(spec); spec.loader.exec_module(nb)
+    text = ("## Takeaway\n\n- You met her for ten hours and she asked about your parents.\n\n"
+            "## Her humor\n\nShe makes dry jokes about herself.\n\n"
+            + "".join(f"- She laughed at line {i} of your story.\n" for i in range(5)))
+    src = tmp_path / "draft.md"; src.write_text(text, encoding="utf-8")
+    d = tmp_path / "build"
+    assert nb.main(["init", str(d), "--as-is", str(src), "--title", "2026-11-11 Test: Date 3",
+                    "--notebook", "Affinity", "--person", "Jiyoung Kim"]) == 0
+    back = tmp_path / "back.md"; back.write_text(text, encoding="utf-8")
+    assert nb.main(["verify", str(d), str(back)]) == 0
