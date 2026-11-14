@@ -232,50 +232,50 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 4241–4268 | ### 210. A requirements document names outcomes, never the technology that delivers them |
 | 4269–4289 | ### 211. A product is available when its page in the user's region sells it, never because a price renders |
 | 4290–4316 | ### 212. An effect size is read against the threshold its source publishes before any skepticism is attached to it |
-| 4317–4358 | ### 213. A description runs from the observed effect inward to the cause, then out to the consequence that matters |
-| 4359–4370 | ### 214. A cue is a word the user can hold, not a description of a sensation |
-| 4371–4376 | ### 215. The term a section is about goes in its heading, and the section opens with one line |
-| 4377–4397 | ### 216. A write to a shared document is verified on its whole skeleton, and a second writer stops the pass |
-| 4398–4433 | ### 217. A reply is in the conversation's language, and a folder the user names is the only destination |
-| 4434–4468 | ### 218. A copy is made only where it can outlive the original, and a correction is a move, not another run of the pass |
-| 4469–4497 | ### 219. A derivative replaces its source in the working folder, and the source's name is the reason it moves |
-| 4498–4526 | ### 220. A fix's blast radius is the surface the user named |
-| 4527–4548 | ### 221. A chart axis is fitted to its data, and secondary curves sit under the primary lines |
-| 4549–4565 | ### 221. An instruction to show something is an instruction about the reply, not the file |
-| 4566–4601 | ### 222. A finding about someone's work is quoted or it is not written, and an absence claim is only as good as the search behind it |
-| 4602–4621 | ### 223. A page that renders blank is reported in the pass that finds it |
-| 4622–4652 | ### 224. "As before" means the user's artifact, and an accepted table's shape is frozen |
-| 4653–4674 | ### 225. A repeated row is copied from its generator, never retyped |
-| 4675–4690 | ### 226. A modified tracked file is read, not guessed at |
-| 4691–4709 | ### 227. A mirrored folder has one working copy, and it is the one the user opens |
-| 4710–4717 | ## Shell: `~/.bash_aliases` (user-global) |
-| 4718–4734 | ### 228. A record's letters are plain; colour belongs to a rendered artifact |
-| 4735–4789 | ### 229. A chart with secondary curves is placed on the render, one dial at a time |
-| 4790–4809 | ### 230. A capability is not an intent; the activity's limits are asked, never inferred from the training record |
-| 4810–4832 | ### 231. An option carried by a search is proved at its own booking page: link, date, price, and the live step that takes the form |
-| 4833–4846 | ### 232. A reference he names is read before the artifact it replaces |
-| 4847–4867 | ### 233. An analysis request is not an execution mandate, and an excluded action is never an option |
-| 4868–4893 | ### 234. An explanation request ends in an explanation, and his backup folder keeps one naming scheme |
-| 4894–4917 | ### 235. A due date is the last day to file, not the first, and a blocked filing is answered with a route that works today |
-| 4918–4941 | ### 236. A failure analysis answers the charge as stated, in his words |
-| 4942–4962 | ### 237. A line for a conversation is written in speech, and asks what happened |
-| 4963–4983 | ### 238. What a record holds is read before it is described |
-| 4984–5016 | ### 239. A table's row order is the user's, and a projection renders it, never sorts it |
-| 5017–5035 | ### 240. A dated note named as the target of a consolidation is a source too |
-| 5036–5053 | ### 241. A ledger row is new hours or a relabelling, and the total says which |
-| 5054–5071 | ### 242. A counting rule covers the span it was written for, and that span's end is stated |
-| 5072–5077 | ### 243. Two kinds of work he names separately stay separate inside their total |
-| 5078–5104 | ### 244. A research reply opens with the Takeaway and states only checked findings |
-| 5105–5154 | ### 245. A "why didn't you" question gets its cause, and the instructions get an edit |
-| 5155–5176 | ### 246. A write or report waits until every source the workflow names is checked |
-| 5177–5196 | ### 247. A price or availability is checked against the user's conditions before it is recommended |
-| 5197–5209 | ### 248. A fix for a blocked process must not pass through the gate that blocked it |
-| 5210–5218 | ### 249. A disputed account is checked against the ground truth, not defended |
-| 5219–5228 | ### 250. Outgoing text never contains a private position |
-| 5229–5242 | ### 251. Concise trims filler, never data |
-| 5243–5258 | ### 252. A load is read from the zone or the measured rate, never from the session's name |
-| 5259–5279 | ### 253. A comparison is made on equal amounts, and the unit is not spoken aloud |
-| 5280–5292 | ### 254. A perceived change carries the reason it is believable, and what does not move it |
-| 5293–5306 | ### 255. A possibility that survives every objection enters the summary |
-| 5307–5316 | ### 256. A hypothetical is answered as a hypothetical |
-| 5317–5337 | ### 257. Instructions live in opencode files; a CLAUDE.md is an import stub |
+| 4317–4374 | ### 213. A description runs from the observed effect inward to the cause, then out to the consequence that matters |
+| 4375–4386 | ### 214. A cue is a word the user can hold, not a description of a sensation |
+| 4387–4392 | ### 215. The term a section is about goes in its heading, and the section opens with one line |
+| 4393–4413 | ### 216. A write to a shared document is verified on its whole skeleton, and a second writer stops the pass |
+| 4414–4449 | ### 217. A reply is in the conversation's language, and a folder the user names is the only destination |
+| 4450–4484 | ### 218. A copy is made only where it can outlive the original, and a correction is a move, not another run of the pass |
+| 4485–4513 | ### 219. A derivative replaces its source in the working folder, and the source's name is the reason it moves |
+| 4514–4542 | ### 220. A fix's blast radius is the surface the user named |
+| 4543–4564 | ### 221. A chart axis is fitted to its data, and secondary curves sit under the primary lines |
+| 4565–4581 | ### 221. An instruction to show something is an instruction about the reply, not the file |
+| 4582–4617 | ### 222. A finding about someone's work is quoted or it is not written, and an absence claim is only as good as the search behind it |
+| 4618–4637 | ### 223. A page that renders blank is reported in the pass that finds it |
+| 4638–4668 | ### 224. "As before" means the user's artifact, and an accepted table's shape is frozen |
+| 4669–4690 | ### 225. A repeated row is copied from its generator, never retyped |
+| 4691–4706 | ### 226. A modified tracked file is read, not guessed at |
+| 4707–4725 | ### 227. A mirrored folder has one working copy, and it is the one the user opens |
+| 4726–4733 | ## Shell: `~/.bash_aliases` (user-global) |
+| 4734–4750 | ### 228. A record's letters are plain; colour belongs to a rendered artifact |
+| 4751–4805 | ### 229. A chart with secondary curves is placed on the render, one dial at a time |
+| 4806–4825 | ### 230. A capability is not an intent; the activity's limits are asked, never inferred from the training record |
+| 4826–4848 | ### 231. An option carried by a search is proved at its own booking page: link, date, price, and the live step that takes the form |
+| 4849–4862 | ### 232. A reference he names is read before the artifact it replaces |
+| 4863–4883 | ### 233. An analysis request is not an execution mandate, and an excluded action is never an option |
+| 4884–4909 | ### 234. An explanation request ends in an explanation, and his backup folder keeps one naming scheme |
+| 4910–4933 | ### 235. A due date is the last day to file, not the first, and a blocked filing is answered with a route that works today |
+| 4934–4957 | ### 236. A failure analysis answers the charge as stated, in his words |
+| 4958–4978 | ### 237. A line for a conversation is written in speech, and asks what happened |
+| 4979–4999 | ### 238. What a record holds is read before it is described |
+| 5000–5032 | ### 239. A table's row order is the user's, and a projection renders it, never sorts it |
+| 5033–5051 | ### 240. A dated note named as the target of a consolidation is a source too |
+| 5052–5069 | ### 241. A ledger row is new hours or a relabelling, and the total says which |
+| 5070–5087 | ### 242. A counting rule covers the span it was written for, and that span's end is stated |
+| 5088–5093 | ### 243. Two kinds of work he names separately stay separate inside their total |
+| 5094–5120 | ### 244. A research reply opens with the Takeaway and states only checked findings |
+| 5121–5170 | ### 245. A "why didn't you" question gets its cause, and the instructions get an edit |
+| 5171–5192 | ### 246. A write or report waits until every source the workflow names is checked |
+| 5193–5212 | ### 247. A price or availability is checked against the user's conditions before it is recommended |
+| 5213–5225 | ### 248. A fix for a blocked process must not pass through the gate that blocked it |
+| 5226–5234 | ### 249. A disputed account is checked against the ground truth, not defended |
+| 5235–5244 | ### 250. Outgoing text never contains a private position |
+| 5245–5258 | ### 251. Concise trims filler, never data |
+| 5259–5274 | ### 252. A load is read from the zone or the measured rate, never from the session's name |
+| 5275–5295 | ### 253. A comparison is made on equal amounts, and the unit is not spoken aloud |
+| 5296–5308 | ### 254. A perceived change carries the reason it is believable, and what does not move it |
+| 5309–5322 | ### 255. A possibility that survives every objection enters the summary |
+| 5323–5332 | ### 256. A hypothetical is answered as a hypothetical |
+| 5333–5353 | ### 257. Instructions live in opencode files; a CLAUDE.md is an import stub |

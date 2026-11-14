@@ -115,6 +115,20 @@ def test_sections_depth_and_length() -> None:
     assert any("What you can do better" in f for f in check.sections(missing))
 
 
+def test_the_turning_point_comes_second_and_is_told_as_a_story() -> None:
+    """Chaehan, 2026-11-14: the turn that changed her was missed, and sex sat too high (failure 210)."""
+    assert check.SECTIONS.index("The turning point") == 1
+    assert check.SECTIONS.index("Sex and past relationships") > check.SECTIONS.index("Her feelings for you")
+    story = _draft(3).replace("## The turning point\n\nYou met her.",
+                              "## The turning point\n\nYou asked about her hand. She told you about her fear.")
+    assert check.sections(story) == []
+    listed = _draft(3).replace("## The turning point\n\nYou met her.",
+                               "## The turning point\n\n- You asked about her hand.\n- She told you her fear.")
+    assert any("turning point" in f for f in check.sections(listed))
+    sex_first = _draft(3).replace("## The turning point", "## Sex and past relationships x", 1)
+    assert any("order" in f or "missing" in f for f in check.sections(sex_first))
+
+
 def _fake_db(tmp_path) -> Path:
     db = tmp_path / "main.sqlite"
     con = sqlite3.connect(db)

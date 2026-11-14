@@ -15,8 +15,9 @@ Three checks, each printed with the line to fix; exit 0 only when all pass.
    are written "...". A quote without a time, or one the turn does not hold,
    fails: an invented or misplaced quote is the costliest error in this note.
 3. Sections, depth and length. The H2 sections of SKILL.md, in that order; at
-   least three quotes on sex and past relationships; at most 1500 words outside
-   the quotes (Chaehan, 2026-11-12: "no quality over quantity").
+   least three quotes on sex and past relationships; a turning point told in
+   paragraphs, never as a list; at most 1500 words outside the quotes
+   (Chaehan, 2026-11-12: "no quality over quantity").
 4. Formula. One sentence opening (its first four words) used four times or
    more: on 2026-11-11 "You would think again if" closed all fourteen trait
    sections. A bullet that starts with a quote is left out.
@@ -36,9 +37,10 @@ AGENTKIT = SKILL.parents[1]
 
 SECTIONS = [
     "Takeaway",
-    "Sex and past relationships",
+    "The turning point",
     "Her feelings for you",
     "How it changed since your first meeting",
+    "Sex and past relationships",
     "Compared with your other dates",
     "What you can do better",
     "What stands out about her",
@@ -133,10 +135,14 @@ def sections(draft: str) -> list[str]:
     if m and len(QUOTE.findall(m.group(0))) < MIN_SEX_QUOTES:
         out.append(f"depth: 'Sex and past relationships' quotes {len(QUOTE.findall(m.group(0)))} lines; "
                    f"it needs {MIN_SEX_QUOTES} or more, his own included (traits.md, the decoding table)")
+    t = re.search(r"^## The turning point.*?(?=^## |\Z)", draft, re.M | re.S)
+    if t and re.search(r"^\s*(?:[-*]|\d+\.)\s+", t.group(0), re.M):
+        out.append("turning point: written as a list; tell it as a story in paragraphs, in time order "
+                   "(SKILL.md step 8; Chaehan, 2026-11-14)")
     words = len(QUOTE.sub("", draft).split())
     if words > MAX_WORDS:
         out.append(f"length: {words} words outside the quotes; keep at most {MAX_WORDS}: "
-                   f"keep a point only when it serves one of the five in SKILL.md")
+                   f"keep a point only when it serves one of the six in SKILL.md")
     return out
 
 
