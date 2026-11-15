@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, utimesSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import plugin, { KEEP, important, shellTargets, snapshot } from "./index.ts"
+import plugin, { KEEP, important, shellTargets, snapshot, snapshotDir } from "./index.ts"
 
 // A Drive tree like the real one: <tmp>/My Drive/1 Projects/KUBS/KUBS DT/...
 function drive() {
@@ -72,6 +72,14 @@ test("a shell command that installs a deck copies that deck, and a read copies n
   expect(shellTargets(`echo x > "${d.grading}/KUBS DT gradebook.md"`, [d.root])).toEqual([join(d.grading, "KUBS DT gradebook.md")])
   const script = `python3 grade_curve.py --folder ~/Drive/KUBS\\ DT/KUBS\\ DT\\ Grading`
   expect(shellTargets(script, [d.root])).toEqual([join(d.grading, "KUBS DT gradebook.md")])
+})
+
+test("the store is ~/.local/share/agentkit/snapshots and holds the 10 newest versions of a file", () => {
+  const saved = process.env.FILE_SNAPSHOT_DIR
+  delete process.env.FILE_SNAPSHOT_DIR
+  expect(snapshotDir().endsWith("/.local/share/agentkit/snapshots")).toBe(true)
+  if (saved) process.env.FILE_SNAPSHOT_DIR = saved
+  expect(KEEP).toBe(10)
 })
 
 test("only the newest versions are kept", () => {
