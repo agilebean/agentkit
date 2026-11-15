@@ -272,6 +272,7 @@ class Run:
         else:
             message = Path(self.a.brief).read_text(encoding="utf-8").strip()
         providers = PROVIDERS[PROVIDERS.index(self.a.start):] if self.a.start in PROVIDERS else PROVIDERS
+        providers = [p.split("#")[0] + "#" + self.a.variant for p in providers]
         code, why = 6, ""
         for i, model in enumerate(providers):
             if self.a.probe and not self.probe(model):
@@ -390,6 +391,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--agent", default="socrates")
     ap.add_argument("--title", default="note build test")
     ap.add_argument("--start", default=PROVIDERS[0], help="first provider to try")
+    ap.add_argument("--variant", default="high", choices=["low", "high", "max"],
+                    help="DeepSeek's reasoning variant for every provider (opencode offers low, high and max; no setting "
+                         "turns thinking off)")
     ap.add_argument("--idle", type=int, default=120, help="seconds without a streamed event before the run stops (RULES.md 73: at most 120)")
     ap.add_argument("--probe", type=int, default=8,
                     help="seconds the availability probe may take; a one-word answer costs 2-4 s, so 8 s is a ping "
