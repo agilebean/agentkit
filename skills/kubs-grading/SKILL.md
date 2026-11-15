@@ -126,7 +126,7 @@ The scores live in two places: the md table and the `ROWS` list at the top of `g
 
 ## Guards
 
-- **The version before a change is kept for you.** In opencode, the file-snapshot plugin copies a grading document (md, csv, xlsx, numbers) of the Drive folder before any write, edit or shell command that changes it, into `~/.local/share/agentkit/file-snapshots/<path below KUBS DT>/`, the newest 30 versions with `index.tsv`; to undo a pass, `cp` the version back and say so. Claude Code has no such plugin: copy the file there yourself before a change.
+- **The version before a change is kept for you.** In opencode, the file-snapshot plugin copies a grading document (md, csv, xlsx, numbers) of the Drive folder before any write, edit or shell command that changes it, into `~/.local/share/agentkit/snapshots/<path below KUBS DT>/`, the newest 10 versions with `index.tsv`; to undo a pass, `cp` the version back and say so. Claude Code has no such plugin: copy the file there yourself before a change.
 - **A grading file exists nowhere for him until it is in the Drive folder.**
   `projects/kubs_dt/grading/` in the socrates repo is the versioned mirror, never
   the deliverable. A pass that writes or edits any file of this set copies it to

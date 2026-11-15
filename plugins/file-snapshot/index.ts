@@ -13,7 +13,7 @@
 // has one of its extensions (the documents and decks, never the recordings,
 // renders or submitted PDFs). Before a write or edit of such a file, and before a
 // shell command that names its folder and changes something, the file is copied
-// to ~/.local/share/agentkit/file-snapshots/<path under the root>/<time>.<ext>.
+// to ~/.local/share/agentkit/snapshots/<path under the root>/<time>.<ext>.
 // A version already copied (same size and modification time) is not copied
 // again, and the newest KEEP versions of each file are kept. The copy is an APFS
 // clone where the volume allows it, so an 11 MB deck costs no space and a few
@@ -31,7 +31,7 @@ import { basename, dirname, extname, join } from "node:path"
 
 const home = () => process.env.HOME || homedir()
 
-export const KEEP = 30
+export const KEEP = 10
 
 // Each rule: a folder (found by this path fragment, so no account name is written
 // here) and the extensions that are documents in it.
@@ -41,7 +41,7 @@ export const RULES: Array<{ name: string; under: string; ext: string[] }> = [
 ]
 
 export function snapshotDir(): string {
-  return process.env.FILE_SNAPSHOT_DIR || join(home(), ".local/share/agentkit/file-snapshots")
+  return process.env.FILE_SNAPSHOT_DIR || join(home(), ".local/share/agentkit/snapshots")
 }
 
 // The rule a path falls under and the path below its folder, or null.

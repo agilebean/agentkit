@@ -1,6 +1,6 @@
 ---
 name: date-analysis
-description: Analyze the recording of one of Chaehan's dates and write the note (Evernote notebook Affinity, or Hanji) - the turning point of the date and the talk that led to it, her feelings for him, sex and past relationships decoded from indirect Korean, how they changed since the earlier meetings, how the date compares with his other dates, and what he can do better and why, in a friend's plain words with verbatim quotes and their times. Reads the transcript Chaehan exported into the Affinity folder on Drive, and MacWhisper's database only when no such file exists. Use when Chaehan asks to analyze a date or a date recording, types /date, or asks to "evernote the date".
+description: Analyze the recording of one of Chaehan's dates and write the note (Evernote notebook Affinity, or Hanji) - the turning point of the date and the idea that led to it as one train of thought, her feelings for him, sex and past relationships decoded from indirect Korean, how they changed since the earlier meetings, how the date compares with his other dates, and what he can do better and why, in a friend's plain words with verbatim quotes and their times. Reads the transcript Chaehan exported into the Affinity folder on Drive, and MacWhisper's database only when no such file exists. Use when Chaehan asks to analyze a date or a date recording, types /date, or asks to "evernote the date".
 ---
 
 # Date analysis
@@ -41,11 +41,19 @@ new captured the extremely important and deep conversational points preceding
 that revelation which changed her whole attitude towards me, as after that she
 allowed me holding her hand."
 
+Chaehan, 2026-11-16, on the third date-3 note: the turning point "has no clear
+train of thought. instead it recites the conversation like a normal summary";
+"the most important content was the principle i told her that led her to ask"
+her question at 4:08:38; and his answer to it was written with "no
+understanding of the whole concept in three steps".
+
 So the note answers six things, in this order, and leaves out what serves none:
 
-1. **The turning point.** The moment her attitude toward him changed, the talk
-   that led to it from where its subject first came up, and what she did after
-   it. A turn is an event across the other five points, so it is found by step
+1. **The turning point.** The moment her attitude toward him changed, and the
+   talk that changed it as one train of thought: the idea that was told, what
+   the other asked about it, the answer in its steps, and what she did with
+   it. The talk is traced from where its subject first came up. A turn is an
+   event across the other five points, so it is found by step
    7, never by a topic code. When nothing in the date changed how she treated
    him, the note says so in one sentence.
 2. **Her feelings for him.** What she reveals about how she feels toward him,
@@ -161,13 +169,45 @@ Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
    `sed -n '/^T<first> /,/^T<last> /p' B/transcript.md` and read every line,
    the lines under Other first: where nobody is ordering, they are hers, and
    MacWhisper also joins a question of hers to the front of his answer inside
-   his turn. Write the arc into `B/turn.md` as numbered steps in time order,
-   one line each: who said what, with its time, and what it moved. When no
+   his turn. Before any line is quoted, write `B/idea.md` from that stretch in
+   your own words, with no quote in it: what he was telling her (or she him),
+   as a claim someone could disagree with; what the other asked about it; the
+   answer in its steps; and where the idea comes back in the other's mouth.
+   Then write the arc into `B/turn.md` as the numbered steps of that thought,
+   one line each: what the turn added to the idea (states it, asks about it,
+   explains a step, hands it to her, says it back, applies it to herself), who
+   said it, and its time. A turn that adds nothing to the thought stays out of
+   the arc, however personal it is. When no
    place shows these signs, write that one sentence, and the section of the
    note holds that sentence alone.
-   - **The arc keeps every question she asks him in the stretch**, with the
-     answer he gave, and every admission he makes about himself (a fear, a
+   - **The stretch is read for what was said, in a step of its own.** One pass
+     over the whole evening does not hold it. On 2026-11-14 the hour of the
+     turn got one read among six, the arc was written from the evidence list
+     in 11 s, and the idea that led to her question at 4:08:38 stood in none
+     of its 23 lines; asked on that stretch alone "what did he tell her?", the
+     same model named the idea in a minute (test of 2026-11-16).
+   - **An idea is written as its content, never as the act of saying it.** "He
+     admitted his fear" names an act, and "you gave her four minutes: language,
+     the two girlfriends, and the fear under it" a list of topics. The content
+     is the claim: his fear is his own to get over first, and he must not wait
+     for the other person to take it away [4:06:00]. Whoever reads the
+     sentence can explain the idea to a third person, or it is rewritten.
+   - **Steps he counts stay steps.** `첫째`, `두번째`, `세 번째` in one answer are
+     the steps of one method, each named by what it does (name the doubts;
+     find the bad experience behind each; catch the fear at the root and admit
+     it), never three items of one list.
+   - **His idea is put together from all his turns in the stretch.** He speaks
+     Korean as a learner and the transcriber garbles it (`시민초코덜` for
+     symptoms, `인종해야` for 인정해야), so the idea stands in no single clean
+     line. It is written in English, and a garbled word it rests on is given
+     beside its reading.
+   - **His words are followed into her mouth.** The same verb or noun said by
+     her (`넘어가다`, `깨다`, `겁`) marks where she asks about his idea, says it
+     back, and applies it to herself; these lines are the joints of the arc.
+   - **The arc keeps every question she asks him about the idea**, with what
+     he answered, and every admission he makes about himself (a fear, a
      failure, a doubt): what he admits is often what lets her answer in kind.
+     An admission made inside an idea is told as part of that idea.
    - **A fear or hurt she tells is named by what or whom it concerns**, in her
      words, from the line where she says it. The arc and the note quote that
      line; "a fear she kept" without its object leaves the turn empty.
@@ -207,15 +247,21 @@ Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
      is quoted, never turned into a clock time by arithmetic; a man in her
      story keeps the role she gives him, and a role she never names is not
      added.
-   - **A garbled line is quoted, never retold.** When the words around a line
-     do not make its sense clear, the note quotes the clear words or leaves the
-     line out.
-   - **The turning point is told as a story**, in paragraphs and in time order
-     from `B/turn.md`, the way a friend retells what happened: what she said,
-     what you answered, what she did next. Her words are quoted where they
-     move the story on, and the paragraphs hold no bullets. What followed is
-     told as what she did next, each with its time; it is never said to have
-     caused everything after it.
+   - **A garbled line of hers is quoted, never retold.** When the words around
+     a line do not make its sense clear, the note quotes the clear words or
+     leaves the line out. His own idea is the exception of step 7: it is put
+     together from all his turns, and he can check it himself.
+   - **The turning point is told as a train of thought**, from `B/idea.md` and
+     `B/turn.md`, the way a friend explains what happened between the two of
+     you: what changed, the idea that did it in two or three sentences, what
+     she asked, the answer in its steps, how she said it back and applied it
+     to herself, and her line. It runs in paragraphs with no bullets, in time
+     order where the thought runs in time. A quote stands where a step of the
+     thought rests on it, one per step at most. Talk that adds nothing to the
+     thought (a stretch she showed him, a concert, the ride home) goes to "Her
+     feelings for you" or stays out. What followed is told as what she did
+     next, each with its time; it is never said to have caused everything
+     after it.
 9. **Check.** `python3 $S/date_check.py B/draft.md --transcript B/transcript.md [--verbatim B/his.md]`
    until it prints PASS. It fails robotic wording (with every contrast frame),
    a Korean quote without its time or not found in that turn, a missing
@@ -249,9 +295,9 @@ At most 1500 words. A section holds at most seven bullets.
    one thing to do better next time. Children here whenever the date touched
    them. Sex here only when something about it changed on this date.
 2. `## Your feedback`: only when Chaehan gave his words, as he wrote them.
-3. `## The turning point`: the arc of step 7 as a story in paragraphs, from
-   where its subject came up to what she did after it, and in two or three
-   sentences what it means for you. When nothing changed how she treated you,
+3. `## The turning point`: the train of thought of step 7 in paragraphs: what
+   changed, the idea that did it, her question, the answer in its steps, what
+   she did with it, and in two or three sentences what it means for you. When nothing changed how she treated you,
    one sentence that says so.
 4. `## Her feelings for you`: what she revealed, in her words, outside the
    turning point, grouped under colon subheads on their own lines (rule 106):

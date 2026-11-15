@@ -430,7 +430,7 @@ each score cell reading criteria = score and letter:
 
 ## Guards
 
-- **The version before a change is kept for you.** In opencode, the file-snapshot plugin copies a grading document (md, csv, xlsx, numbers) of the Drive folder before any write, edit or shell command that changes it, into `~/.local/share/agentkit/file-snapshots/<path below KUBS DT>/`, the newest 30 versions with `index.tsv`; to undo a pass, `cp` the version back and say so. Claude Code has no such plugin: copy the file there yourself before a change.
+- **The version before a change is kept for you.** In opencode, the file-snapshot plugin copies a grading document (md, csv, xlsx, numbers) of the Drive folder before any write, edit or shell command that changes it, into `~/.local/share/agentkit/snapshots/<path below KUBS DT>/`, the newest 10 versions with `index.tsv`; to undo a pass, `cp` the version back and say so. Claude Code has no such plugin: copy the file there yourself before a change.
 - **A grading file exists nowhere for the user until it is in the Drive folder.** Copy every write
   there in the same turn and match the two by checksum; the repo folder is the versioned mirror. A
   rename in Drive is a copy, a checksum, then a delete of the old name: `mv` across two folders on the
