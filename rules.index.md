@@ -265,17 +265,17 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 5055–5072 | ### 241. A ledger row is new hours or a relabelling, and the total says which |
 | 5073–5090 | ### 242. A counting rule covers the span it was written for, and that span's end is stated |
 | 5091–5096 | ### 243. Two kinds of work he names separately stay separate inside their total |
-| 5097–5123 | ### 244. A research reply opens with the Takeaway and states only checked findings |
-| 5124–5173 | ### 245. A "why didn't you" question gets its cause, and the instructions get an edit |
-| 5174–5195 | ### 246. A write or report waits until every source the workflow names is checked |
-| 5196–5215 | ### 247. A price or availability is checked against the user's conditions before it is recommended |
-| 5216–5228 | ### 248. A fix for a blocked process must not pass through the gate that blocked it |
-| 5229–5237 | ### 249. A disputed account is checked against the ground truth, not defended |
-| 5238–5247 | ### 250. Outgoing text never contains a private position |
-| 5248–5261 | ### 251. Concise trims filler, never data |
-| 5262–5277 | ### 252. A load is read from the zone or the measured rate, never from the session's name |
-| 5278–5298 | ### 253. A comparison is made on equal amounts, and the unit is not spoken aloud |
-| 5299–5311 | ### 254. A perceived change carries the reason it is believable, and what does not move it |
-| 5312–5325 | ### 255. A possibility that survives every objection enters the summary |
-| 5326–5335 | ### 256. A hypothetical is answered as a hypothetical |
-| 5336–5356 | ### 257. Instructions live in opencode files; a CLAUDE.md is an import stub |
+| 5097–5127 | ### 244. A research reply opens with the Takeaway and states only checked findings |
+| 5128–5177 | ### 245. A "why didn't you" question gets its cause, and the instructions get an edit |
+| 5178–5199 | ### 246. A write or report waits until every source the workflow names is checked |
+| 5200–5219 | ### 247. A price or availability is checked against the user's conditions before it is recommended |
+| 5220–5232 | ### 248. A fix for a blocked process must not pass through the gate that blocked it |
+| 5233–5241 | ### 249. A disputed account is checked against the ground truth, not defended |
+| 5242–5251 | ### 250. Outgoing text never contains a private position |
+| 5252–5265 | ### 251. Concise trims filler, never data |
+| 5266–5281 | ### 252. A load is read from the zone or the measured rate, never from the session's name |
+| 5282–5302 | ### 253. A comparison is made on equal amounts, and the unit is not spoken aloud |
+| 5303–5315 | ### 254. A perceived change carries the reason it is believable, and what does not move it |
+| 5316–5329 | ### 255. A possibility that survives every objection enters the summary |
+| 5330–5339 | ### 256. A hypothetical is answered as a hypothetical |
+| 5340–5360 | ### 257. Instructions live in opencode files; a CLAUDE.md is an import stub |
