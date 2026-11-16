@@ -185,7 +185,17 @@ Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
      turn got one read among six, the arc was written from the evidence list
      in 11 s, and the idea that led to her question at 4:08:38 stood in none
      of its 23 lines; asked on that stretch alone "what did he tell her?", the
-     same model named the idea in a minute (test of 2026-11-16).
+     same model named the idea in a minute (test of 2026-11-16). From Claude
+     Code the question is a run of its own: `sed` the stretch into
+     `B/stretch.md`, and a brief that names that file alone asks what the talk
+     was and what he told her, what each step he counts is, and where his
+     words come back in her mouth (`note_test.py --brief ... --expect
+     B/idea.md`). The agent that started the run checks `B/idea.md` against
+     the stretch and corrects it before the section is written, and looks
+     first at the steps he counts: no run gave them as steps unless told that
+     counted steps are steps, and most called them three doubts. Asked together with the arc
+     and the section's rules, the same question took one silent step of 180 to
+     305 s, past the runner's idle limit.
    - **An idea is written as its content, never as the act of saying it.** "He
      admitted his fear" names an act, and "you gave her four minutes: language,
      the two girlfriends, and the fear under it" a list of topics. The content
@@ -266,7 +276,7 @@ Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
    until it prints PASS. It fails robotic wording (with every contrast frame),
    a Korean quote without its time or not found in that turn, a missing
    section, a note over 1500 words outside its quotes, fewer than three quotes
-   on sex and past relationships, a turning point written as bullets, and one
+   on sex and past relationships, a turning point written as bullets or holding more than 14 quotes, and one
    sentence opening used four times or more. Then read the draft once aloud in your head against `register.md`.
    Each failure line names its fix, so the marker lists and the lint scripts
    are never read: on 2026-11-14 a run spent four minutes in them and stopped

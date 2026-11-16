@@ -49,6 +49,7 @@ SECTIONS = [
 OPTIONAL = {"Your feedback"}
 MAX_WORDS = 1500          # outside quotes: Chaehan, 2026-11-12, "quality over quantity"
 MIN_SEX_QUOTES = 3
+MAX_TURN_QUOTES = 14  # the 2026-11-14 section had 31 in 478 words and no idea in it (failure 213)
 
 HANGUL = re.compile(r"[\uac00-\ud7a3]")
 QUOTE = re.compile(r"[\"“]([^\"”]*[\uac00-\ud7a3][^\"”]*)[\"”]")
@@ -137,8 +138,13 @@ def sections(draft: str) -> list[str]:
                    f"it needs {MIN_SEX_QUOTES} or more, his own included (traits.md, the decoding table)")
     t = re.search(r"^## The turning point.*?(?=^## |\Z)", draft, re.M | re.S)
     if t and re.search(r"^\s*(?:[-*]|\d+\.)\s+", t.group(0), re.M):
-        out.append("turning point: written as a list; tell it as a story in paragraphs, in time order "
-                   "(SKILL.md step 8; Chaehan, 2026-11-14)")
+        out.append("turning point: written as a list; tell it as a train of thought in paragraphs: the idea, "
+                   "what the other asked about it, the answer in its steps, what she did with it "
+                   "(SKILL.md step 8; Chaehan, 2026-11-14 and 2026-11-16)")
+    if t and len(QUOTE.findall(t.group(0))) > MAX_TURN_QUOTES:
+        out.append(f"turning point: {len(QUOTE.findall(t.group(0)))} quotes; keep at most {MAX_TURN_QUOTES}, one where "
+                   "a step of the thought rests on it, and say the rest in your own words: a chain of quotes "
+                   "recites the talk (SKILL.md step 8; Chaehan, 2026-11-16)")
     words = len(QUOTE.sub("", draft).split())
     if words > MAX_WORDS:
         out.append(f"length: {words} words outside the quotes; keep at most {MAX_WORDS}: "

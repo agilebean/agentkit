@@ -127,6 +127,11 @@ def test_the_turning_point_comes_second_and_is_told_as_a_story() -> None:
     listed = _draft(3).replace("## The turning point\n\nYou met her.",
                                "## The turning point\n\n- You asked about her hand.\n- She told you her fear.")
     assert any("turning point" in f for f in check.sections(listed))
+    # Chaehan, 2026-11-16: the section "recites the conversation like a normal summary" - 31 quotes, no idea.
+    recital = _draft(3).replace("## The turning point\n\nYou met her.", "## The turning point\n\n" +
+                                " ".join(f'She said "말{i}" [0:0{i % 10}:00].' for i in range(check.MAX_TURN_QUOTES + 1)))
+    assert any("quotes; keep at most" in f for f in check.sections(recital))
+    assert not any("quotes; keep at most" in f for f in check.sections(story))
     sex_first = _draft(3).replace("## The turning point", "## Sex and past relationships x", 1)
     assert any("order" in f or "missing" in f for f in check.sections(sex_first))
 
