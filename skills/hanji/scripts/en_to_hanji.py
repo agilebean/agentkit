@@ -32,6 +32,8 @@ import re
 import socket
 import subprocess
 import sys
+import threading
+import time
 import unicodedata
 import urllib.request
 from collections import Counter
@@ -62,6 +64,25 @@ TABLE_SEP = re.compile(r"^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$")
 
 EXECUTE = """const B = "http://127.0.0.1:{port}", titles = {titles};
 const norm = s => String(s || "").normalize("NFC").replace(/[\\u2018\\u2019]/g, "'").replace(/\\s+/g, " ").trim().toLowerCase();
+const pause = ms => fetch(B + "/pause?ms=" + ms).then(r => r.text());
+const links = async (id, hashes) => {{
+  const out = {{}};
+  for (let i = 0; i < hashes.length; i += 4) {{
+    const slice = hashes.slice(i, i + 4);
+    for (let attempt = 0; ; attempt++) {{
+      try {{
+        const got = await Promise.all(slice.map(h => tools.evernote.get_attachment({{ noteId: id, hash: h }})));
+        got.forEach((g, k) => {{ out[slice[k]] = g.downloadUrl || null; }});
+        break;
+      }} catch (e) {{
+        const msg = String((e && e.message) || e);
+        if (attempt >= 3 || !/rate limit/i.test(msg)) throw e;
+        await pause(15000);
+      }}
+    }}
+  }}
+  return out;
+}};
 const notes = [];
 for (const title of titles) {{
   const r = {{ title }};
@@ -78,8 +99,9 @@ for (const title of titles) {{
       const n = await tools.evernote.get_note({{ noteId: exact[0].id }});
       r.note = n;
       const sc = (n.structuredContent && n.structuredContent.resources) ? n.structuredContent : n;
-      r.files = [];
-      for (const x of (sc.resources || [])) r.files.push({{ hash: x.hash, got: await tools.evernote.get_attachment({{ noteId: exact[0].id, hash: x.hash }}) }});
+      const hashes = (sc.resources || []).map(x => x.hash);
+      const got = await links(exact[0].id, hashes);
+      r.files = hashes.map(h => ({{ hash: h, got: {{ downloadUrl: got[h] }} }}));
     }} else if (!exact.length) {{
       const s2 = await tools.evernote.search_notes({{ query: title, maxResults: 8 }});
       r.near = (s2.hits || []).map(h => h.title);
@@ -166,10 +188,14 @@ def file_line(f: dict) -> str:
     return f"{'!' if f['mime'].startswith('image/') else ''}[{f['name']}]({f['path']})"
 
 
-def marked(style: str) -> bool:
-    """Whether a span's style marks its words: a highlight, or a text colour that is not grey."""
-    if re.search(r"--en-highlight|background(-color)?\s*:\s*(?!\s*(transparent|#fff|white|rgb\(\s*255))", style, re.I):
-        return True
+def highlighted(style: str) -> bool:
+    """Whether a span's style is a highlight: Hanji keeps that, and only that."""
+    return bool(re.search(r"--en-highlight|background(-color)?\s*:\s*(?!\s*(transparent|#fff|white|rgb\(\s*255))",
+                          style, re.I))
+
+
+def coloured(style: str) -> bool:
+    """Whether a span's style sets a text colour that is not grey: Hanji has no text colours."""
     m = RGB_RE.search(style)
     rgb = [int(x) for x in m.groups()] if m else None
     if not rgb and (h := HEX_RE.search(style)):
@@ -228,16 +254,22 @@ def convert(enml_text: str, files: dict[str, dict]) -> tuple[str, list[str]]:
     s = TODO_RE.sub(lambda m: "HJTODOX " if re.search(r'checked\s*=\s*"true"', m.group(1), re.I)
                     else "HJTODOO ", s)
     marks = [0]
+    colours = [0]
 
     def span(m: re.Match) -> str:
-        if marked(m.group(1)) and m.group(2).strip():
+        style, text = m.group(1), m.group(2)
+        if highlighted(style) and text.strip():
             marks[0] += 1
-            return f"HJHLO{m.group(2)}HJHLC"
-        return m.group(2)
+            return f"HJHLO{text}HJHLC"
+        if coloured(style) and text.strip():
+            colours[0] += 1
+        return text
     s = SPAN_RE.sub(span, s)
     if marks[0]:
-        changes.append(f"{marks[0]} coloured or highlighted run(s) became Hanji's one highlight: Hanji 0.8.1 has "
-                       "no text colours, so green, red and orange read the same")
+        changes.append(f"{marks[0]} highlighted run(s) kept Hanji's one highlight")
+    if colours[0]:
+        changes.append(f"{colours[0]} coloured run(s) lost their colour and stay plain: Hanji has no text colours, "
+                       "and a highlight would read as emphasis the note never had")
     bare = sum(1 for t in re.findall(r"<table\b.*?</table\s*>", s, re.S | re.I) if not re.search(r"<th\b", t, re.I))
     if bare:
         changes.append(f"the first row of {bare} table(s) without a header row reads as their header: a Markdown "
@@ -246,6 +278,9 @@ def convert(enml_text: str, files: dict[str, dict]) -> tuple[str, list[str]]:
 
     def cell(m: re.Match) -> str:
         c = m.group(0)
+        # Markdown has no heading inside a table cell: the converter would lift the cell's heading out
+        # as a block above the table and leave the row empty, so the text reads bold in its own cell.
+        c = re.sub(r"<h[1-6]\b[^>]*>(.*?)</h[1-6]\s*>", r"<b>\1</b>", c, flags=re.I | re.S)
 
         def med(x: re.Match) -> str:
             h = HASH_RE.search(x.group(0))
@@ -582,20 +617,45 @@ def cmd_serve(a) -> int:
         def log_message(self, *args):  # noqa: D401
             pass
 
+        def do_GET(self):
+            # The execute runtime has no timer, so a wait the copy needs (link pacing, a rate-limit
+            # backoff) is served from here: the agent asks and this process sleeps.
+            if not self.path.startswith("/pause"):
+                self.send_error(404)
+                return
+            m = re.search(r"ms=(\d+)", self.path)
+            ms = min(int(m.group(1)), 120000) if m else 60000
+            time.sleep(ms / 1000)
+            body = f"paused {ms} ms".encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
         def do_POST(self):
             raw = self.rfile.read(int(self.headers.get("Content-Length", 0))).decode("utf-8")
-            try:
-                rep = run_import(json.loads(raw), out, a.db, a.notebook, a.dry_run)
-            except Exception as exc:  # noqa: BLE001 - the agent sees the reason in the execute result
-                rep = f"en_to_hanji failed: {type(exc).__name__}: {exc}"
-                (out / "report.md").write_text(rep + "\n", encoding="utf-8")
-            data = rep.encode()
+            path = str(out / "report.md")
+
+            def work():
+                try:
+                    run_import(json.loads(raw), out, a.db, a.notebook, a.dry_run)
+                except Exception as exc:  # noqa: BLE001 - the agent reads the reason in the report
+                    (out / "report.md").write_text(
+                        f"en_to_hanji failed: {type(exc).__name__}: {exc}\n", encoding="utf-8")
+                state["done"] = True
+
+            # A note with many files takes minutes to download and write, more than the execute call may
+            # wait, so the receiver answers at once and the report lands in the file it names.
+            threading.Thread(target=work, daemon=True).start()
+            body = f"Accepted. The copy runs now; its report appears at {path}, and this text is the end of "
+            body += "the execute call.\n"
+            data = body.encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/plain; charset=utf-8")
             self.send_header("Content-Length", str(len(data)))
             self.end_headers()
             self.wfile.write(data)
-            state["done"] = True
 
     srv = HTTPServer(("127.0.0.1", a.port), H)
     srv.timeout = 5
