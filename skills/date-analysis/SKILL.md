@@ -91,9 +91,13 @@ Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
 1. **Transcript.** First `ls` the Affinity folder above for the recording's
    title, and take any path Chaehan gave. When the file exists, it is the
    transcript, and steps 2 and 3 run `md_turns.py` on it; MacWhisper is not
-   read. The file needs its timestamps (`*05:17:42*` under each speaker line);
-   when it has none, ask Chaehan to export it again with timestamps. Only when
-   no file exists, `python3 $S/mw_transcript.py list` shows MacWhisper's
+   read. The file needs its timestamps (`*05:17:42*` under each speaker line).
+   When it has none, take them from the same recording's session in MacWhisper's
+   database (`mw_transcript.py list`, then `export` for that session): the
+   2026-11-15 export carried no times and every time in its note came from
+   there, and the named file stays the transcript. Ask Chaehan to export again
+   only when the session holds no times either. When no file exists,
+   `python3 $S/mw_transcript.py list` shows MacWhisper's
    recent sessions; when the recording reads "transcribed False", the app is
    still working, so wait and check again every few minutes.
 2. **Name the speakers.** `python3 $S/md_turns.py "<file>" --speakers` (from
