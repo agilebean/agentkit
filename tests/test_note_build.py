@@ -711,6 +711,33 @@ def test_a_text_written_elsewhere_goes_to_hanji_with_a_photo_whose_path_has_a_sp
     assert [l for l in h.markdown(nid).split("\n") if l.strip()][1].startswith("![photo of us.png](blobs/")
 
 
+def test_a_hanji_table_row_with_a_tilde_verifies(tmp_path, monkeypatch, capsys) -> None:
+    """Hanji's Markdown export writes "~" as "\\~", so a table row with an approximate number read as lost
+    (2026-11-16: "~31000 tokens", "~60" and "~$0.05" in three rows of a note that was complete)."""
+    import importlib.util as u
+    if not Path("/Applications/Hanji.app/Contents/MacOS/hanji").exists():
+        pytest.skip("Hanji.app is not installed")
+    spec = u.spec_from_file_location("hanji_note", nb.HANJI_NOTE)
+    hn = u.module_from_spec(spec)
+    spec.loader.exec_module(hn)
+    (tmp_path / "tmp").mkdir()
+    monkeypatch.setenv("TMPDIR", str(tmp_path / "tmp"))
+    db = str(tmp_path / "notes.db")
+    hn.Hanji(db=db)("notebook", "create", "Work")
+    monkeypatch.setenv("NOTE_BUILD_HANJI_DB", db)
+    monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
+    src = tmp_path / "mine.md"
+    src.write_text(AS_IS + "\n### What a call costs\n\n| Call | Cost |\n| --- | --- |\n| One plan | ~$0.05 a note |\n")
+    d = tmp_path / "w"
+    assert nb.main(["init", str(d), "--as-is", str(src), "--title", "2026-11-16 Test", "--notebook", "Work",
+                    "--dest", "hanji"]) == 0
+    capsys.readouterr()
+    rc = nb.main(["write", str(d)])
+    out = capsys.readouterr().out
+    assert rc == 0, out[-600:]
+    assert "~$0.05" in (d / "readback.md").read_text(encoding="utf-8")
+
+
 # ---- Chaehan's own words stand as he wrote them (--verbatim) ----
 
 HIS = """**2026-11-08** the second swim test, 400 m in 6:58. Went better than expected. My legs were tired from pilates, although the pace held. I felt the last 100 m were the strongest.

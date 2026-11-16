@@ -492,6 +492,20 @@ higher fix cannot reach, and it is listed under the fix it backs up. A flat list
 with one check per defect fixes the instances again. For a weaker model, judgment
 over a whole text is moved into tasks it can do item by item, and a script
 assembles the result. The plan's first step tests the ability the plan rests on.
+A plan the weaker model will build itself is written as a build spec: each step
+names its file, gives the text, schema or prompt to copy as written, and states
+its test with the number that passes it. The planner does the parts that need
+judgment (the prompts, the examples, the order of the steps) and runs the
+plan's first test before handing it over; a plan that stops at jobs in a table
+leaves that judgment to the model that lacks it. An analysis that compares
+Chaehan's rules with outside practice states each practice with its source and
+its finding beside his rule, and for a memory or tool question it sets out each
+candidate with what it does, what it needs and what to take from it, never a
+verdict alone (rule 244). Chaehan, 2026-11-16, of the 2026-11-15 wording
+analysis: "be more concrete on how to improve and write it down for
+implementation by a lower model", "the wording analysis has very little content
+about best practices" and "i asked for suggestions to optimize the memory
+system ... not just a brief verdict" (failure 214).
 A weaker model invents and copies: it fills a gap from its own context, and it repeats
 the instruction's example as its answer. So its instructions give examples from
 another domain than the task, and its output is checked mechanically: a sentence
@@ -5115,7 +5129,11 @@ named only when it decides the verdict or contradicts the pooled estimate. The
 text says what the evidence shows as a whole and what it cannot say. Tables of
 studies stay below the answer, for the record. Chaehan: "in studies look only
 for meta-analysis, and report only effect size and sample size of
-meta-analysis." The selection step is `AGENTS.md` core 1.
+meta-analysis." The selection step is `AGENTS.md` core 1. The hint at that
+research takes one form: one indented line under the claim with the pooled
+evidence, then a link to the detail note. Chaehan, 2026-11-15, asked for notes
+that "give ultra hints for that background research or analysis points", and
+confirmed this form.
 
 The instances are Failure 141 (an analysis answered with a verdict and a file
 path, 2026-11-02) and Failure 143 (the Mapo storage locker: many lockers listed,

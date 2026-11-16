@@ -127,6 +127,7 @@ Every note must be created in its topic's notebook, never the default.
 | Health | Health |
 | Swimming | Swimming |
 | Personal | Chaehan |
+| Agent rules, note wording and tooling | Computer |
 
 - Pass `--notebook <name>` to `create` with the exact notebook name.
 - For topics not in the table, pick the obviously matching existing notebook (finance → "Chaehan Financials", travel → the current year's travel notebook). If none matches, ask.

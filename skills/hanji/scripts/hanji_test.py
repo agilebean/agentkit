@@ -95,6 +95,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--agent", default="socrates")
     ap.add_argument("--title", default="hanji skill test")
     ap.add_argument("--start", default=note_test.PROVIDERS[0])
+    ap.add_argument("--variant", default="high", choices=["low", "high", "max"],
+                    help="DeepSeek's reasoning variant, as in note_test.py")
     ap.add_argument("--idle", type=int, default=300)
     ap.add_argument("--budget", type=int, default=1200)
     # note_test.Run reads every option of note_test's own parser; one missing here crashes the run before launch

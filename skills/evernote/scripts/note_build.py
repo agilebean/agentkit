@@ -1689,7 +1689,9 @@ def write_hanji(d: Path, meta: dict) -> int:
     if back.returncode:
         print(f"REFUSED: the read-back failed: {back.stderr.strip()}")
         return back.returncode
-    lines = back.stdout.split("\n")
+    # Hanji's Markdown export writes "~" as "\~" while the note holds "~"; a table row is compared whole (T7),
+    # so the escape is undone before the verify (2026-11-16: three rows with "~" read as lost).
+    lines = back.stdout.replace("\\~", "~").split("\n")
     if lines and lines[0].strip() == f"# {meta['title']}":
         lines = lines[1:]
     (d / "readback.md").write_text("\n".join(lines).lstrip("\n"), encoding="utf-8")

@@ -119,19 +119,14 @@ never through its shell CLI. Two steps:
    the receiver, which converts the note, downloads its files, creates it with
    the helper and returns the report (also in the `report.md` it names).
 
-**A note with many files meets Evernote's attachment rate limit.** Each `get_attachment` call returns a
-link that expires 300 s after it is issued, and the server refuses a burst of them ("Rate limit exceeded:
-`get_attachment` is being called faster than allowed. Wait about 60 seconds"). A note with dozens of files
-cannot be read by the printed code at all: on 2026-11-09 the 77-file "HCMC Hotel/Apt" failed at its first
-attachment twice, a minute apart. Read such a note in batches instead, and hand the whole set to the
-converter in one pass: fetch the note and its links 20 to 30 at a time, POST each batch's
-`{hash: downloadUrl}` to a small local HTTP server that merges them into `/tmp/en_acc.json`, then call
-`en_to_hanji.run_import(payload, out, None, None, False)` with `{notes: [{title, matches, note, files:
-[{hash, got: {downloadUrl}}]}], notebooks}` instead of a receiver, or POST the same payload to a receiver
-started by `start`. The links serve one import, so import within 5 minutes of the first batch or fetch the
-oldest batch again. Measured on "HCMC Hotel/Apt": 77 links in three batches, 78 s of fetching, then 58 s to
-download, convert, write and verify all 77 files byte-identical. The limit is per account, so a batch that
-follows a run of attachment calls minutes earlier starts exhausted whatever it asks for.
+**A note with many files meets Evernote's attachment rate limit.** Evernote's limit is about 40 attachment
+calls in a burst, refilled about one a second. The printed execute code fetches the download links four at a
+time with `Promise.all` and, on a rate-limit error, asks the receiver for a 15 s pause (the execute runtime
+has no timer, so the receiver serves `/pause?ms=`) and retries the same four up to three times. A note whose
+import would outlive the execute call's own timeout is handled by the receiver answering at once: it copies
+in a thread and writes the report to the path it named, which the agent then reads. 77 files of 84.7 MB took
+181 s through the Evernote thrift CLI in one call, against 58 s for the same files from the signed links, so
+the links remain the path and the thrift CLI stays out of the copy.
 
 The report says, per note, where it went and what was checked against the
 Evernote original: every word, every file byte for byte against its Evernote
@@ -160,6 +155,9 @@ Evernote edits.
   cross-reference names the other note by its exact title in words.
 - **No table widths.** Hanji lays tables out itself; `fit-tables` and the 939 px
   ceiling do not apply.
+- **`~` comes back as `\~`.** Hanji's Markdown export escapes the tilde of an
+  approximate number while the note itself holds `~`. note_build.py undoes the
+  escape before its verify; a read-back you compare yourself needs the same step.
 - **Headings go from `#` to `###`**: a `####` heading comes back as `###`.
 - **No line break inside a paragraph.** A break at a line's end (`\`, two
   spaces or `<br>`) becomes a new paragraph, so a letter's address block reads
