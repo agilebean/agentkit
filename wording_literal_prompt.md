@@ -1,0 +1,1 @@
+Say in your own plain words what literally happens or is the case in this line: who does what, or what has which value. When the line uses a picture, so that a thing buys, spends, decides, closes, lands, turns, travels or keeps something and you cannot say what literally happens, answer exactly: cannot say.
