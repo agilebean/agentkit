@@ -505,7 +505,7 @@ verdict alone (rule 244). Chaehan, 2026-11-16, of the 2026-11-15 wording
 analysis: "be more concrete on how to improve and write it down for
 implementation by a lower model", "the wording analysis has very little content
 about best practices" and "i asked for suggestions to optimize the memory
-system ... not just a brief verdict" (failure 214).
+system ... not just a brief verdict" (failure 215).
 A weaker model invents and copies: it fills a gap from its own context, and it repeats
 the instruction's example as its answer. So its instructions give examples from
 another domain than the task, and its output is checked mechanically: a sentence
