@@ -1,0 +1,198 @@
+"""The fact card (build spec step 2): card_fill.py, card_check.py, card_select.py.
+
+The fixture is the pilot of 2026-11-16: six record lines from memory/health.md
+and memory/travel.md, and the 13 cards DeepSeek V4.1 Flash filled from them in
+its first run (docs/2026-11-17 wording build/pilot/card_fill.txt).
+"""
+from __future__ import annotations
+
+import importlib.util
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def _load(name: str):
+    spec = importlib.util.spec_from_file_location(name, ROOT / "scripts" / f"{name}.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+fill = _load("card_fill")
+check = _load("card_check")
+select = _load("card_select")
+
+SOURCES = """# Sources
+
+## Health
+
+memory/health.md:96 | Sexual health: citrulline before sex is 4-6 g, about 1 h before (Chaehan, 2026-11-03). Citrulline is in use, not daily (Chaehan, 2026-11-03); on-demand dose 30 mg (Chaehan, 2026-11-04).
+memory/health.md:12 | Gluten intolerance (standing constraint): Chaehan has kept gluten out of his diet for about 25 years, so it is his permanent diet (Chaehan, 2026-11-08); the agent first recorded it on 2026-10-19, when it ruled out a barley product.
+memory/health.md:13 | Lactose intolerance (standing constraint): Chaehan has kept lactose out of his diet for about 25 years, so it is his permanent diet (Chaehan, 2026-11-08); the agent first recorded it on 2026-11-03. Excluded: milk and dairy that contain lactose. Lactose-free dairy is acceptable (Chaehan, 2026-11-04). The 2026-09-21 entry below weighs A1 beta-casein over lactose for the bloating; the two are not yet reconciled.
+memory/health.md:140 | Hyaluronic acid injections received June 3, 2026 at Bom Clinic (Seoul): 2 injections + x-rays = 190,000 KRW, not covered by worldwide insurance. A trusted Apgujeong clinic (doctor knows surgical history) is available but more expensive.
+memory/health.md:151 | Clinic invoices filed (stated by Chaehan 2026-11-06, "i filed the health invoices"): the blood test and knee injection receipts that the 2026-11-03 Life Problems note listed as a quick win.
+memory/travel.md:88 | Airbnb Sep 14-18 at 80k KRW/day; Chaehan leaves one day early (the final night is paid either way).
+"""
+
+FILLED = """measure | your citrulline dose before sex | is 4-6 g, about 1 h before |  |  | 2026-11-03 | 1
+state | your citrulline use | is in use, not daily |  |  | 2026-11-03 | 1
+measure | your citrulline on-demand dose | is 30 mg |  |  | 2026-11-04 | 1
+state | your gluten-free diet | has been kept for about 25 years and is permanent |  |  | 2026-11-08 | 2
+state | your lactose-free diet | has been kept for about 25 years and is permanent |  |  | 2026-11-08 | 3
+instr | you |  |  | exclude milk and dairy that contain lactose |  | 3
+state | your lactose-free dairy intake | is acceptable | you can eat lactose-free dairy |  | 2026-11-04 | 3
+open | the cause of your bloating | remains unreconciled between A1 beta-casein and lactose, with the 2026-09-21 entry weighing A1 beta-casein over lactose |  |  |  | 3
+act | you | received 2 hyaluronic acid injections plus x-rays on 2026-06-03 at Bom Clinic, Seoul | paid 190,000 KRW, not covered by worldwide insurance |  |  | 4
+state | the trusted Apgujeong clinic | is available, its doctor knows your surgical history, and it is more expensive |  |  |  | 4
+act | you | filed the health invoices, the blood test and knee injection receipts |  |  | 2026-11-06 | 5
+state | your Airbnb stay on Sep 14-18 | costs 80k KRW/day |  |  |  | 6
+act | you | leave the Airbnb one day early | the final night is paid either way |  |  | 6
+"""
+
+
+def _pilot(tmp_path) -> Path:
+    (tmp_path / "sources.md").write_text(SOURCES, encoding="utf-8")
+    block = fill.section_lines(SOURCES, "Health")
+    cards, bad = fill.parse_cards(FILLED, "Health", block)
+    assert not bad
+    path = tmp_path / "cards.tsv"
+    fill.write_cards(path, cards)
+    return path
+
+
+# ---- card_fill: the call's answer becomes rows of cards.tsv ------------------
+
+def test_the_section_block_is_numbered_with_its_locations() -> None:
+    block = fill.section_lines(SOURCES, "Health")
+    assert [loc for loc, _ in block][:2] == ["memory/health.md:96", "memory/health.md:12"]
+    assert block[5][1].startswith("Airbnb Sep 14-18")
+    assert fill.user_message(block).splitlines()[1].startswith("1  Sexual health:")
+
+
+def test_the_filled_cards_become_13_rows_with_their_record_line_as_src(tmp_path) -> None:
+    rows = check.read_cards(_pilot(tmp_path))
+    assert len(rows) == 13
+    assert rows[0]["id"] == "C01" and rows[0]["section"] == "Health"
+    assert rows[0]["src"] == "memory/health.md:96"
+    assert rows[12]["src"] == "memory/travel.md:88"
+    assert rows[5]["do"] == "exclude milk and dairy that contain lactose"
+
+
+def test_a_line_that_is_not_a_card_is_reported_not_kept() -> None:
+    block = fill.section_lines(SOURCES, "Health")
+    cards, bad = fill.parse_cards("Here are the cards:\nstate | your gym | runs until 2027 |  |  |  | 9\n"
+                                  "state | your citrulline use | is on demand |  |  |  | 1\n", "Health", block)
+    assert len(cards) == 1
+    assert len(bad) == 2  # the preamble, and a src line the block does not have
+
+
+# ---- card_check on the pilot -------------------------------------------------
+
+def test_card_check_refuses_the_separator_and_each_about(tmp_path) -> None:
+    path = _pilot(tmp_path)
+    refusals, emptied = check.check_file(path, sources=tmp_path / "sources.md")
+    by_card = {(r.card, r.field) for r in refusals}
+    assert ("C09", "so") in by_card                      # 190,000 KRW
+    assert {("C01", "fact"), ("C04", "fact"), ("C05", "fact")} <= by_card   # about 1 h, about 25 years
+    assert any("190,000" in r.text for r in refusals)
+    assert len(refusals) == 4
+
+
+def test_card_check_empties_a_so_that_repeats_the_fact(tmp_path) -> None:
+    path = _pilot(tmp_path)
+    _, emptied = check.check_file(path, sources=tmp_path / "sources.md")
+    assert emptied == ["C07"]
+    rows = check.read_cards(path)
+    assert rows[6]["so"] == ""
+    assert rows[12]["so"] == "the final night is paid either way"  # new words: kept
+
+
+def test_a_date_converted_from_month_words_is_grounded(tmp_path) -> None:
+    path = _pilot(tmp_path)
+    refusals, _ = check.check_file(path, sources=tmp_path / "sources.md")
+    assert not any("2026-06-03" in r.text for r in refusals)
+
+
+def test_card_select_cuts_7_known_cards_and_keeps_6(tmp_path) -> None:
+    path = _pilot(tmp_path)
+    check.check_file(path, sources=tmp_path / "sources.md")
+    kept, cut = select.select_file(path)
+    assert len(cut) == 7 and len(kept) == 6
+    assert [c["id"] for c in cut] == ["C01", "C02", "C03", "C04", "C05", "C07", "C11"]
+    assert all(c["reason"] == "known" for c in cut)
+    assert len(check.read_cards(path)) == 6
+    assert len(check.read_cards(tmp_path / "cut.tsv")) == 7
+
+
+# ---- each rule of the card table ---------------------------------------------
+
+def _card(**kw) -> dict:
+    base = {"section": "Health", "id": "C01", "kind": "state", "thing": "your Mapo gym membership",
+            "fact": "runs until 2027-01-31", "so": "", "do": "", "said": "", "src": "memory/health.md:1"}
+    base.update(kw)
+    return base
+
+
+SRC = "Mapo gym membership runs until 2027-01-31; Chaehan paid 330000 won on 2026-10-02 (Chaehan, 2026-10-02)."
+
+
+def _fields(card: dict, src: str = SRC) -> set[str]:
+    refusals, _ = check.check_card(card, src, check.lint_rules())
+    return {r.field for r in refusals}
+
+
+def test_a_good_card_passes() -> None:
+    assert _fields(_card()) == set()
+
+
+def test_kind_must_be_one_of_seven() -> None:
+    assert _fields(_card(kind="fact")) == {"kind"}
+
+
+def test_thing_must_name_which_one() -> None:
+    assert _fields(_card(thing="the membership")) == {"thing"}
+    assert _fields(_card(thing="Mapo gym")) == set()
+    assert _fields(_card(thing="the 2026-10-02 payment")) == set()
+
+
+def test_fact_must_continue_the_thing() -> None:
+    assert _fields(_card(fact="it runs until 2027-01-31")) == {"fact"}
+    assert _fields(_card(fact="")) == {"fact"}
+    assert _fields(_card(kind="todo", thing="you", fact="", do="renew the Mapo gym membership")) == set()
+
+
+def test_do_belongs_to_todo_and_instr_and_starts_with_a_verb() -> None:
+    assert _fields(_card(kind="todo", thing="you", fact="", do="the membership renewal")) == {"do"}
+    assert _fields(_card(kind="todo", thing="you", fact="", do="you must renew it")) == {"do"}
+    assert _fields(_card(kind="todo", thing="you", fact="")) == {"do"}
+    assert _fields(_card(do="renew it")) == {"do"}
+
+
+def test_a_card_has_so_or_do_never_both() -> None:
+    card = _card(kind="todo", thing="you", fact="", so="you keep the pool lane", do="renew the Mapo gym membership")
+    assert "so" in _fields(card)
+
+
+def test_said_must_be_a_date_of_the_source_line() -> None:
+    assert _fields(_card(said="2026-10-02")) == set()
+    assert _fields(_card(said="2026-11-03")) == {"said"}
+
+
+def test_numbers_and_names_must_be_in_the_source_line() -> None:
+    assert _fields(_card(fact="runs until 2027-02-28")) == {"fact"}
+    assert _fields(_card(thing="your Hapjeong gym membership")) == {"thing"}
+
+
+def test_a_missing_source_line_is_refused(tmp_path) -> None:
+    path = tmp_path / "cards.tsv"
+    check.write_cards(path, [_card(src="memory/health.md:99999")])
+    refusals, _ = check.check_file(path, sources=None, root=tmp_path)
+    assert [r.field for r in refusals] == ["src"]
+
+
+def test_what_went_well_is_never_cut(tmp_path) -> None:
+    path = tmp_path / "cards.tsv"
+    check.write_cards(path, [_card(section="What went well", said="2026-10-02"), _card(id="C02", said="2026-10-02")])
+    kept, cut = select.select_file(path)
+    assert [c["id"] for c in kept] == ["C01"] and [c["id"] for c in cut] == ["C02"]
