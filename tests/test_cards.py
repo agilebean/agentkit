@@ -196,3 +196,18 @@ def test_what_went_well_is_never_cut(tmp_path) -> None:
     check.write_cards(path, [_card(section="What went well", said="2026-10-02"), _card(id="C02", said="2026-10-02")])
     kept, cut = select.select_file(path)
     assert [c["id"] for c in kept] == ["C01"] and [c["id"] for c in cut] == ["C02"]
+
+
+def test_a_thousand_written_with_k_grounds_its_written_out_form() -> None:
+    card = _card(thing="your Airbnb stay on Sep 14-18", fact="costs 80000 KRW per day")
+    assert _fields(card, "Airbnb Sep 14-18 at 80k KRW/day; Chaehan leaves one day early.") == set()
+
+
+def test_an_instruction_chaehan_stated_himself_is_known_and_a_todo_stays(tmp_path) -> None:
+    path = tmp_path / "cards.tsv"
+    check.write_cards(path, [_card(kind="instr", thing="you", fact="", do="take supplement 30 mg on demand",
+                                   said="2026-11-04"),
+                             _card(id="C02", kind="todo", thing="you", fact="", do="book the Mapo locker",
+                                   said="2026-11-04")])
+    kept, cut = select.select_file(path)
+    assert [c["id"] for c in cut] == ["C01"] and [c["id"] for c in kept] == ["C02"]
