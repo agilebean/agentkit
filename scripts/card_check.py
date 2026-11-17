@@ -138,8 +138,9 @@ def source_text(src: str, sources: dict[str, str], root: Path) -> str | None:
 # ---- the rules ------------------------------------------------------------------
 
 def _with_iso_dates(text: str) -> str:
-    """The text with each date written in words ("June 3, 2026") also written as 2026-06-03."""
-    extra = []
+    """The text with each date written in words ("June 3, 2026") also written as 2026-06-03, and each
+    thousand written with k ("80k KRW") also written out (80000): the card writes both forms."""
+    extra = [str(int(float(m.group(1)) * 1000)) for m in re.finditer(r"\b(\d+(?:\.\d+)?)k\b", text)]
     for m in MONTH_DATE.finditer(text):
         mon = (m.group("m1") or m.group("m2"))[:3].lower()
         if mon in MONTHS:
