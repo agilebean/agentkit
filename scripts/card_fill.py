@@ -45,7 +45,10 @@ def complete(messages: list[dict], model: str | None = None, max_tokens: int = 2
     if model:
         os.environ["FAST_MODEL"] = model
     os.environ.setdefault("FAST_MODEL", MODEL)
-    return _complete(messages, alias="fast", max_tokens=max_tokens, temperature=temperature)
+    try:
+        return _complete(messages, alias="fast", max_tokens=max_tokens, temperature=temperature)
+    except Exception:  # a stream that ends empty (seen 2026-11-17, 1 of 60 calls) gets one more try
+        return _complete(messages, alias="fast", max_tokens=max_tokens, temperature=temperature)
 
 
 def section_lines(sources: str, section: str) -> list[tuple[str, str]]:

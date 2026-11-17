@@ -878,3 +878,50 @@ def test_a_date_note_keeps_her_as_subject_through_the_read_back(tmp_path, monkey
                     "--notebook", "Affinity", "--person", "Yuna Kim"]) == 0
     back = tmp_path / "back.md"; back.write_text(text, encoding="utf-8")
     assert nb.main(["verify", str(d), str(back)]) == 0
+
+
+# ---- step 4 of the 2026-11-17 wording build: lines a fresh reader cannot say literally ----
+
+class _FakeSay:
+    def __init__(self, answers):
+        self.answers = answers
+
+    def literal_answers(self, lines, **kw):
+        return [self.answers.get(l, "You meet her after your swim.") for l in lines]
+
+    @staticmethod
+    def cannot_say(a):
+        return a == "cannot say"
+
+    @staticmethod
+    def unanswered(a):
+        return a.startswith("no answer")
+
+
+def test_pass_lists_the_lines_a_fresh_reader_cannot_say(tmp_path, monkeypatch, capsys) -> None:
+    monkeypatch.setenv("NOTE_BUILD_LITERAL", "1")
+    line = "You saw her invite you to her exhibition from 2026-11-21."
+    monkeypatch.setattr(nb, "_say", lambda: _FakeSay({line: "cannot say"}))
+    d, rc = _as_is(tmp_path, monkeypatch, AS_IS)
+    out = capsys.readouterr().out
+    assert rc == 0 and "PASS" in out
+    assert "cannot say what literally happens in 1 of 3 lines" in out and f"- {line}" in out
+    assert (d / "literal.tsv").read_text().count("\nyes\t") == 1
+
+
+def test_a_failed_literal_check_does_not_stop_the_write(tmp_path, monkeypatch, capsys) -> None:
+    monkeypatch.setenv("NOTE_BUILD_LITERAL", "1")
+
+    def broken():
+        raise RuntimeError("no key")
+
+    monkeypatch.setattr(nb, "_say", broken)
+    d, rc = _as_is(tmp_path, monkeypatch, AS_IS)
+    out = capsys.readouterr().out
+    assert rc == 0 and "PASS" in out and "The literal check did not run (no key)" in out
+
+
+def test_literal_lines_skip_headings_tables_links_and_his_own_words() -> None:
+    text = ("## Health\n\n- Your ferritin rose to 67 on Ferrovit.\n| a | b |\n- [Detail note](evernote:///view/1/s/a/a/)\n"
+            "<!-- verbatim -->\n- i feel great now\n<!-- end verbatim -->\n- He said he feels great today.\n")
+    assert nb.literal_lines(text, verbatim="He said he feels great today.") == ["Your ferritin rose to 67 on Ferrovit."]

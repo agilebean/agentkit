@@ -38,6 +38,7 @@ PROMPT = ROOT / "wording_writer_prompt.md"
 PAIRS = ROOT / "wording_pairs.tsv"
 LITERAL = ROOT / "wording_literal_prompt.md"
 MODEL = "deepseek/deepseek-v4.1-flash"
+NO_ANSWER = "no answer"
 PAIRS_HEAD = "Cards and the lines Chaehan accepted for them:\n\n"
 TAIL = "\n\nReturn one line per card below: the card's id, a tab, the line."
 NUMBER = re.compile(r"\d{4}-\d{2}-\d{2}|\d+(?:\.\d+)?")
@@ -85,7 +86,10 @@ def complete(messages: list[dict], model: str | None = None, max_tokens: int = 1
     if model:
         os.environ["FAST_MODEL"] = model
     os.environ.setdefault("FAST_MODEL", MODEL)
-    return _complete(messages, alias="fast", max_tokens=max_tokens, temperature=temperature)
+    try:
+        return _complete(messages, alias="fast", max_tokens=max_tokens, temperature=temperature)
+    except Exception:  # a stream that ends empty (seen 2026-11-17, 1 of 60 calls) gets one more try
+        return _complete(messages, alias="fast", max_tokens=max_tokens, temperature=temperature)
 
 
 # ---- cards and pairs -------------------------------------------------------------
@@ -293,11 +297,18 @@ def literal_answers(lines: list[str], model: str | None = None, workers: int = 8
     question = LITERAL.read_text(encoding="utf-8").strip()
 
     def ask(line: str) -> str:
-        return complete([{"role": "user", "content": f"{question}\n\nThe line: {line}"}],
-                        model=model, max_tokens=8000).strip()
+        try:
+            return complete([{"role": "user", "content": f"{question}\n\nThe line: {line}"}],
+                            model=model, max_tokens=8000).strip()
+        except Exception as e:  # one line without an answer never stops the others
+            return f"{NO_ANSWER} ({str(e)[:120]})"
 
     with ThreadPoolExecutor(max_workers=workers) as pool:
         return list(pool.map(ask, lines))
+
+
+def unanswered(answer: str) -> bool:
+    return answer.startswith(NO_ANSWER)
 
 
 def cannot_say(answer: str) -> bool:

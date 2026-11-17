@@ -54,6 +54,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve()
 GATE_PATH = HERE.parents[2] / "life-overview" / "scripts" / "overview_gate.py"
+SAY_PATH = HERE.parents[3] / "scripts" / "say.py"
 import os
 import subprocess
 
@@ -987,6 +988,67 @@ def init_as_is(d: Path, a) -> int:
     return check_as_is(d)
 
 
+def _say():
+    spec = importlib.util.spec_from_file_location("say", SAY_PATH)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def literal_lines(text: str, verbatim: str | None = None) -> list[str]:
+    """The note's statements: each bullet and paragraph, without headings, tables, images, a link or a label
+    alone, and Chaehan's own words (verbatim.md and a <!-- verbatim --> block)."""
+    out, inside = [], False
+    kept = re.sub(r"\s+", " ", verbatim or "")
+    for raw in text.splitlines():
+        s = raw.strip()
+        if re.fullmatch(r"<!--\s*verbatim\s*-->", s):
+            inside = True
+            continue
+        if re.fullmatch(r"<!--\s*end verbatim\s*-->", s):
+            inside = False
+            continue
+        if inside or not s or s.startswith(("#", "|", "![", "```", "<", ">")):
+            continue
+        plain = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", MARKER.sub("", s))
+        plain = re.sub(r"[*_`]", "", plain).strip()
+        if len(re.findall(r"[A-Za-z가-힣]+", plain)) < 4 or (kept and plain in kept):
+            continue
+        out.append(plain)
+    return out
+
+
+def literal_report(d: Path, text: str) -> None:
+    """Step 4 of the 2026-11-17 wording build: ask a fresh call what literally happens in each line, and list
+    for Chaehan the lines it cannot say. The list goes into the agent's report; it never stops the write.
+    NOTE_BUILD_LITERAL=0 turns it off (the tests)."""
+    if os.environ.get("NOTE_BUILD_LITERAL", "1") == "0":
+        return
+    lines = literal_lines(text, verbatim_text(d))
+    if not lines:
+        return
+    try:
+        say = _say()
+        answers = say.literal_answers(lines)
+    except Exception as e:  # no key, no network: the note is written all the same
+        print(f"\nThe literal check did not run ({str(e)[:160]}). The write goes ahead.")
+        return
+    rows = [(line, a.replace("\t", " ").replace("\n", " ")) for line, a in zip(lines, answers)]
+    (d / "literal.tsv").write_text("cannot say\tline\tanswer\n" + "".join(
+        f"{'yes' if say.cannot_say(a) else ''}\t{line}\t{a}\n" for line, a in rows), encoding="utf-8")
+    bad = [line for line, a in rows if say.cannot_say(a)]
+    missing = sum(say.unanswered(a) for _l, a in rows)
+    if missing:
+        print(f"\nThe literal check got no answer for {missing} of {len(lines)} lines.")
+    if bad:
+        print(f"\nFor Chaehan, in your report: a fresh reader cannot say what literally happens in "
+              f"{len(bad)} of {len(lines)} lines. They are written as they are; quote them so he can judge:")
+        for line in bad:
+            print(f"- {line}")
+    else:
+        print(f"\nA fresh reader can say what literally happens in all {len(lines)} lines.")
+
+
 def check_as_is(d: Path) -> int:
     """Run the gate on draft.md as it stands; on PASS stamp it and print the write command."""
     g = gate()
@@ -1004,6 +1066,7 @@ def check_as_is(d: Path) -> int:
     print(f"note-gate:{g.stamp(draft).name}")
     print(f"\nPASS. The note text is stamped. Write it to Evernote, read it back and verify it with:\n"
           f"python3 {HERE} write {d}")
+    literal_report(d, text)
     return 0
 
 
@@ -1162,6 +1225,7 @@ def cmd_next(a) -> int:
     print(f"\nnote-gate:{g.stamp(draft).name}")
     print(f"\nPASS. The note text is stamped. Write it to Evernote, read it back and verify it with:\n"
           f"python3 {HERE} write {d}")
+    literal_report(d, draft)
     return 0
 
 

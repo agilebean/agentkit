@@ -171,3 +171,14 @@ def test_the_literal_question_is_the_spec_text() -> None:
     q = say.LITERAL.read_text(encoding="utf-8").strip()
     assert q.startswith("Say in your own plain words what literally happens")
     assert q.endswith("answer exactly: cannot say.")
+
+
+def test_a_failed_literal_call_is_one_unanswered_line(monkeypatch) -> None:
+    def fake(messages, model=None, max_tokens=0, temperature=0.0):
+        if "broken" in messages[-1]["content"]:
+            raise RuntimeError("stream ended empty")
+        return "cannot say"
+
+    monkeypatch.setattr(say, "complete", fake)
+    answers = say.literal_answers(["The plan buys a week.", "A broken line."], workers=1)
+    assert say.cannot_say(answers[0]) and say.unanswered(answers[1]) and not say.cannot_say(answers[1])
