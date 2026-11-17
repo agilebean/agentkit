@@ -98,6 +98,9 @@ def measure_literal(rows: list[dict], model: str | None = None, out: Path | None
     if out:
         out.write_text(json.dumps([{"id": r["id"], "label": r["label"], "line": r["line"], "answer": a}
                                    for r, a in zip(rows, answers)], ensure_ascii=False, indent=1), encoding="utf-8")
+    missing = [r["id"] for r, a in zip(rows, answers) if a.startswith("no answer")]
+    if missing:
+        print(f"literal: no answer for {' '.join(missing)}; each counts as a line the reader can say")
     return measure(rows, lambda line: verdict[line])
 
 

@@ -52,3 +52,12 @@ def test_an_appended_row_changes_the_totals(tmp_path) -> None:
     _, n_acc, _, n_rej = ev.measure(rows, ev.CHECKS["seat"])
     assert (n_acc, n_rej) == (21, 41)
 
+
+
+def test_literal_counts_cannot_say_as_a_refusal(monkeypatch) -> None:
+    answers = {"Your 400 m went from 8:08 to 8:04.": "Your 400 m time fell from 8:08 to 8:04.",
+               "The plan buys you a calm week.": "cannot say"}
+    monkeypatch.setattr(ev, "literal_answers", lambda lines, **kw: [answers[l] for l in lines])
+    rows = [{"id": "A1", "label": "accepted", "fault": "", "line": "Your 400 m went from 8:08 to 8:04."},
+            {"id": "R1", "label": "rejected", "fault": "picture", "line": "The plan buys you a calm week."}]
+    assert ev.measure_literal(rows) == (1, 1, 1, 1)
