@@ -689,6 +689,17 @@ one will eventually be chosen.
   3 wire transfers via power of attorney", another matter) and
   `furniture-relocation.md` (a customs broker clears under power of attorney).
   Chaehan: "jaekeun didn't sign the transfers - where did you get that?"
+- **A size in a photo is a proportion until something in the frame is
+  calibrated.** A photograph without a scale bar carries ratios, and a body
+  part is not a ruler: a fingertip or a shoulder varies by a factor of two
+  between people and changes with the lens. State a millimetre figure only
+  when Chaehan gave it, when the frame holds a printed rule, or when a tool
+  measured it; otherwise give the proportion or ask, and say the size is
+  unmeasured. 2026-11-17: an agent read a comedo plug beside a fingertip as
+  "2-3 mm" and the extracted fragments as "1-3 mm"; Chaehan: "you read
+  dimensions wrong: the long plug was 1cm long", which changes the finding
+  from a deep comedo to a cyst-sized cast of the follicle. The wrong size
+  also carried the wrong cause.
 - **An ordinal names its series.** "First", "second" or "last" is written
   with what it counts: "the second of the four flat viewings", four visits to four different flats. A count of meetings with one person names that person ("your first meeting with the landlord") and comes only from a line that counts meetings with that person. A bare "second meeting" binds to the nearest person and invents a history with them.
 
