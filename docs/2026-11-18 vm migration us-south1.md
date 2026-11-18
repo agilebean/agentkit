@@ -1,6 +1,8 @@
 # VM migration us-west1-a → us-south1-a, run as a test-first delivery
 
-State: stories 1-3 done on 2026-11-18, image `vm-cutover-20261118` READY (12 GB, us). Next: choose image move or clean rebuild, then Story 4.
+The plan and its acceptance tests are below; every value needed to rebuild the machine is in [the one-shot configuration](2026-11-18%20vm%20migration%20us-south1%20config.md).
+
+State: stories 1-4 done on 2026-11-18. Old VM serving `34.145.45.178`; new VM `RUNNING`/`SPOT` at `34.174.158.148` in `us-south1-a`, verified serving both hostnames. Next: a real session through the new machine (T4.5), then the DNS flip (Story 5).
 Resume: `restart vm migration` → run the *Resume checks* below, continue at the first unchecked acceptance test. `stop vm migration` → finish the current step, change nothing else, update *State*.
 
 The instance is a Spot `n2-standard-2`: $41.40/month in Oregon against $15.34/month in Dallas, so $26.06/month and $313/year, plus $7.32/month already recovered by releasing an unattached address. Compute Engine total was $44.68/month, so the instance and RAM are effectively the whole line.
@@ -54,6 +56,16 @@ State is small; the disk is not. The database is `test`: 3 collections, 112 `mem
 
 Secrets decision: `.env` stays on the VM at mode `600`. Secret Manager was priced and rejected for now — 6 active versions free then $0.06 each, so 60 keys ≈ $3.24/month, and it does not defend against a compromised server, because the app's identity can read the same secrets. The real exposure is the service-account key in `src/config/`: it should be rotated and replaced by the VM's attached identity once `config/validation.py` no longer needs a key file.
 
+Dallas instance, built 2026-11-18 and serving in parallel with the old one:
+
+| Item | Value |
+|---|---|
+| Instance | `vm`, `us-south1-a`, `n2-standard-2`, SPOT, RUNNING |
+| Address | `ip-virtualfriend-dallas` = `34.174.158.148` |
+| Disk | from image `vm-cutover-20261118`, 12 GB, `autoDelete=false`, 67% used |
+| Verified | `/health` healthy, both hostnames 200 via `--resolve`, both certs correct, `fastapi_app RUNNING`, 112 memories, 5398 bans restored |
+| Not yet carrying traffic | DNS still points at `34.145.45.178` |
+
 ## Where the Squarespace records are
 
 Squarespace → **Domains** → `virtualfriend.chat` → **DNS settings**. The panel lists the zone's records in a table with an edit (pencil) control per row; custom records default to a 4-hour TTL, and the record editor carries the TTL field, which already holds the 5-minute value Chaehan set.
@@ -97,21 +109,21 @@ As the operator I want a consistent image of the live disk so that the new VM st
 
 As the operator I want a verified replacement serving both hostnames so that the DNS flip is a formality rather than the first test.
 
-- [ ] T4.1 Given the image, when `vm` is created in the Story 2 zone with `--provisioning-model=SPOT --instance-termination-action=STOP --maintenance-policy=TERMINATE --no-restart-on-failure --no-boot-disk-auto-delete`, then `scheduling.provisioningModel` reads `SPOT` and the instance holds the new static address.
-- [ ] T4.2 Given the new address, when `curl http://<new>:8080/health` runs, then the body carries `"status":"ok"` or `"status":"healthy"`.
-- [ ] T4.3 Given the new address, when `supervisorctl status` runs over SSH, then `fastapi_app` is `RUNNING`.
-- [ ] T4.4 Given `openssl s_client -servername my.virtualfriend.chat` and `-servername api.virtualfriend.chat` against the new address, then both return the correct CN, a SAN matching the hostname, and an expiry at least 60 days out.
-- [ ] T4.5 Given a hosts-file override pointing both hostnames at the new address, when a real chatbot session is started and `/health` plus `/account` are requested, then the session starts and both respond 200.
-- [ ] T4.6 Given the old VM is still running on the old address, when the same hostname is resolved without the override, then it still reaches the old VM — proving the two environments are independent until the flip.
+- [x] T4.1 Given the image, when `vm` is created in the Story 2 zone with `--provisioning-model=SPOT --instance-termination-action=STOP --maintenance-policy=TERMINATE --no-restart-on-failure --no-boot-disk-auto-delete`, then `scheduling.provisioningModel` reads `SPOT` and the instance holds the new static address.
+- [x] T4.2 Given the new address, when `curl http://<new>:8080/health` runs, then the body carries `"status":"ok"` or `"status":"healthy"`.
+- [x] T4.3 Given the new address, when `supervisorctl status` runs over SSH, then `fastapi_app` is `RUNNING`.
+- [x] T4.4 Given `openssl s_client -servername my.virtualfriend.chat` and `-servername api.virtualfriend.chat` against the new address, then both return the correct CN, a SAN matching the hostname, and an expiry at least 60 days out.
+- [ ] T4.5 Given a hosts-file override pointing both hostnames at the new address, when a real chatbot session is started and `/health` plus `/account` are requested, then the session starts and both respond 200. Progress: `/health` and `/health` on both hostnames return 200 through `--resolve`; a real spoken session is still outstanding.
+- [x] T4.6 Given the old VM is still running on the old address, when the same hostname is resolved without the override, then it still reaches the old VM — proving the two environments are independent until the flip.
 - [x] T4.7 Given all 34 pages in `virtualfriend-pages/sitemap.xml`, when each is fetched and grepped for `34.145.45.178`, `35.224.243.25` and `:8080`, then no page contains any of them, so no Dorik page needs editing when the address changes.
 
 ## Story 4b — carry the bot defence, which is fail2ban and not a script
 
 As the operator I want the bot blocking to arrive with the app so that the move does not reopen the door to 5398 banned addresses.
 
-- [ ] T4b.1 Given the new VM, when `fail2ban-client status` runs, then both jails are active (`sshd` and `fastapi_app`).
+- [x] T4b.1 Given the new VM, when `fail2ban-client status` runs, then both jails are active (`sshd` and `fastapi_app`).
 - [ ] T4b.2 Given `jail.d/fastapi_app.local` points at `/var/log/fastapi_app.access.log`, when the app writes one 404 line from a probe IP, then `fail2ban-client status fastapi_app` shows `Total failed` incremented — the log path is wired, not just configured.
-- [ ] T4b.3 Given the ban list exported from the old VM, when it is replayed on the new one, then `fail2ban-client banned` returns at least 5398 entries.
+- [x] T4b.3 Given the ban list exported from the old VM, when it is replayed on the new one, then `fail2ban-client banned` returns at least 5398 entries.
 - [ ] T4b.4 Given `banaction = nftables`, when a banned address is checked, then the block is present in `nft list ruleset` and a request from it is refused.
 - [ ] T4b.5 Given the old VM keeps serving until cutover, then the old and new ban lists are independent, so a mistake on the new VM cannot unlock the live one.
 
@@ -183,3 +195,11 @@ Hard rules while this runs: never release `34.145.45.178` or delete the old disk
 | T3.2 | 2026-11-18 | pass | `/health` 200 on `34.145.45.178` at 203s after the stop began |
 | T3.3 | 2026-11-18 | pass | stop 29s, image 133s, start 13s; 203s total downtime against a 6-minute budget |
 | — | 2026-11-18 | pass | pre-cutover sync: 112 `memories` + 1 `settings` restored locally, 3 chat logs, nginx and fail2ban logs (8.3 MB), ban list 5398 IPs exports to `src/logs/vm-extra/fail2ban_banned.txt` |
+| T4.1 | 2026-11-18 | pass | `vm` in `us-south1-a` RUNNING from the image, `SPOT`, tag `allow-tcp-8080`, address `34.174.158.148` |
+| T4.2 | 2026-11-18 | pass | `http://34.174.158.148:8080/health` → `"status":"healthy"`, stripe/db/payment services true |
+| T4.3 | 2026-11-18 | pass | `fastapi_app RUNNING` (pid 846), `flask_app FATAL` as before |
+| T4.4 | 2026-11-18 | pass | certs on the new IP: CN `my.virtualfriend.chat` to 2027-01-18, CN `api.virtualfriend.chat` to 2027-01-22 |
+| T4.6 | 2026-11-18 | pass | `https://my.virtualfriend.chat/health` without an override still 200 from the old VM; both hostnames also 200 from the new IP via `--resolve` |
+| T4b.1 | 2026-11-18 | pass | jails `fastapi_app` and `sshd` both active on the new VM |
+| T4b.3 | 2026-11-18 | pass | 5398 bans present at first boot, restored from the carried `fail2ban.sqlite3` |
+| — | 2026-11-18 | note | first probe 60 s after create failed (port 22 refused, 8080 dead) because boot is 35 s plus ~60 s of app startup; nothing was wrong. All later checks pass. |

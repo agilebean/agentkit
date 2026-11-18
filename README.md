@@ -6,6 +6,11 @@ Shared agents across projects by Chaehan So
 `skills/README.md` maps every skill Chaehan owns: what it does, where its
 instruction and scripts live, and where a new document about one goes.
 
+## Runbooks
+
+- [virtualfriend VM migration to us-south1](docs/2026-11-18%20vm%20migration%20us-south1.md) — the test-first plan, current state and test log.
+- [One-shot configuration for that VM](docs/2026-11-18%20vm%20migration%20us-south1%20config.md) — every instance, service, database, secret and command value needed to rebuild the machine.
+
 ## scripts
 
 Standalone personal scripts. `~/.local/bin` holds symlinks to these files, so the repo is the source of truth.
