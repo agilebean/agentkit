@@ -2,7 +2,7 @@
 
 The plan and its acceptance tests are below; every value needed to rebuild the machine is in [the one-shot configuration](2026-11-18%20vm%20migration%20us-south1%20config.md).
 
-State: stories 1-4 done on 2026-11-18. Old VM serving `34.145.45.178`; new VM `RUNNING`/`SPOT` at `34.174.158.148` in `us-south1-a`, verified serving both hostnames. Next: a real session through the new machine (T4.5), then the DNS flip (Story 5).
+State: migration complete on 2026-11-18. Dallas (`vm`, `us-south1-a`, `34.174.158.148`) serves both hostnames; Oregon instance, disk and address are deleted; the image is deleted. Two tests stay open: T6.3 (a real preemption) and T8.2 (next month's bill).
 Resume: `restart vm migration` → run the *Resume checks* below, continue at the first unchecked acceptance test. `stop vm migration` → finish the current step, change nothing else, update *State*.
 
 The instance is a Spot `n2-standard-2`: $41.40/month in Oregon against $15.34/month in Dallas, so $26.06/month and $313/year, plus $7.32/month already recovered by releasing an unattached address. Compute Engine total was $44.68/month, so the instance and RAM are effectively the whole line.
@@ -65,6 +65,8 @@ Dallas instance, built 2026-11-18 and serving in parallel with the old one:
 | Disk | from image `vm-cutover-20261118`, 12 GB, `autoDelete=false`, 67% used |
 | Verified | `/health` healthy, both hostnames 200 via `--resolve`, both certs correct, `fastapi_app RUNNING`, 112 memories, 5398 bans restored |
 | Not yet carrying traffic | DNS still points at `34.145.45.178` |
+
+Retired 2026-11-18: Oregon instance, its disk `vm` and `ip-virtualfriend` deleted after the log backup verified, so the line above describes the cutover morning only.
 
 ## Where the Squarespace records are
 
@@ -131,19 +133,19 @@ As the operator I want the bot blocking to arrive with the app so that the move 
 
 As the operator I want DNS and the deploy pipeline on the new machine so that a `git push` still reaches production.
 
-- [ ] T5.1 Given the two A records, when Chaehan replaces the data field in both, then `dig +short my.virtualfriend.chat` and `dig +short api.virtualfriend.chat` both return the new address within 10 minutes.
-- [ ] T5.2 Given propagation, when `https://my.virtualfriend.chat/health` and `https://api.virtualfriend.chat/health` are requested, then both return 200 from the new VM (confirmed by the access log on the new host, not just the status code).
-- [ ] T5.3 Given `SSH_HOST` is updated to the new address, when `gh workflow run deploy.yml` runs, then the run is green and its log shows the new host.
-- [ ] T5.4 Given the workflow, when a no-op commit is pushed, then `git log -1` on the new VM shows that commit within 2 minutes — the auto-deploy path is proven end to end, not inferred.
-- [ ] T5.5 Given DNS is flipped, when the old VM is still running, then requests to the old address still answer, so the rollback window is real.
-- [ ] T5.6 Given T5.2 to T5.4 pass, when `vm-cutover-20261118` is deleted, then `images list` is empty and the old VM still boots from its own disk — the image is a safety net for the cutover window only, and its storage is not carried as a monthly cost.
+- [x] T5.1 Given the two A records, when Chaehan replaces the data field in both, then `dig +short my.virtualfriend.chat` and `dig +short api.virtualfriend.chat` both return the new address within 10 minutes.
+- [x] T5.2 Given propagation, when `https://my.virtualfriend.chat/health` and `https://api.virtualfriend.chat/health` are requested, then both return 200 from the new VM (confirmed by the access log on the new host, not just the status code).
+- [x] T5.3 Given `SSH_HOST` is updated to the new address, when `gh workflow run deploy.yml` runs, then the run is green and its log shows the new host.
+- [x] T5.4 Given the workflow, when a no-op commit is pushed, then `git log -1` on the new VM shows that commit within 2 minutes — the auto-deploy path is proven end to end, not inferred.
+- [x] T5.5 Given DNS is flipped, when the old VM is still running, then requests to the old address still answer, so the rollback window is real.
+- [x] T5.6 Given T5.2 to T5.4 pass, when `vm-cutover-20261118` is deleted, then `images list` is empty and the old VM still boots from its own disk — the image is a safety net for the cutover window only, and its storage is not carried as a monthly cost.
 
 ## Story 6 — keep the preemption chain alive on the new instance
 
 As the operator I want the restart function to follow the VM so that a Spot reclaim does not leave the product offline.
 
-- [ ] T6.1 Given the sink filter currently matches instance ID `3228524999645469894`, when it is updated to `resource.labels.instance_name="vm"`, then `gcloud logging sinks describe` shows the new filter with the same destination and no writer-identity change.
-- [ ] T6.2 Given `deploy.sh` has been read and confirmed to only set environment and rebuild, when it runs with `ZONE=us-south1-a`, then the function's `serviceConfig.environmentVariables.ZONE` reads `us-south1-a`.
+- [x] T6.1 Given the sink filter currently matches instance ID `3228524999645469894`, when it is updated to `resource.labels.instance_name="vm"`, then `gcloud logging sinks describe` shows the new filter with the same destination and no writer-identity change.
+- [x] T6.2 Given `deploy.sh` has been read and confirmed to only set environment and rebuild, when it runs with `ZONE=us-south1-a`, then the function's `serviceConfig.environmentVariables.ZONE` reads `us-south1-a`.
 - [ ] T6.3 Given `simulate-maintenance-event`, when the VM is reclaimed, then the function log records a restart attempt and the VM returns to `RUNNING` within 10 minutes.
 - [ ] T6.4 Given the restart, when `scheduling.provisioningModel` is read, then it is still `SPOT` — no standard-priced instance appears in `instances list`.
 - [ ] T6.5 Given spot capacity is exhausted (negative test, by reasoning and by reading the code path), then the function logs an error and leaves the VM stopped rather than creating a standard VM.
@@ -152,16 +154,16 @@ As the operator I want the restart function to follow the VM so that a Spot recl
 
 As the operator I want no stale address in the codebase so that the next person reading it does not SSH into a deleted VM.
 
-- [ ] T7.1 Given the change, when `grep -rn "34\.145\.45\.178"` runs over the repo, then the only hits are history (`logs/`, `_archive/`) or this document.
-- [ ] T7.2 Given `scripts/datasync.sh`, `scripts/disk_usage_breakdown.sh`, `scripts/disk_cleanup.sh`, `docs/*` and the CLAUDE.md quick reference are updated, then `bash -n` passes on each script.
-- [ ] T7.3 Given `gcloud config set compute/zone us-south1-a`, when the `gc` alias runs, then it opens a shell on the new VM.
-- [ ] T7.4 Given the stale `Host vm.us-west1-a.virtualfriend-demo` block is removed from `~/.ssh/config`, when `ssh vm.us-south1-a.virtualfriend-demo` runs, then gcloud has regenerated a working entry.
+- [x] T7.1 Given the change, when `grep -rn "34\.145\.45\.178"` runs over the repo, then the only hits are history (`logs/`, `_archive/`) or this document.
+- [x] T7.2 Given `scripts/datasync.sh`, `scripts/disk_usage_breakdown.sh`, `scripts/disk_cleanup.sh`, `docs/*` and the CLAUDE.md quick reference are updated, then `bash -n` passes on each script.
+- [x] T7.3 Given `gcloud config set compute/zone us-south1-a`, when the `gc` alias runs, then it opens a shell on the new VM.
+- [x] T7.4 Given the stale `Host vm.us-west1-a.virtualfriend-demo` block is removed from `~/.ssh/config`, when `ssh vm.us-south1-a.virtualfriend-demo` runs, then gcloud has regenerated a working entry.
 
 ## Story 8 — decommission on day 8, only if every earlier test held
 
 As the operator I want the Oregon resources retired so that the saving actually lands.
 
-- [ ] T8.1 Given 7 quiet days, when the old instance, its disk and `ip-virtualfriend` are deleted, then `gcloud compute instances list`, `disks list` and `addresses list` show no us-west1 leftovers.
+- [x] T8.1 Given the logs are backed up and the image is deleted, when the old instance, its disk (`vm` in us-west1-a, not `persistent-disk-0`) and `ip-virtualfriend` are deleted, then `gcloud compute instances list`, `disks list` and `addresses list` show no us-west1 leftovers. Done on day 0, not day 8: Chaehan waived the rollback window once the eleven log files were verified byte-identical locally.
 - [ ] T8.2 Given the next billing cycle, when Billing → Reports is filtered to us-south1 for 30 days, then the compute line is ≈ $15-18 instead of $44.68.
 
 Rollback, at any point before T8.1: start `vm` in `us-west1-a`, point both A records back to `34.145.45.178`, reset `SSH_HOST`, `gcloud config set compute/zone us-west1-a`. User data is in MongoDB and Stripe, so only local chat logs written after the image are affected.
@@ -203,3 +205,19 @@ Hard rules while this runs: never release `34.145.45.178` or delete the old disk
 | T4b.1 | 2026-11-18 | pass | jails `fastapi_app` and `sshd` both active on the new VM |
 | T4b.3 | 2026-11-18 | pass | 5398 bans present at first boot, restored from the carried `fail2ban.sqlite3` |
 | — | 2026-11-18 | note | first probe 60 s after create failed (port 22 refused, 8080 dead) because boot is 35 s plus ~60 s of app startup; nothing was wrong. All later checks pass. |
+| T5.1 | 2026-11-18 | pass | `my` and `api` both `34.174.158.148` from Google and Cloudflare DNS within minutes |
+| T5.2 | 2026-11-18 | pass | both hostnames 200; the new VM's nginx access log shows the requests and bot 400s |
+| T5.3 | 2026-11-18 | pass | `44301908629` green in 24 s after `SSH_HOST` was set |
+| T5.4 | 2026-11-18 | pass | `git log -1` on the Dallas VM showed `b5b90c8`, `fastapi_app` restarted |
+| T5.5 | 2026-11-18 | pass | old address answered until it was retired |
+| T5.6 | 2026-11-18 | pass | image deleted; `images list` empty |
+| T6.1 | 2026-11-18 | pass | filter is now `resource.labels.instance_name="vm"`, destination unchanged |
+| T6.2 | 2026-11-18 | pass | Cloud Run service env `ZONE=us-south1-a`, revision 00005 serving 100% |
+| T7.1 | 2026-11-18 | pass | remaining hits are dated billing/investigation notes only; no `.py` ever held the IP |
+| T7.2 | 2026-11-18 | pass | `bash -n` clean on all three scripts; aliases synced to the repo (85 / 896 lines) |
+| T7.3 | 2026-11-18 | pass | `compute/zone` is `us-south1-a`; `gc` opens the Dallas VM |
+| T7.4 | 2026-11-18 | pass | `config-ssh` regenerated the Dallas entry; stale Oregon block removed by hand |
+| T8.1 | 2026-11-18 | pass | instance, disk `vm` and `ip-virtualfriend` deleted; only us-south1 resources remain |
+| — | 2026-11-18 | pass | log backup: 11 files copied, sizes identical, including `access.log.1`–`.5` (14 MB) that the mirror had never held |
+| — | 2026-11-18 | fixed | deploy no longer swallows failures (`set -euo pipefail`) and the dead `cp` of the renamed patch is gone |
+| — | 2026-11-18 | fixed | five 2026-02-13 `🔍` diagnostic loggers removed from the langchain monkey patch (they had been removed once by snapshot `06e1fac` and restored by `e262837`) |
