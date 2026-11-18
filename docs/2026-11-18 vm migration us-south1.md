@@ -221,3 +221,42 @@ Hard rules while this runs: never release `34.145.45.178` or delete the old disk
 | — | 2026-11-18 | pass | log backup: 11 files copied, sizes identical, including `access.log.1`–`.5` (14 MB) that the mirror had never held |
 | — | 2026-11-18 | fixed | deploy no longer swallows failures (`set -euo pipefail`) and the dead `cp` of the renamed patch is gone |
 | — | 2026-11-18 | fixed | five 2026-02-13 `🔍` diagnostic loggers removed from the langchain monkey patch (they had been removed once by snapshot `06e1fac` and restored by `e262837`) |
+
+## What we did on 2026-11-18
+
+Released the dead `35.224.243.25` ($7.32/month). Proved Spot capacity in Dallas (17 s to RUNNING). Imaged the disk with a 203 s outage, then built `vm` in `us-south1-a` from it and verified it before any traffic moved. Flipped both Squarespace A records (`my`, `api`), set GitHub's `SSH_HOST`, moved the log sink to an `instance_name` filter, set the Cloud Run function's `ZONE`, and replaced the old IP in `datasync.sh`, `disk_cleanup.sh`, `disk_usage_breakdown.sh`, both alias files and `CLAUDE.md`. Fixed the deploy script (fail fast, dead `cp` removed), removed the five February diagnostics from the langchain patch, backed up all eleven Oregon log files, deleted the image, and retired Oregon: instance, disk `vm` and `ip-virtualfriend`. Finished by setting `compute/zone` to `us-south1-a` and regenerating the SSH config, which is what finally made `gc` and `applog` reach the live machine.
+
+## Disk and log footprint (Dallas, measured 2026-11-18)
+
+`df -h /` → 11G total, 7.1G used, 3.5G free, 67%.
+
+| Path | Size |
+|---|---|
+| `~/miniforge3` | 2.8 G |
+| `~/virtualfriend` (repo + logs) | 473 M |
+| `/var/log` | 283 M |
+| `~/nltk_data` | 64 M |
+| `/var/lib/mongodb` | 1.2 M |
+| OS + apt, remainder | ~3.5 G |
+
+Inside `/var/log`: `/var/log/supervisor` 72 M, `/var/log/nginx` 1.3 M, and the three app files 36 M (`out.log` 24,659,112, `access.log` 10,342,204, `error.log` 1,338,785 bytes). Every line is currently stored **twice**, once by the app's own `out_file` handler and once by supervisord capturing stdout, which is why the supervisor copy is 44.8 M for the same period.
+
+## Log file naming: why it is inconsistent
+
+The switch to `RotatingFileHandler` was `5906e8e` on 2026-05-23: "Replace unbounded FileHandler with RotatingFileHandler, reduce PROD log levels from DEBUG to INFO/WARNING (disk filled 1.1GB in 20 days)". The reason was not small files but the opposite — an unbounded file handler plus DEBUG levels ate 1.1 GB in three weeks. That handler names files `.1`–`.5` with no date and never compresses, while the older logrotate scheme produced `-YYYY-MM-DD` names with gzip.
+
+| | `RotatingFileHandler` (today) | logrotate (before May, and nginx/mongo today) |
+|---|---|---|
+| Trigger | size (50 MB here) | schedule and/or `maxsize` |
+| Name | `out.log.1` … `.5`, no date | `out.log-2026-11-18`, sorted by date |
+| Compression | none | gzip |
+| Owner | the app, per process | cron, one writer |
+| Multi-worker | unsafe: each uvicorn worker rotates the same path, so lines can be lost and the file can pass its limit | safe with `copytruncate` |
+| Config location | in the repo (`config/logging_config.json`) | `/etc/logrotate.d`, outside the repo — this is how it vanished silently |
+| History window | last 5 × 50 MB, independent of time | last N days or weeks, predictable |
+
+Proposed, not yet done: stop writing `out_file` and `access_file` from the app, let supervisord own stdout, and rotate `/var/log/supervisor/*.log` and the nginx logs with logrotate daily, `dateext`, `compress`, `maxsize 50M`, `rotate 14`. That gives date-named, compressed files, one writer, half the disk, and a name you can scan by day. With that in place a nightly one-page digest per day (error count, sessions, STT/LLM/TTS TTFB averages, banned IPs) goes into `logs/summary/` so scanning a month does not mean opening a 24 MB file.
+
+## Why "24 MB" and "7.4 MB" were both true
+
+The 24,659,112-byte file is Dallas's `out.log`. The 7,358,578-byte local copy is Oregon's, taken from `34.145.45.178` before retirement, and it is what the mirror had always held. Dallas inherited Oregon's 7.3 MB in the image and grew to 24.6 MB in a day, mostly through the per-token diagnostics removed in `786adb6`. The sentence that compared them named neither host.
