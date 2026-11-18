@@ -56,10 +56,10 @@ Evidence: deleted 2026-11-18; `addresses list` now shows one address, `34.145.45
 
 As the operator I want a throwaway Spot launch in Dallas so that the migration cannot end in an unbootable instance.
 
-- [ ] T2.1 Given zone `us-south1-a`, when a Spot `n2-standard-2` is created, then it reaches `RUNNING` within 120s.
+- [x] T2.1 Given zone `us-south1-a`, when a Spot `n2-standard-2` is created, then it reaches `RUNNING` within 120s.
 - [ ] T2.2 Given T2.1 fails with `ZONE_RESOURCE_POOL_EXHAUSTED`, when the same is tried in `us-south1-b` then `us-south1-c`, then a zone that reaches `RUNNING` is recorded and used for Story 4.
 - [ ] T2.3 Given all three zones fail, then the migration stops here and the cost of a standard-priced instance is not paid.
-- [ ] T2.4 Given the test instance is deleted, when `gcloud compute instances list` runs, then only `vm` in us-west1 exists and no orphan disk remains.
+- [x] T2.4 Given the test instance is deleted, when `gcloud compute instances list` runs, then only `vm` in us-west1 exists and no orphan disk remains.
 
 ## Story 3 — image the running system with minutes of downtime, not hours
 
@@ -142,3 +142,5 @@ Hard rules while this runs: never release `34.145.45.178` or delete the old disk
 | T1.1 | 2026-11-18 | pass | `virtualfriend-ip` (35.224.243.25) deleted; `addresses list` shows only `34.145.45.178` IN_USE |
 | T1.2 | 2026-11-18 | pass | `dig my` and `dig api` both `34.145.45.178` after deletion |
 | T4.7 | 2026-11-18 | pass | 34/34 sitemap pages fetched, 0 containing the old IP, the dead IP or `:8080`; no page fetch failed |
+| T2.1 | 2026-11-18 | pass | `spot-probe` n2-standard-2 SPOT reached RUNNING in `us-south1-a` in 17s |
+| T2.4 | 2026-11-18 | pass | probe deleted; `instances list` shows only `vm` in `us-west1-a` |
