@@ -351,6 +351,18 @@ Repeated fix-attempt cycles without tracing the regeneration path is the fastest
 
 Every fix is a causal claim: "my change made the bad state become good." To verify that claim you must rule out every other explanation for the green signal you see. Correlation is not causation.
 
+**A circumstance is not a cause until a named route reaches the thing.** Much
+of what surrounds a finding — the job, the climate, the sweat, the diet, the
+hygiene — has no path to it, and listing it as a cause is the same failure as
+inventing a helper. Test: state the physical route from the factor to the site
+("oil on the palms, then a hand on the skin" reaches the face, never the
+mid-back) and drop every factor that has none. Where the honest answer is that
+the cause is unknown or structural, say that; a plausible surrounding is worse
+than an admitted gap. 2026-11-18: an agent explained a 1 cm keratin sac on a
+back shoulder by its owner's painting, sweat and friction; Chaehan: "her job as
+painter doesn't put the paint on her back skin isn't that common sense?" The
+cause was the follicle's own lining.
+
 **A measurement is not proof of your action.**
 A passing test, a clean file, a zero count from `grep` — these are measurements of the current state. They don't tell you *how* the state came to be. The test may pass because you refreshed the baseline. The file may be clean because a pipeline regenerated it from a still-clean cache. Before claiming your fix worked, trace the full path from your edit to the measured outcome. If any step along that path could have produced the green result without your edit, you have not demonstrated causation.
 
@@ -700,6 +712,13 @@ one will eventually be chosen.
   dimensions wrong: the long plug was 1cm long", which changes the finding
   from a deep comedo to a cyst-sized cast of the follicle. The wrong size
   also carried the wrong cause.
+- **In an automatic transcript the speaker label is part of the line.** A
+  quote belongs to the person its label names, and a garbled line is no
+  evidence at all: two neighbours in a two-person talk routinely swap, and the
+  same subject in both mouths reads as one story. Before a transcript line
+  becomes a fact about someone, read the label on that line and one line each
+  side. 2026-11-18: a health bullet gave a woman a dislike of Korean oysters
+  from a line labelled to Chaehan; he said "seafood is wrong".
 - **An ordinal names its series.** "First", "second" or "last" is written
   with what it counts: "the second of the four flat viewings", four visits to four different flats. A count of meetings with one person names that person ("your first meeting with the landlord") and comes only from a line that counts meetings with that person. A bare "second meeting" binds to the nearest person and invents a history with them.
 
