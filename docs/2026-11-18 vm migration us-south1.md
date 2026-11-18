@@ -79,6 +79,7 @@ As the operator I want a verified replacement serving both hostnames so that the
 - [ ] T4.4 Given `openssl s_client -servername my.virtualfriend.chat` and `-servername api.virtualfriend.chat` against the new address, then both return the correct CN, a SAN matching the hostname, and an expiry at least 60 days out.
 - [ ] T4.5 Given a hosts-file override pointing both hostnames at the new address, when a real chatbot session is started and `/health` plus `/account` are requested, then the session starts and both respond 200.
 - [ ] T4.6 Given the old VM is still running on the old address, when the same hostname is resolved without the override, then it still reaches the old VM — proving the two environments are independent until the flip.
+- [x] T4.7 Given all 34 pages in `virtualfriend-pages/sitemap.xml`, when each is fetched and grepped for `34.145.45.178`, `35.224.243.25` and `:8080`, then no page contains any of them, so no Dorik page needs editing when the address changes.
 
 ## Story 5 — flip both DNS records and prove every path that carries the address
 
@@ -140,3 +141,4 @@ Hard rules while this runs: never release `34.145.45.178` or delete the old disk
 |---|---|---|---|
 | T1.1 | 2026-11-18 | pass | `virtualfriend-ip` (35.224.243.25) deleted; `addresses list` shows only `34.145.45.178` IN_USE |
 | T1.2 | 2026-11-18 | pass | `dig my` and `dig api` both `34.145.45.178` after deletion |
+| T4.7 | 2026-11-18 | pass | 34/34 sitemap pages fetched, 0 containing the old IP, the dead IP or `:8080`; no page fetch failed |
