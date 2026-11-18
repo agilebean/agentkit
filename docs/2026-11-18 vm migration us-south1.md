@@ -1,6 +1,6 @@
 # VM migration us-west1-a → us-south1-a, run as a test-first delivery
 
-State: Story 1 done (2026-11-18). Next: Story 2, the Dallas capacity spike.
+State: stories 1-3 done on 2026-11-18, image `vm-cutover-20261118` READY (12 GB, us). Next: choose image move or clean rebuild, then Story 4.
 Resume: `restart vm migration` → run the *Resume checks* below, continue at the first unchecked acceptance test. `stop vm migration` → finish the current step, change nothing else, update *State*.
 
 The instance is a Spot `n2-standard-2`: $41.40/month in Oregon against $15.34/month in Dallas, so $26.06/month and $313/year, plus $7.32/month already recovered by releasing an unattached address. Compute Engine total was $44.68/month, so the instance and RAM are effectively the whole line.
@@ -29,6 +29,30 @@ The instance is a Spot `n2-standard-2`: $41.40/month in Oregon against $15.34/mo
 | Deploy | `.github/workflows/deploy.yml`, `appleboy/ssh-action`, secret `SSH_HOST` = old IP, repo `agilebean/virtualfriend` |
 | Preemption | sink `vm-preemption-sink` (filter on the instance ID above) → topic `vm-preemptions` → gen2 function `restart-vm-on-preemption`, us-central1, `ZONE=us-west1-a` |
 | App URL | `FASTAPI_BASE_URL = https://my.virtualfriend.chat` in `config/constants.py`, no change needed |
+
+## What crosses over, and what does not
+
+State is small; the disk is not. The database is `test`: 3 collections, 112 `memories` documents, 1 `settings`, 0 `locks` — under 1 MB of data on a 7.2 GB used disk.
+
+| Artifact | Size / count | How it crosses |
+|---|---|---|
+| MongoDB `test` DB | 0.7 MB, 112+1 docs | `mongodump` → `mongorestore` |
+| `.env` | 60 keys, mode 664 today | copy over SSH, `chmod 600`, never committed |
+| `src/config/virtualfriend-demo.json` | 2.3 KB, GCP **service-account key** | copy; used by `config/validation.py` |
+| `src/config/gcloud_client_secret.json`, `client_secret_gmail.json` | 810 B, 408 B | copy |
+| `~/.ssh/id_rsa` + `authorized_keys` | 3.4 KB | copy keys, regenerate host keys |
+| certbot account + 2 certs | `/etc/letsencrypt` | reissue with certbot (HTTP-01) |
+| fail2ban: `jail.d/fastapi_app.local`, `filter.d/fastapi.conf`, `/var/log/fastapi_app.access.log` | 5398 banned IPs | copy configs, recreate log path; bans restore from `/var/lib/fail2ban/fail2ban.sqlite3` (3.3 MB) — verified they survived a reboot |
+| nginx: 3 sites, 2 LE certs | — | copy site configs |
+| supervisor: `fastapi_app` | 1 unit | recreate; `flask_app` is dropped (already FATAL) |
+| apt: 55 manual packages | — | `apt-mark showmanual` list → install |
+| Python: 161 packages, 3.12.8 | `requirements.txt` 146 lines | rebuild env from today's `pip freeze` |
+| nltk `tokenizers` | 64 MB | re-download |
+| VM-only git files | `system_prompt_components.py`, `environment.yml`, `src/dump/`, `migrate_emotional_citations_vm.py` | copy or upstream first |
+| Logs | app/chat/mongo synced locally; `/var/log` 286 MB | all synced down, only the last 30 days carried |
+| Junk | 12 GB disk 69% full, 286 MB `/var/log`, dead `flask_app` | not carried |
+
+Secrets decision: `.env` stays on the VM at mode `600`. Secret Manager was priced and rejected for now — 6 active versions free then $0.06 each, so 60 keys ≈ $3.24/month, and it does not defend against a compromised server, because the app's identity can read the same secrets. The real exposure is the service-account key in `src/config/`: it should be rotated and replaced by the VM's attached identity once `config/validation.py` no longer needs a key file.
 
 ## Where the Squarespace records are
 
@@ -65,9 +89,9 @@ As the operator I want a throwaway Spot launch in Dallas so that the migration c
 
 As the operator I want a consistent image of the live disk so that the new VM starts as a byte-for-byte copy (nginx sites, both certs, miniforge envs, supervisor config, git checkout).
 
-- [ ] T3.1 Given `vm` is stopped, when `gcloud compute images create vm-cutover-20261118` runs, then the image reaches `READY` and its size is ≤ 13 GB.
-- [ ] T3.2 Given the image is READY, when `vm` is started again, then `https://my.virtualfriend.chat/health` returns 200 within 5 minutes.
-- [ ] T3.3 Given the stop and start, then the measured outage is under 6 minutes and the actual duration is written into the Test log.
+- [x] T3.1 Given `vm` is stopped, when `gcloud compute images create vm-cutover-20261118` runs, then the image reaches `READY` and its size is ≤ 13 GB.
+- [x] T3.2 Given the image is READY, when `vm` is started again, then `https://my.virtualfriend.chat/health` returns 200 within 5 minutes.
+- [x] T3.3 Given the stop and start, then the measured outage is under 6 minutes and the actual duration is written into the Test log.
 
 ## Story 4 — build the Dallas VM and prove it before DNS moves
 
@@ -81,6 +105,16 @@ As the operator I want a verified replacement serving both hostnames so that the
 - [ ] T4.6 Given the old VM is still running on the old address, when the same hostname is resolved without the override, then it still reaches the old VM — proving the two environments are independent until the flip.
 - [x] T4.7 Given all 34 pages in `virtualfriend-pages/sitemap.xml`, when each is fetched and grepped for `34.145.45.178`, `35.224.243.25` and `:8080`, then no page contains any of them, so no Dorik page needs editing when the address changes.
 
+## Story 4b — carry the bot defence, which is fail2ban and not a script
+
+As the operator I want the bot blocking to arrive with the app so that the move does not reopen the door to 5398 banned addresses.
+
+- [ ] T4b.1 Given the new VM, when `fail2ban-client status` runs, then both jails are active (`sshd` and `fastapi_app`).
+- [ ] T4b.2 Given `jail.d/fastapi_app.local` points at `/var/log/fastapi_app.access.log`, when the app writes one 404 line from a probe IP, then `fail2ban-client status fastapi_app` shows `Total failed` incremented — the log path is wired, not just configured.
+- [ ] T4b.3 Given the ban list exported from the old VM, when it is replayed on the new one, then `fail2ban-client banned` returns at least 5398 entries.
+- [ ] T4b.4 Given `banaction = nftables`, when a banned address is checked, then the block is present in `nft list ruleset` and a request from it is refused.
+- [ ] T4b.5 Given the old VM keeps serving until cutover, then the old and new ban lists are independent, so a mistake on the new VM cannot unlock the live one.
+
 ## Story 5 — flip both DNS records and prove every path that carries the address
 
 As the operator I want DNS and the deploy pipeline on the new machine so that a `git push` still reaches production.
@@ -90,6 +124,7 @@ As the operator I want DNS and the deploy pipeline on the new machine so that a 
 - [ ] T5.3 Given `SSH_HOST` is updated to the new address, when `gh workflow run deploy.yml` runs, then the run is green and its log shows the new host.
 - [ ] T5.4 Given the workflow, when a no-op commit is pushed, then `git log -1` on the new VM shows that commit within 2 minutes — the auto-deploy path is proven end to end, not inferred.
 - [ ] T5.5 Given DNS is flipped, when the old VM is still running, then requests to the old address still answer, so the rollback window is real.
+- [ ] T5.6 Given T5.2 to T5.4 pass, when `vm-cutover-20261118` is deleted, then `images list` is empty and the old VM still boots from its own disk — the image is a safety net for the cutover window only, and its storage is not carried as a monthly cost.
 
 ## Story 6 — keep the preemption chain alive on the new instance
 
@@ -114,7 +149,7 @@ As the operator I want no stale address in the codebase so that the next person 
 
 As the operator I want the Oregon resources retired so that the saving actually lands.
 
-- [ ] T8.1 Given 7 quiet days, when the old instance, disk, image and `ip-virtualfriend` are deleted, then `gcloud compute instances list`, `disks list`, `images list` and `addresses list` show no us-west1 leftovers.
+- [ ] T8.1 Given 7 quiet days, when the old instance, its disk and `ip-virtualfriend` are deleted, then `gcloud compute instances list`, `disks list` and `addresses list` show no us-west1 leftovers.
 - [ ] T8.2 Given the next billing cycle, when Billing → Reports is filtered to us-south1 for 30 days, then the compute line is ≈ $15-18 instead of $44.68.
 
 Rollback, at any point before T8.1: start `vm` in `us-west1-a`, point both A records back to `34.145.45.178`, reset `SSH_HOST`, `gcloud config set compute/zone us-west1-a`. User data is in MongoDB and Stripe, so only local chat logs written after the image are affected.
@@ -144,3 +179,7 @@ Hard rules while this runs: never release `34.145.45.178` or delete the old disk
 | T4.7 | 2026-11-18 | pass | 34/34 sitemap pages fetched, 0 containing the old IP, the dead IP or `:8080`; no page fetch failed |
 | T2.1 | 2026-11-18 | pass | `spot-probe` n2-standard-2 SPOT reached RUNNING in `us-south1-a` in 17s |
 | T2.4 | 2026-11-18 | pass | probe deleted; `instances list` shows only `vm` in `us-west1-a` |
+| T3.1 | 2026-11-18 | pass | image `vm-cutover-20261118` READY, 12 GB, storage location `us`, created 2026-11-18T03:32:23-08:00 |
+| T3.2 | 2026-11-18 | pass | `/health` 200 on `34.145.45.178` at 203s after the stop began |
+| T3.3 | 2026-11-18 | pass | stop 29s, image 133s, start 13s; 203s total downtime against a 6-minute budget |
+| — | 2026-11-18 | pass | pre-cutover sync: 112 `memories` + 1 `settings` restored locally, 3 chat logs, nginx and fail2ban logs (8.3 MB), ban list 5398 IPs exports to `src/logs/vm-extra/fail2ban_banned.txt` |
