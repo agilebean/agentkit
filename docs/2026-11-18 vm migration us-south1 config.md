@@ -248,3 +248,20 @@ gcloud compute ssh chaehan@vm --zone=us-south1-a --command='sudo supervisorctl s
 ```
 
 Expected on a healthy instance: `/health` JSON with `"status":"healthy"`, both hostnames 200, certificates matching their hostname with a 2027 expiry, `fastapi_app RUNNING`, `flask_app FATAL` (pre-existing), two fail2ban jails with 5398 bans, 112 documents, root disk ~67% used.
+
+## 15. Disk footprint and log rotation (measured 2026-11-18 on Dallas)
+
+| Path | Size |
+|---|---|
+| Root filesystem | 11 G total, 7.1 G used, 3.5 G free (67%) |
+| `~/miniforge3` | 2.8 G |
+| `~/virtualfriend` | 473 M |
+| `/var/log` | 283 M (supervisor 72 M, nginx 1.3 M) |
+| `~/nltk_data` | 64 M |
+| `/var/lib/mongodb` | 1.2 M |
+
+Log files: `out.log` 24,659,112 B, `access.log` 10,342,204 B, `error.log` 1,338,785 B. Supervisord's copy of stdout is 44.8 M, so every line exists twice.
+
+Rotation today is `RotatingFileHandler` inside the app, from `config/logging_config.json`: `out_file` and `error_file` at `maxBytes 52428800` with `backupCount 5`, `access_file` at `maxBytes 10485760` with `backupCount 5`. Files are named `.1`–`.5`, carry no date, and are not compressed. This replaced logrotate in `5906e8e` (2026-05-23) because an unbounded `FileHandler` plus DEBUG levels filled 1.1 GB in 20 days.
+
+Rebuild rule: if the rotation is changed to logrotate, the app writes to stdout only (drop `out_file`/`access_file` from the JSON), supervisor owns the file, and `/etc/logrotate.d/virtualfriend` rotates daily with `dateext`, `compress`, `maxsize 50M`, `rotate 14` — one writer, date-named and compressed, at half the current disk.
