@@ -40,7 +40,8 @@ LITERAL = ROOT / "wording_literal_prompt.md"
 MODEL = "deepseek/deepseek-v4.1-flash"
 NO_ANSWER = "no answer"
 PAIRS_HEAD = "Cards and the lines Chaehan accepted for them:\n\n"
-TAIL = "\n\nReturn one line per card below: the card's id, a tab, the line."
+GROUPS_HEAD = "\n\nCards that share an id make one line together:\n\n"
+TAIL = "\n\nReturn one line per id below: the id, a tab, the line."
 NUMBER = re.compile(r"\d{4}-\d{2}-\d{2}|\d+(?:\.\d+)?")
 NAME = re.compile(r"\b[A-Z][A-Za-z-]{2,}\b|[가-힣]{2,}")
 OBLIGATION = re.compile(r"\b(?:must|have to|has to|had to|need to|needs to|should|ought to)\b", re.I)
@@ -110,23 +111,25 @@ def card_text(card: dict) -> str:
     return " | ".join(parts + [f"{k}={card[k]}" for k in ("fact", "so", "do") if card.get(k)])
 
 
-def split_prompt(text: str | None = None) -> tuple[str, list[str]]:
-    """The prompt's rules, and the ids of the pairs it shows, in order."""
+def split_prompt(text: str | None = None) -> tuple[str, list[str], str]:
+    """The prompt's rules, the ids of the single-card pairs it shows in order, and its block of lines made of
+    several cards (2026-11-20: one card a sentence made a bullet of three facts read as three sentences)."""
     text = PROMPT.read_text(encoding="utf-8") if text is None else text
     head, rest = text.split(PAIRS_HEAD, 1)
-    block = rest.split(TAIL, 1)[0]
+    block, rest = rest.split(GROUPS_HEAD, 1)
+    groups = rest.split(TAIL, 1)[0]
     by_card = {card_text(pair_card(r)): r["id"] for r in load_pairs()}
     ids = []
     for m in re.finditer(r"^card: (.*)$", block, re.M):
         if m.group(1) not in by_card:
             raise SystemExit(f"say.py: the prompt's pair {m.group(1)!r} is not a row of {PAIRS.name}")
         ids.append(by_card[m.group(1)])
-    return head, ids
+    return head, ids, groups
 
 
-def build_prompt(head: str, pairs: list[dict]) -> str:
+def build_prompt(head: str, pairs: list[dict], groups: str) -> str:
     shown = "\n\n".join(f"card: {card_text(pair_card(r))}\nline: {r['line']}" for r in pairs)
-    return head + PAIRS_HEAD + shown + TAIL + "\n"
+    return head + PAIRS_HEAD + shown + GROUPS_HEAD + groups + TAIL + "\n"
 
 
 def _topic(thing: str) -> set[str]:
@@ -137,7 +140,7 @@ def choose_pairs(cards: list[dict]) -> tuple[list[dict], list[tuple[str, str | N
     """The prompt's pairs with each one that shares a topic word with a card swapped for an unused row."""
     rows = load_pairs()
     by_id = {r["id"]: r for r in rows}
-    _head, shown = split_prompt()
+    _head, shown, _groups = split_prompt()
     topics = set().union(*(_topic(c["thing"]) for c in cards)) if cards else set()
     sent = {c["id"] for c in cards}
     used = set(shown)
@@ -155,11 +158,16 @@ def choose_pairs(cards: list[dict]) -> tuple[list[dict], list[tuple[str, str | N
     return chosen, swapped
 
 
+def line_id(card: dict) -> str:
+    """The id of the line a card belongs to: its own id unless it shares a line with other cards."""
+    return card.get("line") or card["id"]
+
+
 def user_message(cards: list[dict], refused: dict[str, tuple[str, list[str]]] | None = None) -> str:
-    msg = "Cards:\n" + "\n".join(f"{c['id']}\t{card_text(c)}" for c in cards)
-    for cid, (line, reasons) in (refused or {}).items():
-        msg += (f"\n\nYour line for {cid} was refused: {line}\nWhy: {'; '.join(reasons)}.\n"
-                f"Write the line again from the card.")
+    msg = "Cards:\n" + "\n".join(f"{line_id(c)}\t{card_text(c)}" for c in cards)
+    for lid, (line, reasons) in (refused or {}).items():
+        msg += (f"\n\nYour line for {lid} was refused: {line}\nWhy: {'; '.join(reasons)}.\n"
+                f"Write the line again from its cards.")
     return msg
 
 
@@ -195,9 +203,11 @@ def _shingles(text: str, n: int = 6) -> set[tuple]:
     return {tuple(w[i:i + n]) for i in range(len(w) - n + 1)}
 
 
-def check_line(line: str, card: dict, prompt: str) -> tuple[list[str], list[str]]:
-    """(the reasons the line fails, the lint warns it only reports)."""
-    fields = " ".join(card[k] for k in ("thing", "fact", "so", "do") if card.get(k))
+def check_line(line: str, card: dict | list[dict], prompt: str) -> tuple[list[str], list[str]]:
+    """(the reasons the line fails, the lint warns it only reports), for one card or the cards of one line."""
+    cards = card if isinstance(card, list) else [card]
+    fields = " ".join(c[k] for c in cards for k in ("thing", "fact", "so", "do") if c.get(k))
+    card = {"do": " ".join(c.get("do", "") for c in cards).strip()}
     fails = []
     lost = sorted(_numbers(fields) - _numbers(line)) + sorted(n for n in _names(fields, False) if n not in line)
     if lost:
@@ -213,7 +223,7 @@ def check_line(line: str, card: dict, prompt: str) -> tuple[list[str], list[str]
         if first in _mod("overview_gate").IMPERATIVE and not re.match(rf"(?i)\s*{first}\b", fields):
             fails.append(f"it opens on the instruction {first!r}, but the card has no 'do': "
                          f"open with what the line is about")
-    own = _shingles(fields + " " + script_line(card))
+    own = _shingles(fields + " " + " ".join(script_line(c) for c in cards))
     if (_shingles(line) & _shingles(prompt)) - own:
         fails.append("it copies six words in a row from the examples: write it from the card")
     warns = []
@@ -245,48 +255,51 @@ def script_line(card: dict) -> str:
 # ---- the call -------------------------------------------------------------------------
 
 def say(cards: list[dict], model: str | None = None, workers: int = 4, literal: bool = False) -> dict:
-    """Lines for the cards of one section, with how each was made: model, retry or script."""
+    """Lines for the cards of one section, by line id, with how each was made: model, retry or script. Cards
+    that share a "line" key make one line; a card without one is a line of its own."""
     t = time.time()
-    head, _ids = split_prompt()
+    head, _ids, groups_text = split_prompt()
     pairs, swapped = choose_pairs(cards)
-    prompt = build_prompt(head, pairs)
+    prompt = build_prompt(head, pairs, groups_text)
     system = {"role": "system", "content": prompt}
-    by_id = {c["id"]: c for c in cards}
+    groups: dict[str, list[dict]] = {}
+    for c in cards:
+        groups.setdefault(line_id(c), []).append(c)
     answer = parse_answer(complete([system, {"role": "user", "content": user_message(cards)}], model=model),
-                          list(by_id))
+                          list(groups))
     calls = 1
     lines, how, fails, warns = {}, {}, {}, {}
     retry: dict[str, tuple[str, list[str]]] = {}
-    for cid, card in by_id.items():
-        line = answer.get(cid, "")
-        bad, warn = check_line(line, card, prompt) if line else (["the answer has no line for this card"], [])
+    for lid, members in groups.items():
+        line = answer.get(lid, "")
+        bad, warn = check_line(line, members, prompt) if line else (["the answer has no line for this id"], [])
         if bad:
-            retry[cid] = (line, bad)
+            retry[lid] = (line, bad)
         else:
-            lines[cid], how[cid], warns[cid] = line, "model", warn
+            lines[lid], how[lid], warns[lid] = line, "model", warn
 
-    def again(cid: str) -> tuple[str, str]:
-        msg = user_message([by_id[cid]], {cid: retry[cid]} if retry[cid][0] else None)
-        return cid, parse_answer(complete([system, {"role": "user", "content": msg}], model=model), [cid]).get(cid, "")
+    def again(lid: str) -> tuple[str, str]:
+        msg = user_message(groups[lid], {lid: retry[lid]} if retry[lid][0] else None)
+        return lid, parse_answer(complete([system, {"role": "user", "content": msg}], model=model), [lid]).get(lid, "")
 
     with ThreadPoolExecutor(max_workers=max(1, min(workers, len(retry) or 1))) as pool:
         second = list(pool.map(again, list(retry)))
     calls += len(second)
-    for cid, line in second:
-        bad, warn = check_line(line, by_id[cid], prompt) if line else (["no line again"], [])
+    for lid, line in second:
+        bad, warn = check_line(line, groups[lid], prompt) if line else (["no line again"], [])
         if not bad:
-            lines[cid], how[cid], warns[cid] = line, "retry", warn
+            lines[lid], how[lid], warns[lid] = line, "retry", warn
         else:
-            lines[cid], how[cid] = script_line(by_id[cid]), "script"
-            warns[cid] = check_line(lines[cid], by_id[cid], prompt)[1]
-        fails[cid] = retry[cid][1] + ([f"retry: {'; '.join(bad)}"] if bad else [])
-    report = {"lines": {cid: lines[cid] for cid in by_id}, "how": {cid: how[cid] for cid in by_id},
+            lines[lid], how[lid] = " ".join(script_line(c) for c in groups[lid]), "script"
+            warns[lid] = check_line(lines[lid], groups[lid], prompt)[1]
+        fails[lid] = retry[lid][1] + ([f"retry: {'; '.join(bad)}"] if bad else [])
+    report = {"lines": {lid: lines[lid] for lid in groups}, "how": {lid: how[lid] for lid in groups},
               "fails": fails, "warns": {k: v for k, v in warns.items() if v}, "calls": calls,
               "swapped": swapped, "seconds": round(time.time() - t, 1)}
     if literal:
-        answers = literal_answers([report["lines"][cid] for cid in by_id], model=model)
-        report["literal"] = dict(zip(by_id, answers))
-        report["cannot_say"] = [cid for cid, a in report["literal"].items() if cannot_say(a)]
+        answers = literal_answers([report["lines"][lid] for lid in groups], model=model)
+        report["literal"] = dict(zip(groups, answers))
+        report["cannot_say"] = [lid for lid, a in report["literal"].items() if cannot_say(a)]
     return report
 
 
