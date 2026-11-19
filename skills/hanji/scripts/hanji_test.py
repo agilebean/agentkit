@@ -5,7 +5,7 @@
 
 The run is the installed path, as in the evernote skill's note_test.py, whose launch, provider
 fallback (the OpenCode Go API first, then the direct DeepSeek API) and idle and budget stops it
-reuses: `opencode run --standalone --agent socrates` in the socrates folder with the brief as the
+reuses: `opencode run --server <private server> --agent socrates` in the socrates folder with the brief as the
 message. Writes <out>/report.md (providers, steps, tokens, cost, and one row per hanji command with
 its duration, exit and first output line) and <out>/events.jsonl. Exit 0 when every helper write
 (or en_to_hanji.py copy) the agent ran verified and none failed, 1 otherwise, 5 idle or over budget, 6 every provider failed.
