@@ -10,6 +10,7 @@ instruction and scripts live, and where a new document about one goes.
 
 - [virtualfriend VM migration to us-south1](docs/2026-11-18%20vm%20migration%20us-south1.md) — the test-first plan, current state and test log.
 - [One-shot configuration for that VM](docs/2026-11-18%20vm%20migration%20us-south1%20config.md) — every instance, service, database, secret and command value needed to rebuild the machine.
+- [Log rotation prompt](docs/2026-11-18%20log%20rotation%20prompt.md) — the open question about multi-process logging handed to another model, with constraints and what a reviewer must test.
 
 ## scripts
 
