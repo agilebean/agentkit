@@ -100,27 +100,49 @@ What any plan has to handle:
 
 ## Options, 2026-11-19 (your decision is open)
 
-At this volume a month per file is enough: three streams give 36 archives a year, and a month of the busiest stream is ~5 MB. How fast a question across months is answered depends on the line format more than on the number of files: one JSON object per line (time with zone, level, logger, process, conversation, message, exception) lets DuckDB answer it in one SQL query over all the `.gz` files in the Mac mirror.
+Speed decides nothing at this volume. On a synthetic year of the access log (600000 lines, 47 MB, 7.7 MB compressed), counting a month of 404s took 22 ms with grep, 44 ms with zgrep and 13 ms in SQLite with a time index, and writing one line into SQLite cost 8 µs. The number of files follows logrotate's period: yearly rotation gives each stream one live file and one archive a year.
 
-| | A. Monthly files, logrotate | B. Monthly files, app-managed | C. SQLite log database |
+| | A. Text files + logrotate, yearly | B. systemd journal | C. SQLite database |
 |---|---|---|---|
-| Files a year | 36 archives, 3 live files | 36 | 1 database, plus the access text file |
-| Analysis across months | DuckDB over `*.jsonl.gz`, one query | the same | SQL directly |
-| Reading live | `tail -F`, with `jq` or lnav for JSON | through a symlink to the current month | a query script |
-| Six writers | rename and reopen, 0 lines lost | no rename, 0 lines lost | SQLite locking, untested here |
-| Code you own | ~40 lines (JSON formatter, flood guard, size fuse) and a 15-line logrotate conf | ~150 lines including compression and pruning, with tests | ~120 lines, a schema and a snapshot step |
-| Host config | the logrotate conf, installed and dry-run checked by every deploy | the log directory only | none |
-| fail2ban | new path | new path through a symlink, to be verified | keeps a text access log beside the database |
-| Backup | rsync the directory | rsync the directory | snapshot with `VACUUM INTO`, then rsync |
-| Your constraints | all met | all met | gives up the text files |
+| Files you handle | + 3 live files, 3 archives a year | + none; `journalctl` shows one stream | + 1 database, plus a text access log for fail2ban |
+| Questions across months | + grep or zgrep over at most 2 files per stream | + indexed by time and field (`--since`, `-p warning`) | + SQL |
+| Reading live | + `tail -F`, `less`, every text tool | + `journalctl -f` | − needs a polling query |
+| Overflow | + `maxsize` fuse, checked daily; − a flood writes up to a day before the check | + cap and retention built in; − the cap is shared with system logs | − cap and pruning are yours to write |
+| Six writers | + rename, then each process reopens: 0 lines lost in the test | + journald is the only writer | + SQLite's lock orders the writers |
+| Code you own | + standard library handler, a 15-line config | − fields beyond level and tag need an extra package | − ~120 lines, schema, pruning, backup snapshot |
+| Host config | − logrotate config, installed and dry-run checked by the deploy | − a journald drop-in for the cap | + none |
+| Backup to the Mac | + rsync; an archive's name never changes | − binary, and macOS has no `journalctl`, so the VM must export text daily | − snapshot first, since a copy of a live database can be torn |
+| fail2ban | + new path only | + native (`backend = systemd`) | − still reads the text access log |
+| Your constraints | + all met | − the app no longer writes its own files | − the text files go |
+| Standard practice | + the classic Unix setup, which nginx on your VM already uses | + Ubuntu's journal since 15.04 | − unusual for application logs |
 
-Every option also needs these parts:
+Recommended: A. It meets every constraint with the tools Ubuntu already runs for nginx, the app side stays the standard library's `WatchedFileHandler`, and each file holds one year of one stream. The deploy installs the config from the repository and fails when `logrotate -d` reports an error:
 
-- JSON lines for out and error. Access stays in uvicorn's text format, which the fail2ban filter already matches.
-- A flood guard in the app that collapses repeated messages and caps each process's lines per minute, writing a count of what it dropped.
-- A size fuse that stops a live file at 100 MB (out), 50 MB (access) or 20 MB (error) in a month.
+```
+/var/log/fastapi_app/out.log
+/var/log/fastapi_app/error.log
+/var/log/fastapi_app/access.log {
+    su chaehan adm
+    yearly
+    maxsize 200M
+    rotate 5
+    dateext
+    dateyesterday
+    dateformat -%Y-%m-%d
+    extension .log
+    compress
+    delaycompress
+    create 0640 chaehan adm
+    missingok
+    notifempty
+}
+```
+
+The three paths are named one by one, because a `*.log` glob would also match last year's archive while `delaycompress` keeps it uncompressed. An archive is named for the last day it holds: `access-2026-12-31.log.gz` is 2026, and a flood that passes 200 MB adds one archive named for its day. B is the cleaner design if you drop the own-files constraint, at the cost of the Mac backup. C offers nothing your volume needs.
+
+Whichever you choose:
+
 - No stdout handler on production loggers, and supervisord's capture capped at 10 MB with 5 backups.
 - loguru routed into the standard logging handlers, and the `error_file` handler set to WARNING.
-- The files in `/var/log/fastapi_app/`, owned by chaehan.
-
-Recommended: A. The app side stays standard library apart from ~40 lines, logrotate already runs daily on Ubuntu 24.04, and `dateyesterday` with `dateformat -%Y-%m` names each archive by the month it holds (`out-2026-11.jsonl.gz`). The deploy installs the conf and fails on a dry-run error, so it cannot vanish again unnoticed. B fits better if you want no host file at all and accept owning the rotation code. C fits if your analysis is mostly ad-hoc SQL on the VM and you drop the text-file constraint.
+- Level, logger and process added to the out and error line format, so grep can filter by them. JSON lines pay off only once you query fields every week.
+- Optional: a guard in the app that collapses a repeated message into one line with a count, which closes A's one-day flood window.
