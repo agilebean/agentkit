@@ -96,7 +96,7 @@ What any plan has to handle:
 - supervisord rotates its capture by default at 50 MB with 10 backups. The repository's conf sets `redirect_stderr=true`, so the 24 MB supervisor error.log comes from a different conf or is left over.
 - fail2ban reads `/var/log/fastapi_app.access.log` with `backend = polling` and expands a glob only at start. Its jail and filter exist only on the host.
 - `run_chatbot` (`app_fastapi.py:424`) logs the bot's stdout a second time in the worker.
-- out.log measured 24.66 MB on the VM and 7.36 MB in the Mac copy synced 2026-11-18 23:07.
+- out.log is 24.66 MB on the Dallas VM; the Mac's 7.36 MB copy is the Oregon file taken before retirement (failure 222), and the daily volumes above come from that copy.
 
 ## Options, 2026-11-19 (your decision is open)
 
