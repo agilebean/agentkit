@@ -98,7 +98,7 @@ What any plan has to handle:
 - `run_chatbot` (`app_fastapi.py:424`) logs the bot's stdout a second time in the worker.
 - out.log is 24.66 MB on the Dallas VM; the Mac's 7.36 MB copy is the Oregon file taken before retirement (failure 222), and the daily volumes above come from that copy.
 
-## Options, 2026-11-19 (your decision is open)
+## Options, 2026-11-19
 
 Speed decides nothing at this volume. On a synthetic year of the access log (600000 lines, 47 MB, 7.7 MB compressed), counting a month of 404s took 22 ms with grep, 44 ms with zgrep and 13 ms in SQLite with a time index, and writing one line into SQLite cost 8 µs. The number of files follows logrotate's period: yearly rotation gives each stream one live file and one archive a year.
 
@@ -116,33 +116,11 @@ Speed decides nothing at this volume. On a synthetic year of the access log (600
 | Your constraints | + all met | − the app no longer writes its own files | − the text files go |
 | Standard practice | + the classic Unix setup, which nginx on your VM already uses | + Ubuntu's journal since 15.04 | − unusual for application logs |
 
-Recommended: A. It meets every constraint with the tools Ubuntu already runs for nginx, the app side stays the standard library's `WatchedFileHandler`, and each file holds one year of one stream. The deploy installs the config from the repository and fails when `logrotate -d` reports an error:
+Decided 2026-11-19: A, with 50 MB as the size limit and today's paths kept, so fail2ban, `extractip.sh` and the agent instructions that grep `fastapi_app.out.log` stay as they are. Committed in virtualfriend as `6c8a926`, not yet deployed.
 
-```
-/var/log/fastapi_app/out.log
-/var/log/fastapi_app/error.log
-/var/log/fastapi_app/access.log {
-    su chaehan adm
-    yearly
-    maxsize 200M
-    rotate 5
-    dateext
-    dateyesterday
-    dateformat -%Y-%m-%d
-    extension .log
-    compress
-    delaycompress
-    create 0640 chaehan adm
-    missingok
-    notifempty
-}
-```
-
-The three paths are named one by one, because a `*.log` glob would also match last year's archive while `delaycompress` keeps it uncompressed. An archive is named for the last day it holds: `access-2026-12-31.log.gz` is 2026, and a flood that passes 200 MB adds one archive named for its day. B is the cleaner design if you drop the own-files constraint, at the cost of the Mac backup. C offers nothing your volume needs.
-
-Whichever you choose:
-
-- No stdout handler on production loggers, and supervisord's capture capped at 10 MB with 5 backups.
-- loguru routed into the standard logging handlers, and the `error_file` handler set to WARNING.
-- Level, logger and process added to the out and error line format, so grep can filter by them. JSON lines pay off only once you query fields every week.
-- Optional: a guard in the app that collapses a repeated message into one line with a count, which closes A's one-day flood window.
+- `src/config/logrotate.conf` closes a file at the end of the year or once it passes 50 MB, keeps 10 archives, gzips each one a period after closing (`delaycompress`), and names it for its last day: `fastapi_app.access-2026-12-31.log.gz`. Uncompressed data per stream stays under ~100 MB, the live file plus the latest archive.
+- The three file handlers in `logging_config.json` and both production dicts are `WatchedFileHandler`, which reopens the path after logrotate's rename. With five uvicorn workers and the files renamed mid-traffic, 601 of 601 lines arrived once, none in the renamed file.
+- Production loggers have no stdout handler. supervisord's capture keeps the VM's separate stderr file and is capped at 10 MB with 5 backups (`src/config/fastapi_app.conf`).
+- loguru hands pipecat records to standard logging, so they get the file handler and a timestamp. each out and error line now has its level, logger and process; `error_file` takes WARNING and up whatever `--log-level` says.
+- The deploy checks `config/logrotate.conf` with `logrotate -d`, installs it as `/etc/logrotate.d/fastapi_app`, removes the rescue's `/etc/logrotate.d/fastapi-app`, and installs the supervisor config.
+- `logsync` keeps its pattern and deletes a raw archive once its `.gz` has arrived.
