@@ -55,7 +55,7 @@ def _mod(name: str):
 
 def load_cases(path: Path = CASES) -> list[dict]:
     with open(path, encoding="utf-8", newline="") as fh:
-        return [r for r in csv.DictReader(fh, delimiter="\t") if r.get("id")]
+        return [r for r in csv.DictReader(fh, delimiter="\t", quoting=csv.QUOTE_NONE) if r.get("id")]
 
 
 def _lint(line: str) -> bool:

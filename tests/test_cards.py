@@ -211,3 +211,57 @@ def test_an_instruction_chaehan_stated_himself_is_known_and_a_todo_stays(tmp_pat
                                    said="2026-11-04")])
     kept, cut = select.select_file(path)
     assert [c["id"] for c in cut] == ["C01"] and [c["id"] for c in kept] == ["C02"]
+
+
+def test_a_record_line_copied_under_two_sections_keeps_both_copies(tmp_path) -> None:
+    src = tmp_path / "sources.md"
+    src.write_text("## What went well\n\nmemory/kubs.md:13 | The course is your first; you count it as done (2026-11-07).\n\n"
+                   "## Work\n\nmemory/kubs.md:13 | The course is your first.\n", encoding="utf-8")
+    assert "2026-11-07" in check.read_sources(src)["memory/kubs.md:13"]
+
+
+def test_a_long_section_is_filled_in_pieces_and_a_failed_piece_stops_nothing(monkeypatch) -> None:
+    lines = "\n".join(f"memory/health.md:{n} | Your Mapo gym membership runs until 2027-01-{n:02d}." for n in range(1, 10))
+    sources = f"## Health\n\n{lines}\n"
+    sent = []
+
+    def fake(messages, model=None, **kw):
+        sent.append(messages[-1]["content"])
+        if "2027-01-07" in messages[-1]["content"]:
+            raise RuntimeError("finish_reason='length'")
+        return "state | your Mapo gym membership | runs until 2027-01-01 |  |  |  | 1"
+
+    monkeypatch.setattr(fill, "complete", fake)
+    cards, bad, _secs = fill.fill_section(sources, "Health")
+    assert len(sent) == 2 and sent[0].count("\n") == 6 and sent[1].count("\n") == 3
+    assert len(cards) == 1 and cards[0]["src"] == "memory/health.md:1"
+    assert len(bad) == 1 and "memory/health.md:7" in bad[0] and "length" in bad[0]
+
+
+def test_a_name_may_come_from_the_section_and_a_number_only_from_the_line(tmp_path) -> None:
+    src = tmp_path / "sources.md"
+    src.write_text("## Storage and furniture\n\n"
+                   "memory/furniture.md:30 | LA execution complete (2026-09-30): the shipment is in transit.\n"
+                   "Evernote 2026-11-07 Life Challenges | Ask whether the furniture that left Los Angeles has arrived.\n"
+                   "memory/travel.md:35 | i will rent again, starting from sep 2028 longterm, 2027-03-16.\n", encoding="utf-8")
+    path = tmp_path / "cards.tsv"
+    check.write_cards(path, [
+        _card(section="Storage and furniture", thing="your furniture from Los Angeles",
+              fact="left on 2026-09-30 and is in transit", src="memory/furniture.md:30"),
+        _card(id="C02", section="Storage and furniture", thing="your rental in Seoul from Sep 2028",
+              fact="is long term", src="memory/travel.md:35"),
+        _card(id="C03", section="Storage and furniture", thing="your furniture",
+              fact="left on 2026-03-16", src="memory/furniture.md:30"),
+    ])
+    refusals, _ = check.check_file(path, sources=src)
+    assert [(r.card, r.field) for r in refusals] == [("C02", "thing"), ("C03", "fact")]
+    assert "Seoul" in refusals[0].text and "2026-03-16" in refusals[1].text
+
+
+def test_a_quote_survives_any_number_of_writes(tmp_path) -> None:
+    path = tmp_path / "cards.tsv"
+    card = _card(fact='counts as "a huge breakthrough" in the search')
+    for _ in range(3):
+        check.write_cards(path, [card])
+        card = check.read_cards(path)[0]
+    assert card["fact"] == 'counts as "a huge breakthrough" in the search'
