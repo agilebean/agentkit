@@ -9,30 +9,37 @@
 folder's `write` and its execute call, and the outcome comes from the folder's own read-back and verify.
 `--expect <file> ...` judges a run that writes no note (a read, an export) by the files it must leave.
 
-The run is the installed path: `opencode run --standalone --agent socrates` with the brief as the message, so
-the agent reads the evernote skill and drives note_build.py itself. Providers, in order: the OpenCode Go API
+The run is the installed path: `opencode run --agent socrates` with the brief as the message, so the agent reads
+the evernote skill and drives note_build.py itself. It runs against a private `opencode serve` this script starts
+(class Server), not `--standalone`, so that the server's event stream shows the model reasoning while `opencode run`
+prints nothing; a server that fails to start falls back to `--standalone`. Providers, in order: the OpenCode Go API
 (opencode-go/deepseek-v4.1-flash#high), then the direct DeepSeek API (deepseek/deepseek-flash#high). A provider
 error (spent quota, model unavailable, cut connection) moves the same session to the next provider at once.
 
-Quick abandon (RULES.md rule 74): the run stops when two `note_build.py next` rounds in a row lower neither the
-failure count nor change the first failure, when no event arrives for --idle seconds, or past --budget seconds.
+Quick abandon (RULES.md rule 74): this script stops the run when two `note_build.py next` rounds in a row lower
+neither the failure count nor change the first failure, when neither `opencode run` nor the server's stream shows the model
+working for --idle seconds (RULES.md rule 73: 120), or past --budget seconds.
 
-Writes <out>/report.md (providers used, rounds, costs, outcome) and <out>/events.jsonl, and prints one line per
-event worth acting on, so a Monitor can follow it. Exit: 0 written and verified, 3 the agent asks Chaehan,
+Writes <out>/report.md (providers used, rounds, costs, the longest silences, outcome), <out>/events.jsonl (what
+`opencode run` printed) and <out>/server_events.jsonl (the server's stream, deltas as their length), and prints one
+line per event worth acting on, so a Monitor can follow it. Exit: 0 written and verified, 3 the agent asks Chaehan,
 4 stuck, 5 idle or over budget, 6 every provider failed, 1 otherwise.
 """
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import os
 import queue
 import re
+import secrets
 import signal
 import subprocess
 import sys
 import threading
 import time
+import urllib.request
 from pathlib import Path
 
 PROVIDERS = ["opencode-go/deepseek-v4.1-flash#high", "deepseek/deepseek-flash#high"]
@@ -45,6 +52,103 @@ SUBS = ("init", "next", "write", "verify", "link", "extract")
 WRITE_BRIEF = ("Evernote write. Run `python3 {nb} write \"$NOTE_BUILD_WRITE\"` and run the code it prints in ONE "
                "execute call, exactly as printed. The printed code is complete: do not read the script. Change "
                "nothing else, ask nothing, and end with the lines the call returned.")
+# Server events that show the model or a tool at work. session.retry.scheduled is left out: a provider that keeps
+# failing would otherwise look alive.
+LIVE = re.compile(r"^session\.(?:reasoning|text|tool|step|shell|compaction)\.")
+
+
+class Server:
+    """A private `opencode serve` whose event stream shows the model working while `opencode run` is silent.
+
+    `opencode run --format json` prints a part only once it is complete, so a DeepSeek step that reasons for
+    minutes prints nothing between step_start and its first tool call. Three life-overview runs were cut that way,
+    on 2026-11-17 twice at 120 s and on 2026-11-19 at 300 s, each right after the agent read the skill and the
+    sources. The server's /api/event stream sends session.reasoning.delta, session.text.delta and
+    session.tool.input.delta while the model streams: measured 2026-11-20 on a 7 s reasoning step, 48 reasoning
+    deltas never more than 0.5 s apart, while `opencode run` printed nothing. The server reads its password from
+    OPENCODE_SERVER_PASSWORD, and the run client sends the same variable; the agent's shell tool runs inside the
+    server, so the server starts with the environment the tools need ($NOTE_BUILD_SOCRATES, $NOTE_BUILD_WRITE)."""
+
+    def __init__(self, cwd: str, env: dict, log: Path, t0: float) -> None:
+        self.password = secrets.token_urlsafe(24)
+        self.env = dict(env, OPENCODE_SERVER_PASSWORD=self.password)
+        self.cwd, self.t0, self.url = cwd, t0, ""
+        self.p: subprocess.Popen | None = None
+        self.ticks: list[float] = []  # times of LIVE events
+        self.counts: dict[str, int] = {}
+        self.retries: list[str] = []
+        self.log = log.open("a", encoding="utf-8")
+        self.listening = threading.Event()
+        # localhost never goes through a proxy from the environment
+        self.opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+
+    @property
+    def last(self) -> float:
+        return self.ticks[-1] if self.ticks else 0.0
+
+    def start(self, wait: float = 20) -> bool:
+        """Start the server on a free port; True once it listens and its event stream is open."""
+        self.p = subprocess.Popen(["opencode", "serve", "--hostname", "127.0.0.1", "--port", "0"], cwd=self.cwd,
+                                  env=self.env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                                  stderr=subprocess.STDOUT, text=True, start_new_session=True)
+        threading.Thread(target=self._drain, daemon=True).start()
+        if not self.listening.wait(wait):
+            self.stop()
+            return False
+        threading.Thread(target=self._watch, daemon=True).start()
+        return True
+
+    def _drain(self) -> None:
+        for line in self.p.stdout:
+            m = re.search(r"server listening on (http://\S+)", line)
+            if m and not self.url:
+                self.url = m.group(1).rstrip("/")
+                self.listening.set()
+
+    def _watch(self) -> None:
+        auth = "Basic " + base64.b64encode(f"opencode:{self.password}".encode()).decode()
+        req = urllib.request.Request(self.url + "/api/event",
+                                     headers={"Authorization": auth, "Accept": "text/event-stream"})
+        while self.p and self.p.poll() is None:
+            try:
+                with self.opener.open(req, timeout=300) as r:
+                    for raw in r:
+                        line = raw.decode("utf-8", "replace").strip()
+                        if line.startswith("data:"):
+                            try:
+                                self.seen(json.loads(line[5:]))
+                            except ValueError:
+                                pass
+            except Exception:
+                time.sleep(1)
+
+    def seen(self, e: dict) -> None:
+        now, typ = time.time(), str(e.get("type") or "")
+        if LIVE.match(typ):
+            self.ticks.append(now)
+        self.counts[typ] = self.counts.get(typ, 0) + 1
+        data = e.get("data") or {}
+        row: dict = {"t": round(now - self.t0, 1), "type": typ}
+        if typ.endswith(".delta"):
+            row["chars"] = len(str(data.get("delta") or ""))
+        else:
+            row["data"] = json.dumps(data, ensure_ascii=False)[:400]
+        if typ == "session.retry.scheduled":
+            self.retries.append(row["data"])
+        self.log.write(json.dumps(row, ensure_ascii=False) + "\n")
+        self.log.flush()
+
+    def stop(self) -> None:
+        if self.p and self.p.poll() is None:
+            Run.stop(self.p)
+        if not self.log.closed:
+            self.log.close()
+
+
+def longest_gap(start: float, end: float, ticks: list[float]) -> float:
+    """The longest stretch between start and end with no tick in it."""
+    pts = [start] + sorted(t for t in ticks if start <= t <= end) + [end]
+    return max((b - a for a, b in zip(pts, pts[1:])), default=0.0)
 
 
 def classify_next(out: str) -> tuple[str, list[str]]:
@@ -125,6 +229,8 @@ class Rounds:
 
 
 class Run:
+    POLL = 5  # seconds between checks of the idle cut while `opencode run` is silent
+
     def __init__(self, args) -> None:
         self.a = args
         self.out = Path(args.out).resolve()
@@ -137,24 +243,42 @@ class Run:
         self.last_text = ""
         self.written = self.verified = False
         self.t0 = time.time()
+        self.server: Server | None = None
+        self.run_ticks: list[float] = []  # times of the lines `opencode run` printed
 
     def say(self, line: str) -> None:
         print(f"{time.strftime('%H:%M:%S')} {line}", flush=True)
 
-    def launch(self, model: str, message: str) -> subprocess.Popen:
-        cmd = ["opencode", "run", "--standalone", "--agent", self.a.agent, "-m", model, "--format", "json",
-               "--title", self.a.title]
-        if self.session:
-            cmd += ["--session", self.session]
+    def env(self) -> dict:
         # opencode takes its project from $PWD, which a child inherits from the launching shell, not from
         # its working directory: launched from agentkit, it looked for the agent there and answered
         # 'Agent not found: "socrates"' (2026-11-07, hanji_test.py).
         env = dict(os.environ, NOTE_BUILD_SOCRATES=str(self.a.cwd), PWD=str(self.a.cwd))
         if getattr(self.a, "write", None):
             env["NOTE_BUILD_WRITE"] = str(Path(self.a.write).resolve())
+        if self.server:
+            env["OPENCODE_SERVER_PASSWORD"] = self.server.password
+        return env
+
+    def start_server(self) -> None:
+        """Start the private server whose event stream is the run's sign of life (class Server)."""
+        s = Server(self.a.cwd, self.env(), self.out / "server_events.jsonl", self.t0)
+        if s.start():
+            self.server = s
+            self.say(f"SERVER {s.url}: its event stream counts as the model streaming")
+        else:
+            self.say("SERVER did not start in 20 s: running --standalone, where a reasoning step longer than "
+                     f"--idle ({self.a.idle} s) looks dead")
+
+    def launch(self, model: str, message: str) -> subprocess.Popen:
+        where = ["--server", self.server.url] if self.server else ["--standalone"]
+        cmd = ["opencode", "run", *where, "--agent", self.a.agent, "-m", model, "--format", "json",
+               "--title", self.a.title]
+        if self.session:
+            cmd += ["--session", self.session]
         err = (self.out / "opencode.stderr").open("a")
         # stdin closed: opencode reads a piped stdin as message text and waits on it, silent (2026-11-07)
-        return subprocess.Popen(cmd + [message], cwd=self.a.cwd, env=env, stdin=subprocess.DEVNULL,
+        return subprocess.Popen(cmd + [message], cwd=self.a.cwd, env=self.env(), stdin=subprocess.DEVNULL,
                                 stdout=subprocess.PIPE, stderr=err, text=True, start_new_session=True)
 
     @staticmethod
@@ -178,34 +302,48 @@ class Run:
         p = self.launch(model, message)
         q: queue.Queue = queue.Queue()
         threading.Thread(target=lambda: [q.put(l) for l in p.stdout] + [q.put(None)], daemon=True).start()
-        last = time.time()
+        last = told = time.time()
+        retries = len(self.server.retries) if self.server else 0
         why = ""
-        while True:
-            try:
-                line = q.get(timeout=5)
-            except queue.Empty:
-                if time.time() - last > self.a.idle:
-                    why = f"idle {self.a.idle} s"
-                elif time.time() - self.t0 > self.a.budget:
-                    why = f"over the {self.a.budget} s budget"
+        try:
+            while True:
+                try:
+                    line = q.get(timeout=self.POLL)
+                except queue.Empty:
+                    now = time.time()
+                    alive = max(last, self.server.last if self.server else 0.0)
+                    if self.server and len(self.server.retries) > retries:
+                        retries = len(self.server.retries)
+                        self.say(f"RETRY {self.server.retries[-1][:200]}")
+                    if now - alive > self.a.idle:
+                        why = f"idle {self.a.idle} s"
+                    elif now - self.t0 > self.a.budget:
+                        why = f"over the {self.a.budget} s budget"
+                    elif now - last > 60 and now - told > 60 and alive > last:
+                        # a Monitor reading these lines sees the model is streaming while `opencode run` is silent
+                        told = now
+                        n = sum(1 for t in self.server.ticks if t > last)
+                        self.say(f"STREAMING {n} server events in {now - last:.0f} s without a line from opencode run")
+                    if why:
+                        break
+                    continue
+                if line is None:
+                    why = "turn ended"
+                    break
+                last = time.time()
+                self.run_ticks.append(last)
+                try:
+                    e = json.loads(line)
+                except ValueError:
+                    continue
+                self.events.write(json.dumps({"t": round(last - self.t0, 1), "model": model, **e}, ensure_ascii=False) + "\n")
+                self.session = self.session or e.get("sessionID")
+                why = self.event(e, seg)
                 if why:
                     break
-                continue
-            if line is None:
-                why = "turn ended"
-                break
-            last = time.time()
-            try:
-                e = json.loads(line)
-            except ValueError:
-                continue
-            self.events.write(json.dumps({"t": round(last - self.t0, 1), "model": model, **e}, ensure_ascii=False) + "\n")
-            self.session = self.session or e.get("sessionID")
-            why = self.event(e, seg)
-            if why:
-                break
-        self.stop(p)
-        seg["end"], seg["why"] = time.time(), why
+        finally:
+            self.stop(p)
+            seg["end"], seg["why"] = time.time(), why
         return why
 
     def event(self, e: dict, seg: dict) -> str:
@@ -274,24 +412,30 @@ class Run:
         providers = PROVIDERS[PROVIDERS.index(self.a.start):] if self.a.start in PROVIDERS else PROVIDERS
         providers = [p.split("#")[0] + "#" + self.a.variant for p in providers]
         code, why = 6, ""
-        for i, model in enumerate(providers):
-            if self.a.probe and not self.probe(model):
-                why = "provider error"
-                continue
-            first = message if not self.session else (message if i == 0 else
-                                                      "Continue the task where you stopped, as the first message says.")
-            why = self.segment(model, first)
-            seg = self.segments[-1]
-            if why == "error" and seg["steps"] == 0 and seg["end"] - seg["start"] < 15:
-                # A launch that fails before its first step ("Agent not found" while another
-                # standalone server shuts down, 2026-11-07) is retried once on the same provider.
-                time.sleep(20)  # the 2026-11-07 window lasted ~60 s; two retries 3 s apart both failed
+        try:
+            for i, model in enumerate(providers):
+                if self.a.probe and not self.probe(model):
+                    why = "provider error"
+                    continue
+                if not self.server:
+                    self.start_server()
+                first = message if not self.session else (message if i == 0 else
+                                                          "Continue the task where you stopped, as the first message says.")
                 why = self.segment(model, first)
-            if why == "provider error" or (why.startswith("idle") and self.segments[-1]["steps"] == 0):
-                # A provider that never takes a step (silent for --idle seconds, 2026-11-07) counts as failed.
-                why = "provider error" if why.startswith("idle") else why
-                continue
-            break
+                seg = self.segments[-1]
+                if why == "error" and seg["steps"] == 0 and seg["end"] - seg["start"] < 15:
+                    # A launch that fails before its first step ("Agent not found" while another
+                    # standalone server shuts down, 2026-11-07) is retried once on the same provider.
+                    time.sleep(20)  # the 2026-11-07 window lasted ~60 s; two retries 3 s apart both failed
+                    why = self.segment(model, first)
+                if why == "provider error" or (why.startswith("idle") and self.segments[-1]["steps"] == 0):
+                    # A provider that never takes a step (silent for --idle seconds, 2026-11-07) counts as failed.
+                    why = "provider error" if why.startswith("idle") else why
+                    continue
+                break
+        finally:
+            if self.server:
+                self.server.stop()
         self.check_build()
         last_kind = self.rounds.log[-1][1] if self.rounds.log else ""
         if why == "provider error":
@@ -351,6 +495,22 @@ class Run:
                  "| --- | --- | --- | --- | --- | --- | --- |"]
         lines += [f"| {s['model']} | {hm(s['start'])} | {hm(s['end'] or time.time())} | {s['steps']} | {s['tokens']} | "
                   f"{s['cost']:.4f} | {s['why']} |" for s in self.segments]
+        lines += ["", "## Silences", ""]
+        if self.server:
+            c = self.server.counts
+            lines += [f"The cut falls after {self.a.idle} s in which neither `opencode run` nor its server's event stream "
+                      f"shows the model working. The server sent {c.get('session.reasoning.delta', 0)} reasoning deltas, "
+                      f"{c.get('session.text.delta', 0)} text deltas and {c.get('session.tool.input.delta', 0)} tool input "
+                      f"deltas, and scheduled {len(self.server.retries)} provider retries.", "",
+                      "| Model | Longest without a line from opencode run (s) | Longest without any sign of life (s) |",
+                      "| --- | --- | --- |"]
+            for s in self.segments:
+                end = s["end"] or time.time()
+                lines.append(f"| {s['model']} | {longest_gap(s['start'], end, self.run_ticks):.0f} | "
+                             f"{longest_gap(s['start'], end, self.run_ticks + self.server.ticks):.0f} |")
+        else:
+            lines += [f"No server ran: the cut fell after {self.a.idle} s without a line from `opencode run --standalone`, "
+                      "which prints nothing while the model reasons."]
         lines += ["", "## note_build calls", "", "| t (s) | Command | Kind | Failures | First line |",
                   "| --- | --- | --- | --- | --- |"]
         rounds = iter(self.rounds.log)

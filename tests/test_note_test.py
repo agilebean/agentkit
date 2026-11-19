@@ -57,3 +57,85 @@ def test_the_launch_puts_the_project_folder_in_pwd(tmp_path, monkeypatch) -> Non
                        "cwd": "/Users/x/socrates"})()
     nt.Run(a).launch("m", "hello")
     assert seen == {"cwd": "/Users/x/socrates", "pwd": "/Users/x/socrates"}
+
+
+def _args(tmp_path, idle):
+    return type("A", (), {"out": str(tmp_path), "session": None, "agent": "socrates", "title": "t",
+                          "cwd": str(tmp_path), "idle": idle, "budget": 60})()
+
+
+class _SilentRun:
+    """`opencode run` that prints nothing for `quiet` seconds, then one step and the end of its turn."""
+
+    def __init__(self, quiet):
+        self.quiet, self.pid = quiet, 0
+
+    @property
+    def stdout(self):
+        import time
+        time.sleep(self.quiet)
+        yield '{"type":"step_finish","part":{"cost":0,"tokens":{}}}\n'
+
+    def poll(self):
+        return 0
+
+
+def _segment(tmp_path, monkeypatch, quiet, idle, deltas):
+    import threading
+    import time
+    run = nt.Run(_args(tmp_path, idle))
+    run.POLL = 0.1
+    run.server = nt.Server(str(tmp_path), {}, tmp_path / "server_events.jsonl", run.t0)
+    monkeypatch.setattr(run, "launch", lambda model, message: _SilentRun(quiet))
+
+    def stream():
+        end = time.time() + quiet
+        while time.time() < end:
+            run.server.seen({"type": "session.reasoning.delta", "data": {"delta": "thinking"}})
+            time.sleep(0.2)
+
+    if deltas:
+        threading.Thread(target=stream, daemon=True).start()
+    return run.segment("m", "hello")
+
+
+def test_reasoning_on_the_server_stream_keeps_a_silent_run_alive(tmp_path, monkeypatch) -> None:
+    # 2026-11-17 and 2026-11-19: DeepSeek reasoned past the cut while `opencode run` printed nothing
+    assert _segment(tmp_path, monkeypatch, quiet=1.5, idle=1, deltas=True) == "turn ended"
+
+
+def test_true_silence_is_still_cut(tmp_path, monkeypatch) -> None:
+    assert _segment(tmp_path, monkeypatch, quiet=1.5, idle=1, deltas=False) == "idle 1 s"
+
+
+def test_a_provider_retry_is_not_a_sign_of_life(tmp_path) -> None:
+    s = nt.Server(str(tmp_path), {}, tmp_path / "e.jsonl", 0)
+    s.seen({"type": "session.retry.scheduled", "data": {"attempt": 1}})
+    s.seen({"type": "server.connected", "data": {}})
+    assert s.ticks == [] and len(s.retries) == 1
+    s.seen({"type": "session.tool.input.delta", "data": {"delta": "abc"}})
+    assert len(s.ticks) == 1
+
+
+def test_the_launch_runs_against_the_private_server_with_its_password(tmp_path, monkeypatch) -> None:
+    seen = {}
+
+    class FakePopen:
+        def __init__(self, cmd, cwd=None, env=None, **kw):
+            seen.update(cmd=cmd, password=env.get("OPENCODE_SERVER_PASSWORD"))
+
+    monkeypatch.setattr(nt.subprocess, "Popen", FakePopen)
+    run = nt.Run(_args(tmp_path, 120))
+    run.launch("m", "hello")
+    assert "--standalone" in seen["cmd"] and seen["password"] is None
+    run.server = nt.Server(str(tmp_path), {}, tmp_path / "e.jsonl", 0)
+    run.server.url = "http://127.0.0.1:1"
+    run.launch("m", "hello")
+    i = seen["cmd"].index("--server")
+    assert seen["cmd"][i + 1] == "http://127.0.0.1:1" and seen["password"] == run.server.password
+
+
+def test_longest_gap_counts_from_the_segment_start_to_its_end() -> None:
+    assert nt.longest_gap(0, 10, [2, 3]) == 7
+    assert nt.longest_gap(0, 10, []) == 10
+    assert nt.longest_gap(0, 10, [12]) == 10
