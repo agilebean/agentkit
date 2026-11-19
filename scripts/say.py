@@ -96,7 +96,7 @@ def complete(messages: list[dict], model: str | None = None, max_tokens: int = 1
 
 def load_pairs(path: Path = PAIRS) -> list[dict]:
     with open(path, encoding="utf-8", newline="") as fh:
-        return [{k: (v or "").strip() for k, v in r.items()} for r in csv.DictReader(fh, delimiter="\t") if r.get("id")]
+        return [{k: (v or "").strip() for k, v in r.items()} for r in csv.DictReader(fh, delimiter="\t", quoting=csv.QUOTE_NONE) if r.get("id")]
 
 
 def pair_card(row: dict) -> dict:

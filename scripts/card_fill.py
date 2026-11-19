@@ -93,15 +93,34 @@ def parse_cards(text: str, section: str, block: list[tuple[str, str]], start: in
     return cards, bad
 
 
+CHUNK = 6  # record lines per call: the pilot's size. A whole section of 9 to 15 lines ran out of its
+# 24000 tokens in reasoning twice on 2026-11-17, and that one call stopped every section.
+
+
 def fill_section(sources: str, section: str, model: str | None = None) -> tuple[list[dict], list[str], float]:
+    """The section's cards, from calls of at most CHUNK record lines each, sent at once. A call that fails
+    is reported among the lines not kept and stops no other call."""
     block = section_lines(sources, section)
     if not block:
         return [], [f"section {section!r} has no record lines in sources.md"], 0.0
     t = time.time()
-    answer = complete([{"role": "system", "content": PROMPT.read_text(encoding="utf-8")},
-                       {"role": "user", "content": user_message(block)}], model=model)
-    cards, bad = parse_cards(answer, section, block)
-    return cards, bad, time.time() - t
+    prompt = PROMPT.read_text(encoding="utf-8")
+    chunks = [block[i:i + CHUNK] for i in range(0, len(block), CHUNK)]
+
+    def one(chunk: list[tuple[str, str]]) -> tuple[list[dict], list[str]]:
+        try:
+            answer = complete([{"role": "system", "content": prompt},
+                               {"role": "user", "content": user_message(chunk)}], model=model)
+        except Exception as e:
+            return [], [f"record lines {chunk[0][0]} to {chunk[-1][0]} got no cards: {str(e)[:120]}"]
+        return parse_cards(answer, section, chunk)
+
+    with ThreadPoolExecutor(max_workers=len(chunks)) as pool:
+        results = list(pool.map(one, chunks))
+    cards = [c for new, _bad in results for c in new]
+    for i, c in enumerate(cards, 1):
+        c["id"] = f"C{i:02d}"
+    return cards, [b for _new, bad in results for b in bad], time.time() - t
 
 
 def main(argv: list[str] | None = None) -> int:

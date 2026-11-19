@@ -96,16 +96,16 @@ def read_cards(path: Path) -> list[dict]:
         return []
     with open(path, encoding="utf-8", newline="") as fh:
         return [{k: (r.get(k) or "").strip() for k in FIELDS} | ({"reason": r["reason"]} if r.get("reason") else {})
-                for r in csv.DictReader(fh, delimiter="\t")]
+                for r in csv.DictReader(fh, delimiter="\t", quoting=csv.QUOTE_NONE)]
 
 
 def write_cards(path: Path, cards: list[dict], extra: tuple[str, ...] = ()) -> None:
+    """One card per line, fields joined by tabs, a quote kept as it is: no escaping, which doubled a
+    backslash before each quote on every write (2026-11-19)."""
     cols = FIELDS + extra
-    with open(path, "w", encoding="utf-8", newline="") as fh:
-        w = csv.writer(fh, delimiter="\t", lineterminator="\n", quoting=csv.QUOTE_NONE, escapechar="\\")
-        w.writerow(cols)
-        for c in cards:
-            w.writerow([str(c.get(k, "")).replace("\t", " ").replace("\n", " ") for k in cols])
+    rows = ["\t".join(cols)] + ["\t".join(str(c.get(k, "")).replace("\t", " ").replace("\n", " ") for k in cols)
+                                for c in cards]
+    Path(path).write_text("\n".join(rows) + "\n", encoding="utf-8")
 
 
 def read_sources(path: Path | None) -> dict[str, str]:
@@ -115,8 +115,8 @@ def read_sources(path: Path | None) -> dict[str, str]:
         return out
     for n, line in enumerate(Path(path).read_text(encoding="utf-8").splitlines(), 1):
         m = re.match(r"\s*(?:[-*]\s+)?(\S+:\d+)\s+\|\s+(.*)", line)
-        if m:
-            out[m.group(1)] = m.group(2)
+        if m:  # a line copied under two sections may be cut differently in each: keep both
+            out[m.group(1)] = (out[m.group(1)] + " " + m.group(2)) if m.group(1) in out else m.group(2)
         out[f"sources.md:{n}"] = line
     return out
 
@@ -164,8 +164,28 @@ def so_repeats(card: dict) -> bool:
     return len(new) * 2 <= len(so)
 
 
-def check_card(card: dict, src: str | None, rules) -> tuple[list[Refusal], bool]:
-    """The refusals of one card, and whether its `so` repeats its fact (the caller empties it)."""
+def section_blocks(path: Path | None) -> dict[str, str]:
+    """The text under each '## ' heading of sources.md, by the heading in lower case."""
+    out: dict[str, list[str]] = {}
+    head = ""
+    if not path or not Path(path).exists():
+        return {}
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        m = re.match(r"##\s+(.*)", line)
+        if m and not line.startswith("###"):
+            head = m.group(1).strip().lower()
+            continue
+        out.setdefault(head, []).append(line)
+    return {k: "\n".join(v) for k, v in out.items()}
+
+
+def check_card(card: dict, src: str | None, rules, block: str = "") -> tuple[list[Refusal], bool]:
+    """The refusals of one card, and whether its `so` repeats its fact (the caller empties it).
+
+    A number must stand in the card's own record line: a number joined from another line is the error
+    that costs Chaehan (a wrong date or amount). A name may stand anywhere in the card's section of
+    sources.md, in any case, as the gate's T19 grounds a section: on 2026-11-17 all 12 cards refused by the
+    line rule were faithful ("LA" written as "Los Angeles", "KTX" as "the KTX train", "sep" as "Sep")."""
     cid = card.get("id") or "?"
     out: list[Refusal] = []
 
@@ -216,12 +236,14 @@ def check_card(card: dict, src: str | None, rules) -> tuple[list[Refusal], bool]
         return out, False
     grounded = _with_iso_dates(src)
     if said and said not in grounded:
-        refuse("said", "in the record", f"{said} is not in the record line: 'said' holds the date on which "
+        refuse("said", "said in the record", f"{said} is not in the record line: 'said' holds the date on which "
                                         f"the line says Chaehan stated the fact, or stays empty")
     nb = _note_build()
+    wide = (grounded + "\n" + _with_iso_dates(block)).lower()
     for field in ("thing", "fact", "so", "do"):
         if card[field]:
-            bad = [w for w in nb.invented(card[field], grounded) if w not in ("You", "Your")]
+            bad = [w for w in nb.invented(card[field], grounded) if w not in ("You", "Your")
+                   and not (not nb.NUMBER.fullmatch(w) and w.lower() in wide)]
             if bad:
                 refuse(field, "in the record", f"{', '.join(bad)} is not in the record line {card['src']}: "
                                                f"copy it as the line has it, or cut it")
@@ -233,11 +255,13 @@ def check_file(path: Path, sources: Path | None = None, root: Path | None = None
     rules = lint_rules()
     cards = read_cards(path)
     smap = read_sources(sources)
+    blocks = section_blocks(sources)
     root = Path(root) if root else Path.cwd()
     refusals: list[Refusal] = []
     emptied: list[str] = []
     for card in cards:
-        out, repeats = check_card(card, source_text(card["src"], smap, root), rules)
+        out, repeats = check_card(card, source_text(card["src"], smap, root), rules,
+                                  blocks.get(card["section"].strip().lower(), ""))
         refusals += out
         if repeats:
             card["so"] = ""
