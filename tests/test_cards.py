@@ -89,19 +89,20 @@ def test_a_line_that_is_not_a_card_is_reported_not_kept() -> None:
 
 # ---- card_check on the pilot -------------------------------------------------
 
-def test_card_check_refuses_the_separator_and_each_about(tmp_path) -> None:
+def test_card_check_fixes_the_separator_and_each_about(tmp_path) -> None:
     path = _pilot(tmp_path)
-    refusals, emptied = check.check_file(path, sources=tmp_path / "sources.md")
-    by_card = {(r.card, r.field) for r in refusals}
-    assert ("C09", "so") in by_card                      # 190,000 KRW
-    assert {("C01", "fact"), ("C04", "fact"), ("C05", "fact")} <= by_card   # about 1 h, about 25 years
-    assert any("190,000" in r.text for r in refusals)
-    assert len(refusals) == 4
+    refusals, emptied, fixed = check.check_file(path, sources=tmp_path / "sources.md")
+    assert refusals == []
+    assert sorted(" ".join(f.split()[:2]) for f in fixed) == ["C01 fact:", "C04 fact:", "C05 fact:", "C09 so:"]
+    rows = check.read_cards(path)
+    assert rows[8]["so"] == "paid 190000 KRW, not covered by worldwide insurance"
+    assert rows[0]["fact"] == "is 4-6 g, ~1 h before"
+    assert rows[7]["kind"] == "open"  # "remains unreconciled" states an unknown
 
 
 def test_card_check_empties_a_so_that_repeats_the_fact(tmp_path) -> None:
     path = _pilot(tmp_path)
-    _, emptied = check.check_file(path, sources=tmp_path / "sources.md")
+    _, emptied, _ = check.check_file(path, sources=tmp_path / "sources.md")
     assert emptied == ["C07"]
     rows = check.read_cards(path)
     assert rows[6]["so"] == ""
@@ -110,7 +111,7 @@ def test_card_check_empties_a_so_that_repeats_the_fact(tmp_path) -> None:
 
 def test_a_date_converted_from_month_words_is_grounded(tmp_path) -> None:
     path = _pilot(tmp_path)
-    refusals, _ = check.check_file(path, sources=tmp_path / "sources.md")
+    refusals, *_ = check.check_file(path, sources=tmp_path / "sources.md")
     assert not any("2026-06-03" in r.text for r in refusals)
 
 
@@ -187,7 +188,7 @@ def test_numbers_and_names_must_be_in_the_source_line() -> None:
 def test_a_missing_source_line_is_refused(tmp_path) -> None:
     path = tmp_path / "cards.tsv"
     check.write_cards(path, [_card(src="memory/health.md:99999")])
-    refusals, _ = check.check_file(path, sources=None, root=tmp_path)
+    refusals, *_ = check.check_file(path, sources=None, root=tmp_path)
     assert [r.field for r in refusals] == ["src"]
 
 
@@ -253,7 +254,7 @@ def test_a_name_may_come_from_the_section_and_a_number_only_from_the_line(tmp_pa
         _card(id="C03", section="Storage and furniture", thing="your furniture",
               fact="left on 2026-03-16", src="memory/furniture.md:30"),
     ])
-    refusals, _ = check.check_file(path, sources=src)
+    refusals, *_ = check.check_file(path, sources=src)
     assert [(r.card, r.field) for r in refusals] == [("C02", "thing"), ("C03", "fact")]
     assert "Seoul" in refusals[0].text and "2026-03-16" in refusals[1].text
 
@@ -265,3 +266,86 @@ def test_a_quote_survives_any_number_of_writes(tmp_path) -> None:
         check.write_cards(path, [card])
         card = check.read_cards(path)[0]
     assert card["fact"] == 'counts as "a huge breakthrough" in the search'
+
+
+# ---- the fixes and refusals step 8 called for (2026-11-19) ------------------------
+
+def test_a_date_in_words_chaehans_and_an_open_card_without_an_unknown_are_fixed() -> None:
+    card = _card(kind="open", thing="your storage locker fee", fact="expires on November 11, 2026",
+                 so="Chaehan's 2020 sample is kept")
+    changes = check.fix_card(card)
+    assert card["fact"] == "expires on 2026-11-11" and card["so"] == "your 2020 sample is kept"
+    assert card["kind"] == "state" and len(changes) == 3
+
+
+def test_an_open_card_that_states_an_unknown_stays_open() -> None:
+    for fact in ("could be 2027-03-15 or 2027-03-16", "may have women of your target age", "is not yet decided"):
+        card = _card(kind="open", fact=fact)
+        check.fix_card(card)
+        assert card["kind"] == "open", fact
+
+
+def test_a_bare_chaehan_is_refused() -> None:
+    assert _fields(_card(fact="runs until 2027-01-31, as Chaehan said on 2026-10-02")) == {"fact"}
+
+
+def test_a_todo_whose_record_line_shows_it_done_is_refused() -> None:
+    done = "2026-10-31 16:27 send CT-TR-1 + RRF-1 Forms + pay fee [Nonprofit Admin]"
+    card = _card(kind="todo", thing="you", fact="", do="send CT-TR-1 + RRF-1 Forms", src="omnifocus_done.txt:2")
+    refusals, _ = check.check_card(card, done, check.lint_rules())
+    assert [r.rule for r in refusals] == ["done"]
+    card["src"] = "memory/taxes.md:3"
+    assert check.check_card(card, "- [x] send CT-TR-1 + RRF-1 Forms", check.lint_rules())[0]
+    assert not check.check_card(card, "send CT-TR-1 + RRF-1 Forms by 2027-02-15", check.lint_rules())[0]
+    due = _card(thing="your Nonprofit Admin task", fact="is due on 2026-10-31", src="omnifocus_done.txt:2")
+    assert [r.rule for r in check.check_card(due, done, check.lint_rules())[0]] == ["done"]
+    sent = _card(kind="act", thing="you", fact="sent the CT-TR-1 forms on 2026-10-31", src="omnifocus_done.txt:2")
+    assert check.check_card(sent, done, check.lint_rules())[0] == []
+
+
+def test_repair_fills_a_refused_card_again_and_the_facts_a_line_lacks(tmp_path, monkeypatch) -> None:
+    src = tmp_path / "sources.md"
+    src.write_text("## What went well\n\n"
+                   "memory/sport.md:24 | The gym registration as a breakthrough (Chaehan, 2026-11-07): he set "
+                   "up a phone call with Junho to run the registration in Korean.\n"
+                   "omnifocus_done.txt:2 | 2026-10-31 16:27 send CT-TR-1 + RRF-1 Forms + pay fee\n", encoding="utf-8")
+    path = tmp_path / "cards.tsv"
+    check.write_cards(path, [
+        _card(section="What went well", kind="state", thing="your gym registration",
+              fact="counts as a breakthrough for Chaehan", said="2026-11-07", src="memory/sport.md:24"),
+        _card(id="C02", section="What went well", kind="todo", thing="you", fact="", do="send CT-TR-1 + RRF-1 Forms",
+              src="omnifocus_done.txt:2"),
+    ])
+    asked = []
+
+    def fake(messages, model=None, **kw):
+        msg = messages[-1]["content"]
+        asked.append(msg)
+        if "was refused" in msg and "CT-TR-1" in msg:
+            return "act | you | sent the CT-TR-1 and RRF-1 forms and paid the fee on 2026-10-31 |  |  |  | 1"
+        if "was refused" in msg:
+            return "state | your gym registration | counts as a breakthrough |  |  | 2026-11-07 | 1"
+        if "stand in no card: Junho" in msg:
+            return "act | you | set up a phone call with Junho to run the registration in Korean |  |  |  | 1"
+        return ""
+
+    monkeypatch.setattr(fill, "complete", fake)
+    report = fill.repair(path, src, tmp_path)
+    cards = {c["id"]: c for c in check.read_cards(path)}
+    assert cards["C01"]["fact"] == "counts as a breakthrough"
+    assert cards["C02"]["kind"] == "act" and "2026-10-31" in cards["C02"]["fact"]
+    assert any("Junho" in c["fact"] for c in cards.values())
+    assert report["refilled"] == {"C01": ["C01"], "C02": ["C02"]} and report["cut as refused"] == []
+    assert report["covered"]["memory/sport.md:24"]["missing"] == ["Junho", "Korean"]
+
+
+def test_a_card_refused_twice_is_cut(tmp_path, monkeypatch) -> None:
+    src = tmp_path / "sources.md"
+    src.write_text("## Health\n\nmemory/health.md:1 | Mapo gym membership runs until 2027-01-31.\n", encoding="utf-8")
+    path = tmp_path / "cards.tsv"
+    check.write_cards(path, [_card(fact="runs until 2027-02-28", src="memory/health.md:1")])
+    monkeypatch.setattr(fill, "complete", lambda m, **kw: "state | your Mapo gym membership | runs until 2027-03-31 |  |  |  | 1"
+                        if "was refused" in m[-1]["content"] else "")
+    report = fill.repair(path, src, tmp_path)
+    assert report["cut as refused"] == ["C01"] and check.read_cards(path) == []
+    assert "refused" in check.read_cards(tmp_path / "cut.tsv")[0]["reason"]

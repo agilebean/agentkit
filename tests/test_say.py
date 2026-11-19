@@ -28,9 +28,10 @@ def _card(**kw) -> dict:
 # ---- the prompt ----------------------------------------------------------------
 
 def test_the_prompt_rebuilt_from_pairs_p01_to_p08_is_the_tested_file() -> None:
-    head, ids = say.split_prompt()
+    head, ids, groups = say.split_prompt()
     assert ids == [f"P0{i}" for i in range(1, 9)]
-    assert say.build_prompt(head, [BY_ID[i] for i in ids]) == say.PROMPT.read_text(encoding="utf-8")
+    assert groups.count("line: ") == 3
+    assert say.build_prompt(head, [BY_ID[i] for i in ids], groups) == say.PROMPT.read_text(encoding="utf-8")
 
 
 def test_a_pair_that_shares_a_word_with_a_card_is_swapped() -> None:
@@ -182,3 +183,41 @@ def test_a_failed_literal_call_is_one_unanswered_line(monkeypatch) -> None:
     monkeypatch.setattr(say, "complete", fake)
     answers = say.literal_answers(["The plan buys a week.", "A broken line."], workers=1)
     assert say.cannot_say(answers[0]) and say.unanswered(answers[1]) and not say.cannot_say(answers[1])
+
+
+# ---- one line from several cards (2026-11-20) ------------------------------------------
+
+def test_cards_that_share_a_line_id_go_out_under_it() -> None:
+    a = say.pair_card(BY_ID["P16"]) | {"id": "C87", "line": "L5"}
+    b = _card(id="C89", kind="state", thing="your furniture", fact="has no recorded arrival", line="L5")
+    assert say.user_message([a, b]).splitlines()[1:] == [f"L5\t{say.card_text(a)}", f"L5\t{say.card_text(b)}"]
+
+
+def test_a_line_is_checked_against_all_its_cards() -> None:
+    a = _card(id="C1", thing="your furniture", fact="was due between 2026-10-25 and 2026-11-09", line="L1")
+    b = _card(id="C2", thing="your furniture", fact="has no recorded arrival", line="L1")
+    prompt = say.PROMPT.read_text(encoding="utf-8")
+    assert say.check_line("Your furniture was due between 2026-10-25 and 2026-11-09, and no arrival is recorded.",
+                          [a, b], prompt)[0] == []
+    assert say.check_line("Your furniture was due by 2026-11-09, and no arrival is recorded.", [a, b], prompt)[0]
+
+
+def test_say_writes_one_line_for_cards_that_share_an_id(monkeypatch) -> None:
+    a = _card(id="C1", thing="your furniture", fact="was due between 2026-10-25 and 2026-11-09", line="L1")
+    b = _card(id="C2", thing="your furniture", fact="has no recorded arrival", line="L1")
+    c = say.pair_card(BY_ID["P11"])
+    monkeypatch.setattr(say, "complete", lambda m, **kw:
+                        "L1\tYour furniture was due between 2026-10-25 and 2026-11-09, and no arrival is recorded.\n"
+                        f"P11\t{BY_ID['P11']['line']}")
+    report = say.say([a, b, c], workers=1)
+    assert list(report["lines"]) == ["L1", "P11"] and report["how"] == {"L1": "model", "P11": "model"}
+
+
+def test_the_script_line_of_a_failed_group_holds_each_card(monkeypatch) -> None:
+    a = _card(id="C1", thing="your furniture", fact="was due between 2026-10-25 and 2026-11-09", line="L1")
+    b = _card(id="C2", thing="your furniture", fact="has no recorded arrival", line="L1")
+    monkeypatch.setattr(say, "complete", lambda m, **kw: "L1\tYour furniture arrived.")
+    report = say.say([a, b], workers=1)
+    assert report["how"] == {"L1": "script"}
+    assert report["lines"]["L1"] == ("Your furniture was due between 2026-10-25 and 2026-11-09. "
+                                     "Your furniture has no recorded arrival.")
