@@ -116,7 +116,7 @@ Speed decides nothing at this volume. On a synthetic year of the access log (600
 | Your constraints | + all met | − the app no longer writes its own files | − the text files go |
 | Standard practice | + the classic Unix setup, which nginx on your VM already uses | + Ubuntu's journal since 15.04 | − unusual for application logs |
 
-Decided 2026-11-19: A, with 50 MB as the size limit and today's paths kept, so fail2ban, `extractip.sh` and the agent instructions that grep `fastapi_app.out.log` stay as they are. Committed in virtualfriend as `6c8a926`, not yet deployed.
+Decided 2026-11-19: A, with 50 MB as the size limit and today's paths kept, so fail2ban, `extractip.sh` and the agent instructions that grep `fastapi_app.out.log` stay as they are. Deployed 2026-11-19 as virtualfriend `6c8a926`. logrotate rotates when the calendar year changes, so the first yearly archive is written at 2027-01-01 00:00 UTC, earlier for a file that passes 50 MB.
 
 - `src/config/logrotate.conf` closes a file at the end of the year or once it passes 50 MB, keeps 10 archives, gzips each one a period after closing (`delaycompress`), and names it for its last day: `fastapi_app.access-2026-12-31.log.gz`. Uncompressed data per stream stays under ~100 MB, the live file plus the latest archive.
 - The three file handlers in `logging_config.json` and both production dicts are `WatchedFileHandler`, which reopens the path after logrotate's rename. With five uvicorn workers and the files renamed mid-traffic, 601 of 601 lines arrived once, none in the renamed file.
