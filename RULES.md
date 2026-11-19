@@ -511,13 +511,20 @@ judgment (the prompts, the examples, the order of the steps) and runs the
 plan's first test before handing it over; a plan that stops at jobs in a table
 leaves that judgment to the model that lacks it. An analysis that compares
 Chaehan's rules with outside practice states each practice with its source and
-its finding beside his rule, and for a memory or tool question it sets out each
-candidate with what it does, what it needs and what to take from it, never a
-verdict alone (rule 244). Chaehan, 2026-11-16, of the 2026-11-15 wording
+its finding beside his rule, and for a memory, tool or best-practice question it
+sets out each candidate with what it does, what it needs and what to take from
+it, never a verdict alone (rule 244). A best-practice question starts from the
+established practices, puts each in a column with its pros and its cons against
+the goals Chaehan named, and recommends from those goals; a design of the
+agent's own comes only after the standard ones fail a goal, and is labeled as
+such. Chaehan, 2026-11-16, of the 2026-11-15 wording
 analysis: "be more concrete on how to improve and write it down for
 implementation by a lower model", "the wording analysis has very little content
 about best practices" and "i asked for suggestions to optimize the memory
-system ... not just a brief verdict" (failure 215).
+system ... not just a brief verdict" (failure 215). Chaehan, 2026-11-19, after a
+custom daily-file handler and then monthly files were proposed for log rotation:
+"i still don't see the pros/cons for each option" and "remember i asked for best
+practices" (failure 223).
 A weaker model invents and copies: it fills a gap from its own context, and it repeats
 the instruction's example as its answer. So its instructions give examples from
 another domain than the task, and its output is checked mechanically: a sentence
