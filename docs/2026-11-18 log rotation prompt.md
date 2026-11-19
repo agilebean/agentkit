@@ -72,3 +72,55 @@ Commit `5906e8e` (2026-05-23): *"Replace unbounded FileHandler with RotatingFile
 5. A naming scheme that sorts by date and can be globbed by an rsync backup in one pattern, with the exact pattern for the Mac side.
 6. A short "definition of done" a reviewer can test: a script or set of commands proving no line loss across a rotation, the disk bound holding, an old day being readable, and the backup picking up every file.
 7. Any trap you would expect us to hit that is not in the list above.
+
+## Findings, 2026-11-19
+
+Six processes wrote 4000 numbered lines each, with a rotation every 0.5 to 1 s standing in for the daily one (Python 3.12.12, macOS):
+
+| Scheme | Lines lost, two runs | Why |
+|---|---|---|
+| `RotatingFileHandler` (today) | 11%, 43% | each process rolls over when its own descriptor passes `maxBytes`, so one rotation shifts the backups once per process |
+| `TimedRotatingFileHandler` with gzip | 77%, 80% | in 3.12 the second process to reach the boundary finds the archive, returns early and keeps writing into it after the gzip rotator has deleted it |
+| logrotate `copytruncate` | 3 and 7 lines | lines written between the copy and the truncate are lost |
+| logrotate `create` with `WatchedFileHandler` | 0, 0 | the rename keeps the inode and each process reopens the path before its next write |
+| a file per period, never renamed | 0, 0 | nothing is renamed or truncated while open |
+
+What any plan has to handle:
+
+- Volume is ~212 KB a day (out ~41 KB, access ~164 KB, error ~7 KB), ~78 MB a year raw and ~10 MB compressed, read from the dates on the lines in the Mac mirror. The disk only overflows in a flood.
+- The cascade is in the data: `fastapi_app.access.log.1` to `.4` on the Mac all hold lines from 2026-09-17 to 09-22. The Mac never builds up history because numbered names are reused and every `logsync` overwrites them.
+- The uvicorn master loads `--log-config` as well (`uvicorn/config.py:274`), so six uvicorn processes hold the handlers.
+- The bot's loguru sink (`config/logging_config.py:507`) writes straight into out.log with no rotation and no timestamp; ~23% of out.log's bytes start without a date.
+- `--log-level info` overrides the JSON's WARNING for `uvicorn.error`, which put 1735 INFO lines into error.log.
+- The 2026-05-22 rescue doc told you to remove the logrotate config. The stale `src/config/logrotate.conf` (monthly, restarts the app) was never installed.
+- supervisord rotates its capture by default at 50 MB with 10 backups. The repository's conf sets `redirect_stderr=true`, so the 24 MB supervisor error.log comes from a different conf or is left over.
+- fail2ban reads `/var/log/fastapi_app.access.log` with `backend = polling` and expands a glob only at start. Its jail and filter exist only on the host.
+- `run_chatbot` (`app_fastapi.py:424`) logs the bot's stdout a second time in the worker.
+- out.log measured 24.66 MB on the VM and 7.36 MB in the Mac copy synced 2026-11-18 23:07.
+
+## Options, 2026-11-19 (your decision is open)
+
+At this volume a month per file is enough: three streams give 36 archives a year, and a month of the busiest stream is ~5 MB. How fast a question across months is answered depends on the line format more than on the number of files: one JSON object per line (time with zone, level, logger, process, conversation, message, exception) lets DuckDB answer it in one SQL query over all the `.gz` files in the Mac mirror.
+
+| | A. Monthly files, logrotate | B. Monthly files, app-managed | C. SQLite log database |
+|---|---|---|---|
+| Files a year | 36 archives, 3 live files | 36 | 1 database, plus the access text file |
+| Analysis across months | DuckDB over `*.jsonl.gz`, one query | the same | SQL directly |
+| Reading live | `tail -F`, with `jq` or lnav for JSON | through a symlink to the current month | a query script |
+| Six writers | rename and reopen, 0 lines lost | no rename, 0 lines lost | SQLite locking, untested here |
+| Code you own | ~40 lines (JSON formatter, flood guard, size fuse) and a 15-line logrotate conf | ~150 lines including compression and pruning, with tests | ~120 lines, a schema and a snapshot step |
+| Host config | the logrotate conf, installed and dry-run checked by every deploy | the log directory only | none |
+| fail2ban | new path | new path through a symlink, to be verified | keeps a text access log beside the database |
+| Backup | rsync the directory | rsync the directory | snapshot with `VACUUM INTO`, then rsync |
+| Your constraints | all met | all met | gives up the text files |
+
+Every option also needs these parts:
+
+- JSON lines for out and error. Access stays in uvicorn's text format, which the fail2ban filter already matches.
+- A flood guard in the app that collapses repeated messages and caps each process's lines per minute, writing a count of what it dropped.
+- A size fuse that stops a live file at 100 MB (out), 50 MB (access) or 20 MB (error) in a month.
+- No stdout handler on production loggers, and supervisord's capture capped at 10 MB with 5 backups.
+- loguru routed into the standard logging handlers, and the `error_file` handler set to WARNING.
+- The files in `/var/log/fastapi_app/`, owned by chaehan.
+
+Recommended: A. The app side stays standard library apart from ~40 lines, logrotate already runs daily on Ubuntu 24.04, and `dateyesterday` with `dateformat -%Y-%m` names each archive by the month it holds (`out-2026-11.jsonl.gz`). The deploy installs the conf and fails on a dry-run error, so it cannot vanish again unnoticed. B fits better if you want no host file at all and accept owning the rotation code. C fits if your analysis is mostly ad-hoc SQL on the VM and you drop the text-file constraint.
