@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Write the lines of one note section from its fact cards (build spec step 3).
 
-One request per section. Its system message is wording_writer_prompt.md, with
-eight card and line pairs Chaehan accepted; its user message is the section's
+One request per section. Its system message is wording_writer_prompt.md (the
+rules) followed by wording_writer_examples.md (eight card and line pairs
+Chaehan accepted, kept with his other private data in socrates, under
+docs/human quality/data); its user message is the section's
 cards, one per line. Nothing else goes in: no skill, no memory file, no source
 line. A pair whose `thing` shares a word with a card's `thing` is swapped for
 the next unused row of wording_pairs.tsv, so a pair about the note's own topic
@@ -34,8 +36,12 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+# Chaehan's labelled lines and accepted examples are private: they live in socrates, never in this public repository.
+DATA = Path(os.environ.get("HUMAN_QUALITY_DATA")
+            or Path.home() / "Software" / "Prototypes" / "socrates" / "docs" / "human quality" / "data")
 PROMPT = ROOT / "wording_writer_prompt.md"
-PAIRS = ROOT / "wording_pairs.tsv"
+EXAMPLES = DATA / "wording_writer_examples.md"
+PAIRS = DATA / "wording_pairs.tsv"
 LITERAL = ROOT / "wording_literal_prompt.md"
 MODEL = "deepseek/deepseek-v4.1-flash"
 NO_ANSWER = "no answer"
@@ -111,10 +117,15 @@ def card_text(card: dict) -> str:
     return " | ".join(parts + [f"{k}={card[k]}" for k in ("fact", "so", "do") if card.get(k)])
 
 
+def prompt_text() -> str:
+    """The writer prompt as tested and sent: the rules of PROMPT, then the examples of EXAMPLES."""
+    return PROMPT.read_text(encoding="utf-8") + EXAMPLES.read_text(encoding="utf-8")
+
+
 def split_prompt(text: str | None = None) -> tuple[str, list[str], str]:
     """The prompt's rules, the ids of the single-card pairs it shows in order, and its block of lines made of
     several cards (2026-11-20: one card a sentence made a bullet of three facts read as three sentences)."""
-    text = PROMPT.read_text(encoding="utf-8") if text is None else text
+    text = prompt_text() if text is None else text
     head, rest = text.split(PAIRS_HEAD, 1)
     block, rest = rest.split(GROUPS_HEAD, 1)
     groups = rest.split(TAIL, 1)[0]

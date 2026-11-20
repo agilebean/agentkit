@@ -9,10 +9,14 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location("wording_eval", ROOT / "scripts" / "wording_eval.py")
 ev = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(ev)
+
+pytestmark = pytest.mark.skipif(not ev.CASES.exists(), reason="the labelled lines are Chaehan's private data, kept in socrates")
 
 
 def test_the_table_holds_20_accepted_and_40_rejected_lines() -> None:
@@ -45,7 +49,7 @@ def test_misses_names_the_lines_a_check_gets_wrong() -> None:
 
 def test_an_appended_row_changes_the_totals(tmp_path) -> None:
     table = tmp_path / "cases.tsv"
-    text = (ROOT / "wording_cases.tsv").read_text(encoding="utf-8")
+    text = ev.CASES.read_text(encoding="utf-8")
     table.write_text(text + "A21\taccepted\t\tYour 200 m took 3:41 on 2026-11-02.\n"
                      "R41\trejected\tpicture\tThe week buys you a quiet start.\n", encoding="utf-8")
     rows = ev.load_cases(table)

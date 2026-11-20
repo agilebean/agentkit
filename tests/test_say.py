@@ -1,7 +1,7 @@
 """The writing call (scripts/say.py), build spec steps 3 and 4.
 
 say.py turns the cards of one section into lines: one request with
-wording_writer_prompt.md as the system message and the cards as the user
+wording_writer_prompt.md and the examples from socrates as the system message and the cards as the user
 message, then a check of each line against its card, one retry, and a line
 the script writes itself when the retry fails too. No test here calls a model.
 """
@@ -10,10 +10,15 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location("say", ROOT / "scripts" / "say.py")
 say = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(say)
+
+if not say.PAIRS.exists():
+    pytest.skip("the card and line pairs are Chaehan's private data, kept in socrates", allow_module_level=True)
 
 PAIRS = say.load_pairs()
 BY_ID = {r["id"]: r for r in PAIRS}
@@ -31,7 +36,7 @@ def test_the_prompt_rebuilt_from_pairs_p01_to_p08_is_the_tested_file() -> None:
     head, ids, groups = say.split_prompt()
     assert ids == [f"P0{i}" for i in range(1, 9)]
     assert groups.count("line: ") == 3
-    assert say.build_prompt(head, [BY_ID[i] for i in ids], groups) == say.PROMPT.read_text(encoding="utf-8")
+    assert say.build_prompt(head, [BY_ID[i] for i in ids], groups) == say.prompt_text()
 
 
 def test_a_pair_that_shares_a_word_with_a_card_is_swapped() -> None:
@@ -74,7 +79,7 @@ P05 = say.pair_card(BY_ID["P05"])
 
 
 def _fails(line: str, card: dict) -> list[str]:
-    return say.check_line(line, card, say.PROMPT.read_text(encoding="utf-8"))[0]
+    return say.check_line(line, card, say.prompt_text())[0]
 
 
 def test_the_accepted_lines_of_the_test_pairs_pass() -> None:
@@ -110,10 +115,10 @@ def test_a_line_copied_from_the_prompt_fails() -> None:
 def test_a_lint_flag_fails_and_a_warn_is_only_reported() -> None:
     card = _card(thing="your Mapo gym membership", fact="runs until 2027-01-31")
     fails, warns = say.check_line("Your Mapo gym membership runs until 2027-01-31, a robust deal.", card,
-                                  say.PROMPT.read_text(encoding="utf-8"))
+                                  say.prompt_text())
     assert fails
     p13 = say.pair_card(BY_ID["P13"])
-    fails, warns = say.check_line(BY_ID["P13"]["line"], p13, say.PROMPT.read_text(encoding="utf-8"))
+    fails, warns = say.check_line(BY_ID["P13"]["line"], p13, say.prompt_text())
     assert fails == [] and warns
 
 
@@ -196,7 +201,7 @@ def test_cards_that_share_a_line_id_go_out_under_it() -> None:
 def test_a_line_is_checked_against_all_its_cards() -> None:
     a = _card(id="C1", thing="your furniture", fact="was due between 2026-10-25 and 2026-11-09", line="L1")
     b = _card(id="C2", thing="your furniture", fact="has no recorded arrival", line="L1")
-    prompt = say.PROMPT.read_text(encoding="utf-8")
+    prompt = say.prompt_text()
     assert say.check_line("Your furniture was due between 2026-10-25 and 2026-11-09, and no arrival is recorded.",
                           [a, b], prompt)[0] == []
     assert say.check_line("Your furniture was due by 2026-11-09, and no arrival is recorded.", [a, b], prompt)[0]
