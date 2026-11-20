@@ -837,7 +837,14 @@ text is selected by `AGENTS.md` core 1; this rule governs how it reads.
   after a 737-word shoulder note that he cut to its point, one fact and one
   detail per section: "only relevant points not clutter (more of the same)
   or unnecessary detail (obscuring the point). most important cut the
-  overlaps" (failure 205).
+  overlaps" (failure 205). A summary takes its shape from the question
+  Chaehan asked, never from a count of slots: when he asks which items to act
+  on, it sorts them into the groups that answer him (attractive or sellable,
+  held or new), and a line that places no item moves below. A skill or
+  template gives a summary its groups, never a bullet count, because a count
+  gets filled. The test: for each summary line, name the item it places; a
+  line that places none fails. Chaehan, 2026-11-20: "quality over quantity and
+  not filling the space just for the sake of finishing the task" (failure 226).
 
 Detection signal: if a note reads like the transcript of an analysis
 (reframe, enumeration, assumptions, reveal), it is in the wrong order. The

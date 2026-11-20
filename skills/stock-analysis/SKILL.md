@@ -89,9 +89,18 @@ Title `YYYY-MM-DD Stock Review`, notebook Finance, source file
 rewrites that note; a new day makes a new note and leaves the earlier ones
 untouched (RULES.md 31). Sections in this order:
 
-1. **Summary**, 4-6 bullets: the market state with its number; each holding
-   whose facts fit or cut against a recorded decision; every deadline inside
-   30 days; the best-scoring new name. No buy or sell call.
+1. **Summary**, three groups in this order, as Chaehan asked on 2026-11-20:
+   Attractive (score 80 or more, the factors average 4 of 5), Mixed (60 to
+   79), Sellable (below 60, under a neutral 3). Each group has two
+   sub-bullets, Existing (his holdings) and New (his named candidates and the
+   proposed names), and under them one line per stock, best case first: its
+   score, the fact that puts it in the group, the fact that would move it out,
+   its dated event inside 3 months, and for a holding whether the facts fit
+   his recorded decision. An empty sub-bullet says so in one line; New under
+   Sellable names the screened names below 60, marked unresearched. Nothing
+   else goes in the Summary: the market, the yield and the method have their
+   own sections. The groups rank the evidence and are not a call on his money
+   (the advice limit); the Method section says so once.
 2. **Holdings**, sorted by score: Stock, Why (what it sells into AI, one line),
    Score, 3 months, Long term, Street, Your plan.
 3. **Candidates**, his named ones first, then the new ones marked "new": Stock,
@@ -101,8 +110,11 @@ untouched (RULES.md 31). Sections in this order:
 5. **Per stock**, one `###` each: 3-6 dated facts with links.
 6. **Method**: the weights, the data date, a pointer to `reference.md`.
 
-Wording follows `agentkit/AGENTS.md` core 1 and 4: spell out P/E, EV, HBM and
-every other abbreviation once; dates YYYY-MM-DD; no thousand separators. Run
+Before the draft, read RULES.md's "The principle of parsimony" and rule 19
+(line ranges in `rules.index.md`): a Summary line that places no stock in a
+group moves to the section below. Wording follows `agentkit/AGENTS.md` core 1
+and 4: spell out P/E, EV, HBM and every other abbreviation once; dates
+YYYY-MM-DD; no thousand separators. Run
 `python3 $HOME/Software/Prototypes/agentkit/scripts/wording_lint.py` on the file.
 
 Filing: `$P create --notebook Finance --file <source>` (a same-day rewrite:
