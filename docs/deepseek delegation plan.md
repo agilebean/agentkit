@@ -74,7 +74,7 @@ This table is where progress is tracked: a session sets a task's status here bef
 | DD-12 | Recurring-cost register | money | every subscription with its renewal date and last use | DeepSeek, data in socrates | E4 | blocked: E4 |
 | DD-13 | Evernote to Hanji copy in batches | notes | the move to Hanji finished and checked word for word | DeepSeek | the notebooks you name | ready to count |
 | DD-14 | Spring 2027 course preparation | course | checked sources and deck skeletons per session | frontier plans, DeepSeek builds | E6 | blocked: E6 |
-| DD-15 | The human quality plan's measure runs | notes | the decision test run on every build | DeepSeek | HQ-01 | blocked: HQ-01 |
+| DD-15 | The human quality plan's measure runs | notes | each new build reaches you blind, with the decision test as a signal | DeepSeek | the first build of HQ-03, HQ-05 or HQ-06 | waiting for a build |
 | DD-16 | Stock scores refreshed each week | money | the score table without a Claude session | DeepSeek, data in socrates | none | ready |
 | DD-17 | `tests/test_note_test.py` independent of the session it runs in | agentkit | the suite passes inside an opencode session too | any | none | done, 2026-11-21: 588 passed with the variable set |
 
@@ -221,7 +221,9 @@ Acceptance: every link opens on the day of the report, and every deck passes dec
 
 ### DD-15 The human quality plan's measure runs
 
-Goal: DeepSeek runs `decision_eval.py` on every note build and prepares the blind-read packets, once HQ-01 has built the test.
+Goal: DeepSeek prepares the blind-read packet for every note build the human quality plan makes and runs `decision_eval.py` on both builds of each packet.
+
+Acceptance: you prefer the new build in a blind read; the judge's whole-note recall of `decision_eval.py` is reported beside it as a signal, never as a gate (HQ-01's fallback, 2026-11-21).
 
 ### DD-16 Stock scores refreshed each week
 
@@ -253,6 +255,7 @@ DD-01 and DD-02 are done; E2 to E6 wait for your word.
 
 ## Log
 
+- 2026-11-21: DD-15's acceptance is your blind read, with the judge's whole-note recall of `decision_eval.py` as a signal, never as a gate, since HQ-01 found that the test does not rank the builds you preferred above the ones you rejected (human quality plan, log of 2026-11-21). It no longer waits on HQ-01, only on the first build to compare.
 - 2026-11-20: created from the opencode session database (602 top-level runs since 2026-10-01), the commit logs of the last 60 days, the memory lint counts and the VM move runbook of 2026-11-18, in answer to Chaehan's question of what else DeepSeek can take, with the docs question answered in its last section.
 - 2026-11-21: DD-01 and DD-02 done (agentkit 4f01e7e to 1548113). The runbook of DD-02 was checked on a scratch copy before the hand-over, and DeepSeek V4.1 Flash ran it in three turns, 1353 s and $0.09 in all. Both of its stops came from gaps in the runbook: its first turn ended at T5.1 with the wait for GitHub in a background job, which nothing in `opencode run` wakes (the skill now keeps every wait in the foreground), and the first run on main failed 4 PDF tests because the clean replica of T4.2 had kept this Mac's PATH (T4.3 added). Both stops ended in a report that passed `report_check.py`, the first after one flag (`carry`, R7) and the final one on its first check. At its third turn DeepSeek first put markitdown into the workflow's install line (8d68c2f), against the decision in the runbook's State line, and removed it with T4.3 (e290af9); its report leaves that pair out, since the table of changes holds net changes. The plan's premise that tests needing private data already skip held for 13 tests, and 14 in `test_note_build.py` gained the marker. DD-17 is proposed: `tests/test_note_test.py` fails inside an opencode session, which sets `OPENCODE_SERVER_PASSWORD`. E1 decided by Chaehan: "Add the line".
 - 2026-11-21, second entry: DD-17 done. `tests/test_note_test.py` asserted that a launch without a private server passes no `OPENCODE_SERVER_PASSWORD`, which held only for a caller without one; an opencode session sets it for its shell tools. `note_test.py` passes its caller's environment on by design, so the test now removes the variable first, and the code is unchanged. The committed suite printed 588 passed with the variable set.

@@ -90,12 +90,12 @@ This table is where progress is tracked. A session that takes a task sets its st
 | HQ-00 | Personal test data out of the public repository | privacy | any | D0, decided | done in part on 2026-11-20; the rest is DD-03 of the delegation plan |
 | HQ-01 | Decision test for a whole note | measurement | frontier | D1, decided | blocked, 2026-11-21: Takeaway recall ranks the build you preferred above in 4 of 9 pair-runs by shared words and 1 of 9 by the judge |
 | HQ-02 | Your live decisions as data | choice, meaning | frontier | D2 | blocked: D2 |
-| HQ-03 | Understand before form | meaning | frontier designs; DeepSeek and a frontier model run | HQ-01 | blocked: HQ-01 |
+| HQ-03 | Understand before form | meaning | frontier designs; DeepSeek and a frontier model run | what made A4 better than B for you | blocked: that answer |
 | HQ-04 | Derived and reading cards | meaning | frontier | D3 | blocked: D3 |
-| HQ-05 | Choose by decision and deadline | choice | frontier | HQ-01, HQ-02 | blocked; the priorities edit is in progress in another session |
+| HQ-05 | Choose by decision and deadline | choice | frontier | HQ-02; what made A4 better than B for you | blocked: D2 and that answer |
 | HQ-06 | Sentences that follow each other | wording | any | none | ready |
 | HQ-07 | A correction becomes a case first | learning | any | D4 | blocked: D4 |
-| HQ-08 | Retire rules and checks that write form | rules | frontier | HQ-01, then D5 per batch | blocked: HQ-01 |
+| HQ-08 | Retire rules and checks that write form | rules | frontier | D5 per batch | ready |
 | HQ-09 | One builder for every note skill | all | frontier | HQ-03 to HQ-06 | blocked |
 | HQ-10 | Memory index and dated fact lines | truth | any | D2 for part b | ready for part a |
 
@@ -178,7 +178,7 @@ Steps:
 2. Run it on the sources of the benchmark notes with DeepSeek at high reasoning and with a frontier model, three runs each, timing every call. The runner's 120 s idle cut stopped long silent reasoning in failure 213, so the cut rises for this step alone.
 3. Build each note through the card path from `point.md`, measure it with HQ-01, and give Chaehan the best build of each model blind.
 
-Acceptance: Takeaway recall rises against the same build without `point.md` on three of every four benchmark notes, with no invented fact. The model that wins your blind read and the numbers is written into the skills, with its cost per note.
+Acceptance: you prefer the new build in a blind read against the same build without `point.md`, on three of every four benchmark notes, with no invented fact; the judge's whole-note recall from `decision_eval.py` is reported beside it as a signal, never as a gate. The model that wins your blind read is written into the skills, with its cost per note.
 
 ### HQ-04 Derived and reading cards
 
@@ -208,7 +208,7 @@ Steps:
 2. The Takeaway is chosen across sections: open decisions by deadline and cost first, then one state per section that changes what you expect. An event enters only when it changes a decision.
 3. Choice is measured against the gold lists of HQ-01, no longer against B.
 
-Acceptance: rebuilt from the cards of 2026-11-09, the Takeaway holds the decisions the gold list dates soonest within its first three lines, and Takeaway recall rises over A4.
+Acceptance: rebuilt from the cards of 2026-11-09, you prefer the new build to A4 in a blind read; the judge's whole-note recall from `decision_eval.py` is reported beside it as a signal, never as a gate, with the Takeaway line on which the decision due soonest appears.
 
 ### HQ-06 Sentences that follow each other
 
@@ -250,7 +250,7 @@ Steps:
 2. Propose batches. A rule a script fully enforces becomes a one-line pointer to the script, and incident rules merge into their class. A check that forces a form (the gate's seat check on a line's first two words, and the sentence "Both sentences start with You or Your" in step 3 of `note_build.py`, step 5 of the build spec) is kept only if the measures fall without it.
 3. Each batch goes to you as a before and after (D5), and the index is regenerated with `tools/rules_index.py`.
 
-Acceptance: per batch, `wording_eval.py` and `decision_eval.py` do not fall on the benchmark, and the test of every removed rule is kept in its class or in a script.
+Acceptance: per batch, you prefer the new build in a blind read or rate the two equal, `wording_eval.py` does not fall on the benchmark, and the test of every removed rule is kept in its class or in a script; the judge's whole-note recall from `decision_eval.py` is reported beside it as a signal, never as a gate.
 
 ### HQ-09 One builder for every note skill
 
@@ -264,7 +264,7 @@ Steps:
 2. Port one skill at a time, in the order of how often its notes drew a correction in the failure register, each measured by HQ-01 on its benchmark note.
 3. Delete a skill's old steps once its port passes (rule 203).
 
-Acceptance: per skill, decision recall equals or exceeds the skill's own path, and in a blind read you prefer the port or rate the two equal.
+Acceptance: per skill, in a blind read you prefer the port or rate the two equal; the judge's whole-note recall from `decision_eval.py` is reported beside it as a signal, never as a gate.
 
 ### HQ-10 Memory index and dated fact lines
 
@@ -308,6 +308,8 @@ Suggestion: a frontier-model session takes HQ-01 now, which changes no rule, gat
 - The 4 of 4 against 0 of 4: failure 213, DeepSeek V4.1 Flash at high reasoning, two runs per cell on two stretches of one transcript.
 
 ## Log
+
+- 2026-11-21, second entry: your blind read is the measure of a whole note, as HQ-01's acceptance says when the test cannot separate the builds. The acceptance of HQ-03, HQ-05, HQ-08 and HQ-09 now asks that you prefer the new build in a blind read, with the judge's whole-note recall of `decision_eval.py` reported beside it as a signal, never as a gate; HQ-08 and HQ-09 also pass when you rate the two equal, since a batch of retired rules or a port that changes nothing you see is the result they want. HQ-03 and HQ-08 no longer wait on HQ-01: HQ-08 is ready, and HQ-03 and HQ-05 wait on what made A4 better than B for you, since A4's Takeaway names none of the eight decisions of 2026-11-09 and B's names three. DD-15 of the delegation plan prepares the blind-read packets with the test as its signal. HQ-07's step 2 still keeps a rule only when `decision_eval.py` improves; it changes with D4, which another session is asking.
 
 - 2026-11-21: HQ-01 is blocked, since the decision test does not rank every build you preferred above the one you rejected on Takeaway recall. `scripts/decision_eval.py` (agentkit acd07ef, 16 tests) has one fresh DeepSeek call read the whole note and another the Takeaway alone, and matches each call's rows to your gold list by shared words or by a judge call on one pair at a time. You confirmed four gold lists with the question tool (D1; socrates c4a9d00, `docs/human quality/data/decision_test/`): Life Challenges 2026-11-07 (16 decisions), Stock Review 2026-11-20 (4), Life Overview 2026-11-09 (8, A4 preferred over B) and date 3 (3), a control, since its two versions share one Takeaway word for word. In three runs with no failed call, the preferred build led on Takeaway recall in 4 of 9 pair-runs by shared words and 1 of 9 by the judge: Life Challenges 1 of 3 by both, Stock Review 3 of 3 by words and 0 of 3 by the judge (three ties), A4 against B 0 of 3, at 0 against 3 of 8 every run, and the control tied in all three runs. On whole-note recall the judge ranks the preferred build above in all three runs for Life Challenges and Stock Review, and for A4 in one run with two ties. Shared words paired rows on a common word ("follow up" with the Taxpayer Advocate follow-up), and the judge refused near matches ("buy Intel" against "buy Intel or AMD"). A4's Takeaway states none of the eight decisions, so your choice of A4 rests on what its body says, and B's Takeaway names three. Whole-note recall would not pass either, at 7 of 9 pair-runs by the judge, so your blind read stays the only measure of a whole note, as the task's acceptance says; the test still reports what a Takeaway leaves out. The first batch of 2026-11-20 was void after HTTP 429 refusals from the OpenCode Go route, so every call now passes one gate, six at a time in these runs, and a refusal waits and tries again. Correction recorded as failure 233 in socrates, with one sentence in rule 62.
 
