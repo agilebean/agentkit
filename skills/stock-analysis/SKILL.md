@@ -53,8 +53,9 @@ or its tests: they live in socrates `memory/stocks.md` and in the note.
    In Claude Code each call names `allowed_domains`: `fc.yahoo.com`,
    `query1.finance.yahoo.com`. Eleven names take ~10 s, the universe ~30 s.
 2. **Pick 3-5 new names** from the screen: the highest scores, at least one
-   robotics name, ties broken by the largest rise in next
-   year's earnings estimate over 90 days. A name he sold this year stays
+   robotics name, ties broken by the largest fall in forward P/E over 3
+   months on an earnings estimate that held (the script's "P/E 3 mo" and
+   "Estimate 3 mo" columns): the price fell faster than the earnings. A name he sold this year stays
    eligible and its row says he held it.
 3. **Research every name** with web search (standard mode, several per turn),
    each fact with its date and source link:
@@ -65,7 +66,11 @@ or its tests: they live in socrates `memory/stocks.md` and in the note.
      customer concentration, maturities;
    - the long-term case: what drives the company's growth for 3-5 years, and
      which event would end it;
-   - the cause of the move when the 3-month return is beyond ±15%.
+   - the cause of the move when the 3-month return is beyond ±15% or the
+     price sits 30% or more below its 1-year high, with the day of the
+     largest fall and any lawsuit or filing it set off;
+   - for a large fall, whether the earnings estimate fell with the price:
+     only a fall on an estimate that held makes the stock cheaper.
 
    Once per run: the sector's move and its cause, and the 10-year Treasury
    yield. A fact not read at its source is labeled unverified (RULES.md 244).
@@ -90,9 +95,11 @@ rewrites that note; a new day makes a new note and leaves the earlier ones
 untouched (RULES.md 31). Sections in this order:
 
 1. **Summary**, these four parts and nothing else:
-   - One sentence naming the pattern behind the scores: what the high
-     scorers share against the low ones.
-   - A grid of stock names, no scores. Rows: Attractive (score 80 or more,
+   - One or two sentences naming the pattern behind the scores and the
+     prices: what the high scorers share against the low ones, and where the
+     price moved against next year's earnings.
+   - A grid of stock names, each with its forward P/E ("Nvidia 9×", a
+     loss-maker "(loss)"), no scores. Rows: Attractive (score 80 or more,
      the factors average 4 of 5), Mixed (60 to 79), Sellable (below 60, under
      a neutral 3). Columns: Your holdings, New names (his candidates and the
      proposed ones). Names run by score within a cell, Sellable lowest first;
@@ -101,20 +108,26 @@ untouched (RULES.md 31). Sections in this order:
      recorded or left open, whether the evidence supports it or cuts against
      it, and its date. A stock with no decision gets no sentence. While a sale
      is pending, where its money goes is one of them: his plan, his funding
-     rule in `memory/finance.md`, and which new names fill a segment he holds
-     no stock in.
+     rule in `memory/finance.md`, and where the price fell furthest below
+     the earnings (forward P/E now against 3 months ago, on an estimate that
+     held). Every candidate he named is a decision too: its fall from the
+     1-year high, whether the estimate fell with it, and its P/E against the
+     names it competes with.
    - One line of the other dated events inside 30 days.
 
    From the second review on, a stock that changed group shows its earlier
    group in the grid ("Arm, was Attractive"), and the decisions list only
    what is new or whose evidence changed since the previous review.
 2. **Stocks**, one table sorted by score, new names marked "new": Stock,
-   Score, Next 3 months, Long term, Analysts (the consensus rating and median
+   Score, Price against earnings (the fall from the 1-year high, the forward
+   P/E now and 3 months ago, and the estimate's move when it fell more than
+   5%), Next 3 months, Long term, Analysts (the consensus rating and median
    target), "Your plan, or what it adds". A cell holds its decisive fact; an
    unverified fact says so in its cell.
 3. **Sources**: one line per stock with its dated links, and one line for the
    market (the 10-year Treasury yield).
-4. **Method**: the weights, the group cutoffs, the data date, each hand-set
+4. **Method**: the weights, the group cutoffs, the closing date of the
+   prices, how the P/E change is computed, each hand-set
    value with its reason in one clause, a reporting-currency caveat, one
    sentence that the groups rank the evidence and the decision stays his, and
    a pointer to `reference.md`.
