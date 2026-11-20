@@ -62,7 +62,7 @@ This table is where progress is tracked: a session sets a task's status here bef
 |---|---|---|---|---|---|---|
 | DD-01 | The report form and its check | all | every later task reaches you as a table you can trust | frontier designs, any model builds | E1, decided | done, 2026-11-21: DeepSeek's reports passed on the second and first check |
 | DD-02 | agentkit tests on every push, and the red test fixed | agentkit | a broken commit shows within minutes | DeepSeek | none | done, 2026-11-20: main green, a broken commit red |
-| DD-03 | Personal data out of agentkit | agentkit | what the move of 2026-11-20 left public is gone | DeepSeek | E2 for skills, rules and history | ready for tests and scripts |
+| DD-03 | Personal data out of agentkit | agentkit | what the move of 2026-11-20 left public is gone | DeepSeek | E2 for skills, rules and history | in progress, 2026-11-21, Claude Opus 5.5: the acceptance check on today's tree |
 | DD-04 | Google Cloud bill audit each month | virtualfriend | the next saving after the VM move | DeepSeek, read-only | your yes per change | ready |
 | DD-05 | Nightly log digest | virtualfriend | errors and response times on one page a day | DeepSeek | none | ready |
 | DD-06 | The service-account key replaced by the VM's own identity | virtualfriend | the key file the VM runbook flagged is gone | DeepSeek | E3 | blocked: E3 |
