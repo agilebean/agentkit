@@ -4264,6 +4264,28 @@ documented ones and you must add the fix cost", then "you said the total is over
 evernote to see that?" and "isn't that common sense?" The per-lecture figure is
 15.78 h: 126.25 over eight.
 
+**Two cases are compared on what differs between them.** When a table puts one
+case beside another (a city and a city, a winter away and a winter at home), each
+line carries its amount in both cases and its difference; the difference, not the
+amount, is the finding. A cost paid in both cases cancels and is written as 0,
+however large it is at the source. An income line is earned or not earned in a
+case, never varied to make a total come out. A figure the source does not give
+stays empty in its cell as "not on the record", and is never back-solved from a
+total the source states: a part computed that way reproduces the total and proves
+nothing else. Before a difference is written, name the one mechanism that makes
+that line differ between the cases; a line with no such mechanism is a zero.
+
+Instance, 2026-11-20: an expense sheet put the loss of Mina's art academy and
+yoga studio from nine weeks in Melbourne at 16.4 million KRW, itemised as rent and
+instructor fees she pays whether she travels or not. The analysis beside it showed
+an operating result per case and added two rows her sheet does not hold: the yoga
+studio at +3.6M with her in Seoul, which needs the classes to earn 17.8M against
+her 15.0M assumption, and the art academy at 0, a break-even she never wrote. Each
+was chosen to reproduce her 16.4M. Chaehan: "the +3.6 −3.8 is wrong (either earning
+or not)". The four lines that differ give 4.6M: 3.6M of private lessons she would
+not teach and 1.0M of extra substitute fees; the remaining 11.8M is rent that
+cancels less her 15.0M of expected class income.
+
 ### 209. An option search starts from the user's outcome and gates, never from the visible brand set
 
 A search for options — providers, agencies, vendors, services — is not a
