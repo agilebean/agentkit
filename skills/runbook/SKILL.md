@@ -35,6 +35,10 @@ below. The model runbook is `docs/2026-11-18 vm migration us-south1.md` in agent
    run `git pull --rebase` and push again. When the repository has a test workflow, read its result for your
    last commit with `gh run list --commit <sha> --json conclusion,databaseId` once the run has finished, and
    put it in the report as a row of the table of changes.
+   Every wait (a workflow run, a deploy, a queue) happens in the foreground, in a shell call with a timeout
+   long enough for it, such as `gh run watch <id> --exit-status --interval 20` with 900000 ms. Never hand a
+   wait to a background job and end your turn: in `opencode run` your run ends with your turn and nothing
+   wakes you again (2026-11-20, the first DD-02 run stopped at T5.1 this way).
 7. **Write the report** to the path the runbook names, then run
    `python3 ~/Software/Prototypes/agentkit/scripts/report_check.py "<report path>"`. When it prints FAIL, fix
    each line it names and run it once more. Commit and push the report after the check prints PASS, or after the

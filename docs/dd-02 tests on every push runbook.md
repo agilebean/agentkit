@@ -4,13 +4,13 @@ Task DD-02 of the [DeepSeek delegation plan](<deepseek delegation plan.md>): eve
 
 Board: `docs/deepseek delegation plan.md`, task DD-02. Report: `docs/2026-11-20 dd-02 tests on every push report.md`.
 
-State: stopped at T5.1 on 2026-11-20. T1.1 to T4.2 pass and are committed; the run on `main` failed on the runner's missing `markitdown`.
+State: stopped at T5.1 on 2026-11-20, resumed at T4.3 the same day. T1.1 to T4.2 pass and are committed; the run on `main` failed on the runner's missing `markitdown`, and the frontier session answered both open items of the first report: the four tests stand in for the PATH lookup (T4.3), and the probe of T5.2 and T5.3 runs after a green `main`.
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules
 
 - Each test below is checked by the command in its Then; a test passes only on that command's output.
-- You change only these files: `tests/test_en_to_hanji.py`, `tests/test_note_build.py`, `tests/test_browser.py`, `pyproject.toml`, `.github/workflows/tests.yml` (new), this runbook's *State* line and *Test log*, the DD-02 row of the board (the claim only), and the report. Never `skills/hanji/scripts/en_to_hanji.py` or `skills/evernote/scripts/note_build.py`: the tests follow the converter of 2026-11-16, not the reverse.
+- You change only these files: `tests/test_en_to_hanji.py`, `tests/test_note_build.py`, `tests/test_browser.py`, `pyproject.toml`, `.github/workflows/tests.yml` (new), `tests/pdf/test_cli.py` (T4.3 only), this runbook's *State* line and *Test log*, the DD-02 row of the board (the claim only), and the report. Never `skills/hanji/scripts/en_to_hanji.py` or `skills/evernote/scripts/note_build.py`: the tests follow the converter of 2026-11-16, not the reverse.
 - Python on this machine is `mamba run -n socrates python` (Python 3.14.4, pytest 9.0.3). Every local pytest command below sets `NOTE_BUILD_SOCRATES` itself, since the scripts read socrates' location from it and a launcher may set it to another folder.
 - Other sessions commit to agentkit at the same time. Stage each file by its name; when `git status --short` shows a file this runbook does not list, leave it alone and unstaged. A run of the whole suite names the committed test files, `$(git ls-files 'tests/*test_*.py')`, so another session's uncommitted test cannot decide your check.
 - Commit after each story whose tests pass, with the message `DD-02 S<n>: <what the story changed>`, and push to `main`. Never push to `main` while a local test fails.
@@ -29,6 +29,7 @@ Resume: run the *Resume checks* below and continue at the first test whose row i
 | Skips that already work | without socrates: 6 tests of `test_en_to_hanji.py` (its `needs_socrates` marker), 6 of `test_wording_eval.py`, 1 of `test_say.py`; without Hanji.app: the Hanji tests |
 | Without the extra packages | 4 collection errors (selenium for `test_browser.py` and `test_driver.py`, thrift for `test_evernote.py`, numpy and soundfile for `test_speech.py`) and 15 failures (PyYAML for 5 tests of `test_core_config.py`, the Google client for 10 of `test_gmail.py`) |
 | Tests that open a local port | measured by wrapping `socket.bind` through a full run: `tests/test_note_build.py::test_the_bridge_uploads_a_photo_with_a_resumable_start_and_one_put` (an `HTTPServer` on 127.0.0.1) and `tests/test_browser.py::TestChromeDriverAttach::test_attaches_with_resolved_driver` (binds 127.0.0.1 and ::1). Every other test only names an address in a string. |
+| Found at T5.1 | run `44754080168` failed 4 tests of `TestConvertCLI` in `tests/pdf/test_cli.py`: they mock `subprocess.run` as markitdown but not `shutil.which("markitdown")`, which `src/agentkit/pdf/cli.py` calls first. They passed in T4.2 only because that venv kept this Mac's `PATH`, which holds `~/.local/bin/markitdown`. |
 | Runner | `macos-latest`: agentkit holds macOS code (`tests/apple`, `say`, the MLX speech package) and runs on a Mac; macOS minutes are free for a public repository |
 
 The 14 tests of `tests/test_note_build.py` that need socrates:
@@ -119,9 +120,27 @@ test_a_section_edited_since_or_holding_an_image_is_refused
   env -u NOTE_BUILD_SOCRATES HOME="$H" "$V/bin/python" -m pytest -q -rs --strict-markers -p no:cacheprovider
   ```
 
+- [ ] T4.3 Given `class TestConvertCLI:` in `tests/pdf/test_cli.py`, when the fixture below is put right under that line, then the commands below print no `failed`, and `NOTE_BUILD_SOCRATES=$HOME/Software/Prototypes/socrates mamba run -n socrates python -m pytest -q tests/pdf/test_cli.py` prints `8 passed`. The commands repeat T4.2 with a bare `PATH`, as the runner has; on 2026-11-20 a scratch copy with the fixture printed `540 passed, 28 skipped`.
+
+  ```python
+      @pytest.fixture(autouse=True)
+      def _markitdown_on_path(self):
+          """subprocess.run stands in for markitdown, so its lookup on PATH is stood in for too."""
+          with patch("shutil.which", return_value="/usr/local/bin/markitdown"):
+              yield
+
+  ```
+
+  ```bash
+  V=$(mktemp -d)/venv && H=$(mktemp -d)
+  ~/Software/miniforge3/envs/socrates/bin/python -m venv "$V"
+  "$V/bin/python" -m pip install -q -e ".[config,gmail,evernote]" pytest numpy selenium soundfile
+  env -i HOME="$H" PATH="$V/bin:/usr/bin:/bin:/usr/sbin:/sbin" TMPDIR="$(dirname "$H")" "$V/bin/python" -m pytest -q -rfs --strict-markers -p no:cacheprovider $(git ls-files 'tests/*test_*.py')
+  ```
+
 ## Story 5: GitHub runs it, green on main and red on a broken commit
 
-- [ ] T5.1 Given Stories 1 to 4 committed and pushed to `main`, when the workflow run for the last commit finishes, then `gh run list --workflow tests.yml --branch main --limit 1 --json conclusion,headSha,databaseId` shows `"conclusion":"success"` and a `headSha` equal to `git rev-parse HEAD`. Wait with `gh run watch <databaseId> --exit-status --interval 20`, in a shell call whose timeout is 900000 ms; a run longer than 15 min fails this test.
+- [ ] T5.1 Given Stories 1 to 4 and T4.3 committed and pushed to `main`, when the workflow run for the last commit finishes, then `gh run list --workflow tests.yml --branch main --limit 1 --json conclusion,headSha,databaseId` shows `"conclusion":"success"` and a `headSha` equal to `git rev-parse HEAD`. Wait with `gh run watch <databaseId> --exit-status --interval 20`, in a shell call whose timeout is 900000 ms; a run longer than 15 min fails this test.
 - [ ] T5.2 Given `main` green, when a branch holding one failing test is pushed from its own worktree, then its run concludes `failure` and `gh run view <databaseId> --log-failed` names `test_red_probe`.
 
   ```bash
