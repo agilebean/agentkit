@@ -349,3 +349,13 @@ def test_a_card_refused_twice_is_cut(tmp_path, monkeypatch) -> None:
     report = fill.repair(path, src, tmp_path)
     assert report["cut as refused"] == ["C01"] and check.read_cards(path) == []
     assert "refused" in check.read_cards(tmp_path / "cut.tsv")[0]["reason"]
+
+
+def test_a_year_that_a_date_of_the_line_holds_is_in_the_line() -> None:
+    line = "The lease covers 120 days (2031-02-01 to 05-31) plus ~60 in the autumn"
+    card = {"section": "Home", "id": "C1", "kind": "measure", "thing": "your lease days in 2031",
+            "fact": "are ~180", "so": "", "do": "", "said": "", "src": "memory/home.md:3"}
+    line = line.replace("autumn", "autumn, ~180 in all")
+    assert check.check_card(card, line, check.lint_rules())[0] == []
+    wrong = card | {"thing": "your lease days in 2032"}
+    assert [r.rule for r in check.check_card(wrong, line, check.lint_rules())[0]] == ["in the record"]
