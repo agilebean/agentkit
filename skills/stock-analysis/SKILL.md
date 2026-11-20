@@ -102,7 +102,7 @@ untouched (RULES.md 31). Sections in this order:
      loss-maker "(loss)"), no scores. Rows: Attractive (score 80 or more,
      the factors average 4 of 5), Mixed (60 to 79), Sellable (below 60, under
      a neutral 3). Columns: Your holdings, New names (his candidates and the
-     proposed ones). Names run by score within a cell, Sellable lowest first;
+     proposed ones). Names run by score within a cell, highest first, in every row;
      an empty cell says "none".
    - The decisions due before the nearest deadline, numbered: each decision he
      recorded or left open, whether the evidence supports it or cuts against
