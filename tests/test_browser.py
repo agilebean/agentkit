@@ -4,6 +4,7 @@ from __future__ import annotations
 import urllib.request
 from pathlib import Path
 from unittest.mock import MagicMock, patch
+import pytest
 
 from agentkit.browser import chrome_driver_attach
 from agentkit.browser._browser import _ensure_cdp_page
@@ -24,6 +25,7 @@ class _FakeResponse:
 
 
 class TestChromeDriverAttach:
+    @pytest.mark.local_port
     def test_attaches_with_resolved_driver(self) -> None:
         """Attach uses the driver path resolved from the running browser."""
         fake_driver = MagicMock()
