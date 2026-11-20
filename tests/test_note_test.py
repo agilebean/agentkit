@@ -125,6 +125,8 @@ def test_the_launch_runs_against_the_private_server_with_its_password(tmp_path, 
             seen.update(cmd=cmd, password=env.get("OPENCODE_SERVER_PASSWORD"))
 
     monkeypatch.setattr(nt.subprocess, "Popen", FakePopen)
+    # An opencode session sets this for its own shell tools; a launch without a private server adds none of its own.
+    monkeypatch.delenv("OPENCODE_SERVER_PASSWORD", raising=False)
     run = nt.Run(_args(tmp_path, 120))
     run.launch("m", "hello")
     assert "--standalone" in seen["cmd"] and seen["password"] is None
