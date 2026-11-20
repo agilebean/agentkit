@@ -256,15 +256,15 @@ def _lines(*rows):
 
 
 def test_mw_finds_a_korean_title_stored_decomposed(tmp_path) -> None:
-    """The app stores 지원 decomposed (NFD); on 2026-11-20 a plain SQL match missed it."""
+    """The app stores a Korean name decomposed (NFD); on 2026-11-20 a plain SQL match missed it."""
     import unicodedata
     db = _fake_db(tmp_path)
     con = sqlite3.connect(db)
     con.execute("insert into session values (x'03', '2026-11-19', ?, null, 1, 1, 5100, null)",
-                (unicodedata.normalize("NFD", "2026-11-19 Noble Date 지원"),))
+                (unicodedata.normalize("NFD", "2026-11-19 Date 지원"),))
     con.commit()
     con.close()
-    s = mw.find_session(mw.open_copy(str(db)), "2026-11-19 Noble Date 지원")
+    s = mw.find_session(mw.open_copy(str(db)), "2026-11-19 Date 지원")
     assert s["id"] == b"\x03"
 
 
@@ -290,9 +290,17 @@ def test_a_name_the_app_holds_is_kept_and_the_other_speaker_takes_the_other_name
     assert mw.name_speakers(lines, "X", None)[0] == {}
 
 
-def test_her_name_is_what_the_title_leaves_after_date_Noble_and_date_n() -> None:
-    assert mw.her_name("2026-11-19 Noble Date 지원") == "지원"
+def test_her_name_is_what_the_title_leaves_after_date_and_date_n() -> None:
+    assert mw.her_name("2026-11-19 Date 지원") == "지원"
     assert mw.her_name("2026-11-15 Mina Date6") == "Mina"
+
+
+def test_a_title_word_from_the_config_is_stripped(monkeypatch, tmp_path) -> None:
+    conf = tmp_path / "date_title_words.txt"
+    conf.write_text("Noble\n", encoding="utf-8")
+    monkeypatch.setattr(mw, "TITLE_WORDS_FILE", conf)
+    assert mw.her_name("2026-11-19 Noble Date 지원") == "지원"
+    assert mw.her_name("2026-11-19 Date 지원") == "지원"
 
 
 def test_the_md_export_reads_like_chaehans_own_and_is_never_written_over(tmp_path) -> None:

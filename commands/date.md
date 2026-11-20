@@ -7,7 +7,7 @@ Arguments: $ARGUMENTS
 Load the date-analysis skill and read the arguments this way:
 
 - The words name the recording as Whisper Transcription holds it, for example
-  "2026-11-19 Noble Date 지원"; the note takes the same name. With no words,
+  "2026-11-11 Date Mina Lee"; the note takes the same name. With no words,
   take the newest recording in Whisper Transcription.
 - When the last word is "Hanji" (any case), this run writes its note to Hanji,
   and the word is not part of the name. Otherwise the note goes to Evernote,

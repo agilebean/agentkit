@@ -83,7 +83,7 @@ def nfc(s: str | None) -> str:
 def find_session(con: sqlite3.Connection, key: str) -> sqlite3.Row:
     """The newest live session whose id, file name or title is `key`, else whose file name holds it. The app
     stores a Korean file name decomposed (NFD), so names are compared composed: on 2026-11-20
-    "2026-11-19 Noble Date 지원" was not found by a plain SQL match."""
+    "2026-11-19 Date 지원" was not found by a plain SQL match."""
     rows = con.execute("select * from session where dateDeleted is null order by dateCreated desc").fetchall()
     k = nfc(key)
     hit = [r for r in rows if r["id"].hex().upper() == k.upper()
@@ -221,9 +221,27 @@ def spans_of(lines: list[dict], who: str, n: int = 25) -> list[tuple[int, int]]:
     return ok[::step][:n]
 
 
+TITLE_WORDS_FILE = Path(os.path.expanduser(
+    os.environ.get("AGENTKIT_DATE_TITLE_WORDS", "~/.config/agentkit/date_title_words.txt")))
+
+
+def title_words() -> list[str]:
+    """The words your recording titles carry besides the date, such as an agency name."""
+    try:
+        raw = TITLE_WORDS_FILE.read_text(encoding="utf-8")
+    except OSError:
+        return []
+    return [w.strip() for w in re.split(r"[,\n]", raw) if w.strip()]
+
+
 def her_name(title: str) -> str:
-    """Her name from a recording title: the words left after the date, Noble and Date<N>."""
-    words = [w for w in nfc(title).split() if not re.fullmatch(r"\d{4}-\d{2}-\d{2}|Noble|Date\d*", w, re.I)]
+    """Her name from a recording title: the words left after the date, the title words and Date<N>.
+
+    The title words are what your own recordings carry besides the date, such as an agency name,
+    read from `~/.config/agentkit/date_title_words.txt` one per line or comma-separated. The script
+    ships with none, so a public title parses as it stands."""
+    stop = "|".join([r"\d{4}-\d{2}-\d{2}", r"Date\d*"] + [re.escape(w) for w in title_words()])
+    words = [w for w in nfc(title).split() if not re.fullmatch(stop, w, re.I)]
     return " ".join(words)
 
 
