@@ -60,8 +60,8 @@ This table is where progress is tracked: a session sets a task's status here bef
 
 | ID | Task | Area | What it gives you | Runs on | Waits on | Status |
 |---|---|---|---|---|---|---|
-| DD-01 | The report form and its check | all | every later task reaches you as a table you can trust | frontier designs, any model builds | E1 for the rule line | ready |
-| DD-02 | agentkit tests on every push, and the red test fixed | agentkit | a broken commit shows within minutes | DeepSeek | none | ready |
+| DD-01 | The report form and its check | all | every later task reaches you as a table you can trust | frontier designs, any model builds | E1 for the rule line | in progress, 2026-11-20, Claude Opus 5.5 |
+| DD-02 | agentkit tests on every push, and the red test fixed | agentkit | a broken commit shows within minutes | DeepSeek | none | in progress, 2026-11-20, runbook by Claude Opus 5.5 |
 | DD-03 | Personal data out of agentkit | agentkit | what the move of 2026-11-20 left public is gone | DeepSeek | E2 for skills, rules and history | ready for tests and scripts |
 | DD-04 | Google Cloud bill audit each month | virtualfriend | the next saving after the VM move | DeepSeek, read-only | your yes per change | ready |
 | DD-05 | Nightly log digest | virtualfriend | errors and response times on one page a day | DeepSeek | none | ready |
