@@ -93,11 +93,11 @@ This table is where progress is tracked. A session that takes a task sets its st
 | HQ-03 | Understand before form | meaning | frontier designs; DeepSeek and a frontier model run | none | ready |
 | HQ-04 | Derived and reading cards | meaning | frontier | D3, decided | ready |
 | HQ-05 | Choose by decision and deadline | choice | frontier | HQ-02 | blocked: HQ-02 |
-| HQ-06 | Sentences that follow each other | wording | any | none | in progress, 2026-11-21, Claude Opus 5.5 |
+| HQ-06 | Sentences that follow each other | wording | any | your blind read of A4 against its rebuild | built, 2026-11-21: waits for your blind read |
 | HQ-07 | A correction becomes a case first | learning | any | D4, decided | ready |
 | HQ-08 | Retire rules and checks that write form | rules | frontier | D5 per batch | ready |
 | HQ-09 | One builder for every note skill | all | frontier | HQ-03 to HQ-06 | blocked |
-| HQ-10 | Memory index and dated fact lines | truth | any | HQ-02 for part b | part a in progress, 2026-11-21, Claude Opus 5.5 |
+| HQ-10 | Memory index and dated fact lines | truth | any | HQ-02 for part b | part a done, 2026-11-21; part b waits on HQ-02 |
 
 Frontier means Claude Opus 5.5, Claude Fable 5.2 or a newer model; any means a model that writes and tests code well, DeepSeek included.
 
@@ -222,7 +222,7 @@ Why here: the 2026-11-17 analysis left this gap untested (its fourth gap). One s
 
 Steps:
 
-1. A pass in `say.py` over each section's lines: the first mention keeps the full name and later ones take a short form of it, and two cards on one thing may share a sentence.
+1. A pass over each section's written lines, `scripts/say_flow.py` beside `say.py`: the first mention keeps the full name and later ones take a short form of it, and two lines on one thing may share a sentence.
 2. Every number, name and verb of each card stays, held by the existing checks.
 3. Rebuild the sections of A4.
 
@@ -313,6 +313,7 @@ Suggestion: a frontier-model session takes HQ-01 now, which changes no rule, gat
 
 ## Log
 
+- 2026-11-21, fifth entry: HQ-06 is built and waits for your blind read, and part a of HQ-10 is done. `scripts/say_flow.py` sends each section's written lines with their place to one call with `wording_flow_prompt.md` and checks the answer with say.py's checks. It reads a note's lines, since the cards of A4 were gone from the temporary folders, and it sits beside `say.py`, which another session was editing. Two passes over A4 (22 calls, 862 s) took the pairs of sentences in a row that name one thing again from 21 to 2, one of them a dose. The median sentence went from 13.5 to 14.5 words, 1098 words to 1053, with no lint flag before or after, and `wording_eval.py --say` stayed at 11 of 11 in three runs. The rebuild is `A4-flow.md` in socrates' step 8 folder (fc06a71). Part a of HQ-10: `memory_index.py` in socrates writes `memory/index.md`, one row for each of the 45 memory files, and a heading index with line ranges for the 19 over 1500 words. `kubs.index.md` came out unchanged, and socrates.md now reads by these indexes.
 - 2026-11-21, fourth entry: you answered D2, D3 and D4 with the question tool. D2: the life-challenges skill asks, after it presents the challenges and before it creates the note, which decisions are valid, one checkbox each, and writes the confirmed ones to a dated file in `socrates/life/`, which HQ-05 and part b of HQ-10 read. The register in `decisions/` that the question proposed is dropped. D3: derived lines with cited premises and recomputed numbers, and readings marked as the agent's or as open. The Cochrane wording stays open. D4: case first. HQ-02, HQ-04 and HQ-07 are ready, and HQ-05 and part b of HQ-10 wait on HQ-02.
 - 2026-11-21, third entry: you chose A4 over B for its fuller body (question tool, options fuller body, plainer wording, Takeaway doesn't matter). HQ-03 and HQ-05 now name that aim: a build keeps every live matter of a section with the step you still have to take, and the understand step or the Takeaway's choice may not cost that body. HQ-03 is ready; HQ-05 waits on D2.
 - 2026-11-21, second entry: your blind read is the measure of a whole note, as HQ-01's acceptance says when the test cannot separate the builds. The acceptance of HQ-03, HQ-05, HQ-08 and HQ-09 now asks that you prefer the new build in a blind read, with the judge's whole-note recall of `decision_eval.py` reported beside it as a signal, never as a gate; HQ-08 and HQ-09 also pass when you rate the two equal, since a batch of retired rules or a port that changes nothing you see is the result they want. HQ-03 and HQ-08 no longer wait on HQ-01: HQ-08 is ready, and HQ-03 and HQ-05 wait on what made A4 better than B for you, since A4's Takeaway names none of the eight decisions of 2026-11-09 and B's names three. DD-15 of the delegation plan prepares the blind-read packets with the test as its signal. HQ-07's step 2 still keeps a rule only when `decision_eval.py` improves; it changes with D4, which another session is asking.
