@@ -90,9 +90,9 @@ This table is where progress is tracked. A session that takes a task sets its st
 | HQ-00 | Personal test data out of the public repository | privacy | any | D0, decided | done in part on 2026-11-20; the rest is DD-03 of the delegation plan |
 | HQ-01 | Decision test for a whole note | measurement | frontier | D1, decided | blocked, 2026-11-21: Takeaway recall ranks the build you preferred above in 4 of 9 pair-runs by shared words and 1 of 9 by the judge |
 | HQ-02 | Your live decisions as data | choice, meaning | frontier | D2 | blocked: D2 |
-| HQ-03 | Understand before form | meaning | frontier designs; DeepSeek and a frontier model run | what made A4 better than B for you | blocked: that answer |
+| HQ-03 | Understand before form | meaning | frontier designs; DeepSeek and a frontier model run | none | ready |
 | HQ-04 | Derived and reading cards | meaning | frontier | D3 | blocked: D3 |
-| HQ-05 | Choose by decision and deadline | choice | frontier | HQ-02; what made A4 better than B for you | blocked: D2 and that answer |
+| HQ-05 | Choose by decision and deadline | choice | frontier | HQ-02 | blocked: D2 |
 | HQ-06 | Sentences that follow each other | wording | any | none | ready |
 | HQ-07 | A correction becomes a case first | learning | any | D4 | blocked: D4 |
 | HQ-08 | Retire rules and checks that write form | rules | frontier | D5 per batch | ready |
@@ -170,6 +170,8 @@ Leave alone: no fact moves between memory files without your yes.
 
 Goal: every note build starts with `point.md`, written from the sources alone in answer to one open question, and the note is built around it.
 
+Aim: on 2026-11-21 you chose A4 over B for its fuller body: its sections hold more of the record, such as the "You must still..." lines, and not for its Takeaway, which names none of the eight decisions. A build keeps every live matter of a section with the step you still have to take, and nothing the understand step adds may cost that body.
+
 Why here: the 4 of 4 against 0 of 4 of 2026-11-16, and three skills that each built this step by hand after a correction.
 
 Steps:
@@ -197,6 +199,8 @@ Acceptance: from the record lines behind the 2026-11-16 Life Challenges note, co
 ### HQ-05 Choose by decision and deadline
 
 Goal: the Takeaway opens with the decisions due soonest and costing most, and a section's live decision leads before its latest event.
+
+Aim: on 2026-11-21 you chose A4 over B for its fuller body: its sections hold more of the record, such as the "You must still..." lines, and not for its Takeaway, which names none of the eight decisions. A build keeps every live matter of a section with the step you still have to take, and nothing the Takeaway's choice adds may cost that body.
 
 Why here: the Takeaway takes each section's lead, so in A4 a section's latest event stood there, and in A5 your order of priorities brought the soonest deadline in as a date while its action stayed in the body.
 
@@ -309,6 +313,7 @@ Suggestion: a frontier-model session takes HQ-01 now, which changes no rule, gat
 
 ## Log
 
+- 2026-11-21, third entry: you chose A4 over B for its fuller body (question tool, options fuller body, plainer wording, Takeaway doesn't matter). HQ-03 and HQ-05 now name that aim: a build keeps every live matter of a section with the step you still have to take, and the understand step or the Takeaway's choice may not cost that body. HQ-03 is ready; HQ-05 waits on D2.
 - 2026-11-21, second entry: your blind read is the measure of a whole note, as HQ-01's acceptance says when the test cannot separate the builds. The acceptance of HQ-03, HQ-05, HQ-08 and HQ-09 now asks that you prefer the new build in a blind read, with the judge's whole-note recall of `decision_eval.py` reported beside it as a signal, never as a gate; HQ-08 and HQ-09 also pass when you rate the two equal, since a batch of retired rules or a port that changes nothing you see is the result they want. HQ-03 and HQ-08 no longer wait on HQ-01: HQ-08 is ready, and HQ-03 and HQ-05 wait on what made A4 better than B for you, since A4's Takeaway names none of the eight decisions of 2026-11-09 and B's names three. DD-15 of the delegation plan prepares the blind-read packets with the test as its signal. HQ-07's step 2 still keeps a rule only when `decision_eval.py` improves; it changes with D4, which another session is asking.
 
 - 2026-11-21: HQ-01 is blocked, since the decision test does not rank every build you preferred above the one you rejected on Takeaway recall. `scripts/decision_eval.py` (agentkit acd07ef, 16 tests) has one fresh DeepSeek call read the whole note and another the Takeaway alone, and matches each call's rows to your gold list by shared words or by a judge call on one pair at a time. You confirmed four gold lists with the question tool (D1; socrates c4a9d00, `docs/human quality/data/decision_test/`): Life Challenges 2026-11-07 (16 decisions), Stock Review 2026-11-20 (4), Life Overview 2026-11-09 (8, A4 preferred over B) and date 3 (3), a control, since its two versions share one Takeaway word for word. In three runs with no failed call, the preferred build led on Takeaway recall in 4 of 9 pair-runs by shared words and 1 of 9 by the judge: Life Challenges 1 of 3 by both, Stock Review 3 of 3 by words and 0 of 3 by the judge (three ties), A4 against B 0 of 3, at 0 against 3 of 8 every run, and the control tied in all three runs. On whole-note recall the judge ranks the preferred build above in all three runs for Life Challenges and Stock Review, and for A4 in one run with two ties. Shared words paired rows on a common word ("follow up" with the Taxpayer Advocate follow-up), and the judge refused near matches ("buy Intel" against "buy Intel or AMD"). A4's Takeaway states none of the eight decisions, so your choice of A4 rests on what its body says, and B's Takeaway names three. Whole-note recall would not pass either, at 7 of 9 pair-runs by the judge, so your blind read stays the only measure of a whole note, as the task's acceptance says; the test still reports what a Takeaway leaves out. The first batch of 2026-11-20 was void after HTTP 429 refusals from the OpenCode Go route, so every call now passes one gate, six at a time in these runs, and a refusal waits and tries again. Correction recorded as failure 233 in socrates, with one sentence in rule 62.
