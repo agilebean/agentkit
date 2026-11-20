@@ -173,3 +173,5 @@ test_a_section_edited_since_or_holding_an_image_is_refused
 | T2.1 | 2026-11-20 | pass | `NOTE_BUILD_SOCRATES=$(mktemp -d) mamba run -n socrates python -m pytest -q -rs tests/test_note_build.py` printed `42 passed, 14 skipped` with 14 lines ending `socrates's ENML converter is not checked out` |
 | T2.2 | 2026-11-20 | pass | `NOTE_BUILD_SOCRATES=$HOME/Software/Prototypes/socrates mamba run -n socrates python -m pytest -q tests/test_note_build.py` printed `56 passed` |
 | T3.1 | 2026-11-20 | pass | `... python -m pytest -q --strict-markers -m local_port --collect-only` listed `tests/test_browser.py::TestChromeDriverAttach::test_attaches_with_resolved_driver` and `tests/test_note_build.py::test_the_bridge_uploads_a_photo_with_a_resumable_start_and_one_put`; the suite printed `588 passed` |
+| T4.1 | 2026-11-20 | pass | `mamba run -n socrates python -c "import yaml; yaml.safe_load(open('.github/workflows/tests.yml'))"` printed `parsed` and exited `0` |
+| T4.2 | 2026-11-20 | pass | the clean venv with an empty `HOME` printed `553 passed, 27 skipped`, and every `SKIPPED` line names private data or socrates |
