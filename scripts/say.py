@@ -129,12 +129,17 @@ def split_prompt(text: str | None = None) -> tuple[str, list[str], str]:
     head, rest = text.split(PAIRS_HEAD, 1)
     block, rest = rest.split(GROUPS_HEAD, 1)
     groups = rest.split(TAIL, 1)[0]
-    by_card = {card_text(pair_card(r)): r["id"] for r in load_pairs()}
+    by_card = {card_text(pair_card(r)): r for r in load_pairs()}
     ids = []
-    for m in re.finditer(r"^card: (.*)$", block, re.M):
-        if m.group(1) not in by_card:
-            raise SystemExit(f"say.py: the prompt's pair {m.group(1)!r} is not a row of {PAIRS.name}")
-        ids.append(by_card[m.group(1)])
+    for m in re.finditer(r"^card: (.*)\nline: (.*)$", block, re.M):
+        card, line = m.group(1), m.group(2)
+        row = by_card.get(card)
+        if row is None:
+            raise SystemExit(f"say.py: the prompt's pair {card!r} is not a row of {PAIRS.name}")
+        if line != row["line"]:
+            raise SystemExit(f"say.py: the prompt's line for {row['id']} is not the row's: "
+                             f"{line!r} != {row['line']!r}")
+        ids.append(row["id"])
     return head, ids, groups
 
 

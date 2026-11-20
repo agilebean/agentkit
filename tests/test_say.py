@@ -40,6 +40,17 @@ def test_the_prompt_rebuilt_from_pairs_p01_to_p08_is_the_tested_file() -> None:
     assert say.build_prompt(head, [BY_ID[i] for i in ids], groups) == say.prompt_text()
 
 
+def test_a_prompt_line_that_drifted_from_its_row_is_refused() -> None:
+    """The card was checked and the line was not, so a rebuilt prompt could silently overwrite a tuned line."""
+    text = say.prompt_text()
+    row = BY_ID["P04"]
+    drifted = row["line"].replace("locally", "abroad", 1)
+    assert drifted != row["line"] and row["line"] in text
+    with pytest.raises(SystemExit) as err:
+        say.split_prompt(text.replace(row["line"], drifted, 1))
+    assert "is not the row's" in str(err.value)
+
+
 def test_a_pair_that_shares_a_word_with_a_card_is_swapped() -> None:
     cards = [say.pair_card(BY_ID[f"P{n:02d}"]) for n in range(9, 20)]
     chosen, swapped = say.choose_pairs(cards)
