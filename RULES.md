@@ -4264,6 +4264,28 @@ documented ones and you must add the fix cost", then "you said the total is over
 evernote to see that?" and "isn't that common sense?" The per-lecture figure is
 15.78 h: 126.25 over eight.
 
+**Two cases are compared on what differs between them.** When a table puts one
+case beside another (a city and a city, a winter away and a winter at home), each
+line carries its amount in both cases and its difference; the difference, not the
+amount, is the finding. A cost paid in both cases cancels and is written as 0,
+however large it is at the source. An income line is earned or not earned in a
+case, never varied to make a total come out. A figure the source does not give
+stays empty in its cell as "not on the record", and is never back-solved from a
+total the source states: a part computed that way reproduces the total and proves
+nothing else. Before a difference is written, name the one mechanism that makes
+that line differ between the cases; a line with no such mechanism is a zero.
+
+(private)
+
+ (private)
+
+
+ (private)
+ (private)
+ (private)
+
+
+
 ### 209. An option search starts from the user's outcome and gates, never from the visible brand set
 
 A search for options — providers, agencies, vendors, services — is not a
