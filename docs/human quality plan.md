@@ -93,7 +93,7 @@ This table is where progress is tracked. A session that takes a task sets its st
 | HQ-03 | Understand before form | meaning | frontier designs; DeepSeek and a frontier model run | none | ready |
 | HQ-04 | Derived and reading cards | meaning | frontier | D3, decided | ready |
 | HQ-05 | Choose by decision and deadline | choice | frontier | HQ-02 | blocked: HQ-02 |
-| HQ-06 | Sentences that follow each other | wording | any | none | ready |
+| HQ-06 | Sentences that follow each other | wording | any | none | in progress, 2026-11-21, Claude Opus 5.5 |
 | HQ-07 | A correction becomes a case first | learning | any | D4, decided | ready |
 | HQ-08 | Retire rules and checks that write form | rules | frontier | D5 per batch | ready |
 | HQ-09 | One builder for every note skill | all | frontier | HQ-03 to HQ-06 | blocked |
