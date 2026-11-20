@@ -287,7 +287,8 @@ Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
    on the runner's idle limit before it had read the transcript.
 10. **Write the note.** The evernote skill, section "A text you wrote":
    `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_build.py init B/note --as-is B/draft.md --title "<title>" --notebook "Affinity" --person "<her name>" [--verbatim B/his.md]`,
-   without the draft's `# title` line. `--person` lets her lead a sentence, as
+   with the draft's `# title` line deleted first: `--as-is` writes the file as it stands, so a
+   kept H1 repeats the note's title in the body (failure 225). `--person` lets her lead a sentence, as
    Chaehan chose on 2026-11-12 ("she may lead"): the gate takes she, her and her
    name as a subject beside you; all its other checks stay, the cap of seven
    list items per section among them (Chaehan, 2026-11-12: quality over quantity). On a gate failure, edit `B/note/draft.md` and run
