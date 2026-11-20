@@ -111,10 +111,33 @@ def _draft(sex_quotes: int, filler_words: int = 0) -> str:
 
 def test_sections_depth_and_length() -> None:
     assert check.sections(_draft(3)) == []
-    assert any("depth" in f for f in check.sections(_draft(2)))
     assert any("length" in f for f in check.sections(_draft(3, 1600)))
     missing = _draft(3).replace("## What you can do better", "## Plans")
     assert any("What you can do better" in f for f in check.sections(missing))
+
+
+def _without(draft: str, *heads: str) -> str:
+    import re
+    for h in heads:
+        draft = re.sub(rf"^## {re.escape(h)}\n.*?(?=^## )", "", draft, flags=re.M | re.S)
+    return draft
+
+
+def test_a_first_date_with_no_turn_and_no_sex_talk_has_no_such_sections() -> None:
+    """Chaehan, 2026-11-20: "sections turning point and sex should not be here if not spoken about this is
+    common sense!" (failure 230)."""
+    short = _without(_draft(0), "The turning point", "How it changed since your first meeting",
+                     "Sex and past relationships")
+    assert check.sections(short) == []
+    assert any("Takeaway" in f for f in check.sections(_without(short, "Takeaway")))
+
+
+def test_a_section_over_a_sentence_saying_nothing_happened_fails() -> None:
+    for head, line in [("The turning point", "You felt no change in her all evening."),
+                       ("Sex and past relationships", "You asked her nothing about sex, and she brought up neither."),
+                       ("How it changed since your first meeting", "You met her once, so this evening stands alone.")]:
+        draft = _draft(3).replace(f"## {head}\n\nYou met her.", f"## {head}\n\n{line}")
+        assert any(head in f and "nothing happened" in f for f in check.sections(draft)), head
 
 
 def test_the_turning_point_comes_second_and_is_told_as_a_story() -> None:

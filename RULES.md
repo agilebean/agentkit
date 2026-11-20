@@ -5245,13 +5245,13 @@ about that same matter), says that leaving it out is correct when no such
 line exists, builds a retelling of record lines instead of a template of
 fields, and shows no example with a filled element that most cases lack. The
 test: for each element the instruction names, ask what the model writes when
-the record is silent; if the answer is "something", the instruction is
+the record is silent; if the answer is "something", or a sentence saying that nothing happened, the instruction is
 rewritten. `agentkit/scripts/instruction_lint.py` flags a paragraph that
-asks for such an element with no empty case; it runs on a skill, command or
+asks for such an element with no empty case (I1), or writes the empty case as a sentence (I2); it runs on a skill, command or
 agent file whenever one is written. Instance, 2026-11-08: the life-overview rule "name who helped and
 how" produced "Minho signed the transfers". Chaehan: "you must prevent that
 deepseek forcibly wants to fill out a requested variable and if it can't,
-uses tricks and hallucination. most plausible-sounding is not enough."
+uses tricks and hallucination. most plausible-sounding is not enough." The empty case of a section, heading or field is its absence, never a sentence that says it is empty: a heading over "nothing came up" is a section read for nothing. A checker never demands an element the record can lack (a section, a count of quotes on a topic), since that demand forces filler. The test for a note: for each section, ask whether a record line holds its matter; when none does, the heading is gone. Instance, 2026-11-20 (failure 230 in socrates `memory/agentic_ai.md`): the note of the 2026-11-19 date kept "The turning point" over "You felt no change in her" and "Sex and past relationships" over marriage talk, because the date skill asked for one sentence when nothing changed and `date_check.py` required every section and three quotes on sex. Chaehan: "sections turning point and sex should not be here if not spoken about this is common sense!"
 
 The model is fixed: DeepSeek through opencode, with the direct DeepSeek API as
 its fallback, does the work. A stronger model is never offered as an option;

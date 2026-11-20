@@ -14,10 +14,13 @@ Three checks, each printed with the line to fix; exit 0 only when all pass.
    in that turn or one of the two turns around it. Words left out inside a quote
    are written "...". A quote without a time, or one the turn does not hold,
    fails: an invented or misplaced quote is the costliest error in this note.
-3. Sections, depth and length. The H2 sections of SKILL.md, in that order; at
-   least three quotes on sex and past relationships; a turning point told in
-   paragraphs, never as a list; at most 1500 words outside the quotes
-   (Chaehan, 2026-11-12: "no quality over quantity").
+3. Sections, depth and length. The H2 sections of SKILL.md, in that order: the
+   ones every note has, and the turning point, the progression and sex only
+   when the date gave them something, never as a heading over a sentence that
+   says nothing happened (Chaehan, 2026-11-20: "sections turning point and sex
+   should not be here if not spoken about this is common sense!"); a turning
+   point told in paragraphs, never as a list; at most 1500 words outside the
+   quotes (Chaehan, 2026-11-12: "no quality over quantity").
 4. Formula. One sentence opening (its first four words) used four times or
    more: on 2026-11-11 "You would think again if" closed all fourteen trait
    sections. A bullet that starts with a quote is left out.
@@ -47,8 +50,12 @@ SECTIONS = [
     "Source",
 ]
 OPTIONAL = {"Your feedback"}
+# Sections only a date that gave them something has. Until 2026-11-20 they were required and sex needed three
+# quotes, so the note of a first date with no turn and no word on sex kept all three over filler (failure 230).
+CONDITIONAL = {"The turning point", "How it changed since your first meeting", "Sex and past relationships"}
+SAYS_NOTHING = re.compile(r"\b(?:nothing|neither|no change|no moment|no turning point|never came up|did not come up|"
+                          r"didn't come up|not spoken|stands alone|no earlier)\b", re.I)
 MAX_WORDS = 1500          # outside quotes: Chaehan, 2026-11-12, "quality over quantity"
-MIN_SEX_QUOTES = 3
 MAX_TURN_QUOTES = 14  # the 2026-11-14 section had 31 in 478 words and no idea in it (failure 213)
 
 HANGUL = re.compile(r"[\uac00-\ud7a3]")
@@ -126,16 +133,21 @@ def sections(draft: str) -> list[str]:
     out = []
     got = [h for h in heads if h not in OPTIONAL]
     for want in SECTIONS:
-        if not any(h.startswith(want) for h in got):
+        if want not in CONDITIONAL and not any(h.startswith(want) for h in got):
             out.append(f"sections: '## {want}' is missing")
     order = [next((i for i, w in enumerate(SECTIONS) if h.startswith(w)), None) for h in got]
     order = [o for o in order if o is not None]
     if order != sorted(order):
         out.append("sections: the H2 sections are out of the order SKILL.md gives")
-    m = re.search(r"^## Sex and past relationships.*?(?=^## |\Z)", draft, re.M | re.S)
-    if m and len(QUOTE.findall(m.group(0))) < MIN_SEX_QUOTES:
-        out.append(f"depth: 'Sex and past relationships' quotes {len(QUOTE.findall(m.group(0)))} lines; "
-                   f"it needs {MIN_SEX_QUOTES} or more, his own included (traits.md, the decoding table)")
+    for want in CONDITIONAL:
+        m = re.search(rf"^## {re.escape(want)}[^\n]*\n(.*?)(?=^## |\Z)", draft, re.M | re.S)
+        if not m:
+            continue
+        body = m.group(1).strip()
+        first = re.split(r"(?<=[.!?])\s", body, maxsplit=1)[0] if body else ""
+        if not body or SAYS_NOTHING.search(first):
+            out.append(f"sections: '## {want}' opens by saying nothing happened: {first[:70]!r}. A section the "
+                       "date gave nothing for leaves the note, heading and all (SKILL.md; Chaehan, 2026-11-20)")
     t = re.search(r"^## The turning point.*?(?=^## |\Z)", draft, re.M | re.S)
     if t and re.search(r"^\s*(?:[-*]|\d+\.)\s+", t.group(0), re.M):
         out.append("turning point: written as a list; tell it as a train of thought in paragraphs: the idea, "

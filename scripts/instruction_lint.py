@@ -12,6 +12,10 @@ says nothing about what to write when the record has none.
 I1  a request for an element (who, why, how, the reason, the cause, the consequence, what it took or
     cost, a helper, a benchmark) with no empty case in the paragraph ("when the record holds one",
     "only where", "leave it out", "when none")
+I2  an empty case written as a sentence ("one sentence that says so"): the empty case of a section,
+    heading or field is its absence. A date note of 2026-11-19 kept "The turning point" over "You felt
+    no change in her" because its skill asked for that sentence (failure 230; Chaehan, 2026-11-20:
+    "sections turning point and sex should not be here if not spoken about this is common sense!")
 """
 from __future__ import annotations
 
@@ -30,6 +34,10 @@ EMPTY = re.compile(
     r"leave (?:it |them )?out|left out|stays out|has none|no such line|when it has one|when there is one|"
     r"when one exists|or nothing|is never a failure|never invent|from (?:a|one) (?:record )?line|"
     r"when the record|when available|is asked|asks? (?:Chaehan|him)|^(?:When|If)\b", re.I | re.M)
+
+SAYS_EMPTY = re.compile(
+    r"\b(?:one sentence that says(?: so)?|says? so in one sentence|a sentence that says (?:so|nothing|that nothing)|"
+    r"write that one sentence|holds that sentence alone|the note says so)\b", re.I)
 
 
 def paragraphs(text: str):
@@ -53,6 +61,9 @@ def lint(text: str) -> list[tuple[int, str]]:
         m = ASK.search(para)
         if m and not EMPTY.search(para):
             out.append((n, m.group(0)))
+        s = SAYS_EMPTY.search(para)
+        if s:
+            out.append((n, "I2:" + s.group(0)))
     return out
 
 
@@ -62,7 +73,10 @@ def main(argv: list[str] | None = None) -> int:
     for p in paths:
         for n, hit in lint(Path(p).read_text(encoding="utf-8")):
             total += 1
-            print(f"{p}:{n}: I1 asks for an element with no empty case: {hit!r}")
+            if hit.startswith("I2:"):
+                print(f"{p}:{n}: I2 writes an empty case as a sentence; leave the section out: {hit[3:]!r}")
+            else:
+                print(f"{p}:{n}: I1 asks for an element with no empty case: {hit!r}")
     print(f"instruction_lint: {len(paths)} file(s), {total} paragraph(s) flagged")
     return 2 if total else 0
 

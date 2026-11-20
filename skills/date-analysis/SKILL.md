@@ -91,17 +91,20 @@ So the note answers six things, in this order, and leaves out what serves none:
    it. The talk is traced from where its subject first came up. A turn is an
    event across the other five points, so it is found by step
    7, never by a topic code. When nothing in the date changed how she treated
-   him, the note says so in one sentence.
+   him, the note has no turning point section.
 2. **Her feelings for him.** What she reveals about how she feels toward him,
    in her words.
 3. **The progression.** How her feelings and the topics below changed from her
-   first meeting with him to this one, from the earlier notes on her.
+   first meeting with him to this one, from the earlier notes on her. A first
+   meeting has none, and its note has no such section.
 4. **Sex and past relationships, hers and his.** Analyzed in full and placed
    here, after her feelings: every line on them, his own included, verbatim
    with its time and decoded. Where she stands between the two ends he guards
    against: too open (much experience, one-night stands, open relationships)
    and too conservative (no sex before marriage). Korean manners keep this
-   indirect; `traits.md` has the decoding table.
+   indirect; `traits.md` has the decoding table. When neither of them spoke
+   about sex or past relationships, the note has no such section: talk about
+   marriage or children is not sex, and children go in the Takeaway.
 5. **The comparison.** How this date compares with his other dates, from
    `memory/dating.md` (the other Noble women and earlier dates).
 6. **What he can do better, and why.** Each point tied to a moment of the date
@@ -112,8 +115,14 @@ Children, his hard condition (`memory/partner-search.md`), go in the Takeaway
 whenever the date touched them. Her personality is read only for the three to
 five things most apparent in a 37-year-old Korean woman on a third meeting:
 how she shows interest indirectly, how she sets limits, what she expects of
-marriage and family; never a run through the Big Five. A thing this date did
-not show is left out, and the section holds only what it showed.
+marriage and family; never a run through the Big Five. A thing this date did not show is left out, and the section holds only what it showed.
+
+A section the date gave nothing for leaves the note, heading and all; it is
+never a heading over a sentence saying that nothing happened. Chaehan,
+2026-11-20, on the note of the 2026-11-19 date, which kept "The turning point"
+over "You felt no change in her" and "Sex and past relationships" over
+marriage talk: "sections turning point and sex should not be here if not
+spoken about this is common sense!" (failure 230).
 
 Every claim rests on a Korean quote with the time of its turn; the analysis is
 in English, in the register of `register.md`. Quality decides: a quote earns
@@ -187,7 +196,9 @@ folder that does not exist, and the runs of 2026-11-17 and 2026-11-20 made one o
 6. **Sex, past relationships and children, decoded.** Search the whole
    transcript for the words of `traits.md`'s decoding table (`rg -n` with all
    of them), read 15 turns before and after every hit, and add what the parts
-   missed. Turns under a staff label whose words are hers count as hers.
+   missed. Turns under a staff label whose words are hers count as hers. When
+   no hit is about sex or past relationships, `B/evidence.md` says so in one
+   line and the note has no such section.
 7. **Find the turning point.** A turn spans many turns and several topics, so
    the parts and the codes cut it into separate lines; this step puts it back
    together. First list in `B/turn.md` every place with these signs, from the
@@ -223,9 +234,8 @@ folder that does not exist, and the runs of 2026-11-17 and 2026-11-20 made one o
    one line each: what the turn added to the idea (states it, asks about it,
    explains a step, hands it to her, says it back, applies it to herself), who
    said it, and its time. A turn that adds nothing to the thought stays out of
-   the arc, however personal it is. When no
-   place shows these signs, write that one sentence, and the section of the
-   note holds that sentence alone.
+   the arc, however personal it is. When no place shows these signs, `B/turn.md` says so in one line, and the
+   note has no turning point section.
    - **The stretch is read for what was said, in a step of its own.** One pass
      over the whole evening does not hold it. On 2026-11-14 the hour of the
      turn got one read among six, the arc was written from the evidence list
@@ -317,8 +327,9 @@ folder that does not exist, and the runs of 2026-11-17 and 2026-11-20 made one o
 9. **Check.** `python3 $S/date_check.py B/draft.md --transcript B/transcript.md [--verbatim B/his.md]`
    until it prints PASS. It fails robotic wording (with every contrast frame),
    a Korean quote without its time or not found in that turn, a missing
-   section, a note over 1500 words outside its quotes, fewer than three quotes
-   on sex and past relationships, a turning point written as bullets or holding more than 14 quotes, and one
+   section the note always has, a turning point, progression or sex section
+   that opens by saying nothing happened, a note over 1500 words outside its
+   quotes, a turning point written as bullets or holding more than 14 quotes, and one
    sentence opening used four times or more. Then read the draft once aloud in your head against `register.md`.
    Each failure line names its fix, so the marker lists and the lint scripts
    are never read: on 2026-11-14 a run spent four minutes in them and stopped
@@ -343,15 +354,15 @@ folder that does not exist, and the runs of 2026-11-17 and 2026-11-20 made one o
 
 At most 1500 words. A section holds at most seven bullets.
 
-1. `## Takeaway`: three bullets: how she feels about you, with the turning
-   point when there was one; what changed since the last meeting with her; the
-   one thing to do better next time. Children here whenever the date touched
+1. `## Takeaway`: at most three bullets: how she feels about you, with the
+   turning point when there was one; what changed since the last meeting with
+   her, from the second meeting on; the one thing to do better next time. Children here whenever the date touched
    them. Sex here only when something about it changed on this date.
 2. `## Your feedback`: only when Chaehan gave his words, as he wrote them.
 3. `## The turning point`: the train of thought of step 7 in paragraphs: what
    changed, the idea that did it, her question, the answer in its steps, what
-   she did with it, and in two or three sentences what it means for you. When nothing changed how she treated you,
-   one sentence that says so.
+   she did with it, and in two or three sentences what it means for you. Only
+   when something changed how she treated you; otherwise the note has none.
 4. `## Her feelings for you`: what she revealed, in her words, outside the
    turning point, grouped under colon subheads on their own lines (rule 106):
    what she said about you, what she asked you, what she offered or planned
@@ -360,9 +371,11 @@ At most 1500 words. A section holds at most seven bullets.
    group the date did not show is left out; the groups hold at most seven
    bullets together.
 5. `## How it changed since your first meeting`: her feelings, sex and past
-   relationships on each earlier meeting with her, against this one.
+   relationships on each earlier meeting with her, against this one. Only
+   from the second meeting on.
 6. `## Sex and past relationships`: her lines and yours, decoded; where she
-   stands between too open and too conservative; what is still unknown.
+   stands between too open and too conservative; what is still unknown. Only
+   when either of you spoke about them.
 7. `## Compared with your other dates`: this date against the other women in
    `memory/dating.md`, on interest, openness and what was settled.
 8. `## What you can do better`: two to four points, each with the moment, what
