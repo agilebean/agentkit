@@ -121,7 +121,7 @@ test_a_section_edited_since_or_holding_an_image_is_refused
 
 ## Story 5: GitHub runs it, green on main and red on a broken commit
 
-- [ ] T5.1 Given Stories 1 to 4 committed and pushed to `main`, when the workflow run for the last commit finishes, then `gh run list --workflow tests.yml --branch main --limit 1 --json conclusion,headSha,databaseId` shows `"conclusion":"success"` and a `headSha` equal to `git rev-parse HEAD`. Wait with `gh run watch <databaseId> --exit-status`; a run longer than 15 min fails this test.
+- [ ] T5.1 Given Stories 1 to 4 committed and pushed to `main`, when the workflow run for the last commit finishes, then `gh run list --workflow tests.yml --branch main --limit 1 --json conclusion,headSha,databaseId` shows `"conclusion":"success"` and a `headSha` equal to `git rev-parse HEAD`. Wait with `gh run watch <databaseId> --exit-status --interval 20`, in a shell call whose timeout is 900000 ms; a run longer than 15 min fails this test.
 - [ ] T5.2 Given `main` green, when a branch holding one failing test is pushed from its own worktree, then its run concludes `failure` and `gh run view <databaseId> --log-failed` names `test_red_probe`.
 
   ```bash
