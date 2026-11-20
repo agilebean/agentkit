@@ -40,7 +40,7 @@ code's design in the skill: the project README is the source and drifts first.
 | `llm-smoke` | verifies LLM auth and connectivity end to end and reports which key source resolved | `scripts/` |
 | `receipt-note` | a receipt or booking into an Evernote note with an itinerary card at the top | `email_shot.py`, `render_card.py` |
 | `sourcing` | provider comparison tables in `memory/src_*.md`: vendors, quotes, reply checks | `README.md` (the routing rule for `src_` files) |
-| `stock-analysis` | scores AI, chip and robotics stocks for 3 months and 3-5 years into the dated Hanji "Stock Review"; positions stay in socrates | `scripts/quotes.py` (Yahoo data, risk-first scores), `reference.md` (rubric, universe); socrates `memory/stocks.md` |
+| `stock-analysis` | scores AI, chip and robotics stocks 0-10 on cash, R&D, CEO, debt and outlook into the dated Hanji "Stock Review"; positions stay in socrates | `scripts/quotes.py` (Yahoo prices and accounts, the score), `reference.md` (listings, universe); socrates `memory/stocks.md` |
 | `update-css` | a 200 m + 400 m swim test into CSS, its effort zones and `config/benchmark.yaml` | swim `config/benchmark.yaml`, `swim/AGENTS.md` |
 | `vendor-bump` | rolls every consumer repo's pinned agentkit ref to a new tag | `scripts/` |
 

@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
-"""Price, trend, analyst and balance-sheet data from Yahoo Finance, scored under the risk-first weights.
+"""Price, earnings and three years of accounts from Yahoo Finance, scored on five factors of 0-2 points.
 
-    quotes.py TICKER [TICKER ...] [--set TICKER:factor=score ...] [--json OUT.json]
+    quotes.py TICKER [TICKER ...] [--set TICKER:factor=points ...] [--json OUT.json]
+
+Score = Cash + Tech + CEO + Debt + Outlook, each 0, 1 or 2 points (10 the best); equal scores rank by
+the lower forward P/E. Cash is EBITDA over revenue and Tech is research and development (R&D) over
+revenue, each 2 when above 20% in every one of the last three years and 1 when above 20% on their
+average. Debt is 2 for net debt under one year of EBITDA with positive free cash flow, 1 when one of the
+two fails or net debt runs 1-3 years of EBITDA, 0 above 3 years or with no EBITDA. Outlook is next
+year's earnings estimate against 90 days ago: up 5% or more 2, within 5% 1, cut more or a loss 0. CEO
+is set by hand (`--set NVDA:ceo=1`): excellent 2, good 1, weak 0; a row without it has no score.
 
 A ticker may be a German listing of a US stock (NVD, FB2A or NVD.DE): the analysis runs on the US
-listing and the row also shows the German price in its own currency. The script prints one
-Markdown table sorted by score. Each factor is scored 1 to 5, 5 the best; the weighted total runs from
-20 to 100. Four factors are computed here; catalysts is set by hand (`--set NVDA:catalysts=4`) and stays
-a neutral 3 until then. `--set` also overrides a computed factor when research finds what the numbers
-miss, such as leases outside reported debt. Hand-set values carry a `*` in the table.
+listing and the row also shows the German price in its own currency. Hand-set values carry a `*`.
 
 Standard library and curl. In Claude Code the command needs network access to fc.yahoo.com and
 query1.finance.yahoo.com.
@@ -17,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import subprocess
 import sys
@@ -24,8 +29,9 @@ import tempfile
 import time
 from datetime import date
 
-WEIGHTS = {"financing": 35, "growth": 25, "valuation": 20, "catalysts": 10, "trend": 10}
-FACTORS = tuple(WEIGHTS)
+FACTORS = ("cash", "tech", "ceo", "debt", "outlook")
+BAR = 0.20          # Cash and Tech: the share of revenue that passes
+TTM_AFTER = 180     # days: the latest 12 months replace the oldest year once they end this long after it
 
 # German listing -> (US listing for the analysis, the German listing as Yahoo names it).
 LISTINGS = {"NVD": ("NVDA", "NVD.DE"), "FB2A": ("META", "FB2A.DE")}
@@ -69,66 +75,82 @@ def pe_change(price, p3m, eps_now, eps_90d) -> float | None:
     return (price / p3m) / (eps_now / eps_90d) - 1
 
 
-# --- factor scores, 5 is best ---------------------------------------------------------------------
+# --- the five factors, each 0-2 points -----------------------------------------------------------
 
-def _clamp(x: int) -> int:
-    return max(1, min(5, x))
+def windows(annual_dates: list[str], ttm_date: str | None) -> list[str]:
+    """The three yearly windows: the last three fiscal years, or the last two and the latest 12 months
+    ("ttm") once those end at least half a year after the last fiscal year."""
+    ys = sorted(annual_dates)[-3:]
+    if ttm_date and ys and (date.fromisoformat(ttm_date) - date.fromisoformat(ys[-1])).days >= TTM_AFTER:
+        return ys[-2:] + ["ttm"]
+    return ys
 
 
-def score_financing(debt, cash, ebitda, fcf) -> int | None:
-    """Net debt against EBITDA; burning cash costs a point."""
+def shares(rev: dict, part: dict, wins: list[str], missing_zero: bool = False) -> list[float] | None:
+    """part over revenue in each window. A company that reports no R&D at all counts 0 (missing_zero);
+    otherwise a gap leaves no figure."""
+    if not wins or (not part and not missing_zero):
+        return None
+    out = []
+    for w in wins:
+        r = rev.get(w)
+        if not r or r <= 0:
+            return None
+        v = part.get(w)
+        if v is None and not missing_zero:
+            return None
+        out.append((v or 0.0) / r)
+    return out
+
+
+def score_three_years(ratios: list[float] | None, bar: float = BAR) -> int | None:
+    """2 when above the bar in every year, 1 when above it on the average, 0 below."""
+    if not ratios:
+        return None
+    if all(x > bar for x in ratios):
+        return 2
+    return 1 if sum(ratios) / len(ratios) > bar else 0
+
+
+def net_debt_years(debt, cash, ebitda) -> float | None:
+    """Net debt in years of EBITDA; negative for net cash, inf when net debt meets no EBITDA."""
     if debt is None and cash is None:
         return None
     net = (debt or 0) - (cash or 0)
     if net <= 0:
-        s = 5
-    elif not ebitda or ebitda <= 0:
-        s = 1
-    else:
-        lev = net / ebitda
-        s = 4 if lev < 1 else 3 if lev < 2.5 else 2 if lev < 4 else 1
-    if fcf is not None and fcf < 0:
-        s -= 1
-    return _clamp(s)
+        return net / ebitda if ebitda and ebitda > 0 else -math.inf
+    return net / ebitda if ebitda and ebitda > 0 else math.inf
 
 
-def score_growth(rev_growth, eps_now, eps_90d) -> int | None:
-    """Revenue growth over the year, moved a point by a 5% change in next year's earnings estimate."""
-    if rev_growth is None:
+def score_debt(years: float | None, fcf) -> int | None:
+    """2: net debt under one year of EBITDA and free cash flow not negative. One year to three, or
+    negative free cash flow, costs a point each. Above three years, or net debt with no EBITDA: 0."""
+    if years is None:
         return None
-    g = rev_growth
-    s = 5 if g > 0.5 else 4 if g > 0.25 else 3 if g > 0.10 else 2 if g > 0 else 1
-    if eps_now is not None and eps_90d:
-        rev = (eps_now - eps_90d) / abs(eps_90d)
-        s += 1 if rev > 0.05 else -1 if rev < -0.05 else 0
-    return _clamp(s)
+    if years > 3:
+        return 0
+    return max(0, 2 - (years > 1) - (fcf is not None and fcf < 0))
 
 
-GROWTH_CAP = 0.5   # next year's earnings growth counted at most 50%: higher growth from a small base misleads
-RICH_SALES = 20    # above 20 times sales, valuation scores at most 2
-CHEAPER = -0.30    # a forward P/E 30% below its level 3 months ago ...
-HELD = -0.05       # ... on an earnings estimate cut by less than 5% moves valuation up 1
-
-
-def score_valuation(fpe, eps_growth, ev_sales, pe_chg=None, eps_rev=None) -> int | None:
-    """Forward P/E against next year's earnings growth (capped); P/E alone without growth; EV/sales for a
-    loss-maker. A P/E that fell 30% in 3 months while the earnings estimate held adds 1: the price fell
-    faster than the earnings. A price above 20 times sales scores at most 2 whatever the earnings say."""
-    if fpe is not None and fpe > 0:
-        if eps_growth is not None and eps_growth > 0:
-            peg = fpe / (min(eps_growth, GROWTH_CAP) * 100)
-            s = 5 if peg < 0.8 else 4 if peg < 1.2 else 3 if peg < 1.8 else 2 if peg < 2.5 else 1
-        else:
-            s = 4 if fpe < 12 else 3 if fpe < 20 else 2 if fpe < 30 else 1
-    elif ev_sales is None:
+def eps_revision(eps_now, eps_90d) -> float | None:
+    if eps_now is None or eps_90d is None or eps_90d <= 0:
         return None
-    else:
-        s = 4 if ev_sales < 3 else 3 if ev_sales < 6 else 2 if ev_sales < 12 else 1
-    if pe_chg is not None and pe_chg <= CHEAPER and eps_rev is not None and eps_rev >= HELD:
-        s = _clamp(s + 1)
-    if ev_sales is not None and ev_sales > RICH_SALES:
-        s = min(s, 2)
-    return s
+    return eps_now / eps_90d - 1
+
+
+def score_outlook(eps_now, eps_90d) -> int | None:
+    """Next year's earnings estimate against 90 days ago: up 5% or more 2, within 5% 1, cut more 0.
+    An estimate of a loss scores 0; one that turned from a loss to a profit scores 2."""
+    if eps_now is None:
+        return None
+    if eps_now <= 0:
+        return 0
+    if eps_90d is None:
+        return None
+    if eps_90d <= 0:
+        return 2
+    rev = eps_now / eps_90d - 1
+    return 2 if rev >= 0.05 else 1 if rev >= -0.05 else 0
 
 
 def earnings_label(when: str | None, today: date | None = None) -> str:
@@ -138,52 +160,40 @@ def earnings_label(when: str | None, today: date | None = None) -> str:
     return when if when >= (today or date.today()).isoformat() else f"reported {when}"
 
 
-def score_trend(r3m, price, ma200) -> int | None:
-    """Three-month return and the price against its 200-day average."""
-    if r3m is None:
-        return None
-    if ma200 is None:
-        return 4 if r3m > 0.10 else 3 if r3m >= 0 else 2 if r3m > -0.20 else 1
-    above = price is not None and price > ma200
-    if above:
-        return 5 if r3m > 0.10 else 4 if r3m >= 0 else 3
-    return 3 if r3m >= 0 else 2 if r3m > -0.20 else 1
-
-
-def eps_revision(eps_now, eps_90d) -> float | None:
-    if eps_now is None or eps_90d is None or eps_90d <= 0:
-        return None
-    return eps_now / eps_90d - 1
-
-
-def scores(f: dict, r: dict) -> dict:
-    pe_chg = pe_change(r.get("price"), r.get("p3m"), f.get("eps_now"), f.get("eps_90d"))
+def scores(f: dict, acc: dict) -> dict:
+    """The computed factors; CEO stays None until set by hand."""
+    wins = windows(list(acc.get("rev", {})), (acc.get("ttm") or {}).get("date"))
+    rev = acc.get("rev", {}) | ({"ttm": acc["ttm"]["rev"]} if acc.get("ttm", {}).get("rev") else {})
+    ebitda = acc.get("ebitda", {}) | ({"ttm": acc["ttm"]["ebitda"]} if acc.get("ttm", {}).get("ebitda") is not None else {})
+    rd = acc.get("rd", {}) | ({"ttm": acc["ttm"]["rd"]} if acc.get("ttm", {}).get("rd") is not None else {})
     return {
-        "financing": score_financing(f.get("debt"), f.get("cash"), f.get("ebitda"), f.get("fcf")),
-        "growth": score_growth(f.get("rev_growth"), f.get("eps_now"), f.get("eps_90d")),
-        "valuation": score_valuation(f.get("fpe"), f.get("eps_growth"), f.get("ev_sales"), pe_chg,
-                                     eps_revision(f.get("eps_now"), f.get("eps_90d"))),
-        "trend": score_trend(r.get("r3m"), r.get("price"), r.get("ma200")),
+        "cash": score_three_years(shares(rev, ebitda, wins)),
+        "tech": score_three_years(shares(rev, rd, wins, missing_zero=True)),
+        "ceo": None,
+        "debt": score_debt(net_debt_years(f.get("debt"), f.get("cash"), f.get("ebitda")), acc.get("fcf")),
+        "outlook": score_outlook(f.get("eps_now"), f.get("eps_90d")),
     }
 
 
-def total(s: dict) -> float | None:
-    full = {k: s.get(k) for k in FACTORS}
-    if full["catalysts"] is None:
-        full["catalysts"] = 3
-    if any(v is None for v in full.values()):
-        return None
-    return round(sum(WEIGHTS[k] * v for k, v in full.items()) / 5, 1)
+def total(s: dict) -> int | None:
+    vals = [s.get(k) for k in FACTORS]
+    return None if any(v is None for v in vals) else sum(vals)
 
 
-_SET = re.compile(r"^([A-Za-z0-9.\-]+):([a-z]+)=([1-5])$")
+def rank_key(row: dict) -> tuple:
+    """Higher score first; equal scores by the lower forward P/E; a loss or no P/E last."""
+    pe = row.get("fpe")
+    return (row.get("total") is None, -(row.get("total") or 0), pe if pe and pe > 0 else math.inf)
+
+
+_SET = re.compile(r"^([A-Za-z0-9.\-]+):([a-z]+)=([0-2])$")
 
 
 def apply_overrides(rows: list[dict], sets: list[str]) -> list[dict]:
     for item in sets:
         m = _SET.match(item.strip())
         if not m:
-            raise ValueError(f"--set wants TICKER:factor=1..5, got {item!r}")
+            raise ValueError(f"--set wants TICKER:factor=0..2, got {item!r}")
         tick, factor, val = m.group(1), m.group(2), int(m.group(3))
         if factor not in FACTORS:
             raise ValueError(f"unknown factor {factor!r}; factors are {', '.join(FACTORS)}")
@@ -235,6 +245,32 @@ def parse_summary(res: dict) -> dict:
     }
 
 
+TS_TYPES = {"TotalRevenue": "rev", "EBITDA": "ebitda", "ResearchAndDevelopment": "rd", "FreeCashFlow": "fcf"}
+
+
+def parse_timeseries(d: dict) -> dict:
+    """Yahoo's fundamentals timeseries into {"rev": {fiscal-year end: value}, "ebitda": ..., "rd": ...,
+    "ttm": {"date": ..., "rev": ..., "ebitda": ..., "rd": ...}, "fcf": the latest 12 months' free cash
+    flow, else the last fiscal year's}."""
+    out: dict = {k: {} for k in TS_TYPES.values()} | {"ttm": {}}
+    for res in (d.get("timeseries") or {}).get("result") or []:
+        typ = ((res.get("meta") or {}).get("type") or [""])[0]
+        for prefix in ("annual", "trailing"):
+            if not typ.startswith(prefix) or typ[len(prefix):] not in TS_TYPES:
+                continue
+            key = TS_TYPES[typ[len(prefix):]]
+            pts = [(v["asOfDate"], v["reportedValue"]["raw"]) for v in res.get(typ) or [] if v]
+            if prefix == "annual":
+                out[key] = dict(pts)
+            elif pts:
+                when, val = max(pts)
+                out["ttm"][key] = val
+                out["ttm"]["date"] = max(out["ttm"].get("date", ""), when)
+    annual_fcf = out.pop("fcf")
+    out["fcf"] = out["ttm"].get("fcf", annual_fcf[max(annual_fcf)] if annual_fcf else None)
+    return out
+
+
 def currency_guard(f: dict, trade_ccy: str | None) -> dict:
     """A company that reports in another currency than it trades in (TSM in TWD, BABA in CNY) gets an
     EV/sales from Yahoo that mixes the two (TSM 2.4, BABA 0.13 on 2026-11-20): drop it and mark the row,
@@ -279,6 +315,13 @@ class Yahoo:
         closes = (((r.get("indicators") or {}).get("quote") or [{}])[0]).get("close") or []
         return {"closes": closes, "meta": r.get("meta") or {}}
 
+    def accounts(self, t: str) -> dict:
+        types = ",".join(p + k for p in ("annual", "trailing") for k in TS_TYPES)
+        now = int(time.time())
+        return parse_timeseries(self._json(
+            "https://query1.finance.yahoo.com/ws/fundamentals-timeseries/v1/finance/timeseries/"
+            f"{t}?type={types}&period1={now - 6 * 365 * 86400}&period2={now}"))
+
     def summary(self, t: str) -> dict:
         d = self._json(f"https://query1.finance.yahoo.com/v10/finance/quoteSummary/{t}"
                        f"?modules={MODULES}&crumb={self.crumb}")
@@ -296,12 +339,17 @@ def fetch(tickers: list[str]) -> list[dict]:
         seen.add(tick)
         ch = y.chart(tick)
         f = currency_guard(parse_summary(y.summary(tick)), ch["meta"].get("currency"))
+        acc = y.accounts(tick)
         r = returns(ch["closes"])
         row = {**r, **f, "ticker": tick, "held": held, "name": f["name"] or ch["meta"].get("longName"),
-               "currency": ch["meta"].get("currency"), "scores": scores(f, r), "set": {}}
+               "currency": ch["meta"].get("currency"), "accounts": acc, "scores": scores(f, acc), "set": {}}
         row["price"] = r["price"] or ch["meta"].get("regularMarketPrice")
-        row["high52"] = ch["meta"].get("fiftyTwoWeekHigh")
-        row["low52"] = ch["meta"].get("fiftyTwoWeekLow")
+        wins = windows(list(acc["rev"]), acc["ttm"].get("date"))
+        rev = acc["rev"] | ({"ttm": acc["ttm"]["rev"]} if acc["ttm"].get("rev") else {})
+        row["windows"] = wins
+        row["ebitda_share"] = shares(rev, acc["ebitda"] | ({"ttm": acc["ttm"]["ebitda"]} if "ebitda" in acc["ttm"] else {}), wins)
+        row["rd_share"] = shares(rev, acc["rd"] | ({"ttm": acc["ttm"]["rd"]} if "rd" in acc["ttm"] else {}), wins, missing_zero=True)
+        row["debt_years"] = net_debt_years(f["debt"], f["cash"], f["ebitda"])
         row["pe_chg"] = pe_change(row["price"], r["p3m"], f["eps_now"], f["eps_90d"])
         row["eps_rev"] = eps_revision(f["eps_now"], f["eps_90d"])
         row["upside"] = (f["target_median"] / row["price"] - 1) if f["target_median"] and row["price"] else None
@@ -325,37 +373,50 @@ def _num(x, nd=1) -> str:
 
 def _s(row: dict, k: str) -> str:
     v = row["scores"].get(k)
-    if k == "catalysts" and v is None:
-        return "3?"
-    return ("n/a" if v is None else str(v)) + ("*" if k in row.get("set", {}) else "")
+    return ("?" if v is None else str(v)) + ("*" if k in row.get("set", {}) else "")
+
+
+def _shares(x: list[float] | None) -> str:
+    return "n/a" if not x else "/".join(f"{v * 100:.0f}" for v in x) + "%"
+
+
+def _years(x: float | None) -> str:
+    if x is None:
+        return "n/a"
+    if x == math.inf:
+        return "no EBITDA"
+    return "net cash" if x <= 0 else f"{x:.1f}"
 
 
 def to_markdown(rows: list[dict]) -> str:
-    head = ("| Stock | Price | 3 mo | From high | Forward P/E | P/E 3 mo | Estimate 3 mo | Street | Target "
-            "| Financing | Growth | Valuation | Catalysts | Trend | Score | Earnings |")
+    head = ("| Stock | Price | From high | P/E (3 mo ago) | EBITDA ÷ revenue | R&D ÷ revenue | Net debt, years "
+            "of EBITDA | Free cash flow | Estimate 3 mo | Cash | Tech | CEO | Debt | Outlook | Score | Earnings |")
     out = [head, "|" + "---|" * 16]
-    for r in sorted(rows, key=lambda r: (r.get("total") is None, -(r.get("total") or 0))):
+    for r in sorted(rows, key=rank_key):
         stock = r["ticker"] + (" †" if r.get("fx") else "") + (f" ({r['held']})" if r.get("held") else "")
         price = f"{_num(r.get('price'), 2)} {r.get('currency') or ''}".strip()
         if r.get("held_price") is not None:
             price += f" / {r['held_price']:.2f} {r.get('held_currency') or ''}".rstrip()
-        street = f"{(r.get('rating') or 'n/a').replace('_', ' ')} ({r.get('n_analysts') or 0})"
-        target = "n/a" if r.get("target_median") is None else f"{r['target_median']:.0f} ({_pct(r.get('upside'))})"
-        cells = [stock, price, _pct(r.get("r3m")), _pct(r.get("from_high")), _num(r.get("fpe")),
-                 _pct(r.get("pe_chg")), _pct(r.get("eps_rev")), street, target,
-                 *(_s(r, k) for k in ("financing", "growth", "valuation", "catalysts", "trend")),
-                 _num(r.get("total")), earnings_label(r.get("next_earnings"))]
+        fpe, chg = r.get("fpe"), r.get("pe_chg")
+        pe = "loss" if fpe is not None and fpe <= 0 else _num(fpe)
+        if fpe and fpe > 0 and chg is not None:
+            pe += f" ({fpe / (1 + chg):.1f})"
+        fcf = (r.get("accounts") or {}).get("fcf")
+        cells = [stock, price, _pct(r.get("from_high")), pe, _shares(r.get("ebitda_share")),
+                 _shares(r.get("rd_share")), _years(r.get("debt_years")),
+                 "n/a" if fcf is None else ("positive" if fcf >= 0 else "negative"), _pct(r.get("eps_rev")),
+                 *(_s(r, k) for k in FACTORS), "?" if r.get("total") is None else str(r["total"]),
+                 earnings_label(r.get("next_earnings"))]
         out.append("| " + " | ".join(cells) + " |")
     if any(r.get("fx") for r in rows):
-        out.append("\n† reports in another currency than it trades in: Yahoo's sales multiple is dropped; "
-                   "check the valuation at a second source.")
+        out.append("\n† reports in another currency than it trades in: check its P/E at a second source.")
     return "\n".join(out)
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("tickers", nargs="+")
-    ap.add_argument("--set", action="append", default=[], metavar="TICKER:factor=score")
+    ap.add_argument("--set", action="append", default=[], metavar="TICKER:factor=points")
     ap.add_argument("--json", metavar="OUT.json", help="write every fetched field and score to this file")
     a = ap.parse_args(argv)
     rows = fetch(a.tickers)
@@ -364,8 +425,8 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as e:
         print(f"quotes.py: {e}", file=sys.stderr)
         return 2
-    print(f"Yahoo Finance, fetched {date.today().isoformat()}; weights "
-          + ", ".join(f"{k} {w}" for k, w in WEIGHTS.items()) + "\n")
+    print(f"Yahoo Finance, fetched {date.today().isoformat()}. Score = Cash + Tech + CEO + Debt + Outlook, "
+          "each 0-2; equal scores by the lower P/E\n")
     print(to_markdown(rows))
     if a.json:
         with open(a.json, "w") as fh:
