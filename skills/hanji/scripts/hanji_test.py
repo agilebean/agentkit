@@ -97,7 +97,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--start", default=note_test.PROVIDERS[0])
     ap.add_argument("--variant", default="high", choices=["low", "high", "max"],
                     help="DeepSeek's reasoning variant, as in note_test.py")
-    ap.add_argument("--idle", type=int, default=300)
+    ap.add_argument("--idle", type=int, default=120,
+                    help="seconds in which neither opencode run nor its server's event stream shows the model working "
+                         "before the run stops (RULES.md 73: at most 120)")
     ap.add_argument("--budget", type=int, default=1200)
     # note_test.Run reads every option of note_test's own parser; one missing here crashes the run before launch
     # (2026-11-10, --probe: AttributeError at the first provider).
