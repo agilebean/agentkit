@@ -8,6 +8,9 @@ _spec = importlib.util.spec_from_file_location("note_build", _p)
 nb = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(nb)
 
+needs_socrates = pytest.mark.skipif(not (nb.SOCRATES / "projects/evernote/src/enml.py").is_file(),
+                                    reason="socrates's ENML converter is not checked out")
+
 OLD = """## Summary
 
 - The week has a quote and a band, not a booking.
@@ -305,6 +308,7 @@ def _stamped_build(tmp_path, monkeypatch, capsys):
     return d
 
 
+@needs_socrates
 def test_a_write_replaces_the_whole_body_and_a_created_note_keeps_its_guid(tmp_path, monkeypatch, capsys) -> None:
     import json
     d = _stamped_build(tmp_path, monkeypatch, capsys)
@@ -318,6 +322,7 @@ def test_a_write_replaces_the_whole_body_and_a_created_note_keeps_its_guid(tmp_p
     assert json.loads((d / "meta.json").read_text())["guid"] == "g-new"
 
 
+@needs_socrates
 def test_a_write_is_refused_for_a_wrong_link_title_or_an_unstamped_draft(tmp_path, monkeypatch, capsys) -> None:
     d = _stamped_build(tmp_path, monkeypatch, capsys)
     g = "f760aa60-eb40-444d-91bc-6b6656415bb1"
@@ -357,6 +362,7 @@ def test_sentences_run_together_get_their_space_back_outside_links() -> None:
     assert nb.space_sentences("Tabelog 3.5 or better.") == "Tabelog 3.5 or better."
 
 
+@needs_socrates
 def test_a_top_image_stays_and_a_note_edited_since_the_read_is_refused(tmp_path, monkeypatch, capsys) -> None:
     import json
     d = _stamped_build(tmp_path, monkeypatch, capsys)
@@ -430,6 +436,7 @@ def test_more_than_three_supporting_items_under_one_item_are_refused(tmp_path, m
     assert "item 2 carries 4 supporting items" in capsys.readouterr().out
 
 
+@needs_socrates
 def test_an_image_at_the_foot_stays_like_one_at_the_top(tmp_path, monkeypatch, capsys) -> None:
     d = _stamped_build(tmp_path, monkeypatch, capsys)
     tag = '<en-media type="image/png" hash="221100627706631fb4a4eda2b7f836d0" />'
@@ -548,6 +555,7 @@ def _as_is(tmp_path, monkeypatch, text):
     return d, rc
 
 
+@needs_socrates
 def test_a_text_written_elsewhere_is_gated_stamped_and_written_with_its_photos(tmp_path, monkeypatch, capsys) -> None:
     import hashlib
     img = _photo(tmp_path)
@@ -567,6 +575,7 @@ def test_a_text_written_elsewhere_is_gated_stamped_and_written_with_its_photos(t
     assert "IMAGES FAILED" in nb.done_write(d, "g-new", plain, {}) and "VERIFY FAILED" in nb.done_write(d, "g-new", plain, {})
 
 
+@needs_socrates
 def test_a_photo_below_the_text_is_refused_and_an_edit_of_the_draft_reruns_the_gate(tmp_path, monkeypatch, capsys) -> None:
     img = _photo(tmp_path)
     d, rc = _as_is(tmp_path, monkeypatch, AS_IS + f"\n![us](<{img}>)\n")
@@ -575,6 +584,7 @@ def test_a_photo_below_the_text_is_refused_and_an_edit_of_the_draft_reruns_the_g
     assert nb.main(["next", str(d)]) == 0 and "PASS" in capsys.readouterr().out
 
 
+@needs_socrates
 def test_the_bridge_uploads_a_photo_with_a_resumable_start_and_one_put(tmp_path) -> None:
     import threading
     from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -621,6 +631,7 @@ def test_the_gate_stamps_into_the_cache_folder_where_the_main_one_cannot_be_writ
     assert not g.stamped("You meet her tomorrow.")
 
 
+@needs_socrates
 def test_a_second_write_does_not_put_in_again_a_photo_the_note_holds(tmp_path, monkeypatch, capsys) -> None:
     import hashlib
     img, other = _photo(tmp_path), _photo(tmp_path, "second.png", (10, 200, 10))
@@ -654,6 +665,7 @@ def test_the_write_run_takes_its_folder_from_the_environment_and_its_verdict_fro
     assert r.written and not r.verified
 
 
+@needs_socrates
 def test_photos_the_write_put_at_the_top_in_divs_stay_at_the_top_on_the_next_write(tmp_path, monkeypatch, capsys) -> None:
     import hashlib
     img = _photo(tmp_path)
@@ -680,6 +692,7 @@ def test_the_printed_execute_code_parses_as_javascript(tmp_path) -> None:
         assert r.returncode == 0, (name, r.stderr[-400:])
 
 
+@needs_socrates
 def test_a_text_written_elsewhere_goes_to_hanji_with_a_photo_whose_path_has_a_space(tmp_path, monkeypatch, capsys) -> None:
     import importlib.util as u
     import shutil
@@ -782,6 +795,7 @@ def test_his_own_list_of_more_than_seven_items_stands(tmp_path) -> None:
     assert not [f for f in g.check(md, None, note=True, table_titles=True, verbatim=items) if f.startswith("T12")]
 
 
+@needs_socrates
 def test_init_as_is_with_his_words_passes_and_its_read_back_verifies(tmp_path, monkeypatch, capsys) -> None:
     monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
     monkeypatch.setenv("NOTE_BUILD_SOCRATES", str(Path.home() / "Software/Prototypes/socrates/.claude/worktrees/evernote-osaka-trip-quality-b1df3d"))
@@ -803,6 +817,7 @@ def test_photos_after_an_empty_first_line_still_stand_at_the_top() -> None:
     assert m and body[m.end():] == "<h2>Takeaway</h2>"
 
 
+@needs_socrates
 def test_a_rewrite_by_guid_needs_the_text_it_started_from_and_refuses_an_edit_since(tmp_path, monkeypatch, capsys) -> None:
     monkeypatch.setenv("NOTE_GATE_STAMPS", str(tmp_path / "stamps"))
     monkeypatch.setenv("NOTE_BUILD_SOCRATES", str(Path.home() / "Software/Prototypes/socrates/.claude/worktrees/evernote-osaka-trip-quality-b1df3d"))
@@ -835,6 +850,7 @@ def _section_build(tmp_path, monkeypatch, base_md):
     return d
 
 
+@needs_socrates
 def test_a_section_write_replaces_one_section_and_keeps_his_edits_and_photos_around_it(tmp_path, monkeypatch, capsys) -> None:
     base = WITH_HIS.replace(HIS, "You wrote this after the test.\n\n- Went better than expected.")
     d = _section_build(tmp_path, monkeypatch, base)
@@ -853,6 +869,7 @@ def test_a_section_write_replaces_one_section_and_keeps_his_edits_and_photos_aro
     assert "the rest of the note changed" in out and "VERIFY FAILED" in out
 
 
+@needs_socrates
 def test_a_section_edited_since_or_holding_an_image_is_refused(tmp_path, monkeypatch, capsys) -> None:
     base = WITH_HIS.replace(HIS, "You wrote this after the test.\n\n- Went better than expected.")
     d = _section_build(tmp_path, monkeypatch, base)
