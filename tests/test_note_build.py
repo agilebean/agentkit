@@ -585,6 +585,7 @@ def test_a_photo_below_the_text_is_refused_and_an_edit_of_the_draft_reruns_the_g
 
 
 @needs_socrates
+@pytest.mark.local_port
 def test_the_bridge_uploads_a_photo_with_a_resumable_start_and_one_put(tmp_path) -> None:
     import threading
     from http.server import BaseHTTPRequestHandler, HTTPServer
