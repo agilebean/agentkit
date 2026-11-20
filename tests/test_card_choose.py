@@ -141,3 +141,15 @@ def test_a_call_that_fails_twice_leaves_the_section_to_the_script(monkeypatch) -
     monkeypatch.setattr(choose, "complete", broken)
     r = choose.choose_section("Health", HEALTH, "2026-11-09")
     assert r["how"] == "script" and r["calls"] == 2 and "no answer" in r["problems"][0]
+
+
+def test_his_order_of_priorities_stands_above_the_cards_when_given(tmp_path) -> None:
+    memory = tmp_path / "optimize-my-life.md"
+    memory.write_text("# Me\n\n## Life priorities\n\nOrder (2026-11-08): 1. travel; 2. health, the knee  "
+                      "first in it.\n\n## Purpose\nOther text.\n", encoding="utf-8")
+    order = choose.priorities_of(memory)
+    assert order == "Order (2026-11-08): 1. travel; 2. health, the knee first in it."
+    lines = choose.user_message("Health", HEALTH[:1], "2026-11-09", order).splitlines()
+    assert lines[1] == "His order of priorities: " + order and lines[2] == "Cards:"
+    memory.write_text("# Me\n\n## Purpose\nOther text.\n", encoding="utf-8")
+    assert choose.priorities_of(memory) is None

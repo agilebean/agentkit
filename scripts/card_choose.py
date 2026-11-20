@@ -12,12 +12,14 @@ card ids only, in an outline:
 
 A script checks the answer: every id once, a lead first, at most three bullets, at most three cards a
 line, an indent only under a bullet (in "What went well": no lead, any number of bullets, up to four
-cards a line). An answer that breaks a rule is asked for once more with the reasons; a second one is
+cards a line). With --priorities, every call also gets his order of priorities from his record, so the
+matter he ranks first in a section leads it. An answer that breaks a rule is asked for once more with the reasons; a second one is
 replaced by the script's own choice: the first cards Chaehan did not state himself, a lead and three
 bullets. The Takeaway takes each section's lead, as Move 4 asks for one bullet per block, its first
 matter. The plan is written in the columns of map.tsv, so say.py can write it.
 
-    python3 scripts/card_choose.py <build>/cards.tsv --sources sources.md --out <build>/plan.tsv
+    python3 scripts/card_choose.py <build>/cards.tsv --sources sources.md --out <build>/plan.tsv \
+        --priorities memory/optimize-my-life.md
 """
 from __future__ import annotations
 
@@ -66,9 +68,17 @@ def _answer(messages: list[dict], model: str | None) -> tuple[str, list[str]]:
         return "", [f"no answer ({str(e)[:100]})"]
 
 
-def user_message(section: str, cards: list[dict], date: str) -> str:
+def user_message(section: str, cards: list[dict], date: str, priorities: str | None = None) -> str:
     rows = [f"{c['id']}\t{_mod('say').card_text(c)}" + (f" | said={c['said']}" if c.get("said") else "") for c in cards]
-    return f"Today is {date}. Section: {section}\nCards:\n" + "\n".join(rows)
+    order = f"His order of priorities: {priorities}\n" if priorities else ""
+    return f"Today is {date}. Section: {section}\n{order}Cards:\n" + "\n".join(rows)
+
+
+def priorities_of(path: Path) -> str | None:
+    """The lines under the heading "Life priorities" of a memory file, joined, as his record states them."""
+    m = re.search(r"^#+\s*Life priorities\s*$(.*?)(?=^#|\Z)", Path(path).read_text(encoding="utf-8"), re.M | re.S)
+    text = " ".join(line.strip() for line in m.group(1).splitlines() if line.strip()) if m else ""
+    return text or None
 
 
 def parse_answer(text: str, ids: list[str], section: str) -> tuple[list[dict], list[str], list[str]]:
@@ -128,11 +138,12 @@ def script_choice(section: str, cards: list[dict]) -> tuple[list[dict], list[str
     return rows, [c["id"] for c in cards if c["id"] not in used]
 
 
-def choose_section(section: str, cards: list[dict], date: str, model: str | None = None) -> dict:
+def choose_section(section: str, cards: list[dict], date: str, model: str | None = None,
+                   priorities: str | None = None) -> dict:
     t = time.time()
     ids = [c["id"] for c in cards]
     system = {"role": "system", "content": PROMPT.read_text(encoding="utf-8")}
-    msg = user_message(section, cards, date)
+    msg = user_message(section, cards, date, priorities)
     text, failed = _answer([system, {"role": "user", "content": msg}], model)
     rows, out, problems = parse_answer(text, ids, section)
     problems = failed or problems
@@ -151,14 +162,15 @@ def choose_section(section: str, cards: list[dict], date: str, model: str | None
             "seconds": round(time.time() - t, 1)}
 
 
-def plan(cards_path: Path, out_path: Path, date: str, model: str | None = None, workers: int = 8) -> dict:
+def plan(cards_path: Path, out_path: Path, date: str, model: str | None = None, workers: int = 8,
+         priorities: str | None = None) -> dict:
     """Choose every section of cards.tsv and write the plan in the columns of map.tsv."""
     cards = _mod("card_check").read_cards(cards_path)
     sections = list(dict.fromkeys(c["section"] for c in cards))
     t = time.time()
     with ThreadPoolExecutor(max_workers=max(1, min(workers, len(sections)))) as pool:
         chosen = dict(zip(sections, pool.map(
-            lambda s: choose_section(s, [c for c in cards if c["section"] == s], date, model), sections)))
+            lambda s: choose_section(s, [c for c in cards if c["section"] == s], date, model, priorities), sections)))
     lines = [("Takeaway", "bullet", 0, r["cards"]) for s in sections if s.strip().lower() != WINS
              for r in chosen[s]["rows"][:1] if r["kind"] == "lead"]
     lines += [(s, r["kind"], r["indent"], r["cards"]) for s in sections for r in chosen[s]["rows"]]
@@ -185,12 +197,17 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", type=Path, required=True, help="the plan, in the columns of map.tsv")
     ap.add_argument("--sources", type=Path, help="sources.md: its first heading gives today's date")
     ap.add_argument("--date", help="today's date, YYYY-MM-DD (default: from --sources)")
+    ap.add_argument("--priorities", type=Path, help="the memory file whose heading 'Life priorities' holds his "
+                    "order, such as memory/optimize-my-life.md; each call gets it above the cards")
     ap.add_argument("--model", help="the model (default: say.py's)")
     a = ap.parse_args(argv)
     date = a.date or (date_of(a.sources) if a.sources else None)
     if not date:
         ap.error("give --date, or --sources whose first heading holds the date")
-    r = plan(a.cards, a.out, date, a.model)
+    order = priorities_of(a.priorities) if a.priorities else None
+    if a.priorities and not order:
+        ap.error(f"{a.priorities} has no heading 'Life priorities' with lines under it")
+    r = plan(a.cards, a.out, date, a.model, priorities=order)
     for s, how in r["how"].items():
         print(f"  {s}: {how}" + (f", {'; '.join(r['problems'][s])}" if s in r["problems"] else ""))
     print(f"card_choose: {r['chosen']} of {r['cards']} cards in {a.out}, {r['calls']} calls, {r['seconds']} s")
