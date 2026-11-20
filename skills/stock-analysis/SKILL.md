@@ -76,10 +76,10 @@ or its tests: they live in socrates `memory/stocks.md` and in the note.
    research finds what the numbers miss. Each override gets a one-line reason
    in the note.
 5. **Read each stock.** 3 months and long term, each Positive, Mixed or
-   Negative with its decisive fact. A holding adds "Your plan": the recorded
-   decision with its date, or "none recorded", and whether the facts since fit
-   it. A candidate adds "Adds": what it brings that the holdings lack, or the
-   overlap it deepens, and the first date that tests it.
+   Negative with its decisive fact. For a holding: the decision he recorded,
+   with its date, or "none recorded", and whether the facts since support it.
+   For a new name: what it brings that the holdings lack, or the overlap it
+   deepens, and its next report date.
 6. **Write, check, file** (below).
 
 ## The note
@@ -89,26 +89,35 @@ Title `YYYY-MM-DD Stock Review`, notebook Finance, source file
 rewrites that note; a new day makes a new note and leaves the earlier ones
 untouched (RULES.md 31). Sections in this order:
 
-1. **Summary**, three groups in this order, as Chaehan asked on 2026-11-20:
-   Attractive (score 80 or more, the factors average 4 of 5), Mixed (60 to
-   79), Sellable (below 60, under a neutral 3). Each group has two
-   sub-bullets, Existing (his holdings) and New (his named candidates and the
-   proposed names), and under them one line per stock, best case first: its
-   score, the fact that puts it in the group, the fact that would move it out,
-   its dated event inside 3 months, and for a holding whether the facts fit
-   his recorded decision. An empty sub-bullet says so in one line; New under
-   Sellable names the screened names below 60, marked unresearched. Nothing
-   else goes in the Summary: the market, the yield and the method have their
-   own sections. The groups rank the evidence and are not a call on his money
-   (the advice limit); the Method section says so once.
-2. **Holdings**, sorted by score: Stock, Why (what it sells into AI, one line),
-   Score, 3 months, Long term, Street, Your plan.
-3. **Candidates**, his named ones first, then the new ones marked "new": Stock,
-   Why, Score, 3 months, Long term, Street, Adds.
-4. **Scores**: the script's table and the hand-set lines (ticker, factor, value,
-   reason).
-5. **Per stock**, one `###` each: 3-6 dated facts with links.
-6. **Method**: the weights, the data date, a pointer to `reference.md`.
+1. **Summary**, these four parts and nothing else:
+   - One sentence naming the pattern behind the scores: what the high
+     scorers share against the low ones.
+   - A grid of stock names, no scores. Rows: Attractive (score 80 or more,
+     the factors average 4 of 5), Mixed (60 to 79), Sellable (below 60, under
+     a neutral 3). Columns: Your holdings, New names (his candidates and the
+     proposed ones). Names run by score within a cell, Sellable lowest first;
+     an empty cell says "none".
+   - The decisions due before the nearest deadline, numbered: each decision he
+     recorded or left open, whether the evidence supports it or cuts against
+     it, and its date. A stock with no decision gets no sentence. While a sale
+     is pending, where its money goes is one of them: his plan, his funding
+     rule in `memory/finance.md`, and which new names fill a segment he holds
+     no stock in.
+   - One line of the other dated events inside 30 days.
+
+   From the second review on, a stock that changed group shows its earlier
+   group in the grid ("Arm, was Attractive"), and the decisions list only
+   what is new or whose evidence changed since the previous review.
+2. **Stocks**, one table sorted by score, new names marked "new": Stock,
+   Score, Next 3 months, Long term, Analysts (the consensus rating and median
+   target), "Your plan, or what it adds". A cell holds its decisive fact; an
+   unverified fact says so in its cell.
+3. **Sources**: one line per stock with its dated links, and one line for the
+   market (the 10-year Treasury yield).
+4. **Method**: the weights, the group cutoffs, the data date, each hand-set
+   value with its reason in one clause, a reporting-currency caveat, one
+   sentence that the groups rank the evidence and the decision stays his, and
+   a pointer to `reference.md`.
 
 Before the draft, read RULES.md's "The principle of parsimony" and rule 19
 (line ranges in `rules.index.md`): a Summary line that places no stock in a
