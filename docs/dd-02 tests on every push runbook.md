@@ -4,7 +4,7 @@ Task DD-02 of the [DeepSeek delegation plan](<deepseek delegation plan.md>): eve
 
 Board: `docs/deepseek delegation plan.md`, task DD-02. Report: `docs/2026-11-20 dd-02 tests on every push report.md`.
 
-State: not started.
+State: stopped at T5.1 on 2026-11-20. T1.1 to T4.2 pass and are committed; the run on `main` failed on the runner's missing `markitdown`.
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules
@@ -175,3 +175,4 @@ test_a_section_edited_since_or_holding_an_image_is_refused
 | T3.1 | 2026-11-20 | pass | `... python -m pytest -q --strict-markers -m local_port --collect-only` listed `tests/test_browser.py::TestChromeDriverAttach::test_attaches_with_resolved_driver` and `tests/test_note_build.py::test_the_bridge_uploads_a_photo_with_a_resumable_start_and_one_put`; the suite printed `588 passed` |
 | T4.1 | 2026-11-20 | pass | `mamba run -n socrates python -c "import yaml; yaml.safe_load(open('.github/workflows/tests.yml'))"` printed `parsed` and exited `0` |
 | T4.2 | 2026-11-20 | pass | the clean venv with an empty `HOME` printed `553 passed, 27 skipped`, and every `SKIPPED` line names private data or socrates |
+| T5.1 | 2026-11-20 | fail | `gh run list --workflow tests.yml --branch main --limit 1 --json conclusion,headSha,databaseId` showed `"conclusion":"failure"` for `headSha` `2e9d2ca`; `gh run view 44754080168 --log-failed` printed `4 failed, 521 passed, 43 skipped` with `markitdown not found on PATH` in all 4 |
