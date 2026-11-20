@@ -8,6 +8,7 @@ the script writes itself when the retry fails too. No test here calls a model.
 from __future__ import annotations
 
 import importlib.util
+import re
 from pathlib import Path
 
 import pytest
@@ -42,7 +43,7 @@ def test_the_prompt_rebuilt_from_pairs_p01_to_p08_is_the_tested_file() -> None:
 def test_a_pair_that_shares_a_word_with_a_card_is_swapped() -> None:
     cards = [say.pair_card(BY_ID[f"P{n:02d}"]) for n in range(9, 20)]
     chosen, swapped = say.choose_pairs(cards)
-    assert swapped == [("P07", "P20")]  # "an A in your course" and "your naproxen course"
+    assert swapped == [("P07", "P20")]  # two pairs that share the word "course"
     assert [r["id"] for r in chosen] == ["P01", "P02", "P03", "P04", "P05", "P06", "P20", "P08"]
 
 
@@ -59,10 +60,10 @@ def test_a_pair_with_no_unused_replacement_is_dropped() -> None:
 
 
 def test_the_user_message_holds_only_the_cards() -> None:
-    msg = say.user_message([say.pair_card(BY_ID["P05"]), say.pair_card(BY_ID["P11"])])
-    assert msg == ("Cards:\nP05\tkind=todo | thing=you | do=book a locker for your winter clothes\n"
-                   "P11\tkind=state | thing=your naproxen course | fact=ended at 7 days | "
-                   "so=diclofenac gel on the spot is enough from here")
+    p05, p11 = BY_ID["P05"], BY_ID["P11"]
+    msg = say.user_message([say.pair_card(p05), say.pair_card(p11)])
+    assert msg == (f"Cards:\nP05\tkind={p05['kind']} | thing={p05['thing']} | do={p05['do']}\n"
+                   f"P11\tkind={p11['kind']} | thing={p11['thing']} | fact={p11['fact']} | so={p11['so']}")
 
 
 def test_the_answer_is_read_by_card_id() -> None:
@@ -89,21 +90,22 @@ def test_the_accepted_lines_of_the_test_pairs_pass() -> None:
 
 
 def test_a_lost_number_or_name_fails() -> None:
-    assert _fails("Your four frozen samples at Bom Clinic run out of storage soon: you pay or lose them.", P15)
-    assert _fails("Your four frozen samples run out of storage on 2026-11-11: you pay 450000 won "
-                  "for another year or the sample is discarded.", P15)
+    line = BY_ID["P15"]["line"]
+    assert _fails(re.sub(r"\b\d+\b", "", line, count=1), P15)            # the number dropped
+    assert _fails(re.sub(r"(?<=\s)[A-Z]\w+", "", line, count=1), P15)    # the name dropped
 
 
 def test_an_added_number_or_name_fails() -> None:
-    assert _fails("Your naproxen course ended at 7 days on 2026-11-10, and diclofenac gel on the spot "
-                  "is enough from here.", P11)
-    assert _fails("Your naproxen course from Bom Clinic ended at 7 days, and diclofenac gel on the spot "
-                  "is enough from here.", P11)
+    line, p11 = BY_ID["P11"]["line"], BY_ID["P11"]
+    assert _fails(line.replace(p11["fact"], p11["fact"] + " on 2026-11-10"), P11)   # number added
+    thing = p11["thing"].capitalize()
+    assert _fails(line.replace(thing, thing + " at Bom Clinic"), P11)                # name added
 
 
 def test_an_obligation_the_card_does_not_hold_fails() -> None:
-    assert _fails("Your naproxen course ended at 7 days, so you must use diclofenac gel on the spot.", P11)
-    assert _fails("Use diclofenac gel on the spot: your naproxen course ended at 7 days.", P11)
+    p11 = BY_ID["P11"]
+    assert _fails(f"{p11['thing']} {p11['fact']}, so you must use the gel.", P11)
+    assert _fails(f"Use the gel: {p11['thing']} {p11['fact']}.", P11)
     assert _fails("You must still book a locker for your winter clothes.", P05) == []
 
 
@@ -130,8 +132,9 @@ def test_the_script_line_of_each_kind() -> None:
         "Leave the knee brace at home."
     assert say.script_line(say.pair_card(BY_ID["P14"])) == \
         "If you have a November date that goes well, you can stay in Seoul into December."
-    assert say.script_line(P11) == \
-        "Your naproxen course ended at 7 days, so diclofenac gel on the spot is enough from here."
+    row = BY_ID["P11"]
+    expected = f"{row['thing']} {row['fact']}, so {row['so']}."
+    assert say.script_line(P11) == expected[0].upper() + expected[1:]
     assert say.script_line(say.pair_card(BY_ID["P16"])) == BY_ID["P16"]["line"]
 
 
@@ -141,12 +144,12 @@ def test_say_retries_once_then_writes_the_line_itself(monkeypatch) -> None:
     cards = [P11, P15, P05]
     answers = iter([
         # first request: P11 adds an obligation, P15 drops its number, P05 is right
-        "P11\tYour naproxen course ended at 7 days, so you must use the gel.\n"
-        "P15\tYour four frozen samples at Bom Clinic run out of storage: you pay or lose them.\n"
+        f"P11\t{BY_ID['P11']['thing']} {BY_ID['P11']['fact']}, so you must use the gel.\n"
+        f"P15\t{BY_ID['P15']['thing']} run out: you pay or lose them.\n"
         "P05\tYou must still book a locker for your winter clothes.",
         # retry of P11: right; retry of P15: wrong again
-        "P11\tYour naproxen course ended at 7 days, and from here diclofenac gel on the spot is enough.",
-        "P15\tYour vials run out.",
+        f"P11\t{BY_ID['P11']['line']}",
+        "P15\tYour storage runs out.",
     ])
     sent = []
 
