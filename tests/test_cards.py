@@ -27,7 +27,7 @@ SOURCES = """# Sources
 
 ## Health
 
-memory/health.md:96 | Sleep: magnesium before bed is 4-6 g, about 1 h before (Chaehan, 2026-11-03). supplement is in use, not daily (Chaehan, 2026-11-03); on-demand dose 30 mg (Chaehan, 2026-11-04).
+memory/health.md:96 | Sleep: magnesium before bed is 4-6 g, about 1 h before (Chaehan, 2026-11-03). Ibuprofen is in use, not daily (Chaehan, 2026-11-03); on-demand dose 30 mg (Chaehan, 2026-11-04).
 memory/health.md:12 | Gluten intolerance (standing constraint): Chaehan has kept gluten out of his diet for about 25 years, so it is his permanent diet (Chaehan, 2026-11-08); the agent first recorded it on 2026-10-19, when it ruled out a barley product.
 memory/health.md:13 | Lactose intolerance (standing constraint): Chaehan has kept lactose out of his diet for about 25 years, so it is his permanent diet (Chaehan, 2026-11-08); the agent first recorded it on 2026-11-03. Excluded: milk and dairy that contain lactose. Lactose-free dairy is acceptable (Chaehan, 2026-11-04). The 2026-09-21 entry below weighs A1 beta-casein over lactose for the bloating; the two are not yet reconciled.
 memory/health.md:140 | Dental cleanings received June 3, 2026 at Bom Clinic (Seoul): 2 cleanings + x-rays = 190,000 KRW, not covered by worldwide insurance. A trusted Apgujeong clinic (doctor knows surgical history) is available but more expensive.
@@ -36,8 +36,8 @@ memory/travel.md:88 | Airbnb Sep 14-18 at 80k KRW/day; Chaehan leaves one day ea
 """
 
 FILLED = """measure | your magnesium dose before bed | is 4-6 g, about 1 h before |  |  | 2026-11-03 | 1
-state | your supplement use | is in use, not daily |  |  | 2026-11-03 | 1
-measure | your supplement on-demand dose | is 30 mg |  |  | 2026-11-04 | 1
+state | your ibuprofen use | is in use, not daily |  |  | 2026-11-03 | 1
+measure | your ibuprofen on-demand dose | is 30 mg |  |  | 2026-11-04 | 1
 state | your gluten-free diet | has been kept for about 25 years and is permanent |  |  | 2026-11-08 | 2
 state | your lactose-free diet | has been kept for about 25 years and is permanent |  |  | 2026-11-08 | 3
 instr | you |  |  | exclude milk and dairy that contain lactose |  | 3
@@ -82,7 +82,7 @@ def test_the_filled_cards_become_13_rows_with_their_record_line_as_src(tmp_path)
 def test_a_line_that_is_not_a_card_is_reported_not_kept() -> None:
     block = fill.section_lines(SOURCES, "Health")
     cards, bad = fill.parse_cards("Here are the cards:\nstate | your gym | runs until 2027 |  |  |  | 9\n"
-                                  "state | your supplement use | is on demand |  |  |  | 1\n", "Health", block)
+                                  "state | your ibuprofen use | is on demand |  |  |  | 1\n", "Health", block)
     assert len(cards) == 1
     assert len(bad) == 2  # the preamble, and a src line the block does not have
 
@@ -206,7 +206,7 @@ def test_a_thousand_written_with_k_grounds_its_written_out_form() -> None:
 
 def test_an_instruction_chaehan_stated_himself_is_known_and_a_todo_stays(tmp_path) -> None:
     path = tmp_path / "cards.tsv"
-    check.write_cards(path, [_card(kind="instr", thing="you", fact="", do="take supplement 30 mg on demand",
+    check.write_cards(path, [_card(kind="instr", thing="you", fact="", do="take ibuprofen 30 mg on demand",
                                    said="2026-11-04"),
                              _card(id="C02", kind="todo", thing="you", fact="", do="book the Mapo locker",
                                    said="2026-11-04")])
