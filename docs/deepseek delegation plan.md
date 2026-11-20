@@ -62,7 +62,7 @@ This table is where progress is tracked: a session sets a task's status here bef
 |---|---|---|---|---|---|---|
 | DD-01 | The report form and its check | all | every later task reaches you as a table you can trust | frontier designs, any model builds | E1, decided | done, 2026-11-21: DeepSeek's reports passed on the second and first check |
 | DD-02 | agentkit tests on every push, and the red test fixed | agentkit | a broken commit shows within minutes | DeepSeek | none | done, 2026-11-20: main green, a broken commit red |
-| DD-03 | Personal data out of agentkit | agentkit | what the move of 2026-11-20 left public is gone | DeepSeek | E2 for skills, rules and history | in progress, 2026-11-21, Claude Opus 5.5: the acceptance check on today's tree |
+| DD-03 | Personal data out of agentkit | agentkit | what the move of 2026-11-20 left public is gone | DeepSeek | E2 for skills, rules and history | tree done, 2026-11-21: 0 lines on ae6e350, suite green; the history waits on its runbook and your go |
 | DD-04 | Google Cloud bill audit each month | virtualfriend | the next saving after the VM move | DeepSeek, read-only | your yes per change | ready |
 | DD-05 | Nightly log digest | virtualfriend | errors and response times on one page a day | DeepSeek | none | ready |
 | DD-06 | The service-account key replaced by the VM's own identity | virtualfriend | the key file the VM runbook flagged is gone | DeepSeek | E3 | blocked: E3 |
@@ -77,6 +77,7 @@ This table is where progress is tracked: a session sets a task's status here bef
 | DD-15 | The human quality plan's measure runs | notes | each new build reaches you blind, with the decision test as a signal | DeepSeek | the first build of HQ-03, HQ-05 or HQ-06 | waiting for a build |
 | DD-16 | Stock scores refreshed each week | money | the score table without a Claude session | DeepSeek, data in socrates | none | ready |
 | DD-17 | `tests/test_note_test.py` independent of the session it runs in | agentkit | the suite passes inside an opencode session too | any | none | done, 2026-11-21: 588 passed with the variable set |
+| DD-18 | The test workflow on a runner that starts at once | agentkit | a push shows its result in a minute, never after a queue | any | none | proposed |
 
 Statuses are ready, blocked (by a task or a decision), in progress (date and model), done (date and result), proposed and dropped.
 
@@ -85,7 +86,7 @@ Statuses are ready, blocked (by a task or a decision), in progress (date and mod
 The session that reaches a decision asks it with the question tool, quoting this section.
 
 - E1, for DD-01. One line in the core of `AGENTS.md`: a run made from a runbook reports in the form above and passes `report_check.py`. It binds every opencode session, DeepSeek's included. Decided 2026-11-21, yes: the line is in core 8.
-- E2, for DD-03. Whether the examples in the skills and RULES.md that come from your life are rewritten with invented ones, which changes text DeepSeek reads and is measured like any prompt change, and whether agentkit's history is rewritten with a force push or the repository is made private. Without the second, every line moved out on 2026-11-20 stays readable in the history.
+- E2, for DD-03. Whether the examples in the skills and RULES.md that come from your life are rewritten with invented ones, which changes text DeepSeek reads and is measured like any prompt change, and whether agentkit's history is rewritten with a force push or the repository is made private. Without the second, every line moved out on 2026-11-20 stays readable in the history. Decided 2026-11-21, Chaehan: "give a prompt for deepseek to rewrite the history"; the purge runbook is `docs/dd-03 history purge runbook.md` and runs on your go.
 - E3, for DD-06. Whether virtualfriend stops using a key file and calls Google services as the VM's own service account, a change to production that the runbook tests on the live endpoints.
 - E4, for DD-12. Which mailbox and folders hold your receipts. The register reads vendors, amounts and dates, never card numbers, and every cancellation stays your act.
 - E5, for DD-10. The four rules of the docs section below.
@@ -116,6 +117,8 @@ Steps:
 3. The list of terms stays in socrates; a check in DD-02's workflow searches agentkit for them through a secret, so the list is never public.
 
 Acceptance: the search finds nothing in agentkit's tree, and the suite passes.
+
+On 2026-11-21 the tree passes: the list in socrates (`docs/agentkit personal terms.txt`) finds 0 lines on ae6e350, and the suite passes 606 of 606. Step 3's check through a secret is not built, and the history waits on its runbook.
 
 ### DD-04 Google Cloud bill audit each month
 
@@ -251,7 +254,7 @@ Your documents are spread over six docs folders and five naming styles (dated wi
 
 The other folders follow the same rules. In socrates, `IMPLEMENTATION_PLAN_socrates.md`, `PROJECT_BRIEF_socrates.md` and `implementation plan merge socrates.md` take plan and brief names, and the dated letters and positions keep their dates with spaces; swim, email-digest and invoice-admin rename their capitalised files.
 
-DD-01 and DD-02 are done; E2 to E6 wait for your word.
+DD-01 and DD-02 are done, DD-03's tree passes and its history waits on its runbook; E3 to E6 wait for your word.
 
 ## Log
 
@@ -259,3 +262,4 @@ DD-01 and DD-02 are done; E2 to E6 wait for your word.
 - 2026-11-20: created from the opencode session database (602 top-level runs since 2026-10-01), the commit logs of the last 60 days, the memory lint counts and the VM move runbook of 2026-11-18, in answer to Chaehan's question of what else DeepSeek can take, with the docs question answered in its last section.
 - 2026-11-21: DD-01 and DD-02 done (agentkit 4f01e7e to 1548113). The runbook of DD-02 was checked on a scratch copy before the hand-over, and DeepSeek V4.1 Flash ran it in three turns, 1353 s and $0.09 in all. Both of its stops came from gaps in the runbook: its first turn ended at T5.1 with the wait for GitHub in a background job, which nothing in `opencode run` wakes (the skill now keeps every wait in the foreground), and the first run on main failed 4 PDF tests because the clean replica of T4.2 had kept this Mac's PATH (T4.3 added). Both stops ended in a report that passed `report_check.py`, the first after one flag (`carry`, R7) and the final one on its first check. At its third turn DeepSeek first put markitdown into the workflow's install line (8d68c2f), against the decision in the runbook's State line, and removed it with T4.3 (e290af9); its report leaves that pair out, since the table of changes holds net changes. The plan's premise that tests needing private data already skip held for 13 tests, and 14 in `test_note_build.py` gained the marker. DD-17 is proposed: `tests/test_note_test.py` fails inside an opencode session, which sets `OPENCODE_SERVER_PASSWORD`. E1 decided by Chaehan: "Add the line".
 - 2026-11-21, second entry: DD-17 done. `tests/test_note_test.py` asserted that a launch without a private server passes no `OPENCODE_SERVER_PASSWORD`, which held only for a caller without one; an opencode session sets it for its shell tools. `note_test.py` passes its caller's environment on by design, so the test now removes the variable first, and the code is unchanged. The committed suite printed 588 passed with the variable set.
+- 2026-11-21, third entry: DD-03 checked for its acceptance on today's tree, with a list of 21 terms in socrates (`docs/agentkit personal terms.txt`), built from the scrub record's map and the later scrub commits. On the claim commit the search found 24 lines in 10 files, 11 in tests and scripts and 13 in rules, a command and skills (socrates `docs/2026-11-21 agentkit term search.md`). The scrub commits after it took them out, and on ae6e350 it finds 0 lines, the suite passes 606 of 606, and GitHub passed the two commits before it. The prompt changes were measured on the same code with the data before and after the token map: `wording_eval.py` gave lint 19 of 20 and 10 of 40 and seat 13 of 20 and 31 of 40 on both, and the acceptance set of `--say` was close on 11 of 11 pairs in 3 of 3 runs on both. The change to `wording_fill_prompt.md`, two example names, has no measure of its own. Step 3, the check in the workflow through a secret, is not built. E2 decided (Chaehan: "give a prompt for deepseek to rewrite the history"). The history was rewritten once at 01:09 with the token map, which changed every commit hash this file cites from before that hour. The purge runbook covers what stays in the history. During the check the repository answered 200 to requests without credentials, raw files included, and GitHub reported it public, where it had reported private at ~00:45. DD-18 is proposed: one run waited 15 min for a macOS arm64 runner and was cancelled, and the first one waited ~11 min, while every other run finished in under 1 min.
