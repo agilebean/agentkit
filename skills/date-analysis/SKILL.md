@@ -121,7 +121,9 @@ its place only when it carries one of the six points.
 
 ## Steps
 
-Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
+Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`). In a shell command, set
+`B=<the folder's full path>` and write `$B/...`, never a bare `B/...`: a bare `B/` names a
+folder that does not exist, and the runs of 2026-11-17 and 2026-11-20 made one or crashed on it.
 `S=~/Software/Prototypes/agentkit/skills/date-analysis/scripts`.
 
 1. **Transcript.** First search the Affinity folder tree for the recording's
