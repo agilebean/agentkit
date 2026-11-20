@@ -213,7 +213,7 @@ sentence. Then:
 - Lead with the option Chaehan would pick. When an item weighs two ways to get
   the same thing, its first sentence names the better way with its number and
   the condition it carries, and the weaker way comes after it as the fallback.
-  Chaehan, 2026-11-08, on the citrulline item: "still not good as you start
+  Chaehan, 2026-11-08, on the nebivolol item: "still not good as you start
   with a less attractive option of korea." The answer in the chat follows the
   same order: the way to plan on first, the fallbacks under it.
 - Chaehan's rejected forms and the accepted ones, from 2026-11-07:
@@ -223,9 +223,9 @@ sentence. Then:
   | You can buy your Seoul dates in December | If a November date goes well, you can stay in Seoul into December |
   | 2027 spends all nine days of slack | You use all nine spare days of 2027, so your autumn stay in Seoul cannot get longer |
   | The receipt stops deciding the tax question | If you file the letter again on 국민신문고, you get a case number and an answer within 7 to 14 days |
-  | The pharmacy trip loses that errand | With citrulline and Lipovastin prescribed in Seoul, you would need the trip only for L-citrulline and vitamin C |
+  | The pharmacy trip loses that errand | With nebivolol and Lipovastin prescribed in Seoul, you would need the trip only for L-citrulline and vitamin C |
   | What tips it | You need two answers, and you can have both before you leave Seoul |
-  | You choose where to fill citrulline, and every route enters Korea only on a Korean prescription | You buy citrulline in Melbourne on the Australian prescription you already hold: A$340.38 for 100 tablets of 20 mg, and the bottle enters Korea only in the quantity a Korean prescription gives |
+  | You choose where to fill nebivolol, and every route enters Korea only on a Korean prescription | You buy nebivolol in Melbourne on the Australian prescription you already hold: A$340.38 for 100 tablets of 20 mg, and the bottle enters Korea only in the quantity a Korean prescription gives |
 
 - No contrast frame ("X, not Y", "instead of"), no object's absence where
   Chaehan's action belongs ("you must still find a place for your winter
