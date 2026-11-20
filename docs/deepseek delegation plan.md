@@ -76,7 +76,7 @@ This table is where progress is tracked: a session sets a task's status here bef
 | DD-14 | Spring 2027 course preparation | course | checked sources and deck skeletons per session | frontier plans, DeepSeek builds | E6 | blocked: E6 |
 | DD-15 | The human quality plan's measure runs | notes | the decision test run on every build | DeepSeek | HQ-01 | blocked: HQ-01 |
 | DD-16 | Stock scores refreshed each week | money | the score table without a Claude session | DeepSeek, data in socrates | none | ready |
-| DD-17 | `tests/test_note_test.py` independent of the session it runs in | agentkit | the suite passes inside an opencode session too | any | none | proposed |
+| DD-17 | `tests/test_note_test.py` independent of the session it runs in | agentkit | the suite passes inside an opencode session too | any | none | in progress, 2026-11-21, Claude Opus 5.5 |
 
 Statuses are ready, blocked (by a task or a decision), in progress (date and model), done (date and result), proposed and dropped.
 
