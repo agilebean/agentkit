@@ -89,15 +89,15 @@ This table is where progress is tracked. A session that takes a task sets its st
 |---|---|---|---|---|---|
 | HQ-00 | Personal test data out of the public repository | privacy | any | D0, decided | done in part on 2026-11-20; the rest is DD-03 of the delegation plan |
 | HQ-01 | Decision test for a whole note | measurement | frontier | D1, decided | blocked, 2026-11-21: Takeaway recall ranks the build you preferred above in 4 of 9 pair-runs by shared words and 1 of 9 by the judge |
-| HQ-02 | Your live decisions as data | choice, meaning | frontier | D2 | blocked: D2 |
+| HQ-02 | Your live decisions as data | choice, meaning | frontier | D2, decided | ready |
 | HQ-03 | Understand before form | meaning | frontier designs; DeepSeek and a frontier model run | none | ready |
-| HQ-04 | Derived and reading cards | meaning | frontier | D3 | blocked: D3 |
-| HQ-05 | Choose by decision and deadline | choice | frontier | HQ-02 | blocked: D2 |
+| HQ-04 | Derived and reading cards | meaning | frontier | D3, decided | ready |
+| HQ-05 | Choose by decision and deadline | choice | frontier | HQ-02 | blocked: HQ-02 |
 | HQ-06 | Sentences that follow each other | wording | any | none | ready |
-| HQ-07 | A correction becomes a case first | learning | any | D4 | blocked: D4 |
+| HQ-07 | A correction becomes a case first | learning | any | D4, decided | ready |
 | HQ-08 | Retire rules and checks that write form | rules | frontier | D5 per batch | ready |
 | HQ-09 | One builder for every note skill | all | frontier | HQ-03 to HQ-06 | blocked |
-| HQ-10 | Memory index and dated fact lines | truth | any | D2 for part b | ready for part a |
+| HQ-10 | Memory index and dated fact lines | truth | any | HQ-02 for part b | ready for part a |
 
 Frontier means Claude Opus 5.5, Claude Fable 5.2 or a newer model; any means a model that writes and tests code well, DeepSeek included.
 
@@ -107,9 +107,9 @@ The session that reaches a decision asks it with the question tool, quoting this
 
 - D0, for HQ-00, decided on 2026-11-20: "move data to socrates". What moved and what stays public is under HQ-00.
 - D1, for HQ-01. For each benchmark note, the decisions you faced on its date. The session drafts each list from the record and you confirm or correct it, since what matters to you is yours to define (core 6).
-- D2, for HQ-02 and part b of HQ-10. Where your live decisions are kept. socrates already has `decisions/`, 16 dated notes of decisions you made between 2026-05-15 and 2026-10-14, and no file records the decisions still open. A register in that folder, one line per live decision with a link to the memory file that holds its facts, gives one read and one ranking, and a decision leaves it for a dated note of its own once you make it; it serves one topic, so rule 34 (no catch-all file) holds. A Decisions heading in each topic file puts each decision beside its facts, and a decision that spans domains then needs one home with links from the others. My recommendation is the register in `decisions/`.
-- D3, for HQ-04. Whether a line may state what two or more record lines on one matter mean together, with its premises cited and its numbers recomputed, and whether a link the record does not state may appear when written as the agent's reading or as open. Asked in the same question, and open since 2026-11-17: whether "probably" and "may" are allowed in a line about evidence, as the Cochrane Handbook uses them for moderate and low certainty.
-- D4, for HQ-07. Whether a correction of yours becomes a case before it becomes a rule, and a new rule or check is kept only when the measures improve (step 6 of the 2026-11-17 build spec). This is also what makes the plan grow with each correction.
+- D2, for HQ-02 and part b of HQ-10, decided on 2026-11-21: "the decisions from life challenges should be in the life folder as a dated file but only after i confirm their validity, so the life challenges skill should ask that by checkboxes after presenting the life challenges, and before creating the note". After the life-challenges skill presents the challenges and before it creates the note, it asks you with the question tool, one checkbox per decision, which are valid, and writes only those to a dated file in `socrates/life/`. HQ-05 and part b of HQ-10 read that file, and no register in `decisions/` is built.
+- D3, for HQ-04, decided on 2026-11-21: "Derived and readings". A line may state what two or more record lines on one matter mean together, with its premises cited and its numbers recomputed by a script, and a link the record does not state appears only written as the agent's reading or as open. Whether "probably" and "may" may stand in a line about evidence, as the Cochrane Handbook uses them, stays open.
+- D4, for HQ-07, decided on 2026-11-21: "Case first". A correction of yours about a note becomes a case of the layer it hit before it becomes a rule, and a new rule or check is kept only when the measures improve; core 0 of `AGENTS.md` changes with HQ-07.
 - D5, for HQ-08. Each batch of rules to merge or retire, shown to you as a before and after.
 
 ## Tasks
@@ -313,6 +313,7 @@ Suggestion: a frontier-model session takes HQ-01 now, which changes no rule, gat
 
 ## Log
 
+- 2026-11-21, fourth entry: you answered D2, D3 and D4 with the question tool. D2: the life-challenges skill asks, after it presents the challenges and before it creates the note, which decisions are valid, one checkbox each, and writes the confirmed ones to a dated file in `socrates/life/`, which HQ-05 and part b of HQ-10 read. The register in `decisions/` that the question proposed is dropped. D3: derived lines with cited premises and recomputed numbers, and readings marked as the agent's or as open. The Cochrane wording stays open. D4: case first. HQ-02, HQ-04 and HQ-07 are ready, and HQ-05 and part b of HQ-10 wait on HQ-02.
 - 2026-11-21, third entry: you chose A4 over B for its fuller body (question tool, options fuller body, plainer wording, Takeaway doesn't matter). HQ-03 and HQ-05 now name that aim: a build keeps every live matter of a section with the step you still have to take, and the understand step or the Takeaway's choice may not cost that body. HQ-03 is ready; HQ-05 waits on D2.
 - 2026-11-21, second entry: your blind read is the measure of a whole note, as HQ-01's acceptance says when the test cannot separate the builds. The acceptance of HQ-03, HQ-05, HQ-08 and HQ-09 now asks that you prefer the new build in a blind read, with the judge's whole-note recall of `decision_eval.py` reported beside it as a signal, never as a gate; HQ-08 and HQ-09 also pass when you rate the two equal, since a batch of retired rules or a port that changes nothing you see is the result they want. HQ-03 and HQ-08 no longer wait on HQ-01: HQ-08 is ready, and HQ-03 and HQ-05 wait on what made A4 better than B for you, since A4's Takeaway names none of the eight decisions of 2026-11-09 and B's names three. DD-15 of the delegation plan prepares the blind-read packets with the test as its signal. HQ-07's step 2 still keeps a rule only when `decision_eval.py` improves; it changes with D4, which another session is asking.
 
