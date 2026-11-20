@@ -168,3 +168,5 @@ test_a_section_edited_since_or_holding_an_image_is_refused
 
 | ID | Date | Result | Evidence |
 |---|---|---|---|
+| T1.1 | 2026-11-20 | pass | `NOTE_BUILD_SOCRATES=$HOME/Software/Prototypes/socrates mamba run -n socrates python -m pytest -q tests/test_en_to_hanji.py` printed `8 passed`; `git diff --quiet skills/hanji/scripts/en_to_hanji.py` exited `0` |
+| T1.2 | 2026-11-20 | pass | `... mamba run -n socrates env -u OPENCODE_SERVER_PASSWORD python -m pytest -q $(git ls-files 'tests/*test_*.py')` printed `588 passed` (the variable is set by this opencode session and fails `test_note_test.py::test_the_launch_runs_against_the_private_server_with_its_password`) |

@@ -135,7 +135,7 @@ def test_execute_code_is_valid_template() -> None:
 
 
 @needs_socrates
-def test_convert_escapes_masks_marks_colours_and_lists_cell_items() -> None:
+def test_convert_escapes_masks_drops_colours_and_lists_cell_items() -> None:
     enml = ('<en-note><div>- not a list, 1. not either</div>'
             '<div>성함: 지원*님, 직업: 소프트**** 7~8천, a_b and _x_</div>'
             '<div><span style="color:rgb(24, 168, 65);">booked</span> and '
@@ -145,9 +145,10 @@ def test_convert_escapes_masks_marks_colours_and_lists_cell_items() -> None:
     md, changes = eh.convert(enml, {})
     assert "\\- not a list, 1. not either" in md
     assert "지원\\*님" in md and "소프트\\*\\*\\*\\* 7\\~8천" in md and "a_b and \\_x\\_" in md
-    assert "==booked== and grey" in md
+    assert "booked and grey" in md and "==" not in md
     assert "| Profile<br>• 밝고 따뜻하며<br>• 미국 유학 | x |" in md
-    assert any("highlight" in c for c in changes) and any("header" in c for c in changes)
+    assert any(c.startswith("1 coloured run(s) lost their colour") for c in changes)
+    assert not any("highlighted run" in c for c in changes) and any("header" in c for c in changes)
 
 
 @needs_socrates
