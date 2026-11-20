@@ -44,6 +44,12 @@ class TestRenameCLI:
 
 
 class TestConvertCLI:
+    @pytest.fixture(autouse=True)
+    def _markitdown_on_path(self):
+        """subprocess.run stands in for markitdown, so its lookup on PATH is stood in for too."""
+        with patch("shutil.which", return_value="/usr/local/bin/markitdown"):
+            yield
+
     def test_convert_success_prints_json(self, tmp_path, capsys):
         input_pdf = tmp_path / "input.pdf"
         input_pdf.write_text("fake pdf bytes")
