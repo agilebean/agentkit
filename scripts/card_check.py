@@ -293,10 +293,13 @@ def check_card(card: dict, src: str | None, rules, block: str = "") -> tuple[lis
                                         f"the line says Chaehan stated the fact, or stays empty")
     nb = _note_build()
     wide = (grounded + "\n" + _with_iso_dates(block)).lower()
+    # A year stands in the line when one of its dates holds it: "in 2031" from "(2031-02-01 to 05-31)". On
+    # 2026-11-20 two faithful cards were cut for a year that only a date of their line held.
+    years = {d[:4] for d in DATE.findall(grounded)}
     for field in ("thing", "fact", "so", "do"):
         if card[field]:
             bad = [w for w in nb.invented(card[field], grounded) if w not in ("You", "Your")
-                   and not (not nb.NUMBER.fullmatch(w) and w.lower() in wide)]
+                   and not (not nb.NUMBER.fullmatch(w) and w.lower() in wide) and w not in years]
             if bad:
                 refuse(field, "in the record", f"{', '.join(bad)} is not in the record line {card['src']}: "
                                                f"copy it as the line has it, or cut it")

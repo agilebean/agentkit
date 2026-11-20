@@ -1,4 +1,4 @@
-You prepare the facts for a note to Chaehan. Below are lines copied from his record, each with its number. For each fact he could act on, or that changes what he expects, fill one card. A record line that holds several facts gives several cards. A booking gives one card for what it fixes, where he is from when to when, and one card for its price, fare, flight number or booking date. Skip a fact that changes nothing for him now.
+You prepare the facts for a note to Chaehan. Below are lines copied from his record, each with its number. For each fact he could act on, or that changes what he expects, fill one card. A record line that holds several facts gives several cards. A booking gives one card for what it fixes, where he is from when to when, named by its route or place and never by its flight number, and one card for its price, fare, flight number or booking date. Skip a fact that changes nothing for him now.
 
 A card is one line of seven fields with " | " between them:
 kind | thing | fact | so | do | said | src
@@ -19,5 +19,7 @@ act | you | paid the 2026 pool pass on 2026-10-02, 330000 won for 12 months |  |
 todo | you |  |  | renew the parking permit before 2026-12-01 |  | 9
 state | your stay at the Seaside Inn Busan | is booked from 2026-05-02 to 2026-05-09, 7 nights |  |  |  | 12
 measure | your booking at the Seaside Inn Busan for 2026-05-02 to 2026-05-09 | costs 840000 won |  |  |  | 12
+state | your flight from Seoul to Jeju | is booked for 2026-05-02 |  |  |  | 13
+measure | your 2026-05-02 flight from Seoul to Jeju | is KE1203 for 98000 won |  |  |  | 13
 
 Return only the cards, one per line.
