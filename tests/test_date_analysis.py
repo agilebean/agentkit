@@ -226,3 +226,60 @@ def test_md_turns_refuses_an_export_without_times(tmp_path) -> None:
     src.write_text("**Chaehan**\n안녕하세요\n", encoding="utf-8")
     with pytest.raises(SystemExit):
         mt.main([str(src), "--out", str(tmp_path / "t.md")])
+
+
+def _lines(*rows):
+    return [{"text": t, "start": s, "end": e, "speaker": w} for w, s, e, t in rows]
+
+
+def test_mw_finds_a_korean_title_stored_decomposed(tmp_path) -> None:
+    """The app stores 지원 decomposed (NFD); on 2026-11-20 a plain SQL match missed it."""
+    import unicodedata
+    db = _fake_db(tmp_path)
+    con = sqlite3.connect(db)
+    con.execute("insert into session values (x'03', '2026-11-19', ?, null, 1, 1, 5100, null)",
+                (unicodedata.normalize("NFD", "2026-11-19 Noble Date 지원"),))
+    con.commit()
+    con.close()
+    s = mw.find_session(mw.open_copy(str(db)), "2026-11-19 Noble Date 지원")
+    assert s["id"] == b"\x03"
+
+
+def test_two_unnamed_speakers_are_named_by_pitch_the_lower_voice_is_chaehan() -> None:
+    lines = _lines(("Speaker 1", 0, 5000, "a"), ("Speaker 2", 5000, 9000, "b"), ("Speaker 3", 9000, 9500, "c"))
+    hz = {"Speaker 1": 222.0, "Speaker 2": 171.0}
+    names, how = mw.name_speakers(lines, "Joohee", "x.m4a", pitch=lambda _p, spans: hz[
+        next(ln["speaker"] for ln in lines if (ln["start"], ln["end"]) == spans[0])])
+    assert names == {"Speaker 2": "Chaehan", "Speaker 1": "Joohee"}, how
+    assert "Speaker 3" not in names
+
+
+def test_voices_too_close_or_no_audio_leave_the_speakers_unnamed() -> None:
+    lines = _lines(("Speaker 1", 0, 5000, "a"), ("Speaker 2", 5000, 9000, "b"))
+    assert mw.name_speakers(lines, "Joohee", "x.m4a", pitch=lambda *_: 200.0)[0] == {}
+    assert mw.name_speakers(lines, "Joohee", None)[0] == {}
+
+
+def test_a_name_the_app_holds_is_kept_and_the_other_speaker_takes_the_other_name() -> None:
+    lines = _lines(("Chaehan", 0, 5000, "a"), ("Speaker 2", 5000, 9000, "b"))
+    assert mw.name_speakers(lines, "Joohee", None)[0] == {"Speaker 2": "Joohee"}
+    lines = _lines(("Chaehan", 0, 5000, "a"), ("Joohee", 5000, 9000, "b"))
+    assert mw.name_speakers(lines, "X", None)[0] == {}
+
+
+def test_her_name_is_what_the_title_leaves_after_date_Noble_and_date_n() -> None:
+    assert mw.her_name("2026-11-19 Noble Date 지원") == "지원"
+    assert mw.her_name("2026-11-15 Mina Date6") == "Mina"
+
+
+def test_the_md_export_reads_like_chaehans_own_and_is_never_written_over(tmp_path) -> None:
+    db = _fake_db(tmp_path)
+    out = tmp_path / "Date3.md"
+    assert mw.main(["--db", str(db), "md", "Date3", "--her", "Mina", "--out", str(out)]) == 0
+    text = out.read_text(encoding="utf-8")
+    assert text.startswith("# Date3\n\n**Speaker 1**\n\n*0:00:00*\n\n안녕하세요\n")
+    mt = _md_turns()
+    ts = mt.turns(text, {})
+    assert [(mt.clock(s), w) for s, w, _ in ts][:3] == [("0:00:00", "Speaker 1"), ("0:00:02", "Speaker 1"),
+                                                         ("0:00:04", "Speaker 2")]
+    assert mw.main(["--db", str(db), "md", "Date3", "--out", str(out)]) == 4

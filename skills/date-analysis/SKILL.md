@@ -1,6 +1,6 @@
 ---
 name: date-analysis
-description: Analyze the recording of one of Chaehan's dates and write the note (Evernote notebook Affinity, or Hanji) - the turning point of the date and the idea that led to it as one train of thought, her feelings for him, sex and past relationships decoded from indirect Korean, how they changed since the earlier meetings, how the date compares with his other dates, and what he can do better and why, in a friend's plain words with verbatim quotes and their times. Reads the transcript Chaehan exported into the Affinity folder on Drive, and MacWhisper's database only when no such file exists. Use when Chaehan asks to analyze a date or a date recording, types /date, or asks to "evernote the date".
+description: Analyze the recording of one of Chaehan's dates and write the note (Evernote notebook Affinity, or Hanji) - the turning point of the date and the idea that led to it as one train of thought, her feelings for him, sex and past relationships decoded from indirect Korean, how they changed since the earlier meetings, how the date compares with his other dates, and what he can do better and why, in a friend's plain words with verbatim quotes and their times. Reads the transcript in the Affinity folder on Drive, and when there is none exports it from Whisper Transcription with Chaehan and her named; from Claude Code, DeepSeek runs it and Claude Code checks the result. Use when Chaehan asks to analyze a date or a date recording, types /date, or asks to "evernote the date".
 ---
 
 # Date analysis
@@ -15,16 +15,52 @@ writes to Evernote; `/date <recording> Hanji` writes to Hanji instead, with
 `note_build.py init --dest hanji` (the hanji skill; Hanji has no Affinity
 notebook, so the note goes to "Chaehan's Life", as the date-1 note did).
 
-**The transcript.** Chaehan exports each date's transcript into the Affinity
-folder on Drive, named like the recording:
-`~/Library/CloudStorage/GoogleDrive-chaehan.so@virtualfriend.chat/My Drive/1 Projects/Affinity/<recording title>.md`.
-That file, or the file he names, is the transcript. Chaehan, 2026-11-14: "do
+**The transcript.** Each date's transcript is a Markdown file named like the
+recording, beside its audio in the Affinity folder on Drive or in a subfolder
+of it (Chaehan files a woman's dates under her name):
+`~/Library/CloudStorage/GoogleDrive-chaehan.so@virtualfriend.chat/My Drive/1 Projects/Affinity/`.
+A file there, or the file he names, is the transcript. Chaehan, 2026-11-14: "do
 not transcribe the audio again, the transcript is at ..." and "why don't you
 conclude that must be in the skill to check first the transcript existence".
-MacWhisper (the app installed as "Whisper Transcription", bundle
-com.goodsnooze.MacWhisper) is reached only when no such file exists, and then
-only through `mw_transcript.py`, which copies the app's database file and
-reads the copy; it never opens the app and never transcribes.
+When no file exists, the agent exports it from Whisper Transcription, the app
+that transcribed the recording, with `mw_transcript.py md` (step 1). Chaehan,
+2026-11-20: "can you export the transcripts as md file yourself from
+macwhisper ... label at least the first two speakers". The app's bundle and
+folders carry its developer's name for it, MacWhisper
+(com.goodsnooze.MacWhisper), and so do the script names; a note or a reply
+calls it Whisper Transcription, the name on Chaehan's Mac. The script copies
+the app's database and reads the copy; it never opens the app and never
+transcribes.
+
+**Who runs it.** DeepSeek runs every step (agentkit RULES.md 245: DeepSeek
+does the work, and a fix goes into its instructions, never into its output).
+In opencode, `/date` loads this skill into the agent. In Claude Code, `/date`
+hands the whole run to DeepSeek and only checks what comes back; Claude Code
+never runs steps 1 to 10 itself. Chaehan, 2026-11-20: "cant you send it to
+deepseek as well and just check and correct the output so we can save tokens
+processed by you?"
+
+1. Ask Chaehan the touch question of step 4 when his words do not answer it,
+   and write his words into `B/his.md`, since the run cannot ask him.
+2. Copy `brief.md` beside this file into `B/brief.md` and fill its fields in
+   angle brackets. When a note of that title exists, fetch it into
+   `B/base.md` and keep the `--guid` clause (the note is rebuilt in place);
+   otherwise delete the clause.
+   Start `python3 ~/Software/Prototypes/agentkit/skills/evernote/scripts/note_test.py --brief B/brief.md --out B/run1 --expect B/idea.md B/turn.md B/draft.md --budget 2400`
+   in the background. A run the idle limit cut continues with
+   `--session <its session>` and a brief that says to continue.
+3. Check what the run left against `B/stretch.md` and `B/transcript.md`:
+   `B/idea.md` (the idea as a claim, her question about it, the steps he
+   counts as steps, his words in her mouth), and in the turning point of
+   `B/note/draft.md` every span of time it states against the times it cites,
+   every act of hers against a line that shows it, a case she gave after
+   `예를 들어서` or `만약에` written as an event, and her key line quoted whole.
+   On 2026-11-17 a full run passed both gates with four such errors.
+4. Send the fixes as one brief to the same session (`--session`): DeepSeek
+   edits `B/note/draft.md` and runs the gate again. A class of error that
+   recurs goes into this skill or `date_check.py`.
+5. Write with `note_test.py --write B/note --out B/run-write`, then read the
+   note back.
 
 ## What Chaehan wants from it
 
@@ -88,21 +124,26 @@ its place only when it carries one of the six points.
 Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
 `S=~/Software/Prototypes/agentkit/skills/date-analysis/scripts`.
 
-1. **Transcript.** First `ls` the Affinity folder above for the recording's
-   title, and take any path Chaehan gave. When the file exists, it is the
-   transcript, and steps 2 and 3 run `md_turns.py` on it; MacWhisper is not
-   read. The file needs its timestamps (`*05:17:42*` under each speaker line).
-   When it has none, take them from the same recording's session in MacWhisper's
-   database (`mw_transcript.py list`, then `export` for that session): the
-   2026-11-15 export carried no times and every time in its note came from
-   there, and the named file stays the transcript. Ask Chaehan to export again
-   only when the session holds no times either. When no file exists,
-   `python3 $S/mw_transcript.py list` shows MacWhisper's
-   recent sessions; when the recording reads "transcribed False", the app is
-   still working, so wait and check again every few minutes.
-2. **Name the speakers.** `python3 $S/md_turns.py "<file>" --speakers` (from
-   MacWhisper: `mw_transcript.py speakers "<session>"`) prints each speaker's
-   turns and longest turns. Chaehan is the man who talks about KUBS, design
+1. **Transcript.** First search the Affinity folder tree for the recording's
+   title (`find "<Affinity folder>" -name "<recording>.md"`), and take any
+   path Chaehan gave. When the file exists, it is the transcript, and steps 2
+   and 3 run `md_turns.py` on it. When no file exists, export it:
+   `mamba run -n socrates python $S/mw_transcript.py md "<recording>" --her "<her first name>"`
+   writes `<recording>.md` beside the recording's audio, in the format of
+   Chaehan's own export, and names the two speakers who talk most. A name the
+   app already holds is kept; two unnamed speakers are told apart by voice
+   pitch, the lower voice being Chaehan's (right in six of six recordings he
+   had labelled, 32 to 98 Hz apart, test of 2026-11-20). Its last line says
+   how it named them; speakers it leaves unnamed are named in step 2 by their
+   words. `python3 $S/mw_transcript.py list` shows the recording names; one
+   that reads "transcribed False" is still being transcribed, so wait and
+   check again every few minutes. A file of his without timestamps
+   (`*05:17:42*` under each speaker line) is replaced for the run by the same
+   command with `--out B/export.md`, which holds the same lines with their
+   times: the 2026-11-15 export carried none.
+2. **Name the speakers.** `python3 $S/md_turns.py "<file>" --speakers` prints
+   each speaker's turns and longest turns. The two who talk most come named
+   from his export or from step 1; check them by their words. Chaehan is the man who talks about KUBS, design
    thinking, AI, Germany and his travels; she is the woman whose life the
    record describes. The app splits one voice across several numbers, worst in
    a loud bar, and Chaehan's export can still file a line of hers under his
@@ -114,9 +155,8 @@ Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
    one reason per speaker; on 2026-11-11 two of her questions sat under a
    speaker described there as video subtitles, and a later run dropped them.
 3. **Turns and counts.**
-   `python3 $S/md_turns.py "<file>" --out B/transcript.md --stats B/stats.md --map "Speaker 4=Other" ...`
-   (from MacWhisper: `mw_transcript.py export` and `stats` with the same
-   `--map`). The transcript has one line per timed block,
+   `python3 $S/md_turns.py "<file>" --out B/transcript.md --stats B/stats.md --map "Speaker 4=Other" ...`.
+   The transcript has one line per timed block,
    `T0123 [1:02:03] Mina: ...`; the time in brackets is how every quote is
    cited.
 4. **Chaehan's record.** Read her section of `memory/dating.md`, the hard
@@ -172,7 +212,7 @@ Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
    forward to what she did next. Print that stretch whole with
    `sed -n '/^T<first> /,/^T<last> /p' B/transcript.md` and read every line,
    the lines under Other first: where nobody is ordering, they are hers, and
-   MacWhisper also joins a question of hers to the front of his answer inside
+   Whisper Transcription also joins a question of hers to the front of his answer inside
    his turn. Before any line is quoted, write `B/idea.md` from that stretch in
    your own words, with no quote in it: what he was telling her (or she him),
    as a claim someone could disagree with; what the other asked about it; the
@@ -189,17 +229,13 @@ Work in a build folder, `$TMPDIR/date-<YYYY-MM-DD>-<name>/` (call it `B`).
      turn got one read among six, the arc was written from the evidence list
      in 11 s, and the idea that led to her question at 4:08:38 stood in none
      of its 23 lines; asked on that stretch alone "what did he tell her?", the
-     same model named the idea in a minute (test of 2026-11-16). From Claude
-     Code the question is a run of its own: `sed` the stretch into
-     `B/stretch.md`, and a brief that names that file alone asks what the talk
+     same model named the idea in a minute (test of 2026-11-16). So `sed` the
+     stretch into `B/stretch.md` and write `B/idea.md` from that file alone,
+     before the arc and before any rule of the section is read: what the talk
      was and what he told her, what each step he counts is, and where his
-     words come back in her mouth (`note_test.py --brief ... --expect
-     B/idea.md`). The agent that started the run checks `B/idea.md` against
-     the stretch and corrects it before the section is written, and looks
-     first at the steps he counts: no run gave them as steps unless told that
-     counted steps are steps, and most called them three doubts. Asked together with the arc
-     and the section's rules, the same question took one silent step of 180 to
-     305 s, past the runner's idle limit.
+     words come back in her mouth. On 2026-11-17 a full run that did so named
+     the idea and gave the counted steps as steps, and its slowest step took
+     104 s; most earlier runs called the counted steps three doubts.
    - **An idea is written as its content, never as the act of saying it.** "He
      admitted his fear" names an act, and "you gave her four minutes: language,
      the two girlfriends, and the fear under it" a list of topics. The content
