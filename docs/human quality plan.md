@@ -89,7 +89,7 @@ This table is where progress is tracked. A session that takes a task sets its st
 |---|---|---|---|---|---|
 | HQ-00 | Personal test data out of the public repository | privacy | any | D0, decided | done in part on 2026-11-20; the rest is DD-03 of the delegation plan |
 | HQ-01 | Decision test for a whole note | measurement | frontier | D1, decided | blocked, 2026-11-21: Takeaway recall ranks the build you preferred above in 4 of 9 pair-runs by shared words and 1 of 9 by the judge |
-| HQ-02 | Your live decisions as data | choice, meaning | frontier | D2, decided | ready |
+| HQ-02 | Your live decisions as data | choice, meaning | frontier | D2, decided | in progress, 2026-11-21, Claude Opus 5.5 |
 | HQ-03 | Understand before form | meaning | frontier designs; DeepSeek and a frontier model run | none | ready |
 | HQ-04 | Derived and reading cards | meaning | frontier | D3, decided | ready |
 | HQ-05 | Choose by decision and deadline | choice | frontier | HQ-02 | blocked: HQ-02 |
