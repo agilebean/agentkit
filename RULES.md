@@ -5405,6 +5405,14 @@ agent behaviour never edits a CLAUDE.md beyond its imports, never creates
 auto-memory: memory is the project's `memory/` folder as its agent file
 defines it.
 
+The rule binds a proposal as much as an edit: a plan that offers a CLAUDE.md as
+the home for an instruction is already the failure. A repo with no opencode file
+gets an `AGENTS.md` at its root, which opencode loads itself, and its CLAUDE.md
+gains the `@` import line and nothing else. Chaehan, 2026-11-20, after a plan
+proposed adding a log-reading command to virtualfriend's `src/CLAUDE.md`: "the
+command etc should not be in claude.md but openconfig agent files as any agent
+rules. you should know that" (failure 224).
+
 Instruction basis, 2026-11-06: "i want that claude when optimizing edits not
 claude.md files but the opencode config files for agents rules etc" and "any
 agent rule that should be applied for every agent should be in agentkit, not

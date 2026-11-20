@@ -278,4 +278,4 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 5354–5366 | ### 254. A perceived change carries the reason it is believable, and what does not move it |
 | 5367–5380 | ### 255. A possibility that survives every objection enters the summary |
 | 5381–5390 | ### 256. A hypothetical is answered as a hypothetical |
-| 5391–5411 | ### 257. Instructions live in opencode files; a CLAUDE.md is an import stub |
+| 5391–5419 | ### 257. Instructions live in opencode files; a CLAUDE.md is an import stub |
