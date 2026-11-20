@@ -107,6 +107,43 @@ def test_valuation_caps_growth_at_50_percent_and_scores_above_20_times_sales_at_
     assert q.score_valuation(fpe, growth, ev_sales) == expected
 
 
+def test_returns_give_the_price_3_months_ago_and_the_fall_from_the_1_year_high():
+    closes = [100.0] * 100 + [200.0] + [80.0] * 100
+    r = q.returns(closes)
+    assert r["p3m"] == 80.0
+    assert r["high"] == 200.0
+    assert r["from_high"] == pytest.approx(-0.6)
+
+
+def test_pe_change_divides_the_price_move_by_the_move_in_the_earnings_estimate():
+    assert q.pe_change(50, 100, 2.0, 2.0) == pytest.approx(-0.5)   # price halved, estimate held: P/E halved
+    assert q.pe_change(50, 100, 1.0, 2.0) == pytest.approx(0.0)    # both halved: no cheaper than before
+    assert q.pe_change(68, 100, 1.28, 1.0) == pytest.approx(0.68 / 1.28 - 1)
+
+
+@pytest.mark.parametrize("args", [(50, None, 2, 2), (50, 100, -1, 2), (50, 100, 2, 0), (None, 100, 2, 2)])
+def test_pe_change_is_none_without_data_or_on_a_loss(args):
+    assert q.pe_change(*args) is None
+
+
+@pytest.mark.parametrize("pe_chg,eps_rev,ev_sales,expected", [
+    (-0.40, 0.00, 5, 4),    # P/E down 40% on an estimate that held: one point cheaper than the level says
+    (-0.20, 0.00, 5, 3),    # down 20%: not enough
+    (-0.40, -0.10, 5, 3),   # estimate cut 10%: the price followed the earnings down, not cheaper
+    (None, None, 5, 3),
+    (-0.40, 0.00, 25, 2),   # above 20 times sales the cap still holds
+])
+def test_valuation_rises_one_when_the_pe_fell_30_percent_on_an_estimate_that_held(
+        pe_chg, eps_rev, ev_sales, expected):
+    assert q.score_valuation(30, 0.20, ev_sales, pe_chg, eps_rev) == expected   # level alone: 3
+
+
+def test_scores_pass_the_pe_change_to_valuation():
+    f = {"fpe": 30, "eps_growth": 0.20, "ev_sales": 5, "eps_now": 2.0, "eps_90d": 2.0}
+    r = {"price": 60.0, "p3m": 100.0, "r3m": -0.4, "ma200": 90.0}
+    assert q.scores(f, r)["valuation"] == 4
+
+
 @pytest.mark.parametrize("when,expected", [
     ("2026-12-09", "2026-12-09"),
     ("2026-11-20", "2026-11-20"),

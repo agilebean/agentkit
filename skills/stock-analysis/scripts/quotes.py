@@ -47,14 +47,26 @@ def resolve(ticker: str) -> tuple[str, str | None]:
 def returns(closes: list[float | None]) -> dict:
     c = [x for x in closes if x is not None]
     if not c:
-        return {"price": None, "r1m": None, "r3m": None, "ma200": None}
+        return {"price": None, "r1m": None, "r3m": None, "ma200": None, "p3m": None, "high": None,
+                "from_high": None}
     price = c[-1]
     return {
         "price": price,
         "r1m": price / c[-22] - 1 if len(c) >= 22 else None,
         "r3m": price / c[-64] - 1 if len(c) >= 64 else None,
         "ma200": sum(c[-200:]) / 200 if len(c) >= 200 else None,
+        "p3m": c[-64] if len(c) >= 64 else None,
+        "high": max(c),
+        "from_high": price / max(c) - 1,
     }
+
+
+def pe_change(price, p3m, eps_now, eps_90d) -> float | None:
+    """How far the forward P/E moved in 3 months: the price move divided by the move in next year's
+    earnings estimate. The currencies cancel, so it holds for a stock that reports in another one."""
+    if None in (price, p3m, eps_now, eps_90d) or p3m <= 0 or eps_now <= 0 or eps_90d <= 0:
+        return None
+    return (price / p3m) / (eps_now / eps_90d) - 1
 
 
 # --- factor scores, 5 is best ---------------------------------------------------------------------
@@ -94,11 +106,14 @@ def score_growth(rev_growth, eps_now, eps_90d) -> int | None:
 
 GROWTH_CAP = 0.5   # next year's earnings growth counted at most 50%: higher growth from a small base misleads
 RICH_SALES = 20    # above 20 times sales, valuation scores at most 2
+CHEAPER = -0.30    # a forward P/E 30% below its level 3 months ago ...
+HELD = -0.05       # ... on an earnings estimate cut by less than 5% moves valuation up 1
 
 
-def score_valuation(fpe, eps_growth, ev_sales) -> int | None:
+def score_valuation(fpe, eps_growth, ev_sales, pe_chg=None, eps_rev=None) -> int | None:
     """Forward P/E against next year's earnings growth (capped); P/E alone without growth; EV/sales for a
-    loss-maker. A price above 20 times sales scores at most 2 whatever the earnings say."""
+    loss-maker. A P/E that fell 30% in 3 months while the earnings estimate held adds 1: the price fell
+    faster than the earnings. A price above 20 times sales scores at most 2 whatever the earnings say."""
     if fpe is not None and fpe > 0:
         if eps_growth is not None and eps_growth > 0:
             peg = fpe / (min(eps_growth, GROWTH_CAP) * 100)
@@ -109,6 +124,8 @@ def score_valuation(fpe, eps_growth, ev_sales) -> int | None:
         return None
     else:
         s = 4 if ev_sales < 3 else 3 if ev_sales < 6 else 2 if ev_sales < 12 else 1
+    if pe_chg is not None and pe_chg <= CHEAPER and eps_rev is not None and eps_rev >= HELD:
+        s = _clamp(s + 1)
     if ev_sales is not None and ev_sales > RICH_SALES:
         s = min(s, 2)
     return s
@@ -133,11 +150,19 @@ def score_trend(r3m, price, ma200) -> int | None:
     return 3 if r3m >= 0 else 2 if r3m > -0.20 else 1
 
 
+def eps_revision(eps_now, eps_90d) -> float | None:
+    if eps_now is None or eps_90d is None or eps_90d <= 0:
+        return None
+    return eps_now / eps_90d - 1
+
+
 def scores(f: dict, r: dict) -> dict:
+    pe_chg = pe_change(r.get("price"), r.get("p3m"), f.get("eps_now"), f.get("eps_90d"))
     return {
         "financing": score_financing(f.get("debt"), f.get("cash"), f.get("ebitda"), f.get("fcf")),
         "growth": score_growth(f.get("rev_growth"), f.get("eps_now"), f.get("eps_90d")),
-        "valuation": score_valuation(f.get("fpe"), f.get("eps_growth"), f.get("ev_sales")),
+        "valuation": score_valuation(f.get("fpe"), f.get("eps_growth"), f.get("ev_sales"), pe_chg,
+                                     eps_revision(f.get("eps_now"), f.get("eps_90d"))),
         "trend": score_trend(r.get("r3m"), r.get("price"), r.get("ma200")),
     }
 
@@ -277,6 +302,8 @@ def fetch(tickers: list[str]) -> list[dict]:
         row["price"] = r["price"] or ch["meta"].get("regularMarketPrice")
         row["high52"] = ch["meta"].get("fiftyTwoWeekHigh")
         row["low52"] = ch["meta"].get("fiftyTwoWeekLow")
+        row["pe_chg"] = pe_change(row["price"], r["p3m"], f["eps_now"], f["eps_90d"])
+        row["eps_rev"] = eps_revision(f["eps_now"], f["eps_90d"])
         row["upside"] = (f["target_median"] / row["price"] - 1) if f["target_median"] and row["price"] else None
         if held:
             hm = y.chart(held)["meta"]
@@ -304,19 +331,18 @@ def _s(row: dict, k: str) -> str:
 
 
 def to_markdown(rows: list[dict]) -> str:
-    head = ("| Stock | Price | 3 mo | vs 200-day | Street | Target | Financing | Growth | Valuation "
-            "| Catalysts | Trend | Score | Earnings |")
-    out = [head, "|" + "---|" * 13]
+    head = ("| Stock | Price | 3 mo | From high | Forward P/E | P/E 3 mo | Estimate 3 mo | Street | Target "
+            "| Financing | Growth | Valuation | Catalysts | Trend | Score | Earnings |")
+    out = [head, "|" + "---|" * 16]
     for r in sorted(rows, key=lambda r: (r.get("total") is None, -(r.get("total") or 0))):
         stock = r["ticker"] + (" †" if r.get("fx") else "") + (f" ({r['held']})" if r.get("held") else "")
         price = f"{_num(r.get('price'), 2)} {r.get('currency') or ''}".strip()
         if r.get("held_price") is not None:
             price += f" / {r['held_price']:.2f} {r.get('held_currency') or ''}".rstrip()
-        ma = r.get("ma200")
-        vs = "n/a" if ma is None or r.get("price") is None else _pct(r["price"] / ma - 1)
         street = f"{(r.get('rating') or 'n/a').replace('_', ' ')} ({r.get('n_analysts') or 0})"
         target = "n/a" if r.get("target_median") is None else f"{r['target_median']:.0f} ({_pct(r.get('upside'))})"
-        cells = [stock, price, _pct(r.get("r3m")), vs, street, target,
+        cells = [stock, price, _pct(r.get("r3m")), _pct(r.get("from_high")), _num(r.get("fpe")),
+                 _pct(r.get("pe_chg")), _pct(r.get("eps_rev")), street, target,
                  *(_s(r, k) for k in ("financing", "growth", "valuation", "catalysts", "trend")),
                  _num(r.get("total")), earnings_label(r.get("next_earnings"))]
         out.append("| " + " | ".join(cells) + " |")
