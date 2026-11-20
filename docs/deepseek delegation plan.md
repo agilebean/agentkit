@@ -60,8 +60,8 @@ This table is where progress is tracked: a session sets a task's status here bef
 
 | ID | Task | Area | What it gives you | Runs on | Waits on | Status |
 |---|---|---|---|---|---|---|
-| DD-01 | The report form and its check | all | every later task reaches you as a table you can trust | frontier designs, any model builds | E1 for the rule line | in progress, 2026-11-20, Claude Opus 5.5 |
-| DD-02 | agentkit tests on every push, and the red test fixed | agentkit | a broken commit shows within minutes | DeepSeek | none | in progress, 2026-11-20, DeepSeek V4.1 Flash |
+| DD-01 | The report form and its check | all | every later task reaches you as a table you can trust | frontier designs, any model builds | E1, decided | done, 2026-11-21: DeepSeek's reports passed on the second and first check |
+| DD-02 | agentkit tests on every push, and the red test fixed | agentkit | a broken commit shows within minutes | DeepSeek | none | done, 2026-11-20: main green, a broken commit red |
 | DD-03 | Personal data out of agentkit | agentkit | what the move of 2026-11-20 left public is gone | DeepSeek | E2 for skills, rules and history | ready for tests and scripts |
 | DD-04 | Google Cloud bill audit each month | virtualfriend | the next saving after the VM move | DeepSeek, read-only | your yes per change | ready |
 | DD-05 | Nightly log digest | virtualfriend | errors and response times on one page a day | DeepSeek | none | ready |
@@ -76,6 +76,7 @@ This table is where progress is tracked: a session sets a task's status here bef
 | DD-14 | Spring 2027 course preparation | course | checked sources and deck skeletons per session | frontier plans, DeepSeek builds | E6 | blocked: E6 |
 | DD-15 | The human quality plan's measure runs | notes | the decision test run on every build | DeepSeek | HQ-01 | blocked: HQ-01 |
 | DD-16 | Stock scores refreshed each week | money | the score table without a Claude session | DeepSeek, data in socrates | none | ready |
+| DD-17 | `tests/test_note_test.py` independent of the session it runs in | agentkit | the suite passes inside an opencode session too | any | none | proposed |
 
 Statuses are ready, blocked (by a task or a decision), in progress (date and model), done (date and result), proposed and dropped.
 
@@ -83,7 +84,7 @@ Statuses are ready, blocked (by a task or a decision), in progress (date and mod
 
 The session that reaches a decision asks it with the question tool, quoting this section.
 
-- E1, for DD-01. One line in the core of `AGENTS.md`: a run made from a runbook reports in the form above and passes `report_check.py`. It binds every opencode session, DeepSeek's included.
+- E1, for DD-01. One line in the core of `AGENTS.md`: a run made from a runbook reports in the form above and passes `report_check.py`. It binds every opencode session, DeepSeek's included. Decided 2026-11-21, yes: the line is in core 8.
 - E2, for DD-03. Whether the examples in the skills and RULES.md that come from your life are rewritten with invented ones, which changes text DeepSeek reads and is measured like any prompt change, and whether agentkit's history is rewritten with a force push or the repository is made private. Without the second, every line moved out on 2026-11-20 stays readable in the history.
 - E3, for DD-06. Whether virtualfriend stops using a key file and calls Google services as the VM's own service account, a change to production that the runbook tests on the live endpoints.
 - E4, for DD-12. Which mailbox and folders hold your receipts. The register reads vendors, amounts and dates, never card numbers, and every cancellation stays your act.
@@ -96,29 +97,11 @@ Each task names its goal, why it stands where it does, its steps and the result 
 
 ### DD-01 The report form and its check
 
-Goal: every DeepSeek run reports in the form of "The report you get", and a script checks it.
-
-Steps:
-
-1. A skill, `agentkit/skills/runbook/SKILL.md`, that DeepSeek loads to run a runbook: read it whole, claim the task on its board, run the acceptance tests in order, stop at a failed test, write the report.
-2. `agentkit/scripts/report_check.py`, with tests on three good and three bad reports.
-3. On E1, the line in the core of `AGENTS.md`.
-
-Acceptance: `report_check.py` passes DeepSeek's report of DD-02 within two tries and refuses the three bad reports.
+Done on 2026-11-21. DeepSeek runs a runbook under `skills/runbook/SKILL.md` (claim, acceptance tests in order, stop at a failed test, every wait in the foreground), and `scripts/report_check.py` refuses a report with text outside its three parts, an empty evidence cell, a number without its unit, a cell of more than one clause or a robot marker; its 37 tests hold three good and three bad reports. DeepSeek's two DD-02 reports passed on the second and the first check, and core 8 of `AGENTS.md` holds the line of E1.
 
 ### DD-02 agentkit tests on every push, and the red test fixed
 
-Goal: every push to agentkit runs its test suite on GitHub's runners.
-
-Why here: 443 commits in 60 days came from many sessions, agentkit has no automated test run, and on 2026-11-20 one test failed unseen, in `tests/test_en_to_hanji.py`, whose converter changed on 2026-11-16 (failure 214).
-
-Steps:
-
-1. Bring the test in line with the 2026-11-16 behaviour, under which colour is dropped and counted.
-2. `.github/workflows/tests.yml`: the Python of the socrates environment, the install, `pytest -q`. Tests that need private data already skip without it; tests that need a local port get a marker.
-3. The run's result enters each session's report.
-
-Acceptance: the workflow passes on main, and a commit that breaks a test fails it.
+Done on 2026-11-20 by DeepSeek V4.1 Flash under [its runbook](<dd-02 tests on every push runbook.md>), with [its report](<2026-11-20 dd-02 tests on every push report.md>). `.github/workflows/tests.yml` runs the suite on `macos-latest` with Python 3.14 on every push: green on `main` in run 44757340752 (43 s), red on the probe commit in run 44757514076. The colour test follows the 2026-11-16 converter (failure 214), 14 tests of `test_note_build.py` skip without socrates, 2 tests that open a local port have the marker `local_port`, and the 4 PDF tests of `tests/pdf/test_cli.py` stand in for markitdown's lookup on PATH. A run's result enters each later report as a row of its table of changes (step 6 of the runbook skill).
 
 ### DD-03 Personal data out of agentkit
 
@@ -266,8 +249,9 @@ Your documents are spread over six docs folders and five naming styles (dated wi
 
 The other folders follow the same rules. In socrates, `IMPLEMENTATION_PLAN_socrates.md`, `PROJECT_BRIEF_socrates.md` and `implementation plan merge socrates.md` take plan and brief names, and the dated letters and positions keep their dates with spaces; swim, email-digest and invoice-admin rename their capitalised files.
 
-Suggestion: a frontier-model session writes the runbook of DD-01 and DeepSeek runs DD-02 under it, which changes no rule and no document of yours and tests the report form on a task whose result a test decides; E1 to E6 wait for your word.
+DD-01 and DD-02 are done; E2 to E6 wait for your word.
 
 ## Log
 
 - 2026-11-20: created from the opencode session database (602 top-level runs since 2026-10-01), the commit logs of the last 60 days, the memory lint counts and the VM move runbook of 2026-11-18, in answer to Chaehan's question of what else DeepSeek can take, with the docs question answered in its last section.
+- 2026-11-21: DD-01 and DD-02 done (agentkit 4f01e7e to 1548113). The runbook of DD-02 was checked on a scratch copy before the hand-over, and DeepSeek V4.1 Flash ran it in three turns, 1353 s and $0.09 in all. Both of its stops came from gaps in the runbook: its first turn ended at T5.1 with the wait for GitHub in a background job, which nothing in `opencode run` wakes (the skill now keeps every wait in the foreground), and the first run on main failed 4 PDF tests because the clean replica of T4.2 had kept this Mac's PATH (T4.3 added). Both stops ended in a report that passed `report_check.py`, the first after one flag (`carry`, R7) and the final one on its first check. At its third turn DeepSeek first put markitdown into the workflow's install line (8d68c2f), against the decision in the runbook's State line, and removed it with T4.3 (e290af9); its report leaves that pair out, since the table of changes holds net changes. The plan's premise that tests needing private data already skip held for 13 tests, and 14 in `test_note_build.py` gained the marker. DD-17 is proposed: `tests/test_note_test.py` fails inside an opencode session, which sets `OPENCODE_SERVER_PASSWORD`. E1 decided by Chaehan: "Add the line".
