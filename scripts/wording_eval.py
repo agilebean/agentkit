@@ -5,7 +5,7 @@ wording_cases.tsv holds 60 lines: 20 that Chaehan wrote or accepted, and 40
 that he rejected, each with its fault. A check is good when it passes the
 accepted lines and refuses the rejected ones. A change to a check, a marker or
 a prompt is kept only when one of its two numbers rises and none falls (build
-spec step 1, docs/2026-11-17 note wording build spec.md).
+spec step 1, in socrates: docs/human quality/2026-11-17 note wording build spec.md).
 
     python3 scripts/wording_eval.py                     # lint and seat
     python3 scripts/wording_eval.py --check seat --min-accept 13 --min-refuse 31
@@ -30,8 +30,6 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CASES = ROOT / "wording_cases.tsv"
-PAIRS = ROOT / "wording_pairs.tsv"
 
 
 def _load(name: str, path: Path):
@@ -51,6 +49,12 @@ def _mod(name: str):
     if name not in _mods:
         _mods[name] = _load(name, paths[name])
     return _mods[name]
+
+
+# The labelled lines are Chaehan's private data and live in socrates (say.DATA).
+DATA = _mod("say").DATA
+CASES = DATA / "wording_cases.tsv"
+PAIRS = DATA / "wording_pairs.tsv"
 
 
 def load_cases(path: Path = CASES) -> list[dict]:
