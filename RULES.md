@@ -2086,7 +2086,7 @@ The instance is Failure 146 (the swim memory's 2:08 reference, 2026-09-21).
 
 ### 62. Ask with the question tool, before acting, not in prose
 
-When a decision belongs to the user, the question goes through the question tool before any action, with the options laid out so they can answer in one tap. This covers anything that changes their records, files, plans, or money, and every choice where more than one option is defensible.
+When a decision belongs to the user, the question goes through the question tool before any action, with the options laid out so they can answer in one tap. This covers anything that changes their records, files, plans, or money, and every choice where more than one option is defensible. What the answer depends on, such as two versions to compare, is shown in the reply's own text before the question: a preview inside the tool or a file sent beside it may not render where the user reads (2026-11-21, failure 233 in socrates: "i told you 3 times to show me the versions to compare, i can't see them!").
 
 The tool is not only for ambiguity. Feeling certain is not a reason to skip it: certainty that a value is stale, that a reading is right, or that the user will agree is the state in which the question gets skipped and the damage happens. When the agent is about to write a sentence that asks the user to decide or provide something ("Tell me which table is yours", "Which should it be?"), that question goes into the question tool instead of the reply. Asking is the next step of the work, never an interruption of it.
 
