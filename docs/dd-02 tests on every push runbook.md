@@ -4,7 +4,7 @@ Task DD-02 of the [DeepSeek delegation plan](<deepseek delegation plan.md>): eve
 
 Board: `docs/deepseek delegation plan.md`, task DD-02. Report: `docs/2026-11-20 dd-02 tests on every push report.md`.
 
-State: stopped at T5.1 on 2026-11-20, resumed at T4.3 the same day. T1.1 to T4.2 pass and are committed; the run on `main` failed on the runner's missing `markitdown`, and the frontier session answered both open items of the first report: the four tests stand in for the PATH lookup (T4.3), and the probe of T5.2 and T5.3 runs after a green `main`.
+State: done on 2026-11-20. T1.1 to T5.3 pass; `main` is green on `e290af9` in run `44757340752`, the probe run `44757514076` failed on `test_red_probe`, and the probe branch is deleted.
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules
@@ -195,3 +195,8 @@ test_a_section_edited_since_or_holding_an_image_is_refused
 | T4.1 | 2026-11-20 | pass | `mamba run -n socrates python -c "import yaml; yaml.safe_load(open('.github/workflows/tests.yml'))"` printed `parsed` and exited `0` |
 | T4.2 | 2026-11-20 | pass | the clean venv with an empty `HOME` printed `553 passed, 27 skipped`, and every `SKIPPED` line names private data or socrates |
 | T5.1 | 2026-11-20 | fail | `gh run list --workflow tests.yml --branch main --limit 1 --json conclusion,headSha,databaseId` showed `"conclusion":"failure"` for `headSha` `2e9d2ca`; `gh run view 44754080168 --log-failed` printed `4 failed, 521 passed, 43 skipped` with `markitdown not found on PATH` in all 4 |
+| T4.3 | 2026-11-20 | pass | the `env -i` venv run on the committed tests printed `540 passed, 28 skipped`; `pytest -q tests/pdf/test_cli.py` printed `8 passed` |
+| T5.1 | 2026-11-20 | pass | `gh run list --workflow tests.yml --branch main --limit 1 --json conclusion,headSha,databaseId` showed `"conclusion":"success"` with `headSha` `e290af9` equal to `git rev-parse HEAD`, run `44757340752` |
+| T5.2 | 2026-11-20 | pass | `gh run view 44757514076 --log-failed` named `test_red_probe` and printed `1 failed, 525 passed, 43 skipped` |
+| T5.3 | 2026-11-20 | pass | `git ls-remote origin dd-02-red-probe` and `git branch --list dd-02-red-probe` printed nothing, and `git log origin/main --oneline` held `0` red probe commits |
+| T6.1 | 2026-11-20 | pass | `python3 scripts/report_check.py "docs/2026-11-20 dd-02 tests on every push report.md"` printed `report_check: PASS` |
