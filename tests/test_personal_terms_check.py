@@ -150,3 +150,17 @@ def test_the_term_itself_is_never_printed(tmp_path: Path) -> None:
     assert result.returncode == 1, result.stdout + result.stderr
     assert "zorblat" not in result.stdout, result.stdout
     assert "zorblat" not in result.stderr, result.stderr
+
+
+def test_the_default_list_is_the_one_in_socrates():
+    """The list lives in socrates; a checkout without it skips rather than failing."""
+    import importlib.util
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "personal_terms_check.py"
+    spec = importlib.util.spec_from_file_location("personal_terms_check_default", script)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    assert str(module.SOCRATES_TERMS).endswith(
+        "Software/Prototypes/socrates/docs/agentkit personal terms.txt"
+    )
