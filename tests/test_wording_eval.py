@@ -28,14 +28,14 @@ def test_the_table_holds_20_accepted_and_40_rejected_lines() -> None:
 
 def test_lint_and_seat_score_the_shipped_numbers() -> None:
     rows = ev.load_cases()
-    assert ev.measure(rows, ev.CHECKS["lint"]) == (19, 20, 10, 40)
+    assert ev.measure(rows, ev.CHECKS["lint"]) == (19, 20, 13, 40)
     assert ev.measure(rows, ev.CHECKS["seat"]) == (13, 20, 31, 40)
 
 
 def test_a_minimum_above_the_score_exits_1(capsys) -> None:
     assert ev.main(["--check", "seat", "--min-accept", "13", "--min-refuse", "31"]) == 0
     assert ev.main(["--check", "seat", "--min-accept", "14"]) == 1
-    assert ev.main(["--check", "lint", "--min-refuse", "11"]) == 1
+    assert ev.main(["--check", "lint", "--min-refuse", "14"]) == 1
     out = capsys.readouterr().out
     assert "13 of 20" in out and "31 of 40" in out
 
@@ -44,7 +44,7 @@ def test_misses_names_the_lines_a_check_gets_wrong() -> None:
     rows = ev.load_cases()
     passed_rejected, refused_accepted = ev.misses(rows, ev.CHECKS["lint"])
     assert len(refused_accepted) == 1
-    assert len(passed_rejected) == 30
+    assert len(passed_rejected) == 27
 
 
 def test_an_appended_row_changes_the_totals(tmp_path) -> None:

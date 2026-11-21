@@ -251,7 +251,7 @@ Write the text as plain sentences, each stating what was seen, why it happened, 
 - **The agent's own history in a note** ("I said earlier ...", "That was wrong"): a note states what is true now; the correction of an earlier answer belongs in the chat.
 - **A goal the session cannot deliver** ("can name every classmate's skill and strength" in one session): write a goal the session's time allows and the reader can show by its end.
 
-**The instances are inventoried.** Every correction the user gives is appended to `common_sense.md` (this folder) in the same turn, as one row: the flagged words and where they stood, why the user rejected them, the repair, and why the repair is better. That file's second table carries the corrections whose complaint was that the agent missed something ordinary: the user's own "not common sense" statements, with what should have been obvious and where it now lives as a rule. The user's words are quoted where the record has them; a correction recorded without the reasoning is incomplete, and when the exchange carries none, ask. Text the user will read or hear is checked against this list and that inventory before it ships. A new class becomes a kind here. A class a machine can check becomes a row in the shared marker list `robot_markers.tsv` (this folder), run by `scripts/wording_lint.py` on any project's files. A skill whose output Chaehan reads as finished prose keeps its own list beside the shared one and runs the checker with `--strict`, which fails every warn: on 2026-11-10 the contrast frames and "mechanism" reached his date note because the shared list only warns on them (the date-analysis skill's `date_markers.tsv`, 2026-11-12); a project workflow wraps the checker where useful (KUBS: `pipeline.py lint --session N` in the socrates repo). Text quoted from a source and kept verbatim sits between `<!-- verbatim -->` and `<!-- end verbatim -->`, and the checker skips it: another author's punctuation is not the user's to repair, and the path that renders an artifact drops the two marker lines before the page is drawn.
+**The instances are inventoried.** Every correction the user gives is appended to `common_sense.md` (this folder) in the same turn, as one row: the flagged words and where they stood, why the user rejected them, the repair, and why the repair is better. That file's second table carries the corrections whose complaint was that the agent missed something ordinary: the user's own "not common sense" statements, with what should have been obvious and where it now lives as a rule. The user's words are quoted where the record has them; a correction recorded without the reasoning is incomplete, and when the exchange carries none, ask. Text the user will read or hear is checked against this list and that inventory before it ships. A new class becomes a kind here. A word or idiom he flags that can recur in other text becomes a row in the shared marker list `robot_markers.tsv` (this folder) in the same turn, with his repair as its fix: one flag is enough, and the row never waits for a second instance to form a class. A flag no expression can find again (a one-off sentence, a heading style, the layout of a whole answer) is named in the writer's-pass list of `tests/test_wording_inventory.py`. That test fails on any inventory row he called robotic that is in neither place. The marker list is run by `scripts/wording_lint.py` on any project's files. A skill whose output Chaehan reads as finished prose keeps its own list beside the shared one and runs the checker with `--strict`, which fails every warn: on 2026-11-10 the contrast frames and "mechanism" reached his date note because the shared list only warns on them (the date-analysis skill's `date_markers.tsv`, 2026-11-12); a project workflow wraps the checker where useful (KUBS: `pipeline.py lint --session N` in the socrates repo). Text quoted from a source and kept verbatim sits between `<!-- verbatim -->` and `<!-- end verbatim -->`, and the checker skips it: another author's punctuation is not the user's to repair, and the path that renders an artifact drops the two marker lines before the page is drawn.
 
 The list covers internal working artifacts too (run sheets, session cards, flow notes), and a re-render re-reads the text before it ships: phrasing an earlier pass left behind is swept, not shipped again.
 
@@ -293,7 +293,11 @@ re-framing your original solution in different words.
 
 Before you implement any proposal, stop and ask yourself: **Is this what
 the user meant?** Then check the proposal against every standing constraint
-stated in this conversation. Doubt about the meaning, or about whether the
+on record: those stated in this conversation, those in RULES.md and AGENTS.md,
+and those in the memory file of the domain at hand. A ban he gave in an earlier
+session binds exactly as one given today. Failure, 2026-10-23, the Evernote life
+overview: it still used he/him, a form he had forbidden more than once ("i
+explicitly and repeatedly said this is forbidden"). Doubt about the meaning, or about whether the
 proposal violates a standing constraint, is a signal to stop, not to
 proceed: use the question tool to clarify with the user before touching
 code or files.
@@ -301,7 +305,7 @@ code or files.
 When the user rejects your proposal because it violates a constraint:
 1. Identify the constraint verbatim from the user's words.
 2. Before presenting any new proposal, check it against every standing
-   constraint the user has stated in this conversation. If any constraint
+   constraint the user has stated, in this conversation or on record. If any constraint
    fails, discard the proposal.
 3. If you cannot satisfy a constraint with code alone, state that clearly
    and ask whether the constraint should be relaxed.
@@ -2219,6 +2223,7 @@ A file name has to identify the file in the visible part of a Finder row, roughl
 - When descriptive detail has grown into the file name (a subtitle, a list, a method), move that detail into the document's own title or status line and shorten the name; the Evernote twin then carries the same short title.
 - Applies to Drive and Desktop files, quote PDFs, diagram versions, and session material alike.
 - A file name is a title: rule 20's neutral-words bullet binds it too.
+- A name keeps only the words that tell it from its siblings, and an article (the, a, an) never does; the same holds for a slide title and a table row label. Chaehan, 2026-10-11: "you use too much the article "the"".
 
 Failure mode: a file name truncated in Finder, so the artifact cannot be identified by sight.
 
@@ -2990,9 +2995,11 @@ When the user explains a past event and attaches a generalization to it — "so 
 
 Failure mode, 2026-10-07: told that the Hotel Meridian Osaka week had jumped from €727 to €964, the agent recorded the booking and the price move and did not record the rule the user was teaching — that the best hotel price can be got exactly 2 months before the travel date, with at most 1-2 days of contingency. The user: "why i told you about the price hike is that it is about 8w 2d before the travel date. so as a rule of thumb, the best hotel price can be get exactly 2m before with max 1-2d contingency. THAT is what you must remember!" Resolution: the rule and its 2026-10-06/07 datapoint went into `memory/travel.md` under Booking tactics.
 
-### 121. A source read for extraction is read to its end, and every message in it
+### 121. A source read for extraction is read to its end: every message, row and month in it
 
-When a document, email or page is read in order to take facts out of it, read the whole thing: truncating the body at a convenient length is the read-side version of guessing. Confirmation-style documents put their operative block at the foot — the fees, the taxes, the timetable, the conditions — exactly where a truncated dump stops, and a thread puts the decisive answer in a later message than the first. If a read has to stop early, say where it stopped and what remains unread, and treat the extraction as incomplete until it is finished.
+When a document, email, page or dataset is read to take facts out of it, read the whole thing: every message of a thread, every row of a table, every month of the span asked about. Truncating the body at a convenient length is the read-side version of guessing. Confirmation-style documents put their operative block at the foot — the fees, the taxes, the timetable, the conditions — exactly where a truncated dump stops, and a thread puts the decisive answer in a later message than the first. If a read has to stop early, say where it stopped and what remains unread, and treat the extraction as incomplete until it is finished. A claim drawn from dated records names the first and last date read, so a missing month shows before he has to find it.
+
+Failure, 2026-08-15, the swim correlates analysis: the December, January and February data were never read. Every effort level for those months was in the JSON, and Chaehan had pointed to it three times ("i am still unhappy that you didn't go through the dec jan data").
 
 Failure mode, 2026-10-07: the Hotel Meridian Osaka confirmation email was dumped as `body[:1800]`, so the pool fees, the COMPLIMENTARY shuttle timetable and the Osaka accommodation tax never reached the note. The user: "the hotel confirmation email had important info which you should extract: the price for the pool and the COMPLIMENTARY SHUTTLE BUS info." The exact fees sat in the hotel's own message, a separate email in the same thread that was never opened. Resolution: the full text of every message in the booking thread was read, and the facts went into the note and the travel memory.
 
@@ -3076,7 +3083,7 @@ Stated 2026-10-09: "you still didn't fix the homework slide in e05 for the kalba
 
 ### 130. A named artifact is built to the user's specification, not to invented content
 
-When the user names an artifact to build — a slide, a note, a table — gather every specification he has already given for it before the build: the folder log, the memory file, the earlier messages. His specification governs the build: an image he named is placed as that image, a construction he pointed at ("like the boxes on X") is built from that construction's own objects, and the accompanying text goes where he said it goes — a figure page's explanation into the presenter notes when the figure takes the page. Writing agent-authored text, or a fresh layout, into the artifact he described is a defect even when the content is correct: it discards his decision and silently replaces it. When the record does not settle the artifact's form, ask before the build; when it does, build that.
+When the user names an artifact to build — a slide, a note, a table — gather every specification he has already given for it before the build: the request itself first, then the folder log, the memory file, the earlier messages. Each noun the request names is a field of the build, and "X and Y" names two fields. Dropping the second noun of an AND is the same defect as inventing a field. Failure, 2026-10-27: "i told you to ask for grade". His specification governs the build: an image he named is placed as that image, a construction he pointed at ("like the boxes on X") is built from that construction's own objects, and the accompanying text goes where he said it goes — a figure page's explanation into the presenter notes when the figure takes the page. Writing agent-authored text, or a fresh layout, into the artifact he described is a defect even when the content is correct: it discards his decision and silently replaces it. When the record does not settle the artifact's form, ask before the build; when it does, build that.
 
 Failure mode, 2026-10-09: asked for "a single slide for that, right after the slide for Job types", the agent built "The job types" as a rows page of its own writing and "Two meanings of need" as stacked rows, while the book's figure and the Formulate-the-Job boxes were the forms the user had named. The user: "you didn't listen: i said for the job types the image from the kalbach book. but the text on that slide into the Notes before deleting them. the needs slide should show the two opposing definitions side by side like the boxes on the formulate the job slide."
 
@@ -3905,6 +3912,12 @@ but understand to generalize to other words!"
 
 ### 196. Code is written once, and a second project imports it
 
+Before writing code that produces a value, search for the code that already
+produces it (the output field, the function's verb, the detection that derives
+it) and call it. A second derivation of a value the system already derives is a
+copy even when no file was copied, and it is found by the search before it is
+written, never by a duplicate after.
+
 A renderer, an exporter, a converter: the moment a second project needs it, it
 moves out of the first project and becomes a shared module that both import.
 Never copy the file and edit the copy. A copy is not reuse, whatever percentage
@@ -4173,7 +4186,7 @@ regenerate e08 even though it already exists at '.../KUBS DT WS2026 E08.html'
 which should not be touched?" The write is now `--deliver`, and a run without it
 prints that the session-folder copy was not written.
 
-### 205. A build modelled on a master takes the master's whole schema, not the fields the first draft needed
+### 260. A build modelled on a master takes the master's whole schema, not the fields the first draft needed
 
 When a deck, a pipeline or a config is built "like <master>", the master is a
 specification of the *pipeline*, not only of how the result looks.
@@ -4642,7 +4655,7 @@ get his confirmation before implementing. A constant, floor or filter coupled
 to something you removed is flagged with the question whether to re-peg it or
 drop it; it is never deleted silently because it "is no longer needed".
 
-### 221. A chart axis is fitted to its data, and secondary curves sit under the primary lines
+### 261. A chart axis is fitted to its data, and secondary curves sit under the primary lines
 
 Two defects have the same cause, an axis chosen as a constant instead of read
 from the plot: the data bunches into a corner with a dead band beside it, and
@@ -5100,6 +5113,11 @@ more, 20.5 h, from 10-23 to that same morning — all of them under his own labe
 Read from the source, the ledger closed at 155.75 h with grading at 21.5 h.
 
 ### 239. A table's row order is the user's, and a projection renders it, never sorts it
+
+A table he has already seen keeps the row order he saw: a changed score, a re-run
+or an added column moves no row, unless the table is sorted by the column that
+changed. On 2026-10-28 the KUBS DT essay grading table came back in a new order:
+"why did you change the sorting table? show the exact sorting as before."
 
 A date-keyed table in his notes reads newest on top. A tool that projects data
 into one of these tables renders in that order; it never substitutes its own

@@ -30,7 +30,20 @@ def build() -> str:
     return "\n".join(out) + "\n"
 
 
+def duplicate_numbers(text: str) -> list[int]:
+    """Rule numbers that head more than one ### section; a cited number must name one rule."""
+    seen: dict[int, int] = {}
+    for m in re.finditer(r"^###\s+(\d+)\.", text, re.M):
+        n = int(m.group(1))
+        seen[n] = seen.get(n, 0) + 1
+    return sorted(n for n, count in seen.items() if count > 1)
+
+
 def main(argv: list[str]) -> None:
+    dupes = duplicate_numbers(RULES.read_text(encoding="utf-8"))
+    if dupes:
+        print(f"RULES.md: rule numbers used twice: {', '.join(map(str, dupes))}", file=sys.stderr)
+        raise SystemExit(1)
     text = build()
     if "--check" in argv:
         raise SystemExit(0 if OUT.exists() and OUT.read_text(encoding="utf-8") == text else 1)
