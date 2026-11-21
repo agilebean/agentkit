@@ -9,6 +9,7 @@ otherwise. A repository is the one whose folder is the longest prefix of the run
 since the child's cost is spent in the same folder. Git is read with `git -C <repo> log` only.
 """
 import argparse
+import csv
 import os
 import sqlite3
 import subprocess
@@ -82,6 +83,28 @@ def kind_of(title):
     if "test" in title.lower():
         return "test"
     return "work"
+
+
+def export_sessions(db_path, since, until, path):
+    """Write the window's session rows to a dated CSV, so the figures survive a session cleanup."""
+    con = sqlite3.connect("file:" + str(Path(db_path).expanduser()) + "?mode=ro", uri=True)
+    try:
+        rows = con.execute(
+            "select time_created, parent_id, directory, title, model, cost from session_v2"
+            " where time_created >= ? and time_created < ? order by time_created",
+            (to_ms(since), to_ms(until)),
+        ).fetchall()
+    finally:
+        con.close()
+    out = Path(path).expanduser()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["time_created_kst", "parent_id", "directory", "title", "model", "cost_usd"])
+        for created, parent, directory, title, model, cost in rows:
+            stamp = datetime.fromtimestamp(created / 1000, KST).strftime("%Y-%m-%d %H:%M:%S")
+            writer.writerow([stamp, parent or "", directory or "", title or "", model or "", f"{cost or 0.0:.6f}"])
+    return len(rows)
 
 
 def collect_runs(db_path, since, until, repositories=REPOSITORIES):
@@ -208,6 +231,11 @@ def main(argv=None):
     parser.add_argument("--db", type=Path, default=DEFAULT_DB, help=f"opencode's database (default {DEFAULT_DB})")
     parser.add_argument("--plan", type=Path, default=DEFAULT_PLAN, help="the plan whose board holds the tasks")
     parser.add_argument("--out", type=Path, help="write the tables here instead of printing them")
+    parser.add_argument(
+        "--export",
+        type=Path,
+        help="write the window's session rows to this CSV, so the figures survive a session cleanup",
+    )
     args = parser.parse_args(argv)
 
     if not args.month and not args.since:
@@ -230,6 +258,9 @@ def main(argv=None):
         collect_commits(REPOSITORIES, since, until),
         collect_board(args.plan),
     )
+    if args.export:
+        written = export_sessions(args.db, since, until, args.export)
+        print(f"usage_report: {written} session rows written to {args.export}")
     if args.out:
         Path(args.out).expanduser().write_text(text)
     else:

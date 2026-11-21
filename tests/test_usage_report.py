@@ -139,3 +139,34 @@ def test_help_names_the_arguments():
     )
     for name in ("--month", "--since", "--until", "--db", "--plan", "--out"):
         assert name in out.stdout
+
+
+
+def test_export_writes_the_windows_rows_to_a_dated_csv(tmp_path):
+    db = tmp_path / "opencode.db"
+    con = sqlite3.connect(db)
+    con.execute(
+        "create table session_v2 (id text, parent_id text, directory text, title text,"
+        " model text, cost real, time_created integer)"
+    )
+    con.executemany(
+        "insert into session_v2 values (?,?,?,?,?,?,?)",
+        [
+            ("a", None, "/w/socrates", "note work", "deepseek-v4.1-flash", 0.25, _ms("2026-11-02 09:00:00")),
+            ("b", "a", "/w/socrates", "child", "deepseek-v4.1-flash", 0.05, _ms("2026-11-02 09:05:00")),
+            ("c", None, "/w/swim", "outside", "deepseek-v4.1-flash", 0.10, _ms("2026-12-01 09:00:00")),
+        ],
+    )
+    con.commit()
+    con.close()
+
+    since = datetime(2026, 11, 1, 0, 0, 0)
+    until = datetime(2026, 12, 1, 0, 0, 0)
+    target = tmp_path / "2026-11 sessions.csv"
+    assert ur.export_sessions(db, since, until, target) == 2
+
+    lines = target.read_text(encoding="utf-8").strip().split("\n")
+    assert lines[0].startswith("time_created_kst,parent_id,directory,title,model,cost_usd")
+    assert len(lines) == 3
+    assert "2026-11-02 09:00:00" in lines[1] and "0.250000" in lines[1]
+    assert "child" in lines[2] and "2026-12-01" not in target.read_text(encoding="utf-8")
