@@ -4,7 +4,7 @@ Task DD-08 of the [DeepSeek delegation plan](<deepseek delegation plan.md>): one
 
 Board: `docs/deepseek delegation plan.md`, task DD-08. Report: `docs/2026-11-21 dd-08 repository sweep report.md`. The sweep table itself names private branches and files, so it goes to socrates: `~/Software/Prototypes/socrates/docs/2026-11-21 repository sweep.md`.
 
-State: not started.
+State: done 2026-11-21, DeepSeek V4.1 Flash ran it to the end, 6 of 6 acceptance tests pass.
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules
@@ -64,3 +64,9 @@ Resume: run the *Resume checks* below and continue at the first test whose row i
 
 | ID | Date | Result | Evidence |
 |---|---|---|---|
+| T1.1 | 2026-11-21 | pass | `pytest -q tests/test_repo_sweep.py` printed `3 failed in 0.51s` before the script existed |
+| T1.2 | 2026-11-21 | pass | `pytest -q tests/test_repo_sweep.py` printed `3 passed in 0.74s`, and `--help` names `--out FILE` and `--days DAYS` |
+| T2.1 | 2026-11-21 | pass | the sweep file holds `15` worktree rows against `15` lines of `git worktree list` over 10 repositories, 5 rows of socrates worktrees |
+| T2.2 | 2026-11-21 | pass | `git -C socrates worktree list` printed 6 lines and `git -C socrates status --porcelain \| wc -l` printed `0`, its 6 rows agree |
+| T3.1 | 2026-11-21 | pass | `gh run view 44861734494` reads `conclusion success` for `49d3946` with `551 passed, 43 skipped`, agentkit and socrates pushed |
+| T3.2 | 2026-11-21 | pass | `python3 scripts/report_check.py "docs/2026-11-21 dd-08 repository sweep report.md"` printed `report_check: PASS` |
