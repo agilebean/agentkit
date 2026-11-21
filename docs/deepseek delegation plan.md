@@ -62,7 +62,7 @@ This table is where progress is tracked: a session sets a task's status here bef
 |---|---|---|---|---|---|---|
 | DD-01 | The report form and its check | all | every later task reaches you as a table you can trust | frontier designs, any model builds | E1, decided | done, 2026-11-21: DeepSeek's reports passed on the second and first check |
 | DD-02 | agentkit tests on every push, and the red test fixed | agentkit | a broken commit shows within minutes | DeepSeek | none | done, 2026-11-20: main green, a broken commit red |
-| DD-03 | Personal data out of agentkit | agentkit | what the move of 2026-11-20 left public is gone | DeepSeek | E2 for skills, rules and history | tree done, 2026-11-21: 0 lines on ae6e350, suite green; the history waits on its runbook and your go |
+| DD-03 | Personal data out of agentkit | agentkit | what the move of 2026-11-20 left public is gone | DeepSeek | E2 for skills, rules and history | open, 2026-11-21: the scrub list finds 0 lines and the purge list 21 files; the history purge is DD-19, and your go is written here with its date |
 | DD-04 | Google Cloud bill audit each month | virtualfriend | the next saving after the VM move | DeepSeek, read-only | your yes per change | blocked, 2026-11-21: the bill's costs need the billing export and a reader; you are switching on the billing API |
 | DD-05 | Nightly log digest | virtualfriend | errors and response times on one page a day | DeepSeek | none | blocked, 2026-11-21: SSH to the VM was refused by this session's permission check |
 | DD-06 | The service-account key replaced by the VM's own identity | virtualfriend | the key file the VM runbook flagged is gone | DeepSeek | E3 | blocked: E3 |
@@ -78,6 +78,7 @@ This table is where progress is tracked: a session sets a task's status here bef
 | DD-16 | Stock scores refreshed each week | money | the score table without a Claude session | DeepSeek, data in socrates | none | ready |
 | DD-17 | `tests/test_note_test.py` independent of the session it runs in | agentkit | the suite passes inside an opencode session too | any | none | done, 2026-11-21: 588 passed with the variable set |
 | DD-18 | The test workflow on a runner that starts at once | agentkit | a push shows its result in a minute, never after a queue | any | none | proposed |
+| DD-19 | The history purge of DD-03, by [its runbook](<dd-03 history purge runbook.md>) | agentkit | no commit of agentkit holds the files moved out or a term of the private list | DeepSeek | your go | blocked: your go |
 
 Statuses are ready, blocked (by a task or a decision), in progress (date and model), done (date and result), proposed and dropped.
 
@@ -118,7 +119,7 @@ Steps:
 
 Acceptance: the search finds nothing in agentkit's tree, and the suite passes.
 
-On 2026-11-21 the tree passes: the list in socrates (`docs/agentkit personal terms.txt`) finds 0 lines on ae6e350, and the suite passes 606 of 606. Step 3's check through a secret is not built, and the history waits on its runbook.
+On 2026-11-21 the tree passes the scrub's list (`docs/agentkit personal terms.txt` in socrates, 0 lines on ae6e350) and fails the purge runbook's list (`docs/human quality/data/history replacements.txt`, 9 of its rules in 21 files); the suite passes 606 of 606. Story 1 of the purge runbook (DD-19) clears the Markdown files and tests and stops on scripts and skill data. Step 3's check through a secret is not built.
 
 ### DD-04 Google Cloud bill audit each month
 
@@ -254,7 +255,7 @@ Your documents are spread over six docs folders and five naming styles (dated wi
 
 The other folders follow the same rules. In socrates, `IMPLEMENTATION_PLAN_socrates.md`, `PROJECT_BRIEF_socrates.md` and `implementation plan merge socrates.md` take plan and brief names, and the dated letters and positions keep their dates with spaces; swim, email-digest and invoice-admin rename their capitalised files.
 
-DD-01 and DD-02 are done, DD-03's tree passes and its history waits on its runbook; E3 to E6 wait for your word.
+DD-01 and DD-02 are done. DD-03's tree still holds 21 files that the purge list hits, and the purge (DD-19) waits on your go; E3 to E6 wait for your word.
 
 ## Log
 
@@ -264,3 +265,4 @@ DD-01 and DD-02 are done, DD-03's tree passes and its history waits on its runbo
 - 2026-11-21, second entry: DD-17 done. `tests/test_note_test.py` asserted that a launch without a private server passes no `OPENCODE_SERVER_PASSWORD`, which held only for a caller without one; an opencode session sets it for its shell tools. `note_test.py` passes its caller's environment on by design, so the test now removes the variable first, and the code is unchanged. The committed suite printed 588 passed with the variable set.
 - 2026-11-21, third entry: DD-03 checked for its acceptance on today's tree, with a list of 21 terms in socrates (`docs/agentkit personal terms.txt`), built from the scrub record's map and the later scrub commits. On the claim commit the search found 24 lines in 10 files, 11 in tests and scripts and 13 in rules, a command and skills (socrates `docs/2026-11-21 agentkit term search.md`). The scrub commits after it took them out, and on ae6e350 it finds 0 lines, the suite passes 606 of 606, and GitHub passed the two commits before it. The prompt changes were measured on the same code with the data before and after the token map: `wording_eval.py` gave lint 19 of 20 and 10 of 40 and seat 13 of 20 and 31 of 40 on both, and the acceptance set of `--say` was close on 11 of 11 pairs in 3 of 3 runs on both. The change to `wording_fill_prompt.md`, two example names, has no measure of its own. Step 3, the check in the workflow through a secret, is not built. E2 decided (Chaehan: "give a prompt for deepseek to rewrite the history"). The history was rewritten once at 01:09 with the token map, which changed every commit hash this file cites from before that hour. The purge runbook covers what stays in the history. During the check the repository answered 200 to requests without credentials, raw files included, and GitHub reported it public, where it had reported private at ~00:45. DD-18 is proposed: one run waited 15 min for a macOS arm64 runner and was cancelled, and the first one waited ~11 min, while every other run finished in under 1 min.
 - 2026-11-21, fourth entry: DD-04 and DD-05 blocked. DD-04: the service account cannot read billing, the Cloud Billing API is off on virtualfriend-demo, and costs by service reach a program only through the billing export to BigQuery; asked how the audit reads the bill, Chaehan answered "I'll switch on the billing api wait for it", and Chaehan's own gcloud login has expired, so the audit also needs `gcloud auth login` or the service account as Billing Account Viewer. The read-only list of what the project runs is done: the Spot VM, its 12 GB disk and address, the preemption function, two Cloud Run services, 6 build-source buckets, 3.2 GB of container images in two repositories and a topic `vm-preemptions-test`. DD-05: a read-only SSH to the VM was refused by the permission check of the Claude Code session, so the digest waits until Chaehan allows VM access.
+- 2026-11-21, fifth entry: correction of the third entry. Its "0 lines" held for the scrub's list of 21 terms only; measured with the private list of the history purge runbook (agentkit 4f8930f, socrates d5105ad), 9 of its rules still hit 21 committed files: RULES.md, `common_sense.md`, the date-analysis skill and its scripts, `scripts/instruction_lint.py`, `scripts/memory_lint.py`, `overview_gate.py` and three test files. DD-03 stays open, and DD-19 holds the purge's run, which waits on Chaehan's go.
