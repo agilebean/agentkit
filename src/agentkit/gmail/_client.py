@@ -117,6 +117,10 @@ class GmailApiBackend:
                 from google.auth.transport.requests import Request
                 try:
                     creds.refresh(Request())
+                    # Persist the rotated credentials: a refresh can hand back a new
+                    # refresh token and invalidate the old one, so an unread disk copy
+                    # fails the next run with invalid_grant (RULES 106).
+                    candidate.write_text(creds.to_json(), encoding="utf-8")
                 except Exception as e:
                     raise GmailAuthError(
                         f"Could not refresh OAuth token ({candidate}): {e}. "

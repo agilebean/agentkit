@@ -5452,3 +5452,11 @@ Instruction basis, 2026-11-06: "i want that claude when optimizing edits not
 claude.md files but the opencode config files for agents rules etc" and "any
 agent rule that should be applied for every agent should be in agentkit, not
 in a specific agent like socrates".
+
+### 258. A credential file is the credential: a refresh is written back where it happens, and a dead token is a consent problem
+
+A token file on disk is the only copy of the credential. When a library refresh rotates it - Google's `creds.refresh()` can hand back a new refresh token and invalidate the old one - the new JSON goes to the same path before the call returns, in every consumer that refreshes. A refresh kept in memory is lost: the next run presents the superseded token and fails `invalid_grant: Token has been expired or revoked`, which reads like a Google problem and is the caller's.
+
+Lifetime is a separate cause with the same symptom: an OAuth client in Testing publishing status issues refresh tokens that expire seven days after consent. Publish the app to Production; publishing needs no website, because verification (homepage, privacy policy, CASA assessment for restricted scopes) only removes the "unverified app" screen and the 100-user cap. The account behind a token is read from `users.getProfile`, never from the file, which stores no address.
+
+Failure mode: 2026-11-21, invoice-admin's `save` failed with a token consented 2026-11-03. email-digest had fixed this class on 2026-08-06 (`d2556c6`, "fix(oauth): write credentials back after refresh"), and both invoice-admin (`gmail_api_backend.from_token_path`) and agentkit's shared Gmail client (`gmail/_client.py`) had kept the memory-only refresh, so every one of their runs could retire the file's token permanently.
