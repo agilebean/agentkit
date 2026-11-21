@@ -278,4 +278,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 5389–5401 | ### 254. A perceived change carries the reason it is believable, and what does not move it |
 | 5402–5415 | ### 255. A possibility that survives every objection enters the summary |
 | 5416–5425 | ### 256. A hypothetical is answered as a hypothetical |
-| 5426–5454 | ### 257. Instructions live in opencode files; a CLAUDE.md is an import stub |
+| 5426–5455 | ### 257. Instructions live in opencode files; a CLAUDE.md is an import stub |
+| 5456–5462 | ### 258. A credential file is the credential: a refresh is written back where it happens, and a dead token is a consent problem |
