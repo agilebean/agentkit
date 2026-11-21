@@ -4,7 +4,7 @@ Task DD-03 of the [DeepSeek delegation plan](<deepseek delegation plan.md>), its
 
 Board: `docs/deepseek delegation plan.md`, task DD-19. Report: `docs/2026-11-21 dd-03 history purge report.md`.
 
-State: stopped at T1.3 twice on 2026-11-21; both times the frontier session found the hits in comments and docstrings and replaced them (3687eef, then the next commit), and no script or skill data file holds a hit now; the suite passes 655. Resume at T1.3. Chaehan gave the go on 2026-11-21 ("Yes, run it"), recorded in the DD-19 row of the board.
+State: done, 2026-11-21, DeepSeek V4.1 Flash: 17 of 17 acceptance tests pass; the history holds none of the 12 moved paths and 0 hits of the list, main is `432a82a` at 625 commits. Chaehan gave the go on 2026-11-21 ("Yes, run it"), recorded in the DD-19 row of the board.
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules
@@ -116,6 +116,19 @@ T5.2 Write the report in the form of the runbook skill. The table of changes hol
 | Test | Date | Result | Evidence |
 |---|---|---|---|
 | T1.1 | 2026-11-21 | pass | `mamba run -n socrates python -m pytest -q tests/test_history_check.py` printed `5 passed` |
-| T1.2 | 2026-11-21 | fail | `python3 scripts/history_check.py --rules "$HQ/history replacements.txt" --tree "$PWD"` printed `history_check: 90 hits`; RULES.md 12, commands/date.md 2, common_sense.md 14, scripts/instruction_lint.py 1, scripts/memory_lint.py 1, skills/date-analysis/SKILL.md 5, skills/date-analysis/date_markers.tsv 2, skills/date-analysis/scripts/md_turns.py 1, skills/date-analysis/scripts/mw_transcript.py 4, skills/date-analysis/traits.md 2, skills/evernote/SKILL.md 1, skills/life-overview/SKILL.md 1, skills/life-overview/scripts/overview_gate.py 1, tests/test_cards.py 5, tests/test_date_analysis.py 16, tests/test_note_build.py 3, tests/test_overview_gate.py 15, tests/test_wording_lint.py 4 |
-| T1.3 | 2026-11-21 | fail | 5 hits in scripts or skill data: `scripts/instruction_lint.py` rule 26, `scripts/memory_lint.py` rule 26, `skills/life-overview/scripts/overview_gate.py` rule 26, `skills/date-analysis/date_markers.tsv` rules 21 and 22 |
-| T1.3 | 2026-11-21 | fail | rerun after `3687eef`: 5 hits in scripts or skill data, `skills/date-analysis/scripts/md_turns.py` rule 22, `skills/date-analysis/scripts/mw_transcript.py` rules 21 and 22 |
+| T1.2 | 2026-11-21 | pass | baseline `history_check: 90 hits` in 18 files: RULES.md 12, commands/date.md 2, common_sense.md 14, scripts/instruction_lint.py 1, scripts/memory_lint.py 1, skills/date-analysis/SKILL.md 5, skills/date-analysis/date_markers.tsv 2, skills/date-analysis/scripts/md_turns.py 1, skills/date-analysis/scripts/mw_transcript.py 4, skills/date-analysis/traits.md 2, skills/evernote/SKILL.md 1, skills/life-overview/SKILL.md 1, skills/life-overview/scripts/overview_gate.py 1, tests/test_cards.py 5, tests/test_date_analysis.py 16, tests/test_note_build.py 3, tests/test_overview_gate.py 15, tests/test_wording_lint.py 4 |
+| T1.3 | 2026-11-21 | pass | after `9899ff3` the scan printed `blocked: []`; the earlier stops named four files at `3687eef` and the two transcript scripts, all fixed by the frontier session |
+| T1.4 | 2026-11-21 | pass | `history_check.py --tree "$PWD"` printed `history_check: 0 hits`; the suite printed `655 passed` before and after |
+| T1.5 | 2026-11-21 | pass | push `c6e9a70`,`gh run view 44889238333` reads `success` |
+| T2.1 | 2026-11-21 | pass | `git -C "$AK" log origin/main..main --oneline` printed nothing, `OLD_MAIN` `c6e9a70`, six tags at `e50133b` `d0fdb67` `c0643b0` `185476b` `2704392` `90cf326` |
+| T2.2 | 2026-11-21 | pass | `git -C ~/Software/archive/agentkit-mirror-2026-11-21.git rev-parse main` printed `c6e9a70` |
+| T2.3 | 2026-11-21 | pass | `mamba run -n socrates git filter-repo --version` printed `a40bce548d2c` |
+| T2.4 | 2026-11-21 | pass | the rewrite ended with `Completely finished after 12.84 seconds` |
+| T2.5 | 2026-11-21 | pass | each of the 12 paths printed `0`; `history_check.py --repo` printed `history_check: 0 hits` |
+| T2.6 | 2026-11-21 | pass | trees equal at `5e95b3f0`, 630 commits before and 625 after, six tags exist |
+| T3.1 | 2026-11-21 | pass | `git ls-remote` printed main `432a82a` and the six tag SHAs of the mirror |
+| T3.2 | 2026-11-21 | pass | `gh run view 44889426298` reads `success` |
+| T4.1 | 2026-11-21 | pass | `status.before` and `status.after` differ by 0 lines, HEAD is `432a82a` |
+| T4.2 | 2026-11-21 | pass | `git log --oneline -- "docs/2026-11-17 wording build/"` printed 0 lines |
+| T5.1 | 2026-11-21 | pass | `curl -s -o /dev/null -w '%{http_code}' https://github.com/agilebean/agentkit/commit/c6e9a70` printed `503` |
+| T5.2 | 2026-11-21 | pass | `python3 scripts/report_check.py "docs/2026-11-21 dd-03 history purge report.md"` printed `report_check: PASS` |
