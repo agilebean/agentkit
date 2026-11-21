@@ -228,7 +228,7 @@ Write the text as plain sentences, each stating what was seen, why it happened, 
 - **Rubric label from an institution's manual** ("Reason 5"): name the quality judged and the symptom that shows it.
 - **Conditional built from the analyst's logic**: state the condition the reader faces.
 - **Parenthetical data capsule**: state the fact in the sentence where it does its work.
-- **Metaphor or absolute that gives an abstraction agency** ("where bias enters an interview", "the evidence trail"): name the person and the action, or the thing itself. A person's view is never a line, a door, a position or a stance, and a meeting has no exits, tests or signals ("took no exit", "her own line is closed", "you passed the two tests she ran"): say what she wants and what the two of them did.
+- **Metaphor or absolute that gives an abstraction agency** ("where bias enters an interview", "the evidence trail"): name the person and the action, or the thing itself. A person's view is never a line, a door, a position or a stance, and a meeting has no exits, tests or signals ("took no exit", "her own line is closed", "you passed the two tests she ran"): say what she wants and what the two of them did. An absolute can be one word, an article included: "without bias" becomes "bias awareness", "the lens" becomes "one alternative lens". Test: find a case in the material that the word excludes, and when the material holds that case, write the bounded form. Chaehan, 2026-09-26: "without bias is impossible so say bias awareness in interviews"; 2026-09-06: "JTBD is not the lens but one alternative lens".
 - **Row built from a method's components** ("the interviews, the ratings"): name the quality judged, never the steps.
 - **Nominalization** ("the implementation of"): use the verb.
 - **Trade slang**: write the plain word for the thing.
@@ -2561,6 +2561,8 @@ Stated 2026-09-30: "the study results should be in bullet points or sub bullet p
 
 When a change moves, swaps, reorders or merges text the user has edited by hand (a warmup swapped between two blocks, a section relocated, a list reordered), the unit of work is their line. Cut it and place it at the new location with its wording, punctuation, line breaks and formatting intact: three formatted lines do not collapse into one compressed sentence, and their fix is not re-invented from an older version of the text. Re-read the region immediately before moving it and work from their latest text, not from memory, so their edits are caught rather than bypassed. Glue that the move needs (a heading, a lead-in, a name that must change with the position) is added around their lines and kept minimal. After the move, show the before and after of every moved line; only they can confirm the move was faithful.
 
+Chaehan's line goes in verbatim, at its own length, in the place Chaehan wrote it for. A text Chaehan wrote for another place gets a summary written for the new one. Test: before placing a line of Chaehan's, name the place it was written for. On 2026-10-19 the agent expanded Chaehan's five tips in the S8 script into long sentences: "1-5 are too verbose, use my wording". On 2026-10-01 it pasted the team project description onto the assessment slide: "you copied the team project desc, you should think about the best summary of it instead!"
+
 A note's gate reshapes none of the user's lines: they are named to it (`note_build.py init --verbatim <file>`, `overview_gate.py --verbatim`), it leaves their form alone, and its T20 fails when one of their paragraphs is not one unbroken run of the original words. When a change touches one section, only that section is written (`init --as-is --replace-section`), so the user's edits elsewhere in the note stay byte for byte. A write by guid names the text it started from (`--base`) and is refused when the note changed since. On 2026-11-10 the gate turned Chaehan's feedback paragraph into six bullets under a lead line; asked whether to fix it, Chaehan: "Yes, fix it". The fix's first write was refused: Chaehan had added a list and a photo table to the note the same day.
 
 Failure mode: a relocation that deletes the user's formatted lines and inserts agent-rewritten ones.
@@ -2868,6 +2870,15 @@ everything the user just flagged.
   unapplied, whatever the artifact below does. The change is applied and shown
   in the artifact; it is never narrated back. Instance: `memory/agentic_ai.md`
   failure 66.
+- **A judgment rejects what it names.** A judgment on what was made or applied
+  rejects it as a negation does: "stupidly create" means revert the file,
+  "wrong rule" means never apply the rule again. Test: list each rejected file
+  and rule before the next pass, and search its output for them. On 2026-10-12
+  the agent explained why a standalone workshop file existed and left the file
+  in place: "i can't believe you didn't understand "stupidly create" as
+  this shouldn't had been done and therefore must be reverted". On 2026-10-31
+  it applied the rejected top-16 fill to the essay grades again: "i had told
+  you twice that 16 top is wrong rule so abandon it!"
 
 Failure mode: 2026-10-03, the KUBS S3 team design challenge. The user rejected
 "Design how older adults stay in charge of their own day." / "Design how
