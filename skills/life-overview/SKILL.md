@@ -85,6 +85,11 @@ Read, in order — memory is ground truth (rule 35):
   candidates for What went well. An open action the memory files hold and the
   Challenges note does not is named in the report to Chaehan as missing there,
   never written into this note.
+- Chaehan's confirmed live decisions: the newest `socrates/life/*-decisions.tsv`,
+  listed by deadline with
+  `python3 ~/Software/Prototypes/agentkit/skills/life-challenges/scripts/decisions.py list`.
+  Each row was checked by Chaehan, so a row is a decision of his and its
+  deadline is his; a decision the file lacks is not one (HQ-02, his D2).
 - the human side of the chapter, which the open items never show (RULES.md
   105): your academic CV (`~/Library/CloudStorage/GoogleDrive-chaehan.so@virtualfriend.chat/My Drive/1 Projects/KUBS/KUBS DT/KUBS DT S1/CV academic Chaehan So 2026.pdf`,
   read with `markitdown`) for what a step means against your career; the swim

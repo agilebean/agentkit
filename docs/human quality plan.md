@@ -89,15 +89,15 @@ This table is where progress is tracked. A session that takes a task sets its st
 |---|---|---|---|---|---|
 | HQ-00 | Personal test data out of the public repository | privacy | any | D0, decided | done in part on 2026-11-20; the rest is DD-03 of the delegation plan |
 | HQ-01 | Decision test for a whole note | measurement | frontier | D1, decided | blocked, 2026-11-21: Takeaway recall ranks the build you preferred above in 4 of 9 pair-runs by shared words and 1 of 9 by the judge |
-| HQ-02 | Your live decisions as data | choice, meaning | frontier | D2, decided | in progress, 2026-11-21, Claude Opus 5.5 |
+| HQ-02 | Your live decisions as data | choice, meaning | frontier | D2, decided | done, 2026-11-21: 10 decisions you checked, in `life/2026-11-21-decisions.tsv` |
 | HQ-03 | Understand before form | meaning | frontier designs; DeepSeek and a frontier model run | none | ready |
 | HQ-04 | Derived and reading cards | meaning | frontier | D3, decided | ready |
-| HQ-05 | Choose by decision and deadline | choice | frontier | HQ-02 | blocked: HQ-02 |
+| HQ-05 | Choose by decision and deadline | choice | frontier | none | ready |
 | HQ-06 | Sentences that follow each other | wording | any | your blind read of A4 against its rebuild | built, 2026-11-21: waits for your blind read |
 | HQ-07 | A correction becomes a case first | learning | any | D4, decided | ready |
 | HQ-08 | Retire rules and checks that write form | rules | frontier | D5 per batch | ready |
 | HQ-09 | One builder for every note skill | all | frontier | HQ-03 to HQ-06 | blocked |
-| HQ-10 | Memory index and dated fact lines | truth | any | HQ-02 for part b | part a done, 2026-11-21; part b waits on HQ-02 |
+| HQ-10 | Memory index and dated fact lines | truth | any | your yes on part b's move of `memory/health.md` | part a done, 2026-11-21; part b ready to propose |
 
 Frontier means Claude Opus 5.5, Claude Fable 5.2 or a newer model; any means a model that writes and tests code well, DeepSeek included.
 
@@ -149,22 +149,7 @@ Leave alone: every gate, prompt and note.
 
 ### HQ-02 Your live decisions as data
 
-Goal: each live decision of yours is one line a script can read: what you decide, by when, the options, what it depends on, its source line, and whether it is open.
-
-Why here: choosing by what is due (HQ-05), the understand step (HQ-03) and the decision test all need the list, and today it exists only as prose.
-
-Inputs: the latest Life Challenges note in `socrates/life/`, the Current state and On the horizon sections of the memory files, step 7b of the 2026-11-17 build spec.
-
-Steps:
-
-1. Propose the line form and its home (D2) with three filled examples from the record.
-2. On your yes, fill the decisions live on the day, each from a record line; nothing inferred becomes a decision (rule 245's empty case).
-3. `memory_lint.py` gains a check of the form.
-4. A script lists the open decisions by deadline, and the life-overview and life-challenges skills read that list in their gather step.
-
-Acceptance: the list holds every open decision of the latest Life Challenges note and of the latest stock review, each traced to its record line, and you confirm it.
-
-Leave alone: no fact moves between memory files without your yes.
+Done on 2026-11-21: your confirmed live decisions are one file a script reads, `socrates/life/YYYY-MM-DD-decisions.tsv`, in the columns of the decision test's gold lists (id, decision, deadline, options, depends, source), so a note can be scored against it. The life-challenges skill presents the challenges, asks you with one checkbox per decision which are valid, writes only those, and checks the file with `skills/life-challenges/scripts/decisions.py check` before it creates the note (D2); the life-overview and life-challenges skills read the newest file in their gather step with `decisions.py list`, overdue first, then by deadline. The first file, 2026-11-21, holds the 10 of 12 decisions you checked, drafted from the 2026-11-16 Life Challenges note, the 2026-11-20 Stock Review and the memory files of that day, each with its record line. The check of the form lives in `decisions.py`, since the file is in `life/`, and `memory_lint.py` reads the memory folder.
 
 ### HQ-03 Understand before form
 
@@ -313,6 +298,7 @@ Suggestion: a frontier-model session takes HQ-01 now, which changes no rule, gat
 
 ## Log
 
+- 2026-11-21, sixth entry: HQ-02 is done. You checked 10 of the 12 decisions drafted from the 2026-11-16 Life Challenges note, the 2026-11-20 Stock Review and the memory files (two stock decisions stayed unchecked), and they are in `socrates/life/2026-11-21-decisions.tsv`. The life-challenges skill now asks by checkbox after it presents the challenges and before it creates the note, and both life skills read the newest file. HQ-05 is ready, and part b of HQ-10 waits on your yes to its proposed move of `memory/health.md`.
 - 2026-11-21, fifth entry: HQ-06 is built and waits for your blind read, and part a of HQ-10 is done. `scripts/say_flow.py` sends each section's written lines with their place to one call with `wording_flow_prompt.md` and checks the answer with say.py's checks. It reads a note's lines, since the cards of A4 were gone from the temporary folders, and it sits beside `say.py`, which another session was editing. Two passes over A4 (22 calls, 862 s) took the pairs of sentences in a row that name one thing again from 21 to 2, one of them a dose. The median sentence went from 13.5 to 14.5 words, 1098 words to 1053, with no lint flag before or after, and `wording_eval.py --say` stayed at 11 of 11 in three runs. The rebuild is `A4-flow.md` in socrates' step 8 folder (fc06a71). Part a of HQ-10: `memory_index.py` in socrates writes `memory/index.md`, one row for each of the 45 memory files, and a heading index with line ranges for the 19 over 1500 words. `kubs.index.md` came out unchanged, and socrates.md now reads by these indexes.
 - 2026-11-21, fourth entry: you answered D2, D3 and D4 with the question tool. D2: the life-challenges skill asks, after it presents the challenges and before it creates the note, which decisions are valid, one checkbox each, and writes the confirmed ones to a dated file in `socrates/life/`, which HQ-05 and part b of HQ-10 read. The register in `decisions/` that the question proposed is dropped. D3: derived lines with cited premises and recomputed numbers, and readings marked as the agent's or as open. The Cochrane wording stays open. D4: case first. HQ-02, HQ-04 and HQ-07 are ready, and HQ-05 and part b of HQ-10 wait on HQ-02.
 - 2026-11-21, third entry: you chose A4 over B for its fuller body (question tool, options fuller body, plainer wording, Takeaway doesn't matter). HQ-03 and HQ-05 now name that aim: a build keeps every live matter of a section with the step you still have to take, and the understand step or the Takeaway's choice may not cost that body. HQ-03 is ready; HQ-05 waits on D2.

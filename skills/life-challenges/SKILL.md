@@ -127,6 +127,10 @@ each issue in one place:
    the door it uses and why. Never
    read the Life Overview: it links this note, and a line read back from it
    looks confirmed twice (`memory/agentic_ai.md` failure 166).
+   Read the newest `life/*-decisions.tsv` too, by deadline with
+   `python3 ~/Software/Prototypes/agentkit/skills/life-challenges/scripts/decisions.py list`:
+   each row is a decision Chaehan confirmed, with its record line, and an
+   overdue row is an issue to place first.
 2. Ask Chaehan which issues of the previous note are done since it, with the
    question tool: one multiSelect question per four issues. Never decide that
    an issue is done or open from a missing record (core 5). Write what Chaehan
@@ -251,8 +255,25 @@ sentence. Then:
    source that the findings lack. Then run `next` and the check again until
    both pass. Never edit `draft.md` by hand: its stamp no longer matches, and
    the write is refused. A PASS proves the form, not the content.
-3. Copy `draft.md` to `socrates/life/YYYY-MM-DD-life-challenges.md`.
-4. Run `note_build.py write $TMPDIR/life-challenges`. With Hanji it creates
+3. Confirm the decisions before the note exists (Chaehan, 2026-11-21: "the
+   decisions from life challenges should be in the life folder as a dated file
+   but only after i confirm their validity, so the life challenges skill should
+   ask that by checkboxes after presenting the life challenges, and before
+   creating the note"). Present the challenges in the reply's text: the two
+   ways, the questions and each area's open action. Then list each decision the
+   draft holds (the dilemma, each question Chaehan decides himself, each open
+   action) with its deadline, options and record line, and ask with the
+   question tool, multiSelect, one checkbox per decision whose label names it
+   and whose description holds its deadline, options and source, four to a
+   question and four questions to a call. Write only the checked ones to
+   `socrates/life/YYYY-MM-DD-decisions.tsv` in the columns `id decision
+   deadline options depends source`, dated the day Chaehan checked them, and run
+   `python3 ~/Software/Prototypes/agentkit/skills/life-challenges/scripts/decisions.py check <file>`
+   until it prints PASS. An unchecked decision is left out, and nothing is
+   inferred about why; when Chaehan checks none, no file is written, and the
+   report says so.
+4. Copy `draft.md` to `socrates/life/YYYY-MM-DD-life-challenges.md`.
+5. Run `note_build.py write $TMPDIR/life-challenges`. With Hanji it creates
    the note itself, reads it back and prints the verify result. With
    Evernote it prints the code for one `execute` call, which creates the
    note, reads it back and verifies it. In opencode, run that code exactly as
@@ -265,8 +286,8 @@ sentence. Then:
    bridge that `write` starts answers that call for 10 minutes at most, so
    launch it right away. A line starting REFUSED names what to fix; it is
    reported, never routed around.
-5. Report the verify result and both cut lists.
-6. Ask with the question tool whether to walk through the note now, and run
+6. Report the verify result, both cut lists and the decisions file.
+7. Ask with the question tool whether to walk through the note now, and run
    the walk-through on yes.
 
 ## Topic note (`/life <topic>`)
