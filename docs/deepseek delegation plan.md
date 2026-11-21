@@ -66,7 +66,7 @@ This table is where progress is tracked: a session sets a task's status here bef
 | DD-04 | Google Cloud bill audit each month | virtualfriend | the next saving after the VM move | DeepSeek, read-only | your yes per change | blocked, 2026-11-21: the bill's costs need the billing export and a reader; you are switching on the billing API |
 | DD-05 | Nightly log digest | virtualfriend | errors and response times on one page a day | DeepSeek | none | blocked, 2026-11-21: SSH to the VM was refused by this session's permission check |
 | DD-06 | The service-account key replaced by the VM's own identity | virtualfriend | the key file the VM runbook flagged is gone | DeepSeek | E3 | blocked: E3 |
-| DD-07 | Dependency and security upkeep of the public repositories | four public repositories | known advisories closed with tests green | DeepSeek | none | in progress, 2026-11-21, runbook by Claude Opus 5.5 |
+| DD-07 | Dependency and security upkeep of the public repositories | four public repositories | known advisories closed with tests green | DeepSeek | none | in progress, 2026-11-21, DeepSeek V4.1 Flash |
 | DD-08 | Uncommitted work and stale worktree sweep | all | no lost edits, no forgotten branches | DeepSeek reports, deletes nothing | none | ready |
 | DD-09 | Monthly usage report | all | whether work moves the way this plan wants | DeepSeek | none | ready |
 | DD-10 | Docs: one naming rule, the right repository, an index | all | agents find any document through its index | DeepSeek | E5 | blocked: E5 |
