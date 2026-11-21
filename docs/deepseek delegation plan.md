@@ -68,7 +68,7 @@ This table is where progress is tracked: a session sets a task's status here bef
 | DD-06 | The service-account key replaced by the VM's own identity | virtualfriend | the key file the VM runbook flagged is gone | DeepSeek | E3 | blocked: E3 |
 | DD-07 | Dependency and security upkeep of the public repositories | four public repositories | known advisories closed with tests green | DeepSeek | none | done, 2026-11-21: 0 advisories left in the four environments, every suite green |
 | DD-08 | Uncommitted work and stale worktree sweep | all | no lost edits, no forgotten branches | DeepSeek reports, deletes nothing | none | done, 2026-11-21: 15 worktrees in 10 repositories, 5 stale; the weekly schedule waits on you |
-| DD-09 | Monthly usage report | all | whether work moves the way this plan wants | DeepSeek | none | in progress, 2026-11-21, runbook by Claude Opus 5.5 |
+| DD-09 | Monthly usage report | all | whether work moves the way this plan wants | DeepSeek | none | in progress, 2026-11-21, DeepSeek V4.1 Flash |
 | DD-10 | Docs: one naming rule, the right repository, an index | all | agents find any document through its index | DeepSeek | E5 | blocked: E5 |
 | DD-11 | Memory lint backlog as proposed fixes | socrates memory | the lines notes are built from in a form a model reads right | DeepSeek proposes | your yes per file | ready |
 | DD-12 | Recurring-cost register | money | every subscription with its renewal date and last use | DeepSeek, data in socrates | E4 | blocked: E4 |
