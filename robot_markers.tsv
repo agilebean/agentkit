@@ -102,3 +102,7 @@ flag	\bevidence trail\b	name what you found out
 warn	\bpays? nothing\b	write the word the record uses, such as "no deduction"
 warn	\bfiled (?:it|that|this) as\b	say it the way a person says it at a table ("she heard that as not decided")
 warn	\bshines?\b	name what is good about it, or ask the question the section answers
+flag	\b(?:verdict|rule|handling|plan|answer|recommendation|ranking|decision|conclusion|choice) stands\b	say it is unchanged
+flag	\bsettles it\b|\bthat ends it\b	state the fact that decides it
+warn	\bworth knowing\b	state the fact
+warn	\b\w+-(?:proof|discounted)\b	a coinage: say what happens in plain words
