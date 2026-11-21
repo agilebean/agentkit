@@ -4,7 +4,7 @@ Task DD-03 of the [DeepSeek delegation plan](<deepseek delegation plan.md>), its
 
 Board: `docs/deepseek delegation plan.md`, task DD-19. Report: `docs/2026-11-21 dd-03 history purge report.md`.
 
-State: stopped at T1.3 on 2026-11-21, then resolved by the frontier session: the five hits were comment lines (three docstrings, one `#` line of a skill's data), replaced in the next commit with the suite at 655 passed. Resume at T1.3. Chaehan gave the go on 2026-11-21 ("Yes, run it"), recorded in the DD-19 row of the board.
+State: stopped at T1.3 a second time on 2026-11-21, DeepSeek V4.1 Flash. The frontier session fixed the first five hits in commit `3687eef` (suite at 655 passed); the check now finds 5 hits in two transcript scripts and they wait for the same call. Chaehan gave the go on 2026-11-21 ("Yes, run it"), recorded in the DD-19 row of the board.
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules
@@ -118,3 +118,4 @@ T5.2 Write the report in the form of the runbook skill. The table of changes hol
 | T1.1 | 2026-11-21 | pass | `mamba run -n socrates python -m pytest -q tests/test_history_check.py` printed `5 passed` |
 | T1.2 | 2026-11-21 | fail | `python3 scripts/history_check.py --rules "$HQ/history replacements.txt" --tree "$PWD"` printed `history_check: 90 hits`; RULES.md 12, commands/date.md 2, common_sense.md 14, scripts/instruction_lint.py 1, scripts/memory_lint.py 1, skills/date-analysis/SKILL.md 5, skills/date-analysis/date_markers.tsv 2, skills/date-analysis/scripts/md_turns.py 1, skills/date-analysis/scripts/mw_transcript.py 4, skills/date-analysis/traits.md 2, skills/evernote/SKILL.md 1, skills/life-overview/SKILL.md 1, skills/life-overview/scripts/overview_gate.py 1, tests/test_cards.py 5, tests/test_date_analysis.py 16, tests/test_note_build.py 3, tests/test_overview_gate.py 15, tests/test_wording_lint.py 4 |
 | T1.3 | 2026-11-21 | fail | 5 hits in scripts or skill data: `scripts/instruction_lint.py` rule 26, `scripts/memory_lint.py` rule 26, `skills/life-overview/scripts/overview_gate.py` rule 26, `skills/date-analysis/date_markers.tsv` rules 21 and 22 |
+| T1.3 | 2026-11-21 | fail | rerun after `3687eef`: 5 hits in scripts or skill data, `skills/date-analysis/scripts/md_turns.py` rule 22, `skills/date-analysis/scripts/mw_transcript.py` rules 21 and 22 |
