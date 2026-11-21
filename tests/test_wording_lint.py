@@ -118,6 +118,24 @@ def test_the_file_name_and_a_given_title_are_checked(tmp_path, capsys) -> None:
     assert wording.main(["--title", "2026-11-05 sample: nutritional intake", str(good)]) == 0
 
 
+def test_an_article_in_a_name_warns() -> None:
+    # RULES.md rule 70, class 37 of the 2026-11-21 session harvest: "you use too
+    # much the article "the"" about file names and slide rows.
+    assert wording.title_articles("2026-11-21 The session lessons") == ["The"]
+    assert wording.title_articles("Paternal Age and the Frozen 2020 Sample Question") == ["the"]
+    assert wording.title_articles("2026-10-11_the_homework_slide") == ["the"]
+    assert wording.title_articles("E06 Option A homework") == []
+    assert wording.title_articles("2026-11-21 session lessons tier1") == []
+    assert wording.title_articles("Theory of the firm") == ["the"]
+
+
+def test_an_article_in_a_file_name_fails_only_strict(tmp_path) -> None:
+    named = tmp_path / "2026-11-21 the plan.md"
+    named.write_text("Plain text.\n")
+    assert wording.main([str(named)]) == 0
+    assert wording.main(["--strict", str(named)]) == 2
+
+
 def test_a_bare_ordinal_date_warns_and_a_named_series_passes() -> None:
     """RULES.md 17: "A second meeting" in a note on a date with Jiwon said Chaehan
     had met her before; the second of the four Noble dates was their first.
