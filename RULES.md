@@ -5460,3 +5460,13 @@ A token file on disk is the only copy of the credential. When a library refresh 
 Lifetime is a separate cause with the same symptom: an OAuth client in Testing publishing status issues refresh tokens that expire seven days after consent. Publish the app to Production; publishing needs no website, because verification (homepage, privacy policy, CASA assessment for restricted scopes) only removes the "unverified app" screen and the 100-user cap. The account behind a token is read from `users.getProfile`, never from the file, which stores no address.
 
 Failure mode: 2026-11-21, invoice-admin's `save` failed with a token consented 2026-11-03. email-digest had fixed this class on 2026-08-06 (`d2556c6`, "fix(oauth): write credentials back after refresh"), and both invoice-admin (`gmail_api_backend.from_token_path`) and agentkit's shared Gmail client (`gmail/_client.py`) had kept the memory-only refresh, so every one of their runs could retire the file's token permanently.
+
+### 259. Sessions are screened for lessons every two weeks, and a session is deleted only after its lessons are recorded and he agrees
+
+Sessions are where Chaehan's corrections live, and they grow without bound, so the pass runs on a cadence rather than when the pile becomes noticeable. Every two weeks, read every session created or changed since the previous pass, take its user turns only, rank them by correction markers per turn, and write each lesson where it belongs: a rule in this file, a line in the memory file of its topic, a fix in the project that owns it. The funnel and the counts behind it are in socrates' `memory/session-harvest.md`. The pass records its date and the number of sessions it covered in that file, and the next pass starts from the recorded date.
+
+Deletion is a separate decision and it is his. A session can go once its lessons are recorded and its artifacts live outside it: a run sheet, a deck, a note, a commit all survive the transcript. Present the analysis per session, its date, its title, what it taught and what its loss would cost, and ask in one batch with the question tool. An archived session waits for that ask instead of going on the agent's judgement, and it goes in the pass that analysed it.
+
+Test: a session with no recorded lesson is never proposed for deletion, and a deletion proposed without its analysis beside it is the failure.
+
+Basis, 2026-11-21, after the KUBS DT harvest: "after analysis also the archived sessions should be deleted" and "from now all sessions should be screened two-weekly for any lessons learned, and carefully scrutinized if discardable and ask me that but with analysis and question tool".

@@ -279,4 +279,5 @@ Read the section you need by its line range; never read the whole file (199 KB).
 | 5402–5415 | ### 255. A possibility that survives every objection enters the summary |
 | 5416–5425 | ### 256. A hypothetical is answered as a hypothetical |
 | 5426–5455 | ### 257. Instructions live in opencode files; a CLAUDE.md is an import stub |
-| 5456–5462 | ### 258. A credential file is the credential: a refresh is written back where it happens, and a dead token is a consent problem |
+| 5456–5463 | ### 258. A credential file is the credential: a refresh is written back where it happens, and a dead token is a consent problem |
+| 5464–5472 | ### 259. Sessions are screened for lessons every two weeks, and a session is deleted only after its lessons are recorded and he agrees |
