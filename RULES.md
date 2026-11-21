@@ -3511,6 +3511,25 @@ Where the failure message carries an instruction - create a new key, re-authoris
 
 Instruction basis: 2026-10-18, the OpenCode Go key expiry. Four hypotheses (a version mismatch between opencode servers, a key-switching mechanism retired by a release, the application window as the thrower of the tool error, one cause behind both symptoms) preceded the log line `~/.local/share/opencode/log/opencode.log` 121841, "This API key has expired. Create a new API key in OpenCode Console and replace it in your client or secret store. Signing in again will not renew this key.", which named the cause; and the tool-channel symptom of the same session was already recorded as failure 67 with its cause and its fix. Chaehan: "the opencode authentication failed. find out why and fix it"; "you still don't get it: the bash alias switched the api keys."
 
+The read also runs on a cadence, because a defect that only the log knows about
+never arrives as a symptom. Sweep the error stream for tracebacks and 5xx, count
+them by date, and read the newest by its own words. A 500 says the server
+mishandled the request, whichever client sent it, so it is a defect to fix and
+never noise to dismiss: bot traffic does on purpose what no real client does,
+and every 5xx it earns is an input path the endpoint owes a 4xx. Differing
+shapes are not differing defects - the same body lands in one of four log lines
+depending on its content type and on whether it is HTTP at all - so the shapes
+are counted together before any of them is called noise.
+
+Test: an error stream holding exceptions from last month that no session has
+read is the failure, whatever the endpoint does with a well-formed request.
+
+Basis, 2026-11-21: Chaehan pasted four lines of virtualfriend's production log
+and asked why the agent had not caught them before. The stream held 135 ASGI
+exceptions since 2025-06-17, 133 of them one defect - FastAPI's default
+validation handler failing to decode a non-UTF-8 body, so a malformed `POST /`
+answered 500 with a traceback - and no session had opened it (failure 243).
+
 ### 168. Configuration paths come from the running process, never from an assumed filename
 
 The file a service reads is named by the process that is running, not by the default the agent remembers. Read the values in that process's environment (`ps eww -p <pid> | tr ' ' '\n' | grep -E '^(OPENCODE|OPENCHAMBER)_'`), take the files it holds from `lsof -p <pid>`, and list a directory (`ls -la`) instead of testing for one guessed name.
