@@ -10,7 +10,10 @@ coming back.
 from __future__ import annotations
 
 import ast
+import os
 import re
+import subprocess
+import sys
 import tomllib
 from pathlib import Path
 
@@ -61,3 +64,14 @@ def test_a_host_without_the_dependency_skips_by_the_same_marker() -> None:
     conftest = (TESTS / "conftest.py").read_text(encoding="utf-8")
     for marker in HOST_MARKERS:
         assert f'get_closest_marker("{marker}")' in conftest, marker
+
+
+def test_the_suite_collects_without_the_private_checkout(tmp_path) -> None:
+    """A test file reads its private data at import, and a collection error is red before any marker can skip it."""
+    env = os.environ | {"NOTE_BUILD_SOCRATES": str(tmp_path / "socrates"),
+                        "HUMAN_QUALITY_DATA": str(tmp_path / "data"),
+                        "HANJI_BIN": str(tmp_path / "hanji")}
+    run = subprocess.run([sys.executable, "-m", "pytest", "-q", "--collect-only", "--strict-markers",
+                          "-p", "no:cacheprovider", "-m", "not macos and not private"],
+                         cwd=ROOT, env=env, capture_output=True, text=True)
+    assert run.returncode == 0, run.stdout[-2000:] + run.stderr[-2000:]

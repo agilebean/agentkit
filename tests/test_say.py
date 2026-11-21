@@ -84,9 +84,10 @@ def test_the_answer_is_read_by_card_id() -> None:
 
 # ---- the line checks -------------------------------------------------------------
 
-P11 = say.pair_card(BY_ID["P11"])
-P15 = say.pair_card(BY_ID["P15"])
-P05 = say.pair_card(BY_ID["P05"])
+if BY_ID:
+    P11, P15, P05 = (say.pair_card(BY_ID[i]) for i in ("P11", "P15", "P05"))
+else:  # no private data on this machine: the private marker skips every test below
+    P11 = P15 = P05 = {}
 
 
 def _fails(line: str, card: dict) -> list[str]:
