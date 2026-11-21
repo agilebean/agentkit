@@ -212,7 +212,15 @@ class TestChromeForTestingLookup:
                 }
             }
         }
-        with patch("agentkit.browser._driver._fetch_json", return_value=payload):
+        with (
+            patch("agentkit.browser._driver._fetch_json", return_value=payload),
+            # the payload lists only the macOS driver, so the download platform is
+            # pinned here instead of being read from the machine the test runs on
+            patch(
+                "agentkit.browser._driver._cft_platform_key",
+                return_value="mac-arm64",
+            ),
+        ):
             assert _chromedriver_download("155", 5.0) == (
                 "155.0.8059.39",
                 "http://x/mac155",
@@ -291,7 +299,7 @@ class TestInstallChromedriver:
                 "agentkit.browser._driver._cft_platform_key",
                 return_value="mac-arm64",
             ),
-            patch("agentkit.browser._driver.sys.platform", "darwin"),
+            patch("agentkit.browser._driver._IS_MACOS", True),
             patch("agentkit.browser._driver.subprocess.run") as mock_xattr,
         ):
             path = _install_chromedriver("155.0.8059.39", "http://x/mac", 5.0)
