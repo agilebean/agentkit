@@ -4,7 +4,7 @@ Task DD-03 of the [DeepSeek delegation plan](<deepseek delegation plan.md>), its
 
 Board: `docs/deepseek delegation plan.md`, task DD-19. Report: `docs/2026-11-21 dd-03 history purge report.md`.
 
-State: stopped at T1.3 a second time on 2026-11-21, DeepSeek V4.1 Flash. The frontier session fixed the first five hits in commit `3687eef` (suite at 655 passed); the check now finds 5 hits in two transcript scripts and they wait for the same call. Chaehan gave the go on 2026-11-21 ("Yes, run it"), recorded in the DD-19 row of the board.
+State: stopped at T1.3 twice on 2026-11-21; both times the frontier session found the hits in comments and docstrings and replaced them (3687eef, then the next commit), and no script or skill data file holds a hit now; the suite passes 655. Resume at T1.3. Chaehan gave the go on 2026-11-21 ("Yes, run it"), recorded in the DD-19 row of the board.
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules
