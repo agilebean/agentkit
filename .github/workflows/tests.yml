@@ -8,8 +8,6 @@ jobs:
   pytest:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      PERSONAL_TERMS: ${{ secrets.PERSONAL_TERMS }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -19,6 +17,3 @@ jobs:
         run: python -m pip install -e ".[config,gmail,evernote]" pytest numpy selenium soundfile
       - name: Test
         run: python -m pytest -q -rs --strict-markers -m "not macos and not private"
-      - name: Personal terms
-        if: ${{ env.PERSONAL_TERMS != '' }}
-        run: python scripts/personal_terms_check.py --from-env PERSONAL_TERMS --tree .

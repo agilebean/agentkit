@@ -7,16 +7,18 @@
 
 The list of terms stays in socrates. A file holds one term a line; a blank line and a line
 starting with `#` are skipped, and a term is numbered by its 1-based position among the terms,
-not among the file's lines. `--from-env` reads the same text from an environment variable, which
-is how `.github/workflows/tests.yml` passes the repository secret `PERSONAL_TERMS`.
+not among the file's lines. The default list is
+`~/Software/Prototypes/socrates/docs/agentkit personal terms.txt`, so `--tree .` alone runs it
+against agentkit. `--from-env` reads the same text from an environment variable, for a caller
+that holds it that way.
 
 A hit is printed as `path:line: term N`, the path relative to the tree. The term itself is never
 printed, so a log of this check can be read by anyone. `.git`, `__pycache__` and a file that is
 not UTF-8 text are skipped: text means no NUL byte and a clean decode.
 
 With no list, or an empty one, the check has nothing to search for: it prints
-`personal_terms_check: no terms list, check skipped` and exits 0, so a repository without the
-secret stays green.
+`personal_terms_check: no terms list, check skipped` and exits 0, so a checkout without the
+socrates list stays green.
 """
 from __future__ import annotations
 
@@ -98,10 +100,17 @@ def scan(tree: Path, terms: list[str], skip: Path | None = None) -> list[str]:
     return [f"{shown}:{lineno}: term {position}" for shown, lineno, position in hits]
 
 
+SOCRATES_TERMS = Path.home() / "Software/Prototypes/socrates/docs/agentkit personal terms.txt"
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Find personal terms in a tree, never printing them.")
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--terms-file", help="a file holding one term a line")
+    source = parser.add_mutually_exclusive_group()
+    source.add_argument(
+        "--terms-file",
+        default=str(SOCRATES_TERMS),
+        help="a file holding one term a line, the socrates list by default",
+    )
     source.add_argument("--from-env", metavar="VAR", help="an environment variable holding the same text")
     parser.add_argument("--tree", default=".", help="the folder to search, the current one by default")
     args = parser.parse_args(argv)
