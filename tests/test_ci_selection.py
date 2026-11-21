@@ -75,3 +75,12 @@ def test_the_suite_collects_without_the_private_checkout(tmp_path) -> None:
                           "-p", "no:cacheprovider", "-m", "not macos and not private"],
                          cwd=ROOT, env=env, capture_output=True, text=True)
     assert run.returncode == 0, run.stdout[-2000:] + run.stderr[-2000:]
+
+
+def test_no_workflow_condition_reads_a_secret() -> None:
+    """GitHub rejects `secrets` inside `if`, and the run it then records has no job at all (24cc538, 2026-11-21)."""
+    offenders = [f"{p.name}:{line} reads a secret in an if; GitHub rejects the file and the run has no job"
+                 for p in sorted((ROOT / ".github" / "workflows").glob("*.yml"))
+                 for line, text in enumerate(p.read_text(encoding="utf-8").splitlines(), 1)
+                 if re.match(r"\s*if\s*:.*secrets\.", text)]
+    assert offenders == [], "\n".join(offenders)
