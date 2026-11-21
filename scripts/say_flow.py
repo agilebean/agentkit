@@ -22,7 +22,7 @@ sentences in a row naming one thing again to 5 after one pass and 2 after two.
     python3 scripts/say_flow.py <note.md> --measure          # the measure alone
 
 The measure counts, in each section, the pairs of sentences in a row that share three words of which two are
-content words ("your right shoulder", "the Sunrise date"), the median words a sentence, and the lint flags.
+content words ("your right shoulder", "the renewal date"), the median words a sentence, and the lint flags.
 """
 from __future__ import annotations
 
