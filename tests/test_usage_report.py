@@ -28,7 +28,8 @@ ur = _load()
 
 
 def _ms(text):
-    return int(datetime.strptime(text, "%Y-%m-%d %H:%M:%S").timestamp() * 1000)
+    """The wall time is KST: a naive timestamp() reads the host's zone, which is UTC on the runner."""
+    return int(datetime.strptime(text, "%Y-%m-%d %H:%M:%S").replace(tzinfo=ur.KST).timestamp() * 1000)
 
 
 def _commit(repo, message, when, coauthor=False):

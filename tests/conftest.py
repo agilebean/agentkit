@@ -15,9 +15,17 @@ holds the rule.
 """
 import os
 import shutil
+import time
 from pathlib import Path
 
 import pytest
+
+# The runner is UTC, Chaehan's Mac is KST. The suite sees one zone everywhere,
+# so a test that formats a timestamp cannot pass here and fail there (the
+# usage-report export did, on 2026-11-21). A test that needs another zone sets it.
+os.environ["TZ"] = "UTC"
+if hasattr(time, "tzset"):
+    time.tzset()
 
 HANJI = "/Applications/Hanji.app/Contents/MacOS/hanji"
 SOCRATES = Path(os.environ.get("NOTE_BUILD_SOCRATES") or Path.home() / "Software" / "Prototypes" / "socrates")

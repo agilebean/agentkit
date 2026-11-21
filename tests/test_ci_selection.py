@@ -14,6 +14,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 import tomllib
 from pathlib import Path
 
@@ -84,3 +85,8 @@ def test_no_workflow_condition_reads_a_secret() -> None:
                  for line, text in enumerate(p.read_text(encoding="utf-8").splitlines(), 1)
                  if re.match(r"\s*if\s*:.*secrets\.", text)]
     assert offenders == [], "\n".join(offenders)
+
+
+def test_the_suite_runs_in_one_timezone() -> None:
+    """conftest pins UTC, the runner's zone, so a timestamp test cannot pass on the KST Mac and fail there."""
+    assert time.strftime("%z") == "+0000", "tests/conftest.py must pin TZ=UTC before the suite runs"
