@@ -4,7 +4,7 @@ Task DD-09 of the [DeepSeek delegation plan](<deepseek delegation plan.md>): one
 
 Board: `docs/deepseek delegation plan.md`, task DD-09. Report: `docs/2026-11-21 dd-09 usage report report.md`. The month's table names Chaehan's costs and working folders, so it goes to socrates: `~/Software/Prototypes/socrates/docs/2026-11 deepseek usage.md`.
 
-State: not started.
+State: stopped at T2.1 on 2026-11-21. T1.1 and T1.2 pass (`scripts/usage_report.py` and its test are committed as `ca82a5d`). The database at the named path holds 400 sessions and none from 2026-11-12 to 2026-11-14, so the plan's window counts 225 socrates runs against the 542 measured when this runbook was written, and November counts 110 runs against 595.
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules
@@ -72,3 +72,6 @@ Resume: run the *Resume checks* below and continue at the first test whose row i
 
 | ID | Date | Result | Evidence |
 |---|---|---|---|
+| T1.1 | 2026-11-21 | pass | `NOTE_BUILD_SOCRATES=$HOME/Software/Prototypes/socrates mamba run -n socrates python -m pytest -q tests/test_usage_report.py` printed `5 passed in 0.55s` |
+| T1.2 | 2026-11-21 | pass | `python3 scripts/usage_report.py --help` printed `--month`, `--since`, `--until`, `--db`, `--plan` and `--out` |
+| T2.1 | 2026-11-21 | fail | `python3 scripts/usage_report.py --since 2026-10-01 --until "2026-11-20 23:08:25"` printed 225 runs for socrates, 37 for the others and `$56.72` was expected where `--month 2026-10` printed `| Total | 168 | 2 | 0 | 40.52 |` |
