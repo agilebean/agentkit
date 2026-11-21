@@ -18,10 +18,9 @@ _spec = importlib.util.spec_from_file_location("say", ROOT / "scripts" / "say.py
 say = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(say)
 
-if not say.PAIRS.exists():
-    pytest.skip("the card and line pairs are Chaehan's private data, kept in socrates", allow_module_level=True)
+pytestmark = pytest.mark.private
 
-PAIRS = say.load_pairs()
+PAIRS = say.load_pairs() if say.PAIRS.exists() else []
 BY_ID = {r["id"]: r for r in PAIRS}
 
 

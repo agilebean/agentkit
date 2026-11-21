@@ -31,4 +31,8 @@ agentkit = ["py.typed"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
-markers = ["local_port: the test opens a socket on 127.0.0.1; deselect it with -m 'not local_port' where a sandbox refuses the bind"]
+markers = [
+    "local_port: the test opens a socket on 127.0.0.1; deselect it with -m 'not local_port' where a sandbox refuses the bind",
+    "macos: the test needs Hanji.app, which exists only on a macOS host; the Linux CI deselects it with -m 'not macos'",
+    "private: the test needs Chaehan's private socrates checkout, its ENML converter or its wording data; the CI deselects it with -m 'not private'",
+]
