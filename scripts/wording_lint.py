@@ -95,6 +95,17 @@ def title_hits(title: str) -> list[str]:
     return [m.group(0) for m in TITLE_BAD.finditer(title)]
 
 
+# A name keeps only the words that tell it from its siblings, and an article
+# never does (RULES.md rule 70). "the" in any case; lowercase "a" and "an" only,
+# so a label such as "Option A" passes.
+TITLE_ARTICLE = re.compile(r"(?:^|[\s_-])((?i:the)|a|an)(?=[\s_-]|$)")
+
+
+def title_articles(title: str) -> list[str]:
+    """The articles in a title or file name (RULES.md rule 70)."""
+    return [m.group(1) for m in TITLE_ARTICLE.finditer(title)]
+
+
 def load_robot_markers(path: str = DEFAULT_MARKERS) -> list[tuple[str, re.Pattern, str, re.Pattern | None]]:
     rules = []
     with open(path, encoding="utf-8") as fh:
@@ -164,6 +175,14 @@ def main(argv=None) -> int:
             print(f"  title '{title}': flag {bad} - name the subject by a neutral category noun "
                   f"(\"nutritional intake\", never \"what she gets\"), RULES.md 20")
             flags += 1
+        articles = title_articles(title)
+        if articles:
+            print(f"  title '{title}': warn {articles} - a name keeps only the words that tell it "
+                  f"from its siblings, and an article never does, RULES.md 70")
+            if args.strict:
+                flags += 1
+            else:
+                warns += 1
     for path in args.files:
         if not os.path.exists(path):
             print(f"  missing: {path}")
