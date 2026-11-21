@@ -4,7 +4,7 @@ Task DD-07 of the [DeepSeek delegation plan](<deepseek delegation plan.md>): eve
 
 Board: `docs/deepseek delegation plan.md`, task DD-07. Report: `docs/2026-11-21 dd-07 dependency upkeep report.md`.
 
-State: not started.
+State: done 2026-11-21, DeepSeek V4.1 Flash; the report is `docs/2026-11-21 dd-07 dependency upkeep report.md`.
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules
@@ -91,3 +91,16 @@ Direct dependencies with an advisory, whose floors the repositories raise in T6.
 | ID | Date | Result | Evidence |
 |---|---|---|---|
 | T0.1 | 2026-11-21 | pass | `pip-audit --path ... --format json` over the four environments: 16, 14, 10 and 20 packages with an advisory, 4 `-before.json` files written |
+| T2.1 | 2026-11-21 | pass | `mamba run -n email-digest python -m pytest -q` printed `315 passed` |
+| T2.2 | 2026-11-21 | n/a | T2.1 printed `315 passed`, so no red test to roll back |
+| T2.3 | 2026-11-21 | pass | `pip-audit --path $SP` into `email-digest-after.json` reads `No known vulnerabilities found` |
+| T3.1 | 2026-11-21 | pass | `mamba run -n invoice-admin python -m pytest -q` printed `225 passed, 5 skipped` |
+| T3.2 | 2026-11-21 | n/a | T3.1 printed `225 passed, 5 skipped`, so no rollback was needed |
+| T3.3 | 2026-11-21 | pass | `pip-audit --path $SP` into `invoice-admin-after.json` reads `No known vulnerabilities found` |
+| T4.1 | 2026-11-21 | pass | the smoke check printed `ok` and `compiled`, `localai-after.json` reads `No known vulnerabilities found` |
+| T1.1 | 2026-11-21 | pass | agentkit printed `612 passed`, the socrates repository printed `202 passed` |
+| T1.2 | 2026-11-21 | n/a | both suites were green, so no rollback was needed |
+| T1.3 | 2026-11-21 | pass | `pip-audit --path $SP` into `socrates-after.json` reads `No known vulnerabilities found` |
+| T6.1 | 2026-11-21 | pass | `76724d4` and `528db65` pushed to `main`, suites printed `315 passed` and `225 passed, 5 skipped` |
+| T6.2 | 2026-11-21 | pass | `gh run list -R agilebean/email-digest --limit 1` reads `success` on `76724d4`, invoice-admin on `528db65` |
+| T6.3 | 2026-11-21 | pass | `python3 scripts/report_check.py "docs/2026-11-21 dd-07 dependency upkeep report.md"` printed `report_check: PASS` |
