@@ -116,11 +116,18 @@ class GmailApiBackend:
             if creds and creds.expired and creds.refresh_token:
                 from google.auth.transport.requests import Request
                 try:
+                    on_disk = json.loads(candidate.read_text(encoding="utf-8"))
                     creds.refresh(Request())
                     # Persist the rotated credentials: a refresh can hand back a new
                     # refresh token and invalidate the old one, so an unread disk copy
-                    # fails the next run with invalid_grant (RULES 106).
-                    candidate.write_text(creds.to_json(), encoding="utf-8")
+                    # fails the next run with invalid_grant (RULES 258). The file's own
+                    # scope list is kept: google-auth narrows creds.scopes to the subset
+                    # the caller asked for, and writing that back drops scopes other
+                    # consumers rely on.
+                    updated = json.loads(creds.to_json())
+                    if on_disk.get("scopes"):
+                        updated["scopes"] = on_disk["scopes"]
+                    candidate.write_text(json.dumps(updated), encoding="utf-8")
                 except Exception as e:
                     raise GmailAuthError(
                         f"Could not refresh OAuth token ({candidate}): {e}. "
