@@ -8,8 +8,8 @@ _spec = importlib.util.spec_from_file_location("note_build", _p)
 nb = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(nb)
 
-needs_socrates = pytest.mark.skipif(not (nb.SOCRATES / "projects/evernote/src/enml.py").is_file(),
-                                    reason="socrates's ENML converter is not checked out")
+needs_socrates = pytest.mark.private
+needs_hanji = pytest.mark.macos
 
 OLD = """## Summary
 
@@ -108,9 +108,6 @@ def test_a_given_summary_replaces_the_line_per_section(tmp_path, monkeypatch, ca
                             "- Do you take the Port Liner at ¥340 when you land at 14:00?\n\n## Kobe Airport")
 
 
-HANJI = "/Applications/Hanji.app/Contents/MacOS/hanji"
-
-
 def test_init_for_hanji_takes_only_a_new_note(tmp_path, capsys) -> None:
     old = tmp_path / "old.md"
     old.write_text(OLD)
@@ -118,7 +115,7 @@ def test_init_for_hanji_takes_only_a_new_note(tmp_path, capsys) -> None:
     assert "builds a new note from a file" in capsys.readouterr().err
 
 
-@pytest.mark.skipif(not Path(HANJI).is_file(), reason="Hanji.app is not installed")
+@needs_hanji
 def test_a_hanji_build_creates_reads_back_and_verifies(tmp_path, monkeypatch, capsys) -> None:
     import sys
     sys.path.insert(0, str(_p.parents[2] / "hanji" / "scripts"))
@@ -694,11 +691,10 @@ def test_the_printed_execute_code_parses_as_javascript(tmp_path) -> None:
 
 
 @needs_socrates
+@needs_hanji
 def test_a_text_written_elsewhere_goes_to_hanji_with_a_photo_whose_path_has_a_space(tmp_path, monkeypatch, capsys) -> None:
     import importlib.util as u
     import shutil
-    if not Path("/Applications/Hanji.app/Contents/MacOS/hanji").exists():
-        pytest.skip("Hanji.app is not installed")
     spec = u.spec_from_file_location("hanji_note", nb.HANJI_NOTE)
     hn = u.module_from_spec(spec)
     spec.loader.exec_module(hn)
@@ -725,12 +721,11 @@ def test_a_text_written_elsewhere_goes_to_hanji_with_a_photo_whose_path_has_a_sp
     assert [l for l in h.markdown(nid).split("\n") if l.strip()][1].startswith("![photo of us.png](blobs/")
 
 
+@needs_hanji
 def test_a_hanji_table_row_with_a_tilde_verifies(tmp_path, monkeypatch, capsys) -> None:
     """Hanji's Markdown export writes "~" as "\\~", so a table row with an approximate number read as lost
     (2026-11-16: "~31000 tokens", "~60" and "~$0.05" in three rows of a note that was complete)."""
     import importlib.util as u
-    if not Path("/Applications/Hanji.app/Contents/MacOS/hanji").exists():
-        pytest.skip("Hanji.app is not installed")
     spec = u.spec_from_file_location("hanji_note", nb.HANJI_NOTE)
     hn = u.module_from_spec(spec)
     spec.loader.exec_module(hn)

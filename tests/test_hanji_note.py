@@ -14,7 +14,7 @@ hn = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(hn)
 
 HANJI = os.environ.get("HANJI_BIN") or shutil.which("hanji") or hn.APP_BIN
-needs_hanji = pytest.mark.skipif(not Path(HANJI).is_file(), reason="Hanji.app is not installed")
+needs_hanji = pytest.mark.macos
 
 NOTE = """# 2026-11-07 Swim log
 

@@ -16,9 +16,8 @@ eh = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(eh)
 
 HANJI = os.environ.get("HANJI_BIN") or shutil.which("hanji") or eh.APP_BIN
-needs_hanji = pytest.mark.skipif(not Path(HANJI).is_file(), reason="Hanji.app is not installed")
-needs_socrates = pytest.mark.skipif(not (eh.SOCRATES / "projects/evernote/src/enml.py").is_file(),
-                                    reason="socrates's ENML converter is not checked out")
+needs_hanji = pytest.mark.macos
+needs_socrates = pytest.mark.private
 
 
 def png(seed: int) -> bytes:

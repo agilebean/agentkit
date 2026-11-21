@@ -16,7 +16,7 @@ _spec = importlib.util.spec_from_file_location("wording_eval", ROOT / "scripts" 
 ev = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(ev)
 
-pytestmark = pytest.mark.skipif(not ev.CASES.exists(), reason="the labelled lines are Chaehan's private data, kept in socrates")
+pytestmark = pytest.mark.private
 
 
 def test_the_table_holds_20_accepted_and_40_rejected_lines() -> None:
