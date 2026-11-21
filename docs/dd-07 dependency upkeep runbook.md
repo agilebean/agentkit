@@ -90,3 +90,4 @@ Direct dependencies with an advisory, whose floors the repositories raise in T6.
 
 | ID | Date | Result | Evidence |
 |---|---|---|---|
+| T0.1 | 2026-11-21 | pass | `pip-audit --path ... --format json` over the four environments: 16, 14, 10 and 20 packages with an advisory, 4 `-before.json` files written |
