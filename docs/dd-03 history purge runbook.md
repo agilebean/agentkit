@@ -2,15 +2,15 @@
 
 Task DD-03 of the [DeepSeek delegation plan](<deepseek delegation plan.md>), its history part: no commit of agentkit, old or new, holds the files moved to socrates on 2026-11-20 or a term of the private replacement list. Written 2026-11-21 by Claude Opus 5.5; DeepSeek V4.1 Flash runs it in opencode under the runbook skill (`skills/runbook/SKILL.md`).
 
-Board: `docs/deepseek delegation plan.md`, task DD-03. Report: `docs/2026-11-21 dd-03 history purge report.md`.
+Board: `docs/deepseek delegation plan.md`, task DD-19. Report: `docs/2026-11-21 dd-03 history purge report.md`.
 
-State: not started. Run it only after the DD-03 row of the board names Chaehan's go with its date.
+State: not started. Chaehan gave the go on 2026-11-21 ("Yes, run it"), recorded in the DD-19 row of the board.
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules
 
 - The replacement list is private and stays in socrates: `$HQ/history replacements.txt`, where `HQ="$HOME/Software/Prototypes/socrates/docs/human quality/data"`. Never copy it, quote it or name one of its terms in agentkit, in a commit message or in the report. The report counts hits; it never shows them.
-- `AK="$HOME/Software/Prototypes/agentkit"` is the checkout other sessions share. In it you change only the files Story 1 names, this runbook's *State* line and *Test log*, the DD-03 row of the board (the claim only) and the report. Stage each file by its name.
+- `AK="$HOME/Software/Prototypes/agentkit"` is the checkout other sessions share. In it you change only the files Story 1 names, this runbook's *State* line and *Test log*, the DD-19 row of the board (the claim only) and the report. Stage each file by its name.
 - The rewrite of Story 2 happens in a fresh mirror clone under `$TMPDIR/dd03/`, never in `$AK`.
 - A push that rewrites history uses `--force-with-lease` with the old SHA of each ref, as rule 193 allows. A bare `--force` is never used.
 - Python is `mamba run -n socrates python`. The suite command is the one of DD-02: `NOTE_BUILD_SOCRATES=$HOME/Software/Prototypes/socrates mamba run -n socrates env -u OPENCODE_SERVER_PASSWORD python -m pytest -q $(git ls-files 'tests/*test_*.py')`.

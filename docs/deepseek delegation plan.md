@@ -78,7 +78,7 @@ This table is where progress is tracked: a session sets a task's status here bef
 | DD-16 | Stock scores refreshed each week | money | the score table without a Claude session | DeepSeek, data in socrates | none | ready |
 | DD-17 | `tests/test_note_test.py` independent of the session it runs in | agentkit | the suite passes inside an opencode session too | any | none | done, 2026-11-21: 588 passed with the variable set |
 | DD-18 | The test workflow on a runner that starts at once | agentkit | a push shows its result in a minute, never after a queue | any | none | done, 2026-11-21: ubuntu-latest, green in 37 s with 0 s of wait |
-| DD-19 | The history purge of DD-03, by [its runbook](<dd-03 history purge runbook.md>) | agentkit | no commit of agentkit holds the files moved out or a term of the private list | DeepSeek | your go | blocked: your go |
+| DD-19 | The history purge of DD-03, by [its runbook](<dd-03 history purge runbook.md>) | agentkit | no commit of agentkit holds the files moved out or a term of the private list | DeepSeek | your go, given 2026-11-21 | ready |
 
 Statuses are ready, blocked (by a task or a decision), in progress (date and model), done (date and result), proposed and dropped.
 
