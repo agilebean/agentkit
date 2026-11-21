@@ -4,7 +4,7 @@ Task DD-03 of the [DeepSeek delegation plan](<deepseek delegation plan.md>), its
 
 Board: `docs/deepseek delegation plan.md`, task DD-19. Report: `docs/2026-11-21 dd-03 history purge report.md`.
 
-State: in progress, 2026-11-21, DeepSeek V4.1 Flash. Chaehan gave the go on 2026-11-21 ("Yes, run it"), recorded in the DD-19 row of the board.
+State: stopped at T1.3 on 2026-11-21, then resolved by the frontier session: the five hits were comment lines (three docstrings, one `#` line of a skill's data), replaced in the next commit with the suite at 655 passed. Resume at T1.3. Chaehan gave the go on 2026-11-21 ("Yes, run it"), recorded in the DD-19 row of the board.
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules
