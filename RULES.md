@@ -702,6 +702,23 @@ one will eventually be chosen.
   지원 and whether he was meeting her for the first time: "yes of course it is the first
   meeting and it was today, what otherwise would you tell from my calendar
   entry and my Sunrise list? this is common sense."
+- **Every source goes on one timeline before anyone's position is read.**
+  When an episode is recorded in more than one source (a chat export, the
+  calls and meetings Chaehan reports, a calendar), every event from every
+  source is listed in date order with its source before any reading is made,
+  and a person's position is read from the latest event, never from an earlier
+  statement that a later one overtook. An event Chaehan reports that the export
+  does not hold is an event on that timeline, dated by his words, never a side
+  note to the export. Test: name the latest event the reading rests on; if any
+  source holds a later one, the reading is stale. 2026-11-22: the feedback on
+  Person's Australia reversal read her position from her texts of 2026-11-20
+  00:25 and called her money message the first time she said what she thought,
+  while Chaehan's account put a later event on the same day: after saying in
+  the night call that she never meant not to go, she refused any stay, even
+  one week, in a warm call she steered to the subject. Chaehan: "you seem to
+  take only her Kakaotalk words into account and not what I told you with the
+  complete reversal the day after so you didn't check the chronological
+  order."
 - **A fact comes from one record line about that event, never from two joined.**
   A person, a cause, a payment or a date is attached to an event only when one
   line of the record names both. Two lines about different matters that share
