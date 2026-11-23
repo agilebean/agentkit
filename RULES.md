@@ -660,6 +660,13 @@ one will eventually be chosen.
   or the following topic is a defective note. Rewrite it with the subject
   named. The metric is irrelevant: loads, doses, prices, dates, and
   frequencies all misattach the same way when unbound.
+- **A numeral that can be a time or a quantity is resolved before it is written.**
+  "at 20mg" beside a stated 20:30 is the clock, and the day's dose stands as the
+  record has it; the smaller number heard earlier stays with the session it
+  belongs to. A repeat that lasts longer than the first is a gain, not a cost
+  (Chaehan, 2026-11-23: "I said I took 30mg at 14:00. don't mix that with the
+  20mg which i for the first sessions where i had difficulties ... there is no
+  cost as the second shot lasted even longer so that's a gain").
 - **Money carries its currency as a symbol, in front of the amount.** `¥233`,
   `$2676`, `₩4430`; no thousand separators and no currency word taken from a
   language (`233 엔`, `4500 dollars`). The word form is the defect even when it
