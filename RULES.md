@@ -3895,9 +3895,11 @@ When something you committed earlier in the same session turns out to be wrong o
 
 The distinction that matters: a **new** piece of work is a new commit, however small. A **correction to work already in this session's commit** is an amendment. Committing a CI failure fix separately and pushing it leaves a red commit and a green commit in the history for one change.
 
+Once the user has named amend for a change, that choice holds for the rest of the session: a correction that arrives a turn later, such as a distance total missing the warmup after the reps were re-keyed, goes into the same commit too. The test before any commit is whether HEAD's subject still describes the whole change; when it does, reset the commits above it softly and re-commit, and a new commit is only for work the subject no longer covers.
+
 The force-push is allowed: on 2026-11-11 auto mode refused one as destructive, and on 2026-11-12 Chaehan, asked which way rule 193 should go, answered "I'll allow force pushes". The lease names the tip you replace, and a commit someone else built on yours is never rewritten: check `git branch -a --contains <sha>` first, and leave the history as it is when another branch holds it.
 
-Instruction basis: 2026-10-20, the E08 deck's page count. Adding the navy agenda made the deck 16 pages; the build test still asserted 15, CI failed, and I fixed the literal and pushed it as its own commit. Chaehan: "you shouldn't push such fixes but git amend them."
+Instruction basis: 2026-10-20, the E08 deck's page count. Adding the navy agenda made the deck 16 pages; the build test still asserted 15, CI failed, and I fixed the literal and pushed it as its own commit. Chaehan: "you shouldn't push such fixes but git amend them." Repeated 2026-11-23: after the 2026-11-22 swim entry was amended on his "relabel it 60% and git amend", the next correction to the same entry (`distance_adjustment: 200` for the warmup and cooldown) was pushed as a new commit. Chaehan: "no it should have git amended not new commit".
 
 ### 194. "Replace A with B" removes A
 
