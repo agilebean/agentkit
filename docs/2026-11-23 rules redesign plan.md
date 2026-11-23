@@ -1,10 +1,10 @@
 # RULES.md redesign plan, 2026-11-23
 
-RULES.md can shrink by about a third without losing a sentence, but only in this order: first every incident is copied into the failure register, then each rule is cut to its principle, its test and the failure numbers. Today 78% of the long quotes in RULES.md exist nowhere else, so cutting first would lose your words.
+RULES.md can shrink by about a third without losing a sentence, but only in this order: first every incident is copied into the failure register, then each rule is cut to its principle, its test and the failure numbers. Today 502 of the 783 distinct long quotes in RULES.md (64%) exist nowhere else, so cutting first would lose your words.
 
 Three measurements make the plan necessary and safe:
 - 35% of RULES.md (~32600 of 92666 words) is in sentences with a date, a quote or a failure number. That is incident text, and the file's own writing standard (its line 9) already says a rule tells no incident.
-- Of the 549 quotes of 25 characters or more, 122 (22%) stand verbatim in socrates `agent/failures.md`. 223 rules tell a dated incident, and 195 of them cite no failure number.
+- Of the 783 distinct quotes of 25 characters or more, 281 (36%) stand verbatim in socrates `agent/failures.md`, matched across line breaks by the ledger of phase 0. 223 rules tell a dated incident, and 195 of them cite no failure number.
 - 79 files in agentkit and socrates cite 180 rules by number, 634 times. Numbers therefore never change.
 
 The plan would change if the failure register turned out to be the wrong home for ~8000 more words of quotes. The alternative would then be one evidence file per rule group in socrates.
@@ -38,9 +38,9 @@ Line 9 of RULES.md says which quote stays: the instance most representative of t
 
 ## The migration, in four phases
 
-**Phase 0, freeze and ledger.** Tag agentkit `rules-2026-11-23`, so the whole text stays retrievable. A script, `tools/rules_ledger.py`, splits RULES.md into sentences, each with an identifier (rule number and position) and a class: principle, test, scope, example, incident or pointer. The ledger quotes incidents, so it lives in socrates.
+**Phase 0, freeze and ledger.** Done on 2026-11-23. The agentkit tag `2026-11-23_rules` keeps the whole text. `tools/rules_ledger.py` splits RULES.md into 4091 units (a sentence, a heading, a table row or a code block), each with an identifier (`R17.004` is the fourth unit of rule 17) and a first-pass class, and `check` names any unit that stands in none of the files the text moved to. The split is lossless on the real file, all 261 rules are covered, and `check` against today's RULES.md finds 0 missing. The ledger quotes incidents, so it lives in socrates: `docs/2026-11-23 rules ledger.tsv`. The first-pass classes: principle 2728 units (56360 words), incident 897 (27713), heading 275, test 135, example 22, pointer 30, table 4. The incident class is a lower bound: a sentence that continues an incident without its own date or quote is classed principle, so phase 1 reviews each rule's units before copying.
 
-**Phase 1, copy, delete nothing.** Every incident sentence that the register lacks goes into it: into the matching failure entry where the date and quote match, otherwise into one evidence entry per rule ("Evidence for rule 17") that lists the dated instances verbatim. Done when all 549 quotes stand verbatim in the register, against 122 today.
+**Phase 1, copy, delete nothing.** Every incident sentence that the register lacks goes into it: into the matching failure entry where the date and quote match, otherwise into one evidence entry per rule ("Evidence for rule 17") that lists the dated instances verbatim. Phase 1 rebuilds the ledger from the RULES.md of its day, so text added after the tag is covered. Done when all 783 quotes stand verbatim in the register, against 281 today.
 
 **Phase 2, trim to cards, 20 rules per batch, longest first.** Incident sentences give way to their failure numbers. Principle sentences stay word for word: nothing is reworded in this phase. You review the first batch's before and after (rules 2, 17, 73, 10 and 104) before the rest runs. Each batch is one commit, with the checks below green.
 
@@ -58,10 +58,9 @@ Each check runs in `tests/` on every push:
 
 After phase 2, RULES.md drops from 92666 to ~60000 words, and every rule fits on a screen: principle, test, evidence numbers. After phase 3 the index routes by task, and the size depends on how many merges you accept. The register grows by ~8000 words of quotes, read only by section.
 
-## What you decide before phase 0
+## Decisions, settled on 2026-11-23
 
-Settled on 2026-11-23: a rule keeps one quote, the instance most representative of its class and most discriminating against its neighbours, never the shortest.
-
-1. A merged rule keeps its number as a stub. Proposal: yes.
-2. The evidence lives in the socrates failure register. Proposal: yes, since it is private, indexed and already in the incident format.
-3. The first batch is the five longest rules, and you review it before the rest. Proposal: yes.
+1. A rule keeps one quote, the instance most representative of its class and most discriminating against its neighbours, never the shortest.
+2. A merged rule keeps its number as a one-line stub (the three proposals approved, Chaehan, 2026-11-23: "yes").
+3. The evidence lives in the socrates failure register.
+4. The first batch of phase 2 is the five longest rules (2, 17, 73, 10, 104), and Chaehan reviews it before the rest runs.
