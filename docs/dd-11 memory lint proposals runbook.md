@@ -4,7 +4,7 @@ Task DD-11 of the [DeepSeek delegation plan](<deepseek delegation plan.md>): eve
 
 Board: `docs/deepseek delegation plan.md`, task DD-11. Report: `docs/2026-11-21 dd-11 memory lint proposals report.md`. The proposals quote memory, so they go to socrates: `~/Software/Prototypes/socrates/docs/2026-11-21 memory lint proposals.md`.
 
-State: not started.
+State: closed, 2026-11-23, on Chaehan's word (the board's log entry of that day).
 Resume: run the *Resume checks* below and continue at the first test whose row in the *Test log* is not `pass`.
 
 ## Delivery rules

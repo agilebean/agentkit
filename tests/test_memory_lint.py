@@ -68,6 +68,7 @@ def test_an_earlier_version_named_beside_its_replacement_is_m2():
 
 def test_a_reproach_to_the_agent_is_m5_and_its_fact_passes():
     for quote in ("what are the blockless days? did you just apply the rule i had before course start?",
-                  "isn't that common sense that you don't show here the reading homework"):
+                  "isn't that common sense that you don't show here the reading homework",
+                  "this is common sense, the reading stays off the slide"):
         assert "M5" in codes(f'Chaehan, 2026-11-02: "{quote}"\n')
     assert codes('Chaehan, 2026-11-02: the day credit "doesn\'t apply further to course end".\n') == []

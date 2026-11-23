@@ -57,7 +57,7 @@ HISTORY = re.compile(r"^#{1,4}\s+.*\b(history|log|archive|evidence)\b", re.I)
 QUOTE = re.compile(r'"[^"]*"|“[^”]*”')
 TO_AGENT = re.compile(r"\b(i told you|told you|you forgot|you must|you should|you mustn't|you did|you didn't|"
                       r"why didn'?t you|why don'?t you|can'?t you|don'?t you|you're wrong|you broke|you missed|"
-                      r"you could have|you still|did you just|isn'?t (?:that|it) (?:common sense|obvious))\b", re.I)
+                      r"you could have|you still|did you just|common sense)\b", re.I)
 
 
 def lint(text: str) -> list[tuple[int, str, str]]:
