@@ -228,7 +228,7 @@ Write the text as plain sentences, each stating what was seen, why it happened, 
 - **Rubric label from an institution's manual** ("Reason 5"): name the quality judged and the symptom that shows it.
 - **Conditional built from the analyst's logic**: state the condition the reader faces.
 - **Parenthetical data capsule**: state the fact in the sentence where it does its work.
-- **Metaphor or absolute that gives an abstraction agency** ("where bias enters an interview", "the evidence trail"): name the person and the action, or the thing itself. A person's view is never a line, a door, a position or a stance, and a meeting has no exits, tests or signals ("took no exit", "her own line is closed", "you passed the two tests she ran"): say what she wants and what the two of them did. An absolute can be one word, an article included: "without bias" becomes "bias awareness", "the lens" becomes "one alternative lens". Test: find a case in the material that the word excludes, and when the material holds that case, write the bounded form. Chaehan, 2026-09-26: "without bias is impossible so say bias awareness in interviews"; 2026-09-06: "JTBD is not the lens but one alternative lens".
+- **Metaphor or absolute that gives an abstraction agency** ("where bias enters an interview", "the evidence trail"): name the person and the action, or the thing itself. A person's view is never a line, a door, a position or a stance, and a meeting has no exits, tests or signals ("took no exit", "her own line is closed", "you passed the two tests she ran"): say what she wants and what the two of them did. An absolute can be one word, an article included: "without bias" becomes "bias awareness", "the lens" becomes "one alternative lens". Test: find a case in the material that the word excludes, and when the material holds that case, write the bounded form.
 - **Row built from a method's components** ("the interviews, the ratings"): name the quality judged, never the steps.
 - **Nominalization** ("the implementation of"): use the verb.
 - **Trade slang**: write the plain word for the thing.
@@ -251,11 +251,15 @@ Write the text as plain sentences, each stating what was seen, why it happened, 
 - **The agent's own history in a note** ("I said earlier ...", "That was wrong"): a note states what is true now; the correction of an earlier answer belongs in the chat.
 - **A goal the session cannot deliver** ("can name every classmate's skill and strength" in one session): write a goal the session's time allows and the reader can show by its end.
 
-**The instances are inventoried.** Every correction the user gives is appended to `common_sense.md` (this folder) in the same turn, as one row: the flagged words and where they stood, why the user rejected them, the repair, and why the repair is better. That file's second table carries the corrections whose complaint was that the agent missed something ordinary: the user's own "not common sense" statements, with what should have been obvious and where it now lives as a rule. The user's words are quoted where the record has them; a correction recorded without the reasoning is incomplete, and when the exchange carries none, ask. Text the user will read or hear is checked against this list and that inventory before it ships. A new class becomes a kind here. A word or idiom he flags that can recur in other text becomes a row in the shared marker list `robot_markers.tsv` (this folder) in the same turn, with his repair as its fix: one flag is enough, and the row never waits for a second instance to form a class. A flag no expression can find again (a one-off sentence, a heading style, the layout of a whole answer) is named in the writer's-pass list of `tests/test_wording_inventory.py`. That test fails on any inventory row he called robotic that is in neither place. The marker list is run by `scripts/wording_lint.py` on any project's files. A skill whose output Chaehan reads as finished prose keeps its own list beside the shared one and runs the checker with `--strict`, which fails every warn: on 2026-11-10 the contrast frames and "mechanism" reached his date note because the shared list only warns on them (the date-analysis skill's `date_markers.tsv`, 2026-11-12); a project workflow wraps the checker where useful (KUBS: `pipeline.py lint --session N` in the socrates repo). Text quoted from a source and kept verbatim sits between `<!-- verbatim -->` and `<!-- end verbatim -->`, and the checker skips it: another author's punctuation is not the user's to repair, and the path that renders an artifact drops the two marker lines before the page is drawn.
+**The instances are inventoried.** Every correction the user gives is appended to `common_sense.md` (this folder) in the same turn, as one row: the flagged words and where they stood, why the user rejected them, the repair, and why the repair is better. That file's second table carries the corrections whose complaint was that the agent missed something ordinary: the user's own "not common sense" statements, with what should have been obvious and where it now lives as a rule. The user's words are quoted where the record has them; a correction recorded without the reasoning is incomplete, and when the exchange carries none, ask. Text the user will read or hear is checked against this list and that inventory before it ships. A new class becomes a kind here. A word or idiom he flags that can recur in other text becomes a row in the shared marker list `robot_markers.tsv` (this folder) in the same turn, with his repair as its fix: one flag is enough, and the row never waits for a second instance to form a class. A flag no expression can find again (a one-off sentence, a heading style, the layout of a whole answer) is named in the writer's-pass list of `tests/test_wording_inventory.py`. That test fails on any inventory row he called robotic that is in neither place. The marker list is run by `scripts/wording_lint.py` on any project's files. A skill whose output Chaehan reads as finished prose keeps its own list beside the shared one and runs the checker with `--strict`, which fails every warn; a project workflow wraps the checker where useful (KUBS: `pipeline.py lint --session N` in the socrates repo). Text quoted from a source and kept verbatim sits between `<!-- verbatim -->` and `<!-- end verbatim -->`, and the checker skips it: another author's punctuation is not the user's to repair, and the path that renders an artifact drops the two marker lines before the page is drawn.
 
 The list covers internal working artifacts too (run sheets, session cards, flow notes), and a re-render re-reads the text before it ships: phrasing an earlier pass left behind is swept, not shipped again.
 
 A chat reply is checked the same way as a file: the checker reads paths, so the finished draft is written to a temp file and run through `scripts/wording_lint.py` (agentkit) before it is sent, on every reply, not only after a correction. When a correction is fixed, its row is appended to `common_sense.md` in the same turn with Chaehan's reasoning; when the exchange carries none, ask him for it.
+
+Neighbours: rules 19, 37, 48, 54, 57 and 85.
+
+Evidence: failures 11, 24, 70, 90, 104, 105, 164, 165, 194, 208 and 238, and the entry "Evidence for rule 2", in socrates `agent/failures.md`.
 
 ### 3. Commit and push on main when told, when satisfaction is detected, or when the work has converged
 Run `git commit` and `git push` when the user says "commit", "push" or "commit and push", when you detect satisfaction (rule 46), or when the work has converged (rule 119). Never wait for the word in the last two cases. "Commit" alone authorizes both commit and push. Git commit amend is allowed.
@@ -407,10 +411,14 @@ A commit must contain only the work for the current task — never the user's un
 - Before committing, run `git status` and `git diff --cached --stat`. Unstage anything not part of the task (`git restore --staged <file>`). If the tree holds changes you did **not** make, leave them unstaged and tell the user they're there.
 - "Done" means the committed state is green **on a clean tree**: with unrelated edits stashed/unstaged, the relevant suite passes at HEAD. Never commit a code change while leaving its matching test update uncommitted — that makes HEAD red even though the dirty working tree looks green.
 - **Your uncommitted work is vulnerable to being swept into another commit.** Rule 10 protects against sweeping *others'* work into *your* commit. The mirror hazard: *your* uncommitted changes get swept into a concurrent session's commit, losing their subject and attribution. Commit small units immediately after they pass verification; never end a working session with tracked-file modifications still uncommitted; run `git status` before ending any turn. If you return to find your change already committed under an unrelated message, do not rewrite pushed history without asking — report the misattribution and let the user decide. Fix attribution as soon as it is found. When the user approves a cleanup, rebuild the history so each change sits in its own commit with its own subject and message: replay the commits in a separate `git worktree` (never the live checkout, which may hold a concurrent session's uncommitted work), keep the pre-rewrite head as a backup branch on the remote as well as locally, verify the rebuilt tip's tree equals the old tip's tree plus only the intended new changes, then force-push with `--force-with-lease`.
-- **Before `--amend`, confirm HEAD is the commit you just made — by sha, in the same command.** Run `git log -1` and check the message is the one you wrote this session, not merely that your file is the only one dirty. `git status` showing only your own file is not proof that HEAD is yours: a concurrent session can commit between your commit and your amend. `git commit --amend --no-edit` then folds your change into *their* commit and reuses *their* message, and pushing it rewrites a commit that was not yours to rewrite. If HEAD has moved, do not amend; commit on top, or ask. The check is mechanical, because a remembered message is not a check: take the sha your own `git commit` just printed and compare it with `git rev-parse --short HEAD` run in the same chain as the amend (`git rev-parse --short HEAD && git commit --amend …`); amend only on a match. Never pair `--amend` with `--no-edit` in a shared checkout — the flag reuses the wrong commit's subject with no visible sign, which is how the repeat below passed unnoticed. A clean `git status` proves nothing here: it is silent about whose commit the tip is. Failure: on 2026-09-22 an amend of a memory fix landed inside a concurrent session's commit (26b576b became c388b16) and force-pushed over it; repeated 2026-10-15, when "git amend that i also ate samgyetang…" folded a health line into a concurrent session's stocks commit (07082d5 → 449b859) and replaced its subject with the health one.
+- **Before `--amend`, confirm HEAD is the commit you just made — by sha, in the same command.** Run `git log -1` and check the message is the one you wrote this session, not merely that your file is the only one dirty. `git status` showing only your own file is not proof that HEAD is yours: a concurrent session can commit between your commit and your amend. `git commit --amend --no-edit` then folds your change into *their* commit and reuses *their* message, and pushing it rewrites a commit that was not yours to rewrite. If HEAD has moved, do not amend; commit on top, or ask. The check is mechanical, because a remembered message is not a check: take the sha your own `git commit` just printed and compare it with `git rev-parse --short HEAD` run in the same chain as the amend (`git rev-parse --short HEAD && git commit --amend …`); amend only on a match. Never pair `--amend` with `--no-edit` in a shared checkout — the flag reuses the wrong commit's subject with no visible sign. A clean `git status` proves nothing here: it is silent about whose commit the tip is.
 - **Recovering lost commits.** When your own operation (reset, rebase, force-push, amend) drops a commit that the user authored, you must restore it exactly — same files, same subject line, same body. Check `git reflog` to find the lost sha, then `git log --format=full <sha> -1` to read the full message. Copy the subject and body verbatim. Never paraphrase or shorten a commit message you're restoring.
 - **A correction to the commit you just made is amended into it, never stacked on top.** When the user rejects or refines work whose commit is still the branch tip, the fix is folded into that commit: `git commit --amend`, or `git rebase -i` with `fixup` when a second commit already exists, then `git push --force-with-lease`. A commit that exists only to repair the one before it is history the user has to read past. A commit and its own revert cancel out — drop both, so the file's history shows no change at all. The `--amend` safety check above still applies (confirm HEAD is the commit you made this session). Before pushing a rewritten tip, verify the rebuilt tree equals the pre-rewrite tree. The user, 2026-09-29: "wait the last changes should have been git amended."
 - **Never state the state; cite the measurement.** When you claim something about the present — a file's content, the working tree, a process, a date, a service — you must cite the command you ran this turn and what it showed. If you ran no such command this turn, you do not know the state: say so, then measure. A measurement from an earlier turn is evidence for nothing in this turn. When a memory contradicts a fresh measurement, write what the measurement shows. Run one measurement per claim; a compound command (e.g. `git status && git log`) invites attending to only one part of its output.
+
+Neighbours: rules 3, 46 and 119.
+
+Evidence: failures 53, 87 and 247, and the entry "Evidence for rule 10", in socrates `agent/failures.md`.
 
 ## Agile slices + strict TDD (do not deviate)
 
@@ -663,20 +671,14 @@ one will eventually be chosen.
 - **A numeral that can be a time or a quantity is resolved before it is written.**
   "at 20mg" beside a stated 20:30 is the clock, and the day's dose stands as the
   record has it; the smaller number heard earlier stays with the session it
-  belongs to. A repeat that lasts longer than the first is a gain, not a cost
-  (Chaehan, 2026-11-23: "I said I took 30mg at 14:00. don't mix that with the
-  20mg which i for the first sessions where i had difficulties ... there is no
-  cost as the second shot lasted even longer so that's a gain").
+  belongs to. A repeat that lasts longer than the first is a gain, not a cost.
 - **Money carries its currency as a symbol, in front of the amount.** `¥233`,
   `$2676`, `₩4430`; no thousand separators and no currency word taken from a
   language (`233 엔`, `4500 dollars`). The word form is the defect even when it
   is the reader's own language, because a cell holding won and yen figures then
   names both currencies in Korean and the two amounts stop telling themselves
   apart. His won amounts keep the form he writes them in (`7450 원`); a second
-  currency in the same table gets its own symbol. Learned 2026-11-05 on
-  "item Thickness & Width", where yen went in as `233 엔` beside his
-  `7450 원`: "why don't you use the yen symbol instead of transcribing it to
-  KRW? isn't that common sense???"
+  currency in the same table gets its own symbol.
 - **A date keeps its event.** "Reported 2026-10-19" dates the report, and the
   state it reports started then only when the record says "since" or
   "started". A standing constraint is written with its age as the record
@@ -697,18 +699,7 @@ one will eventually be chosen.
   line the event has no date, and the agent asks. This holds before any
   calendar is read; the calendar can confirm a date, it is never needed to
   avoid inventing one. An event a note reports, such as a flare, a date or an
-  injury, is written with its date. 2026-11-06: a memory
-  line paraphrased Chaehan's "date after 5d" into "the next one in five days";
-  on 2026-11-08 the overviews printed "the next on 2026-11-11", and the second
-  date was that day. Chaehan: "the second date is today not nov 11", "events
-  must be assigned one date, and the relative modal qualifiers can never be
-  used out of context but attached to the original quote. this must be done
-  independent from the calendar, as this mistake could have been avoided in
-  the first place!!!" and "important facts like right shoulder flare must be
-  dated". 2026-11-08, after the agent asked Chaehan the day of the date with
-  지원 and whether he was meeting her for the first time: "yes of course it is the first
-  meeting and it was today, what otherwise would you tell from my calendar
-  entry and my Sunrise list? this is common sense."
+  injury, is written with its date.
 - **Every source goes on one timeline before anyone's position is read.**
   When an episode is recorded in more than one source (a chat export, the
   calls and meetings Chaehan reports, a calendar), every event from every
@@ -717,43 +708,26 @@ one will eventually be chosen.
   statement that a later one overtook. An event Chaehan reports that the export
   does not hold is an event on that timeline, dated by his words, never a side
   note to the export. Test: name the latest event the reading rests on; if any
-  source holds a later one, the reading is stale. 2026-11-22: the feedback on
-  Person's Australia reversal read her position from her texts of 2026-11-20
-  00:25 and called her money message the first time she said what she thought,
-  while Chaehan's account put a later event on the same day: after saying in
-  the night call that she never meant not to go, she refused any stay, even
-  one week, in a warm call she steered to the subject. Chaehan: "you seem to
-  take only her Kakaotalk words into account and not what I told you with the
-  complete reversal the day after so you didn't check the chronological
-  order."
+  source holds a later one, the reading is stale.
 - **A fact comes from one record line about that event, never from two joined.**
   A person, a cause, a payment or a date is attached to an event only when one
   line of the record names both. Two lines about different matters that share
   a word ("power of attorney", "transfers") are never combined into a new
   fact, and an instruction that asks for a helper or a cause is answered from
-  such a line or left empty. 2026-11-08: the overview wrote "Minho signed the
-  transfers" for the furniture shipment, joining `_misc.md` (Minho "completed
-  3 wire transfers via power of attorney", another matter) and
-  `furniture-relocation.md` (a customs broker clears under power of attorney).
-  Chaehan: "jaekeun didn't sign the transfers - where did you get that?"
+  such a line or left empty.
 - **A size in a photo is a proportion until something in the frame is
   calibrated.** A photograph without a scale bar carries ratios, and a body
   part is not a ruler: a fingertip or a shoulder varies by a factor of two
   between people and changes with the lens. State a millimetre figure only
   when Chaehan gave it, when the frame holds a printed rule, or when a tool
   measured it; otherwise give the proportion or ask, and say the size is
-  unmeasured. 2026-11-17: an agent read a comedo plug beside a fingertip as
-  "2-3 mm" and the extracted fragments as "1-3 mm"; Chaehan: "you read
-  dimensions wrong: the long plug was 1cm long", which changes the finding
-  from a deep comedo to a cyst-sized cast of the follicle. The wrong size
-  also carried the wrong cause.
+  unmeasured.
 - **In an automatic transcript the speaker label is part of the line.** A
   quote belongs to the person its label names, and a garbled line is no
   evidence at all: two neighbours in a two-person talk routinely swap, and the
   same subject in both mouths reads as one story. Before a transcript line
   becomes a fact about someone, read the label on that line and one line each
-  side. 2026-11-18: a health bullet gave a woman a dislike of Korean oysters
-  from a line labelled to Chaehan; he said "seafood is wrong".
+  side.
 - **An ordinal names its series.** "First", "second" or "last" is written
   with what it counts: "the second of the four flat viewings", four visits to four different flats. A count of meetings with one person names that person ("your first meeting with the landlord") and comes only from a line that counts meetings with that person. A bare "second meeting" binds to the nearest person and invents a history with them.
 
@@ -764,20 +738,12 @@ one will eventually be chosen.
   person, the series is missing. `scripts/wording_lint.py` warns on a bare
   "second date" or "second meeting" outside a quote, and the writer settles
   each warning with this test, because "a second meeting" that means meeting
-  one woman again is correct. 2026-11-08: Chaehan's "the second date is today"
-  counted the four flat viewings, and the note on Chaehan's upcoming date with
-  지원 (Person) titled a section "A second meeting". Chaehan:
-  "i never said about a second date where did you derive that?",
-  "if you say second date, it implies the second date with her ... isn't that common sense?"
-  and "which implies i meet the same girl the second time, which could be
-  avoided if it said the second of the four flat viewings".
+  one woman again is correct.
 - **A number keeps the name of its measure.** A value is bound to the
   measure it was taken in, by that measure's own term: "perceived effort 8,
   now 6", never "two-thirds of the effort". A term of the domain (perceived
   effort, stroke rate, DPS, CSS) is never paraphrased into a general word,
-  because the general word no longer says what was measured. Chaehan,
-  2026-11-07: "I didn't like the reduction of two thirds without saying it was
-  perceived effort. don't paraphrase such important terms".
+  because the general word no longer says what was measured.
 - **Identifiers are search keys and stay whole.** An email address is written
   in full, because it is what he searches his inbox for; a company name is
   spelled in full; a file is named by its complete filename.
@@ -793,6 +759,10 @@ one will eventually be chosen.
 
 The write-time test: if a careful reader could attach the datum to the wrong
 subject, the note is wrong no matter what the author knows.
+
+Neighbours: rules 30, 33 and 40.
+
+Evidence: failures 186, 189, 193, 244 and 251, and the entry "Evidence for rule 17", in socrates `agent/failures.md`.
 
 ### 18. Itinerary rows are exact for mid-stay dates; travel days must be asked
 
@@ -2302,26 +2272,28 @@ Every tool call is visible to the user. A call that runs for minutes reads as a 
   silence.** Before the run, a short request checks that the provider answers.
   During the run, the runner watches whether events still stream: two minutes
   with no event ends it, never four or five. A long run that keeps streaming
-  is working and is left alone. Chaehan, 2026-11-08: "don't make stupidly long
-  timeouts like 4-5min, you should test the api for availability and then max
-  2min timeout but you can poll if it is streaming or not."
-- **The back door is inside the script**: `with timeout of N seconds` in AppleScript overrides the app's own 120-second default. It is the same defect as a long tool timeout, so it never goes above 60 seconds either. 2026-09-25: three Keynote builds ran 3 to 15 minutes each on `with timeout of 900 seconds` plus five foreground retries, and the fix (the row groups are 1, 2, 4, group 3 is the footer) was never reached because each attempt was allowed to hang instead of failing.
+  is working and is left alone.
+- **The back door is inside the script**: `with timeout of N seconds` in AppleScript overrides the app's own 120-second default. It is the same defect as a long tool timeout, so it never goes above 60 seconds either.
 
-- **Detection is by class and by liveness, not by one ceiling.** `plugins/shell-guard` carries four mechanisms on the command before it runs: a class ladder (app automation 20 s, inspection 10 s, build 30 s, render/pipeline 45 s, default 20 s, set from 4007 measured calls), a per-event bound requirement (an `osascript` that opens or writes a document without `with timeout of 15 seconds` is refused, because the app's own default is 120 s of silence), a supervisor (app automation and renders run as a watched child, killed at the class cap, answering with the next step rather than the harness's "retry with a larger timeout"), and a target-identity repeat guard (the same file addressed by a `nohup` or a larger-timeout rewrite is still the same attempt; the third send is refused). A supervised command killed at its cap exits 124 - that is a wedged app or pass, never a timeout to extend. 2026-10-20: the E08 bubble script sent one `open` to one quarantined copy three ways and spent 120 s in the first wedge; the same command is now refused before it runs.
+- **Detection is by class and by liveness, not by one ceiling.** `plugins/shell-guard` carries four mechanisms on the command before it runs: a class ladder (app automation 20 s, inspection 10 s, build 30 s, render/pipeline 45 s, default 20 s, set from 4007 measured calls), a per-event bound requirement (an `osascript` that opens or writes a document without `with timeout of 15 seconds` is refused, because the app's own default is 120 s of silence), a supervisor (app automation and renders run as a watched child, killed at the class cap, answering with the next step rather than the harness's "retry with a larger timeout"), and a target-identity repeat guard (the same file addressed by a `nohup` or a larger-timeout rewrite is still the same attempt; the third send is refused). A supervised command killed at its cap exits 124 - that is a wedged app or pass, never a timeout to extend.
 - **Long app automation**: give the script progress markers (`do shell script "echo step >> <log>"`) and read the log, run it in the background rather than blocking on it, and never relaunch the app after it fails to answer.
-- **An attempt budget counts per tool and per deliverable, not per command.** One tool gets at most two attempts on one deliverable; rewriting the command does not reset the count, and the third attempt at the same tool for the same thing is the failure — not the timeouts that preceded it. Before the second attempt, name the fallback in the reply ("this gets 40 seconds; if it hangs, I switch to X"), and take the fallback when the attempt fails instead of inventing a third variant. 2026-09-25: a Keynote build took six attempts and half an hour, because every rewritten script counted as a fresh first try; the same artifact was finally produced in 40 seconds once a different rendering path was used.
+- **An attempt budget counts per tool and per deliverable, not per command.** One tool gets at most two attempts on one deliverable; rewriting the command does not reset the count, and the third attempt at the same tool for the same thing is the failure — not the timeouts that preceded it. Before the second attempt, name the fallback in the reply ("this gets 40 seconds; if it hangs, I switch to X"), and take the fallback when the attempt fails instead of inventing a third variant.
 - **Watch the clock, not only the call.** Tool output carries no elapsed time, so the cost of a session is invisible unless it is written down: put a `date` line into the progress markers, read them back with the log, and report the wall-clock cost of the task in the reply. Being unaware of a 30-minute hang is a missing clock, not bad luck.
 
-- **Search with `rg` and `fd`, never shell `grep -r` and `find`, and never unbounded over the home directory.** Both are already installed (`/opt/homebrew/bin/rg` 15.2.0, `fd` 10.3.0). Benchmarked 2026-09-26: on the Google Drive KUBS tree `grep -rl` took 14 to 21 s where `rg -l --hidden` took 0.02 to 0.07 s, because `grep -r` opens every file on the mount including the `.key` bundles and the PDFs; on `~/Software/Prototypes` `find -name '*.md'` took 0.92 to 1.86 s against `fd -e md` at 0.02 s, or 0.32 s for the like-for-like `fd -e md -I -H` with the same 391 results. Over the home directory both are unusable — `fd -H -I -d 6` needed 37.7 s and `find` did not finish inside 55 s — because that tree carries the Google Drive mount and `~/Library`, so bound every search to the project directory and to the file types needed. `fd` skips hidden and git-ignored paths by default, so add `-H -I` when the target may live under `~/Library` or behind a `.gitignore`.
+- **Search with `rg` and `fd`, never shell `grep -r` and `find`, and never unbounded over the home directory.** Both are already installed (`/opt/homebrew/bin/rg` 15.2.0, `fd` 10.3.0). Over the home directory both are unusable — `fd -H -I -d 6` needed 37.7 s and `find` did not finish inside 55 s — because that tree carries the Google Drive mount and `~/Library`, so bound every search to the project directory and to the file types needed. `fd` skips hidden and git-ignored paths by default, so add `-H -I` when the target may live under `~/Library` or behind a `.gitignore`.
 
-- **A command that asks for approval stops the run for Chaehan.** Claude Code's permission check asks about a `cd` inside a compound command, even into a folder the session may use. A command therefore names its paths (`git -C <repo>`, `rg <pattern> <path>`, `wc -l <path>`), and a file is read with the Read tool, never with `cat`. Chaehan, 2026-11-21, when `cd ~/Software/Prototypes/agentkit && wc -l RULES.md rules.index.md && cat rules.index.md` came up as an approval prompt: "why do you ask for permission? all should be allowed!!!" (failure 237 in socrates `agent/failures.md`).
-  The command's shape is the second place to look, and the client's configuration is the first. Chaehan has said every permission is allowed. A prompt after that means `~/.claude/settings.json` disagrees with Chaehan's word: read `permissions.defaultMode`, the allow list and `sandbox.autoAllowBashIfSandboxed`, and fix the file in the same turn. Since 2026-11-21 the mode is `bypassPermissions`, the allow list names every tool bare, and a sandboxed shell command runs without a prompt. The mode before, `acceptEdits`, approved file edits and asked about every shell command outside the list, which is how a shell variable and a path in another session's temp folder reached Chaehan as prompts. Chaehan, 2026-11-21: "this is not an excuse. i said all permissions should be allowed so configure it. we cannot every session have this same problem so fix it once and for all" (failure 241).
-  Every client that runs an agent is a place a prompt can come from, so all of them are read: `~/.claude/settings.json` and each project's `.claude/settings*.json`; `~/.config/opencode/opencode.jsonc` (`"permission": "allow"`) and the `permission:` block of every agent file (`ls ~/Software/Prototypes/*/.opencode/agents/*.md ~/.config/opencode/agents/*.md`), where a `"*": ask` is replaced by `allow`. The email-digest agent asked about every shell command but its own pipeline until 2026-11-23.
-  **The shell sandbox is not a permission, and a file behind it is written with the file tools.** Claude Code's sandbox refuses shell writes to the client's own folders and follows the links into agentkit: `agentkit/commands` (through `~/.claude/commands`) and `~/.agents/skills` (through `~/.claude/skills`). The deny list is built into the client and no setting lifts it. The Edit and Write tools are not under the shell sandbox and write there without a prompt, so a file in those folders is changed with them. A deny entry in the sandbox listing is never reported to Chaehan as a block: try the Edit tool first, and retry a refused shell write once outside the sandbox. 2026-11-23: the agent read `agentkit/commands` in the deny list, told Chaehan the one-line edit of `slides.md` was his, and the Edit tool then made it at the first try. Chaehan: "i really really don't get why you still have problems with permissions. make a clear effort to remove them i don't want to happen them again" (failure 248).
+- **A command that asks for approval stops the run for Chaehan.** Claude Code's permission check asks about a `cd` inside a compound command, even into a folder the session may use. A command therefore names its paths (`git -C <repo>`, `rg <pattern> <path>`, `wc -l <path>`), and a file is read with the Read tool, never with `cat`.
+  The command's shape is the second place to look, and the client's configuration is the first. Chaehan has said every permission is allowed. A prompt after that means `~/.claude/settings.json` disagrees with Chaehan's word: read `permissions.defaultMode`, the allow list and `sandbox.autoAllowBashIfSandboxed`, and fix the file in the same turn. Since 2026-11-21 the mode is `bypassPermissions`, the allow list names every tool bare, and a sandboxed shell command runs without a prompt.
+  Every client that runs an agent is a place a prompt can come from, so all of them are read: `~/.claude/settings.json` and each project's `.claude/settings*.json`; `~/.config/opencode/opencode.jsonc` (`"permission": "allow"`) and the `permission:` block of every agent file (`ls ~/Software/Prototypes/*/.opencode/agents/*.md ~/.config/opencode/agents/*.md`), where a `"*": ask` is replaced by `allow`.
+  **The shell sandbox is not a permission, and a file behind it is written with the file tools.** Claude Code's sandbox refuses shell writes to the client's own folders and follows the links into agentkit: `agentkit/commands` (through `~/.claude/commands`) and `~/.agents/skills` (through `~/.claude/skills`). The deny list is built into the client and no setting lifts it. The Edit and Write tools are not under the shell sandbox and write there without a prompt, so a file in those folders is changed with them. A deny entry in the sandbox listing is never reported to Chaehan as a block: try the Edit tool first, and retry a refused shell write once outside the sandbox.
 
-- **A hang can be upstream of the tool: check the layer before retrying.** When calls stall — including trivial ones like `tail` — the block is usually the host layer, not the command: a VPN or network filter that blackholes a host (Surfshark vs mcp.evernote.com, 2026-09-26: connections neither connected nor refused, they sat until timeout, and opencode's tool responses stalled in the same window), a service mid-restart, or the app's degraded state. Measure reachability (`curl -m 5`), read the app's log, and fix the layer (VPN off, service restart) instead of retrying the command.
+- **A hang can be upstream of the tool: check the layer before retrying.** When calls stall — including trivial ones like `tail` — the block is usually the host layer, not the command: a VPN or network filter that blackholes a host, a service mid-restart, or the app's degraded state. Measure reachability (`curl -m 5`), read the app's log, and fix the layer (VPN off, service restart) instead of retrying the command.
 
 Stated 2026-09-25: "why do you do such long timeouts of 600s? the max timeout should be 60s!!! i say keynote opened several times with error message." Followed by: "the toolcall should actually be different, timeout at 20s then successive retry with +20s".
+
+Neighbours: rule 74.
+
+Evidence: failures 237, 241 and 248, and the entry "Evidence for rule 73", in socrates `agent/failures.md`.
 
 ### 74. Time every artifact, report the measurement, and spend the round trips
 
@@ -2727,15 +2699,11 @@ When content moves between containers — a slide between decks, a chart between
 - **An element composed for the artifact is content, not artwork.** When the material does not exist yet — a diagram drawn to teach a point — the render freezes exactly what the user came to edit: he reveals the boxes one build at a time, rewords a label, restyles a box. Build it from the artifact's own object kinds (shapes, text items) at the measured positions, so every part stays selectable, editable and animatable; where scripting cannot reach a property (a shape's fill, stroke, corner radius), that remainder is a named hand pass — never trade the user's editing for the script's convenience. A render is the right form only when the source is itself a render: a printed figure, a photo, a scan.
 - **A page that arranges photographs and figures is a composition, not artwork.** The render exemption attaches to an element whose own content is a render — a book figure, a photograph, a scan — and never to a page that places several of them: its band is the band image, its title and captions are live text, and every card, photograph, drawing and arrow is its own object, so each can be moved and resized. A pass that builds such a page through a render pipeline has chosen the flattening in its first step, before any rule is consulted; the unit is the element, and a page is not a bigger element. Where three or more elements compose a page, the deck's own objects are the construction and the source supplies content only. `deckcheck`'s `flat` check reads each page's object list from the app and flags any page carrying an image at 95% of the canvas (the reference's `flatten` block lists the pages that are one image by design).
 
-Failure mode: 2026-10-17, the KUBS E08 story pages (the fourth report of this class). The five story pages — "Two books, two methods", "The design sprint", "The visualization", "Jobs-to-be-done", "The mindset" — were composed as HTML tiles and rendered to one PNG each, then installed one page per image. Every pixel check passed: the baked bands landed on the deck's anchor, the titles' ink measured x 37 / y 44, the install diffed to zero against the tiles. Chaehan: "the e08 was rendered again with the same mistake i have instructed to avoid at least three times: the images should be pasted as image, not the whole slide as image, so i can resize each element." The rebuild places the band image, a live title, and each photograph, drawing cell, card, arrow and caption as its own object; the `flat` check, run on the tile deck, flags pages 3 and 5-9 and on the rebuild only page 3.
+Failure mode: 2026-10-17, the KUBS E08 story pages (the fourth report of this class). Chaehan: "the e08 was rendered again with the same mistake i have instructed to avoid at least three times: the images should be pasted as image, not the whole slide as image, so i can resize each element."
 
-Failure mode: 2026-10-02, the KUBS decks. The post-it craft and dot vote slides moved from the S4 deck to the S3 deck; the agent applied the image-page import recipe (learned on fixed renders), installed two full-bleed image pages into a deck of native slides, and verified them at 0 px. The user: "the new slides for postit and dot vote are images that is terrible!!! why would you do that not as an editable slide like everywhere else? what made you think that way, and why can't you apply common sense for that?"
+Neighbours: rules 125 and 134.
 
-Failure mode: 2026-10-03, the KUBS S3 "Design Challenge" divider. The slide was built as a text-free navy render at (0,0) plus live text — pixel-faithful, text editable — and the user: "you did it again the same mistake the divider slide is an image which i cannot edit! how many times do i have to say it again so you remember?? take it from e01. don't put the icon movie on." E01's dividers are a slide-level background + a red strip shape + the tiger as a movie object + a "?" text glyph + live text; the composite baked the pieces he wanted separate. The faithful rebuild lives in a copy of E01 and reaches the deck by the user's clipboard paste, because Keynote scripting can set neither a slide background nor copy a slide between documents.
-
-Failure mode: 2026-10-10, the KUBS E05 "Formulate the Job" slide. The job statement's five-box diagram was drawn as a 1662x640 PNG and installed as a single image; the deck's drawn figures read as house style and no step asked which form the new element takes. The user: "i said this so many times but you still didn't get it: i need every slide in elements that are editable! you did again just one image which i cannot edit nor make animation effects! why didn't you get this still not?" The native rebuild: five shapes and ten text items at the figure's measured geometry (the deck's fonts, every ink centre verified to within 2 px against the export), the styling the script cannot set left as a named hand pass.
-
-Stated 2026-10-03: "take it from e01. don't put the icon movie on." and "design it better, title up and the options apart and centered so they can it is a big option".
+Evidence: failures 12, 23 and 65, and the entry "Evidence for rule 104", in socrates `agent/failures.md`.
 
 ### 105. An effort retrospective accounts for the user's own labor and psychology, not the artifact inventory
 

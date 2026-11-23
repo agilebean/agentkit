@@ -6,6 +6,7 @@
     python3 tools/rules_ledger.py stats LEDGER.tsv REGISTER.md
     python3 tools/rules_ledger.py evidence LEDGER.tsv REGISTER.md MAP.tsv   which units the register lacks, and where each goes
     python3 tools/rules_ledger.py apply LEDGER.tsv MAP.tsv REGISTER.md TAG   copies them into the register, word for word
+    python3 tools/rules_ledger.py trim RULES.md DECISIONS.tsv REGISTER.md TAG   cuts a batch of rules to cards
 
 Phases 0 and 1 of `docs/2026-11-23 rules redesign plan.md`. `build` splits RULES.md into units: a sentence
 of a paragraph or bullet, a heading, a table row, a fenced code block. Each unit gets an identifier
@@ -23,6 +24,13 @@ one failure of the register goes into that failure's entry; any other goes into 
 incident in its paragraph are copied with it, because an incident often runs on in sentences with no
 date or quote of their own; a copied principle sentence is a harmless duplicate. `apply` writes the
 copies, word for word, and copies nothing the register already holds, so a second run changes nothing.
+
+`trim` is phase 2. DECISIONS.tsv (columns id, action, span, reason, text) names each unit of a batch that
+leaves RULES.md: "cut" removes the sentence, "strip" removes only `span` from it (a dated citation inside a
+sentence that states behaviour), and "append" with a rule's scope as id (`R17`) adds `span` as a card line
+at the rule's end. Every unit not named stays word for word. A cut or stripped unit the register lacks is
+first copied into its rule's evidence entry. `trim` writes nothing when a kept unit would stand in no line
+of RULES.md, a cut one in no line of the register, or a decision's text differs from its unit today.
 
 The ledger and the map quote incidents, so they are written into a private repository (socrates), never agentkit.
 """
@@ -104,13 +112,14 @@ def sentences(text: str) -> list[str]:
     return out
 
 
-def split(source: str) -> list[Unit]:
+def split(source: str, spans: dict[tuple[str, int], tuple[int, int]] | None = None) -> list[Unit]:
+    """The units of `source`; `spans`, when given, receives each paragraph's first and last line."""
     lines = source.splitlines()
     units: list[Unit] = []
     counters: dict[str, int] = {}
     scope, section = "S0", 0
     para: list[str] = []
-    para_line = 0
+    para_line = para_end = 0
 
     def emit(kind: str, text: str, line: int) -> None:
         text = norm(text)
@@ -124,6 +133,8 @@ def split(source: str) -> list[Unit]:
     def flush() -> None:
         nonlocal para
         if para:
+            if spans is not None:
+                spans[(scope, para_line)] = (para_line, para_end)
             for s in sentences(" ".join(para)):
                 emit("", s, para_line)
         para = []
@@ -156,11 +167,12 @@ def split(source: str) -> list[Unit]:
             flush()
         elif BULLET.match(ln):
             flush()
-            para, para_line = [ln], i + 1
+            para, para_line, para_end = [ln], i + 1, i + 1
         else:
             if not para:
                 para_line = i + 1
             para.append(ln)
+            para_end = i + 1
         i += 1
     flush()
     return units
@@ -331,6 +343,120 @@ def apply(units: list[Unit], rows: list[tuple[Unit, str, str]], register: str, t
     return "\n".join(lines)
 
 
+TRIM_FIELDS = ["id", "action", "span", "reason", "text"]
+HEADING = re.compile(r"#{1,3} ")
+
+
+def read_decisions(path: Path) -> list[dict[str, str]]:
+    """One row per decided unit: cut, strip (the span is cut out of the unit) or append (a card line)."""
+    with open(path, encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f, delimiter="\t"))
+    bad = [r["id"] for r in rows if r["action"] not in ("cut", "strip", "append")]
+    if bad:
+        raise ValueError(f"unknown action in rows {bad}")
+    return rows
+
+
+def _flex(text: str) -> re.Pattern[str]:
+    """The text, whatever spaces or line breaks the file puts between its words."""
+    lead = r"\s+" if text[:1].isspace() else ""
+    return re.compile(lead + r"\s+".join(re.escape(w) for w in text.split()))
+
+
+def _acts(decisions: list[dict[str, str]]) -> dict[str, dict[str, str]]:
+    return {d["id"]: d for d in decisions if d["action"] in ("cut", "strip")}
+
+
+def to_register(units: list[Unit], decisions: list[dict[str, str]], register: str, tag: str) -> str:
+    """The register with every cut or stripped unit it lacks copied into its rule's evidence entry."""
+    acts = _acts(decisions)
+    rows = [(u, "copied" if u.id in acts else "rule", f"evidence {_scope(u)}" if u.id in acts else "")
+            for u in units]
+    return apply(units, rows, register, tag)
+
+
+def trim(source: str, decisions: list[dict[str, str]]) -> str:
+    """RULES.md with the decided units cut, the spans stripped and the card lines appended.
+
+    Only the paragraphs that lose text change; inside them, a line keeps its break and indent
+    unless the cut text ran across it. A decision whose text is not the unit of that identifier
+    in `source` stops the trim, so a decision file made for another day's RULES.md is refused.
+    """
+    spans: dict[tuple[str, int], tuple[int, int]] = {}
+    units = split(source, spans)
+    by_id = {u.id: u for u in units}
+    acts = _acts(decisions)
+    for i, d in acts.items():
+        u = by_id.get(i)
+        if u is None or u.text != norm(d["text"]):
+            raise ValueError(f"{i}: the decision's text is not this unit of RULES.md")
+        if d["action"] == "strip" and (not d["span"].strip() or d["span"] not in u.text):
+            raise ValueError(f"{i}: the span to strip is not in the unit")
+    lines = source.split("\n")
+    touched = sorted({(_scope(by_id[i]), by_id[i].line) for i in acts}, key=lambda k: -k[1])
+    for key in touched:
+        start, end = spans[key]
+        para = [u for u in units if (_scope(u), u.line) == key and u.kind not in ("heading", "table", "code")]
+        if all(acts.get(u.id, {}).get("action") == "cut" for u in para):
+            del lines[start - 1:end]
+            k = start - 1
+            if k < len(lines) and not lines[k].strip() and (k == 0 or not lines[k - 1].strip()):
+                del lines[k]
+            continue
+        if acts.get(para[0].id, {}).get("action") == "cut":
+            raise ValueError(f"{para[0].id}: cutting a paragraph's first sentence alone would orphan the rest")
+        raw, pos = "\n".join(lines[start - 1:end]), 0
+        for u in para:
+            m = _flex(u.text).search(raw, pos)
+            if m is None:
+                raise ValueError(f"{u.id}: not found in its paragraph")
+            a, b = m.start(), m.end()
+            d = acts.get(u.id)
+            if d is None:
+                pos = b
+            elif d["action"] == "cut":
+                if raw[b:b + 1] == " ":
+                    b += 1
+                elif a > 0 and raw[a - 1] == " ":
+                    a -= 1
+                raw, pos = raw[:a] + raw[b:], a
+            else:
+                s = _flex(d["span"]).search(raw, a, b)
+                if s is None:
+                    raise ValueError(f"{u.id}: the span to strip is not in its paragraph")
+                raw, pos = raw[:s.start()] + raw[s.end():], b - (s.end() - s.start())
+        lines[start - 1:end] = [ln.rstrip() for ln in raw.split("\n") if ln.strip()]
+    for scope in dict.fromkeys(d["id"] for d in decisions if d["action"] == "append"):
+        head = next((k for k, ln in enumerate(lines) if re.match(rf"### {scope[1:]}\. ", ln)), None)
+        if not re.fullmatch(r"R\d+", scope) or head is None:
+            raise ValueError(f"{scope}: a card line goes to a rule, and RULES.md has no such rule")
+        stop = next((k for k in range(head + 1, len(lines)) if HEADING.match(lines[k])), len(lines))
+        while stop > head + 1 and not lines[stop - 1].strip():
+            stop -= 1
+        block = [x for d in decisions if d["action"] == "append" and d["id"] == scope for x in ("", d["span"])]
+        lines[stop:stop] = block
+    return "\n".join(lines)
+
+
+def trim_check(units: list[Unit], decisions: list[dict[str, str]], rules: str, register: str) -> list[str]:
+    """Each unit of the day's ledger stands where its decision put it, word for word; one line per problem."""
+    acts = _acts(decisions)
+    hay_rules, hay_register = norm(rules), norm(register)
+    problems = []
+    for u in units:
+        d = acts.get(u.id)
+        if d is None and u.text not in hay_rules:
+            problems.append(f"{u.id} is kept but stands in no line of RULES.md")
+        if d is not None and u.text not in hay_register:
+            problems.append(f"{u.id} is cut but stands in no line of the register")
+        if d is not None and d["action"] == "strip" and norm(u.text.replace(d["span"], "", 1)) not in hay_rules:
+            problems.append(f"{u.id} lost more than its span")
+    for d in decisions:
+        if d["action"] == "append" and norm(d["span"]) not in hay_rules:
+            problems.append(f"{d['id']}: the card line is missing")
+    return problems
+
+
 def main(argv: list[str]) -> int:
     if len(argv) >= 3 and argv[0] == "build":
         units = split(Path(argv[1]).read_text(encoding="utf-8"))
@@ -375,6 +501,26 @@ def main(argv: list[str]) -> int:
         register_path.write_text(new, encoding="utf-8")
         found, total = quote_coverage(units, new)
         print(f"rules_ledger: {len(new.split()) - len(register.split())} words added; quotes in the register: {found} of {total}")
+        return 0
+    if len(argv) == 5 and argv[0] == "trim":
+        rules_path, register_path = Path(argv[1]), Path(argv[3])
+        rules, register = rules_path.read_text(encoding="utf-8"), register_path.read_text(encoding="utf-8")
+        decisions = read_decisions(Path(argv[2]))
+        units = split(rules)
+        new_register = to_register(units, decisions, register, argv[4])
+        new_rules = trim(rules, decisions)
+        problems = trim_check(units, decisions, new_rules, new_register)
+        for p in problems:
+            print(p)
+        if problems:
+            print(f"rules_ledger: {len(problems)} problem(s), nothing written")
+            return 2
+        rules_path.write_text(new_rules, encoding="utf-8")
+        register_path.write_text(new_register, encoding="utf-8")
+        found, total = quote_coverage(units, new_register)
+        print(f"rules_ledger: RULES.md {len(rules.split())} -> {len(new_rules.split())} words; "
+              f"{len(new_register.split()) - len(register.split())} words copied into the register; "
+              f"quotes in the register: {found} of {total}")
         return 0
     print(__doc__.splitlines()[2].strip())
     return 1

@@ -192,3 +192,97 @@ def test_apply_twice_changes_nothing():
     units = ledger.split(RULES)
     once = ledger.apply(units, ledger.evidence_plan(units, REGISTER), REGISTER, "T")
     assert ledger.apply(units, ledger.evidence_plan(units, REGISTER), once, "T") == once
+
+
+CARDS = """# Agent Rules
+
+## Rules
+
+### 7. Wrap the long rule
+
+- **A bound head.** The rule states the
+  behaviour. On 2026-10-03 the agent broke
+  it twice. The behaviour holds next time.
+- **Second bullet.** It stays (Chaehan, 2026-10-04: "keep the citation out of the rule text please").
+
+Failure mode: 2026-10-05, a whole paragraph about one day. The user: "this paragraph is only the instance and goes away".
+
+### 8. Next rule
+
+A plain principle.
+"""
+
+
+def decide(*rows):
+    return [dict(zip(ledger.TRIM_FIELDS, r)) for r in rows]
+
+
+def cards_decisions():
+    by_text = {u.text: u for u in ledger.split(CARDS)}
+    def row(action, text, span="", reason="r"):
+        return (by_text[text].id, action, span, reason, text)
+    return decide(
+        row("cut", "On 2026-10-03 the agent broke it twice."),
+        row("strip", 'It stays (Chaehan, 2026-10-04: "keep the citation out of the rule text please").',
+            span=' (Chaehan, 2026-10-04: "keep the citation out of the rule text please")'),
+        row("cut", "Failure mode: 2026-10-05, a whole paragraph about one day."),
+        row("cut", 'The user: "this paragraph is only the instance and goes away".'),
+        ("R7", "append", "Evidence: failure 12.", "card", ""),
+    )
+
+
+def test_trim_cuts_inside_a_wrapped_bullet_and_keeps_its_other_lines():
+    new = ledger.trim(CARDS, cards_decisions())
+    assert "- **A bound head.** The rule states the\n  behaviour. The behaviour holds next time.\n" in new
+    assert "On 2026-10-03" not in new
+
+
+def test_trim_strips_only_the_span():
+    new = ledger.trim(CARDS, cards_decisions())
+    assert "- **Second bullet.** It stays.\n" in new
+
+
+def test_trim_removes_a_paragraph_cut_whole_with_one_blank_line():
+    new = ledger.trim(CARDS, cards_decisions())
+    assert "Failure mode" not in new and "\n\n\n" not in new
+
+
+def test_trim_appends_the_card_line_at_the_rule_end():
+    new = ledger.trim(CARDS, cards_decisions())
+    assert "time.\n- **Second bullet.** It stays.\n\nEvidence: failure 12.\n\n### 8. Next rule" in new
+
+
+def test_trim_refuses_a_decision_made_for_other_text():
+    rows = cards_decisions()
+    rows[0]["text"] = "On 2026-10-03 the agent broke it once."
+    try:
+        ledger.trim(CARDS, rows)
+    except ValueError as e:
+        assert "not this unit" in str(e)
+    else:
+        raise AssertionError("the trim ran on a stale decision")
+
+
+def test_trim_refuses_to_orphan_a_bullet():
+    head = next(u for u in ledger.split(CARDS) if u.text == "- **A bound head.**")
+    try:
+        ledger.trim(CARDS, decide((head.id, "cut", "", "r", head.text)))
+    except ValueError as e:
+        assert "first sentence" in str(e)
+    else:
+        raise AssertionError("the bullet lost its marker")
+
+
+def test_to_register_copies_a_cut_unit_the_register_lacks_and_the_check_passes():
+    units, rows = ledger.split(CARDS), cards_decisions()
+    register = ledger.to_register(units, rows, REGISTER, "T")
+    assert "### Evidence for rule 7: Wrap the long rule" in register
+    assert ledger.trim_check(units, rows, ledger.trim(CARDS, rows), register) == []
+
+
+def test_trim_check_names_a_kept_sentence_that_left_and_a_cut_one_the_register_lacks():
+    units, rows = ledger.split(CARDS), cards_decisions()
+    damaged = ledger.trim(CARDS, rows).replace("The behaviour holds next time.", "")
+    problems = ledger.trim_check(units, rows, damaged, REGISTER)
+    assert any("is kept but" in p for p in problems)
+    assert any("is cut but" in p for p in problems)

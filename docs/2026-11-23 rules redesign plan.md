@@ -1,9 +1,9 @@
 # RULES.md redesign plan, 2026-11-23
 
-RULES.md can shrink by about a third without losing a sentence, but only in this order: first every incident is copied into the failure register, then each rule is cut to its principle, its test and the failure numbers. Phase 1 did the copy on 2026-11-24: all 783 distinct long quotes of RULES.md now stand in the register, against 281 the day before, so phase 2 can cut without losing your words.
+RULES.md loses ~19% of its words when each rule keeps its principle sentences word for word, one quote and its failure numbers: the first batch of phase 2 took rules 2, 10, 17, 73 and 104 from 7727 to 6275 words on 2026-11-24, and at that share the file ends near ~75000 of its 92666 words. A smaller file needs phase 3, where rules merge and their wording changes on your yes. The order makes it safe: phase 1 copied every incident into the failure register on 2026-11-24, so all 783 distinct long quotes of RULES.md stand there, against 281 the day before, and no cut loses your words.
 
 Three measurements make the plan necessary and safe:
-- 35% of RULES.md (~32600 of 92666 words) is in sentences with a date, a quote or a failure number. That is incident text, and the file's own writing standard (its line 9) already says a rule tells no incident.
+- 35% of RULES.md (~32600 of 92666 words) is in sentences with a date, a quote or a failure number, and the file's own writing standard (its line 9) says a rule tells no incident. That share is an upper bound: the first batch cut 48% of those words, and the rest are quoted examples, such as the kinds of rule 2, or rules that state a date.
 - Of the 783 distinct quotes of 25 characters or more, 281 (36%) stood verbatim in socrates `agent/failures.md` on 2026-11-23, matched across line breaks by the ledger of phase 0. 223 rules tell a dated incident, and 195 of them cite no failure number.
 - 79 files in agentkit and socrates cite 180 rules by number, 634 times. Numbers therefore never change.
 
@@ -50,6 +50,14 @@ Incidents keep reaching RULES.md through `AGENTS.md` core 0 until phase 2 runs, 
 
 **Phase 2, trim to cards, 20 rules per batch, longest first.** Incident sentences give way to their failure numbers. Principle sentences stay word for word: nothing is reworded in this phase. You review the first batch's before and after (rules 2, 17, 73, 10 and 104) before the rest runs. Each batch is one commit, with the checks below green.
 
+The first batch ran on 2026-11-24, on a RULES.md identical to the tag, so `evidence` and `apply` had nothing new to copy. Each unit was read by hand, because the first-pass class misleads both ways: a quoted example of a kind of rule 2 is classed incident and stays, and a sentence that only continues a case is classed principle and goes. The decisions are a file per batch in socrates, `docs/2026-11-24 rules trim batch 1.tsv`, one row per unit with its reason:
+- "cut" removes a sentence that tells one dated case, or the user's reaction to it: 42 units.
+- "strip" removes only a dated citation inside a sentence that states behaviour, such as the dated VPN case inside rule 73's sentence on hangs: 4 units.
+- "append" adds the card's two lines at the rule's end: "Neighbours:", the rules it borders, and "Evidence:", its failure numbers and its entry "Evidence for rule N" in socrates `agent/failures.md`.
+- Every unit the file does not name stays word for word, and each rule keeps one dated quote in place: rule 2 the one on "save", rule 10 the one on amending a correction, rule 17 the one on a constraint's age, rule 73 the one on 600-second timeouts, rule 104 the one on the E08 story pages.
+
+`tools/rules_ledger.py trim` applies the file. It changes only the lines that lose text, copies into the register any cut sentence it lacks (one, from rule 10), and writes nothing when a kept sentence would stand in no line of RULES.md or a cut one in no line of the register. Rules 2 and 10 lost 1% and 4%, because they are mostly principle; rules 17, 73 and 104 lost 29%, 25% and 41%. A phase 2 card is therefore the rule's remaining text, then the two lines: a principle of one to three sentences and a separate Test line need rewording, so they come with phase 3.
+
 **Phase 3, merge and route, each merge on your yes.** Rules on one theme merge into one card: wording (2, 19, 37, 48, 54, 57, 85, whose duplicated markers `common_sense.md` already lists as waiting on your word) and commits (3, 10, 46, 119) are the first candidates. Then `rules.index.md` is regrouped by the moment of use.
 
 ## The checks that prove nothing is lost
@@ -57,12 +65,12 @@ Incidents keep reaching RULES.md through `AGENTS.md` core 0 until phase 2 runs, 
 Each check runs in `tests/` on every push:
 - **Quote ledger:** every quote in the tagged RULES.md stands in the register or in the new RULES.md; socrates `tests/test_rules_evidence.py` checks the register, which since phase 1 holds all of them.
 - **Sentence ledger:** every sentence identifier has a destination where the sentence stands verbatim.
-- **Principle diff:** in phase 2, each rule's principle sentences are identical before and after; wording changes only in phase 3, on your yes.
+- **Principle diff:** in phase 2, every sentence a batch's decision file does not name stands word for word in the new RULES.md (`trim` checks it before writing), and socrates `tests/test_rules_evidence.py` fails if a cut sentence leaves the register; wording changes only in phase 3, on your yes.
 - **Citations:** every "RULES.md N" and "rule N" in agentkit, socrates, the skills, the commands and the opencode agents points to a rule or a stub.
 
 ## What you get
 
-After phase 2, RULES.md drops from 92666 to ~60000 words, and every rule fits on a screen: principle, test, evidence numbers. After phase 3 the index routes by task, and the size depends on how many merges you accept. The register grew by 42970 words in phase 1 and is read only by section.
+After phase 2, RULES.md drops from 92666 to ~75000 words, and every rule ends in its neighbours and its evidence numbers. After phase 3 the index routes by task, each rule fits on a screen, and the size depends on how many merges and rewordings you accept. The register grew by 42970 words in phase 1 and is read only by section.
 
 ## Decisions, settled on 2026-11-23
 
