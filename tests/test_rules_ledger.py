@@ -107,3 +107,88 @@ def test_the_ledger_round_trips(tmp_path):
 def test_quote_coverage_counts_quotes_found_in_the_register():
     found, total = ledger.quote_coverage(units(), 'He said "keep it. and never drop it from the record." once.')
     assert (found, total) == (1, 1)
+
+
+RULES = """# Agent Rules
+
+Preamble.
+
+## Rules
+
+### 5. Keep the cache
+
+A rule sentence. Chaehan, 2026-10-01: "keep the cache warm at all times please" (failure 12). It broke the build.
+
+Instance: `agent/failures.md` failure 12.
+
+### 6. Quote the user
+
+A principle first. On 2026-10-02 the agent paraphrased: "never paraphrase what i said to you". The paraphrase lost the point.
+"""
+
+REGISTER = """# failures
+
+## Purpose & context
+
+The register.
+
+## Key learnings & principles
+
+### Failure 12: Cache (x, 2026-10-01)
+
+**Principle.** Keep it.
+
+### Failure 13: Other
+
+Text.
+"""
+
+
+def plan():
+    return {u.text: (d, dest) for u, d, dest in ledger.evidence_plan(ledger.split(RULES), REGISTER)}
+
+
+def test_evidence_plan_copies_from_the_first_incident_and_routes_a_single_cited_failure():
+    p = plan()
+    assert p["A rule sentence."] == ("rule", "")
+    assert p['Chaehan, 2026-10-01: "keep the cache warm at all times please" (failure 12).'] == ("copied", "failure 12")
+    assert p["It broke the build."] == ("copied", "failure 12")
+    assert p["Instance: `agent/failures.md` failure 12."] == ("pointer", "")
+    assert p["A principle first."] == ("rule", "")
+    assert p["The paraphrase lost the point."] == ("copied", "evidence R6")
+
+
+def test_evidence_plan_skips_a_sentence_the_register_holds():
+    register = REGISTER.replace("Text.", "It broke the build.")
+    rows = ledger.evidence_plan(ledger.split(RULES), register)
+    assert {u.text: d for u, d, _ in rows}["It broke the build."] == "in register"
+
+
+def test_apply_writes_every_copy_word_for_word_and_keeps_every_line():
+    units = ledger.split(RULES)
+    rows = ledger.evidence_plan(units, REGISTER)
+    new = ledger.apply(units, rows, REGISTER, "T")
+    for u, d, _ in rows:
+        if d == "copied":
+            assert ledger.norm(u.text) in ledger.norm(new)
+    old_lines = [ln for ln in REGISTER.splitlines() if ln.strip()]
+    it = iter(new.splitlines())
+    assert all(any(ln == x for x in it) for ln in old_lines)
+    assert ledger.quote_coverage(units, new) == (2, 2)
+
+
+def test_apply_places_the_cited_paragraph_in_its_failure_and_the_rest_in_the_rule_entry():
+    units = ledger.split(RULES)
+    new = ledger.apply(units, ledger.evidence_plan(units, REGISTER), REGISTER, "T")
+    f12 = new.split("### Failure 12:")[1].split("### Failure 13:")[0]
+    assert "**From RULES.md rule 5**, tag `T`, line 9:" in f12 and "It broke the build." in f12
+    section = new.split(ledger.EVIDENCE)[1].split(ledger.BEFORE)[0]
+    assert "### Evidence for rule 6: Quote the user" in section
+    assert "Tag `T`, RULES.md line 15." in section and "The paraphrase lost the point." in section
+    assert new.index(ledger.EVIDENCE) < new.index(ledger.BEFORE)
+
+
+def test_apply_twice_changes_nothing():
+    units = ledger.split(RULES)
+    once = ledger.apply(units, ledger.evidence_plan(units, REGISTER), REGISTER, "T")
+    assert ledger.apply(units, ledger.evidence_plan(units, REGISTER), once, "T") == once
