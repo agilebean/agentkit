@@ -1,0 +1,11 @@
+#!/bin/sh
+# Rebuild rules.index.md when RULES.md is staged, so a commit never carries a
+# stale index (85bc49a was red on test_the_index_matches_rules_md, 2026-11-23).
+cd "$(git rev-parse --show-toplevel)" || exit 0
+git diff --cached --name-only | grep -qx RULES.md || exit 0
+if ! git diff --quiet -- RULES.md; then
+  echo "pre-commit: RULES.md has unstaged edits; stage the whole file, then commit" >&2
+  exit 1
+fi
+python3 tools/rules_index.py || exit 1
+git add rules.index.md
