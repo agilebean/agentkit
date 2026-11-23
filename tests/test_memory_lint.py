@@ -44,3 +44,18 @@ def test_m6_fails_the_run(tmp_path):
     f = tmp_path / "x.md"
     f.write_text("The agent's reading: the cache.\n", encoding="utf-8")
     assert memory_lint.main([str(f)]) == 2
+
+
+def test_a_sub_section_of_history_is_history_and_the_next_section_is_not():
+    text = ("## History\n\n### Old tour (superseded 2026-10-04)\n\nSuperseded on 2026-10-04 by the Osaka exit.\n\n"
+            "## Plan\n\nThe old plan was superseded.\n")
+    assert [(n, c) for n, c, _ in memory_lint.lint(text)] == [(9, "M2")]
+
+
+def test_old_value_flag_takes_correction_as_a_label_not_as_a_word():
+    flagged = ["Correction (2026-09-15): the slot is at 08:00.", "Free swim 125000 KRW (corrects the earlier 115,000).",
+               "Corrected 2026-10-09 on his repeat: the clean render.", "The 1:58 value is superseded."]
+    clean = ["Spanish correction tools and inline corrections.", "Grade correction/appeal 2026-11-02 to 2026-11-05.",
+             "Froth warning (test on the mid-2026 correction).", "His correction of the fix: the elbow."]
+    assert all("M2" in [c for _, c, _ in memory_lint.lint(t)] for t in flagged)
+    assert not any("M2" in [c for _, c, _ in memory_lint.lint(t)] for t in clean)

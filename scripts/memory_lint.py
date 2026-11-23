@@ -29,7 +29,8 @@ M6  the label "the agent's reading" outside a quote: it adds words and leaves th
     subject. Write the inference as one sentence with the hedge inside it (Chaehan, 2026-11-23: the
     label leaves notes and memory files alike).
 
-Lines under a heading named History, Log, Archive or Evidence are history and are not flagged for M2.
+Lines under a heading named History, Log, Archive or Evidence, and under its sub-headings, are history and are
+not flagged for M2.
 """
 from __future__ import annotations
 
@@ -41,7 +42,10 @@ REL = re.compile(r"\b(today|tomorrow|yesterday|tonight|this (?:week|month|mornin
                  r"next (?:week|month|year|monday|tuesday|wednesday|thursday|friday|saturday|sunday)|"
                  r"last (?:week|month|night)|in (?:a few|two|three|four|five|six|\d+) (?:days?|weeks?|months?)|"
                  r"after \d+ ?d\b|\d+ days? ago|recently|soon)\b", re.I)
-OLD = re.compile(r"\bsupersed\w*|\bno longer\b|\bwas wrong\b|\bcorrection\b|\bcorrected\b", re.I)
+# "Correction" counts as a label ("Correction (2026-09-15): ...", "Correction:"), and "corrected"/"corrects" when it
+# names what it replaced; "correction tools", a market correction or a grade-correction window state no old value.
+OLD = re.compile(r"(?i:\bsupersed\w*|\bno longer\b|\bwas wrong\b|\bcorrect(?:ed|s) (?:the earlier|from|\d{4}-\d{2}))"
+                 r"|\bCorrection\s*[(:]|\bCorrected\b")
 CONCLUDE = re.compile(r"\b(assessment:|best-fitting|leading cause)\b", re.I)
 HEDGE = re.compile(r"\b(likely|unlikely|probabl\w*|plausibl\w*|possibl\w*|may|might|could|suggests?|"
                    r"appears? to|seems? to|his read|his own read|her read|Chaehan's read)\b", re.I)
@@ -56,10 +60,14 @@ TO_AGENT = re.compile(r"\b(i told you|told you|you forgot|you must|you should|yo
 
 
 def lint(text: str) -> list[tuple[int, str, str]]:
-    out, in_history = [], False
+    out, in_history, history_level = [], False, 0
     for n, line in enumerate(text.splitlines(), 1):
         if line.startswith("#"):
+            level = len(line) - len(line.lstrip("#"))
+            if in_history and level > history_level:
+                continue  # a sub-section of a History section is history too
             in_history = bool(HISTORY.match(line))
+            history_level = level if in_history else 0
             continue
         bare = QUOTE.sub('""', line)
         for m in REL.finditer(bare):
