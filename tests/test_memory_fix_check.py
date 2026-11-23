@@ -32,7 +32,7 @@ SAMPLE = r"""# sample
 
 - Stock: 4 items today.
 - This was superseded by 8 GB.
-- the cause is likely the cache "the dark mode" | the disk.
+- leading cause: the cache "the dark mode" | the disk.
 - he wrote "you forgot the table" in the chat.
 - On 2026-11-02 he wrote it today.
 """
@@ -46,7 +46,7 @@ HEADER = r"""# Proposed memory fixes
 """
 
 ROW_3 = r"| 3 | M1 | - Stock: 4 items today. | - Stock: 4 items on 2026-11-21. |" + "\n"
-ROW_5 = r'| 5 | M3 | - the cause is likely the cache "the dark mode" \| the disk. | - the agent reads the cause as the cache "the dark mode" \| the disk. |' + "\n"
+ROW_5 = r'| 5 | M3 | - leading cause: the cache "the dark mode" \| the disk. | - the cause is likely the cache "the dark mode" \| the disk. |' + "\n"
 ROW_7 = r"| 7 | M1 | - On 2026-11-02 he wrote it today. | - On 2026-11-02 he wrote it. |" + "\n"
 ROW_4 = r"| 4 | M1 | - This was superseded by 8 GB. | - This was set to 8 GB on 2026-11-21. |" + "\n"
 
@@ -107,7 +107,7 @@ def test_c2_a_changed_line_now_is_refused(tmp_path: Path) -> None:
 
 
 def test_c3_a_proposal_the_lint_still_flags_is_refused(tmp_path: Path) -> None:
-    row = r"| 5 | M3 | - the cause is likely the cache \"the dark mode\" \| the disk. | - the cause is likely the disk. |" + "\n"
+    row = r"| 5 | M3 | - leading cause: the cache \"the dark mode\" \| the disk. | - leading cause: the disk. |" + "\n"
     done = run(build(tmp_path, ROW_3 + row + ROW_7), tmp_path)
     assert done.returncode == 1
     assert "C3" in done.stdout and "memory/sample.md:5" in done.stdout
@@ -121,7 +121,7 @@ def test_c4_a_dropped_number_is_refused(tmp_path: Path) -> None:
 
 
 def test_c4_a_dropped_quote_is_refused(tmp_path: Path) -> None:
-    row = r'| 5 | M3 | - the cause is likely the cache "the dark mode" \| the disk. | - the agent reads the cause as the cache \| the disk. |' + "\n"
+    row = r'| 5 | M3 | - leading cause: the cache "the dark mode" \| the disk. | - the cause is likely the cache \| the disk. |' + "\n"
     done = run(build(tmp_path, ROW_3 + row + ROW_7), tmp_path)
     assert done.returncode == 1
     assert "C4" in done.stdout and "memory/sample.md:5" in done.stdout and "the dark mode" in done.stdout
@@ -135,7 +135,7 @@ def test_c4_a_dropped_date_is_refused(tmp_path: Path) -> None:
 
 
 def test_c5_a_keep_without_its_reason_is_refused(tmp_path: Path) -> None:
-    row = r"| 5 | M3 | - the cause is likely the cache \"the dark mode\" \| the disk. | keep: |" + "\n"
+    row = r"| 5 | M3 | - leading cause: the cache \"the dark mode\" \| the disk. | keep: |" + "\n"
     done = run(build(tmp_path, ROW_3 + row + ROW_7), tmp_path)
     assert done.returncode == 1
     assert "C5" in done.stdout and "memory/sample.md:5" in done.stdout

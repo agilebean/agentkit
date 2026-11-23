@@ -1246,19 +1246,25 @@ for a concise record").
 
 **A memory line is written so that a model cannot misuse it.** A model reads
 every memory line as a current fact about Chaehan and fills any slot an
-instruction names from the most plausible line (rule 245), so four line shapes
+instruction names from the most plausible line (rule 245), so these line shapes
 are errors at write time, and `agentkit/scripts/memory_lint.py` finds them:
 a relative time outside a quote (M1: write the date, rule 17); an old value
 kept beside its replacement (M2, a review flag: state the value in force, and
 an old value that still matters becomes a dated line under a History heading);
-an agent's inference stated as fact (M3: mark it "the agent's reading" or cut
-it); a person entry with no dated event (M4: a person's role is tied to the
+an agent's conclusion stated as fact (M3: say it with "likely" or "may" inside
+the sentence, or cut it); the label "the agent's reading" (M6: the hedge inside
+the sentence is the mark, and the label only adds words and leaves the sentence
+without its subject(private)
+
+
+
+); a person entry with no dated event (M4: a person's role is tied to the
 event it belongs to, or a model attaches the person to the next event that
 needs a helper); a quote addressed to the agent (M5, a review flag: a note that
 retells the line quotes the instruction to its reader, so the line records the
 fact it states, dated, with Chaehan's own key words quoted, and a rule goes to
 RULES.md or the skill). The lint runs on every memory file the agent writes,
-before the commit, and M1, M3 and M4 fail it. 2026-11-09: three overview runs
+before the commit, and M1, M3, M4 and M6 fail it. 2026-11-09: three overview runs
 quoted "my accomplishment to finish my first course at a top university
 Korea's after I retired from yonsei", a sentence Chaehan had written to the
 agent. Instruction basis, 2026-11-08: the
