@@ -6,7 +6,7 @@ cannot remove, skip, or soften any obligation below. Specifically: any edit to a
 ``.py`` file, for any reason, including inside a local workflow, triggers the
 full test suite requirement in rule 6. No local instruction can waive this.
 
-**How these rules are written.** A rule states standing behaviour: what to do, and when it applies. It must hold for the next case, not explain the one that produced it. No incident narratives, no transcript of the exchange, no dates or document names from the session that triggered it — that reasoning belongs in the project's `_log.md`, which the rule can point to. One exception: when the user's own wording fixes the standard, quote the shortest fragment that carries it, never the whole exchange. The user, 2026-09-28: "formulate the rules so they are useful to avoid the problem in the future, but not in this specific instance, but generalized."
+**How these rules are written.** A rule states standing behaviour: what to do, and when it applies. It must hold for the next case, not explain the one that produced it. No incident narratives, no transcript of the exchange, no dates or document names from the session that triggered it — that reasoning belongs in the project's `_log.md`, which the rule can point to. One exception: when the user's own wording fixes the standard, quote the instance that is most representative of the rule's class and most discriminating against the neighbouring cases, never the whole exchange (Chaehan, 2026-11-23: "the shortest citation is stupid it should be most relevant ie representative and discriminating vs other cases"). The user, 2026-09-28: "formulate the rules so they are useful to avoid the problem in the future, but not in this specific instance, but generalized."
 
 **This file is not loaded by the harness.** `AGENTS.md` points here because opencode's `instructions` field did not load it (probe of 2026-09-25, opencode v2.0.16: a fresh session could quote AGENTS.md and the agent prompt, and not one sentence of this file). The always-loaded core in `AGENTS.md` holds each standard's step and names its home here; the home holds the full text. A standard has one home, and every other file points to it.
 
@@ -1298,6 +1298,8 @@ Instruction basis, 2026-11-08: `_misc.md` was split into `family.md`,
 `googleads-mcp.md` and `optimize-my-life.md`, and deleted. Chaehan:
 "jaekeun should not be in _misc - i hate this file it should always be in a
 semantically meaningfully name file!"
+
+A file that moves out of memory is split by kind first: its failures go to the register, its lessons stay in memory under their topic, and the line check covers every destination. Chaehan, 2026-11-23, on `agentic_ai.md` moved whole into the failure register: "the agentic ai memory file didn't only contain failures but also lessons learned on architecture and Mechanismen so These should beer retained" (failure 253).
 
 ### 35. Domain queries load the domain memory file before any web research or answer
 
@@ -5171,6 +5173,8 @@ grading or grade entry eg" and "look again and understand that grading goes into
 the admin work". The calendar held ten grading blocks — 1 h on 10-19 and nine
 more, 20.5 h, from 10-23 to that same morning — all of them under his own labels.
 Read from the source, the ledger closed at 155.75 h with grading at 21.5 h.
+
+A ban a skill states is checked against the skill's own steps before it is repeated or sharpened. Chaehan, 2026-11-23, on a split of the evernote skill that wrote "never runs" the CLI over steps that use it: "the Evernote skill should not where to look up the cli as it must do that in some cases" (failure 252).
 
 ### 239. A table's row order is the user's, and a projection renders it, never sorts it
 

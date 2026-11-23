@@ -1,11 +1,11 @@
 ---
 name: evernote
-description: Read, update, create, delete, or search Evernote notes by title through the Evernote MCP; the evernote_api CLI is only the engine of note_build.py. Use when told to read, update, append, create, delete, or search Evernote notes. Do NOT import evernote_api in-process.
+description: Read, update, create, delete, or search Evernote notes by title through the Evernote MCP, and through the evernote_api CLI for the operations the MCP has no tool for (reference/cli.md). Use when told to read, update, append, create, delete, or search Evernote notes. Do NOT import evernote_api in-process.
 ---
 
 # Evernote
 
-The Evernote MCP is the agent's only path. The shell CLI (`mamba run -n socrates python -m projects.evernote.src.evernote_api`, run from the socrates repo root) is the engine `scripts/note_build.py` calls, documented in `reference/cli.md`.
+The Evernote MCP is the default path. The shell CLI (`mamba run -n socrates python -m projects.evernote.src.evernote_api`, run from the socrates repo root) is the engine `scripts/note_build.py` calls and the path for the operations the MCP has no tool for; "Which path to use" lists them, and `reference/cli.md` holds every command.
 
 ## Which path to use
 
@@ -13,7 +13,7 @@ The **Evernote MCP server is the only path.** It is configured in `~/.config/ope
 
 **When the tools are absent, it is a connection-state problem, not auth.** The diagnosis, the reconnect call and the plugin that heals a failed connect are in `reference/troubleshooting.md`.
 
-The agent never runs the shell CLI below for Evernote work, inside an opencode session or outside one. Chaehan, 2026-11-07: "only use the evernote mcp not cli! the cli is buggy". Outside opencode (a Claude Code session), the MCP is reached through an opencode run in the socrates folder, as `note_test.py` and the hanji skill's `hanji_test.py` launch it. The commands below stay as the engine `note_build.py` calls and as its reference. A whole-body write through MCP carries the `// note-gate:<sha>` line from the note gate's PASS, or the note-gate plugin refuses it ("Writing or rewriting a note's text").
+The agent uses the MCP for every operation it has a tool for, inside an opencode session or outside one. Chaehan, 2026-11-07: "only use the evernote mcp not cli! the cli is buggy". The CLI, or its thrift client, is used for these operations only, each described where it is named: moving a note to another notebook ("Notebook placement"), deleting a superseded copy ("Creating or reworking a note"), linking two notes ("Cross-reference links between notes"), embedding an image that must survive a client with the note open (`reference/images.md`), and restoring a cell's lost markup from the note's version history or releasing a locked note (`reference/troubleshooting.md`). Its commands are in `reference/cli.md` (Chaehan, 2026-11-23: the skill names where the CLI is looked up, "as it must do that in some cases"). Outside opencode (a Claude Code session), the MCP is reached through an opencode run in the socrates folder, as `note_test.py` and the hanji skill's `hanji_test.py` launch it. The commands below stay as the engine `note_build.py` calls and as its reference. A whole-body write through MCP carries the `// note-gate:<sha>` line from the note gate's PASS, or the note-gate plugin refuses it ("Writing or rewriting a note's text").
 
 **Batch MCP work into one visible call.** Fetch the note once inside a single `execute` call, apply every edit in that same call (await them in a loop), and read the note back once at the end for the report. Never read-modify-verify per edit: each MCP call is a remote round trip, and on 2026-09-25 thirteen edits became twenty calls while the user watched it hang ("is that absolutely necessary? if yes, timeout early!!!!!"). One call for the changes, one for the verification; the execute runtime has no timers, so the only lever is fewer calls.
 
@@ -161,6 +161,6 @@ mamba run -n socrates python -m projects.evernote.src.evernote_api link-note "<s
 
 Read a file here only when the task needs it.
 
-- `reference/cli.md`: the shell CLI that `note_build.py` drives, with its read and write modes, surgical commands, exit codes and token costs. The agent never runs it for Evernote work; it is the engine's reference.
+- `reference/cli.md`: every command of the shell CLI, which `note_build.py` drives and which the agent runs for the operations "Which path to use" lists, with its read and write modes, surgical commands, exit codes and token costs.
 - `reference/images.md`: a full-body write drops every embedded image unless the write re-attaches it, and a photo goes in with the write itself; the steps and the binary bridge for a new image are here. Read it before any write to a note that holds an image.
 - `reference/troubleshooting.md`: missing MCP tools (a connection state, not auth), a note locked in the app (the RTE room), and a table cell whose markup a write destroyed, with its recovery from note history.

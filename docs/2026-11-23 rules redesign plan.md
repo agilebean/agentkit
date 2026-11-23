@@ -31,10 +31,10 @@ Every card has the same shape:
 Principle: one to three sentences, in the wording the rule has today.
 Test: how to tell the rule is met, and the script or test that checks it, if one exists.
 Neighbours: the rules it borders.
-Evidence: failure numbers, plus at most one quote where your wording fixes the standard.
+Evidence: failure numbers, plus one quote: the instance most representative of the rule's class and most discriminating against its neighbours.
 ```
 
-The quote exception is the one line 9 already makes ("quote the shortest fragment that carries it"). A rule merged into another keeps its number as a one-line stub that names where it went. All 634 citations then still resolve.
+Line 9 of RULES.md says which quote stays: the instance most representative of the rule's class and most discriminating against the neighbouring cases (Chaehan, 2026-11-23). A rule merged into another keeps its number as a one-line stub that names where it went. All 634 citations then still resolve.
 
 ## The migration, in four phases
 
@@ -60,7 +60,8 @@ After phase 2, RULES.md drops from 92666 to ~60000 words, and every rule fits on
 
 ## What you decide before phase 0
 
-1. A rule keeps one quote where your wording fixes the standard, or none. Proposal: one.
-2. A merged rule keeps its number as a stub. Proposal: yes.
-3. The evidence lives in the socrates failure register. Proposal: yes, since it is private, indexed and already in the incident format.
-4. The first batch is the five longest rules, and you review it before the rest. Proposal: yes.
+Settled on 2026-11-23: a rule keeps one quote, the instance most representative of its class and most discriminating against its neighbours, never the shortest.
+
+1. A merged rule keeps its number as a stub. Proposal: yes.
+2. The evidence lives in the socrates failure register. Proposal: yes, since it is private, indexed and already in the incident format.
+3. The first batch is the five longest rules, and you review it before the rest. Proposal: yes.

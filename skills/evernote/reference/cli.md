@@ -1,6 +1,6 @@
 # Evernote CLI reference
 
-The engine that `scripts/note_build.py` calls, kept as its reference. The agent never runs these commands for Evernote work: the Evernote MCP is the only path (`SKILL.md`, "Which path to use"). All commands run from the socrates repo root with the prefix `mamba run -n socrates python -m projects.evernote.src.evernote_api`.
+The engine that `scripts/note_build.py` calls, and the agent's path for the operations the Evernote MCP has no tool for; `SKILL.md`, "Which path to use", lists them. Every other operation goes through the MCP. All commands run from the socrates repo root with the prefix `mamba run -n socrates python -m projects.evernote.src.evernote_api`.
 
 ## Prerequisites
 

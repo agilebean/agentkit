@@ -245,7 +245,7 @@ Your documents are spread over six docs folders and five naming styles (dated wi
 
 1. Home. A document lives in the repository whose code or data it describes. Plans that change agentkit's rules, skills or scripts stay in agentkit; virtualfriend's VM and log documents move to virtualfriend, which is private.
 2. Privacy. A document that quotes your notes, mail, memory, health, money or people, or that names a production machine's address, lives in a private repository: socrates for your life, the project's own repository for its machines.
-3. Names. Lowercase words with spaces. A living document is named `<topic> <kind>.md`, with the kind plan, spec, runbook, reference or brief; a dated snapshot is `YYYY-MM-DD <topic> <kind>.md`, with the kind analysis, report, decision or letter. Three or more files of one work share a folder named for it, with its data in `data/`.
+3. Names, decided by Chaehan on 2026-11-23: "always and everywhere name first with the date and without dashes". Every document is named `YYYY-MM-DD <topic> <kind>.md`, lowercase words with spaces and no dashes; a living document carries its creation date, with the kind plan, spec, runbook, reference or brief, and a dated snapshot its own date, with the kind analysis, report, decision or letter. Three or more files of one work share a folder named for it, with its data in `data/`.
 4. Index. Each docs folder has an `index.md` written by `agentkit/tools/docs_index.py`: one row per document with its kind, its status (living, snapshot, done, retired) and its first sentence. `AGENTS.md`, which every session loads, says to read the index of the repository you work in, and agentkit's for plans that span projects.
 
 | Now in agentkit/docs | After DD-10 | Why |
