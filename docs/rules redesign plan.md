@@ -3,7 +3,7 @@
 RULES.md can shrink by about a third without losing a sentence, but only in this order: first every incident is copied into the failure register, then each rule is cut to its principle, its test and the failure numbers. Today 78% of the long quotes in RULES.md exist nowhere else, so cutting first would lose your words.
 
 Three measurements make the plan necessary and safe:
-- 35% of RULES.md (~32600 of 92666 words) is in sentences with a date, a quote or a failure number. That is incident text, and the file's own writing standard (its line 9) already says a rule carries no incident narrative.
+- 35% of RULES.md (~32600 of 92666 words) is in sentences with a date, a quote or a failure number. That is incident text, and the file's own writing standard (its line 9) already says a rule tells no incident.
 - Of the 549 quotes of 25 characters or more, 122 (22%) stand verbatim in socrates `agent/failures.md`. 223 rules tell a dated incident, and 195 of them cite no failure number.
 - 79 files in agentkit and socrates cite 180 rules by number, 634 times. Numbers therefore never change.
 
