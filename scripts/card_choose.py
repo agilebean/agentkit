@@ -19,7 +19,7 @@ bullets. The Takeaway takes each section's lead, as Move 4 asks for one bullet p
 matter. The plan is written in the columns of map.tsv, so say.py can write it.
 
     python3 scripts/card_choose.py <build>/cards.tsv --sources sources.md --out <build>/plan.tsv \
-        --priorities memory/optimize-my-life.md
+        --priorities memory/profile.md
 """
 from __future__ import annotations
 
@@ -198,7 +198,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--sources", type=Path, help="sources.md: its first heading gives today's date")
     ap.add_argument("--date", help="today's date, YYYY-MM-DD (default: from --sources)")
     ap.add_argument("--priorities", type=Path, help="the memory file whose heading 'Life priorities' holds his "
-                    "order, such as memory/optimize-my-life.md; each call gets it above the cards")
+                    "order, such as memory/profile.md; each call gets it above the cards")
     ap.add_argument("--model", help="the model (default: say.py's)")
     a = ap.parse_args(argv)
     date = a.date or (date_of(a.sources) if a.sources else None)
