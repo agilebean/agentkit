@@ -1236,7 +1236,13 @@ Failure mode: a memory file holding a transcript of one meeting instead of the p
 The test: strip the memory entry down to what a future follow-up must know
 without opening the artifact. What remains is the entry. Anything that only
 makes sense as part of the event narrative is artifact content, not memory
-content.
+content. A dated entry carries its date in its own text, never in the bold
+run-in header that names its subject (Chaehan, 2026-11-23: "the date should
+never be in the subheader but in the text"). The entry holds the fact and the
+one reason it needs. The answer's evidence chain, doses, citations and symptom
+branches stay in the chat; an entry rewritten from a long answer is cut back to
+the answer's own conclusion (2026-11-23: "the record is extremely long i asked
+for a concise record").
 
 **A memory line is written so that a model cannot misuse it.** A model reads
 every memory line as a current fact about Chaehan and fills any slot an
