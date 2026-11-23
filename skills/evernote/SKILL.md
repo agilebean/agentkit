@@ -327,7 +327,7 @@ markup is gone.
   inserting text ahead of the token reinterprets it as a trailing unit and
   rewrites wording the user typed. The row being edited is the authority on
   the order; the note's older rows are not (2026-10-13, "Swim Training Times":
-  "no i wanted the DPS before the values!"; rule 157, agentic_ai failure 46).
+  "no i wanted the DPS before the values!"; rule 157, agent/failures.md failure 46).
 - Before changing a cell, fetch the raw ENML (`get_note`) and treat the
   existing inner markup as part of the content: substitute only the specific
   words and numbers that were approved, keeping every tag around them.

@@ -2,7 +2,7 @@
 // not pass the note gate (agentkit skills/life-overview/scripts/overview_gate.py).
 // A weaker model reads a brief or a rule for what it allows; a refusal at the
 // write is the one point every path passes (failure 164 in socrates
-// memory/agentic_ai.md). The CLI path is refused by the socrates Evernote CLI
+// agent/failures.md). The CLI path is refused by the socrates Evernote CLI
 // itself (exit 7); this covers the `execute` tool's MCP calls.
 //
 // A whole-body write is a new note, an append, an edit that replaces the body
@@ -11,7 +11,7 @@
 // text outside a table. A rewrite split into small edits is still a rewrite: on
 // 2026-11-08 the note "2026-11-07 Right shoulder flare" was rewritten section by
 // section in 13 edits of 500 to 4998 characters, none of which the old size
-// test caught (failure 201 in socrates memory/agentic_ai.md). It passes when its
+// test caught (failure 201 in socrates agent/failures.md). It passes when its
 // code carries a `note-gate:<sha>` marker whose stamp file exists and is under 3
 // hours old. Surgical edits (a cell, a table row, an image tag, one sentence)
 // are left alone.

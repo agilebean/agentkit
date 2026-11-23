@@ -4,7 +4,7 @@ Status, 2026-11-03: Rounds 1 to 3 are complete, including the writing test (T6, 
 
 A new session starts here. Read section 0 for the question, 3.6 for the recommendation, 6 for what waits on Chaehan and 7 for the installed core. Sections 1 to 3 are the evidence; each figure names its source in its row or in Appendix B. The writing test's texts and judging record are in Appendix C.
 
-Terms: the **checker** is `scripts/wording_lint.py` with its list `robot_markers.tsv` (agentkit). The **register** is `socrates/memory/agentic_ai.md`. The **chain** is the writing standard of RULES.md's opening section: a sentence states the observed effect, then its cause, then the consequence the reader could not deduce. **Robotic** is Chaehan's word for machine-sounding text.
+Terms: the **checker** is `scripts/wording_lint.py` with its list `robot_markers.tsv` (agentkit). The **register** is `socrates/agent/failures.md`. The **chain** is the writing standard of RULES.md's opening section: a sentence states the observed effect, then its cause, then the consequence the reader could not deduce. **Robotic** is Chaehan's word for machine-sounding text.
 
 ## 0. The question
 
@@ -33,7 +33,7 @@ Judging standard for every proposal: does it change what the agent does at the m
 | `agentkit/robot_markers.tsv`, `scripts/wording_lint.py` | The checker: 33 rules. A flag fails the run; a warning does not | 154-line script |
 | `agentkit/AGENTS.md` | Loaded in every session. Summary of the standards | 883 words |
 | `socrates/.opencode/agents/socrates.md` | The always-loaded prompt of this agent | 9,613 words |
-| `socrates/memory/agentic_ai.md` | The register: 149 entries, numbers 1 to 141 (Failure 141 added 2026-11-02), eight numbers used twice (71, 83, 84, 94, 98, 116, 117, 126). Each entry has four labelled parts: principle, instance, why it happened, fix | 4,506 lines |
+| `socrates/agent/failures.md` | The register: 149 entries, numbers 1 to 141 (Failure 141 added 2026-11-02), eight numbers used twice (71, 83, 84, 94, 98, 116, 117, 126). Each entry has four labelled parts: principle, instance, why it happened, fix | 4,506 lines |
 | `agentkit/skills/kubs-essay-grading/SKILL.md` and its history | How Insight is defined and scored | 11 commits, 2026-10-30 and 10-31 |
 | `~/.local/share/opencode/opencode.db` | Every session, message, model and variant | 1.6 GB |
 

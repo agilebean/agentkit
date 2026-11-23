@@ -284,12 +284,12 @@ Suggestion: a frontier-model session takes HQ-01 now, which changes no rule, gat
 
 ## Technical details
 
-- Failures since 2026-11-05 about what a note chose to say, from `socrates/memory/agentic_ai.md`:
+- Failures since 2026-11-05 about what a note chose to say, from `socrates/agent/failures.md`:
   - kept what no decision needs: 163, 171, 174, 175, 202, 205 and 209
   - missed what the facts mean: 178, 182, 184, 210, 213 and 226
   - wrong order: 191 and 195
 - The steps built for the second group: goal sections and researched answers in the life-challenges skill (178, 184), What went well in the life-overview skill (182), `idea.md` in the date-analysis skill (210, 213), the decisions grid in the stock-analysis skill (226).
-- Phrase counts: `sed -n '4851,$p' memory/agentic_ai.md | grep -oi '<phrase>' | wc -l` in socrates on 2026-11-20; line 4851 opens failure 150.
+- Phrase counts: `sed -n '/^### Failure 150:/,$p' agent/failures.md | grep -oi '<phrase>' | wc -l` in socrates, counted on 2026-11-20 from failure 150 on.
 - Rule counts: `grep -c '^### [0-9]' RULES.md` gives 259 headings, since the numbers 205 and 221 are each used twice; `wc -w RULES.md` gives 89427. Rules 245 to 251 were added on 2026-11-03 (commit 4050835) and 252 to 257 after.
 - Commits on RULES.md per week: `git log --since=2026-10-01 --format=%ad --date=format:%G-W%V -- RULES.md | sort | uniq -c`.
 - The card path: commits 1e6c3c4 to 5d123f8 (build spec steps 1 to 4), 8d0a543 (A and B), 6f53f0e (your choice of A), 8f95b3a (A2 and A3), 5aa6587 (A4 and `card_choose.py` with its three prompt versions), 8315a26 (A5); the notes and measures are in `socrates/docs/human quality/2026-11-17 wording build/step8/`. Steps 5, 6 and 7 of the build spec are not built.

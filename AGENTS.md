@@ -22,7 +22,7 @@ One task per session. Read big files by section. A job over 60 s runs in the bac
 
 ## Core standards (every session)
 
-**0. When corrected.** Name the rule that would have prevented the failure, and merge the correction into that rule's text in RULES.md: a class, a test, never a new numbered incident rule. Record the failure, cause and fix in the failure register (`memory/agentic_ai.md` in socrates). No apology, no re-explanation.
+**0. When corrected.** Name the rule that would have prevented the failure, and merge the correction into that rule's text in RULES.md: a class, a test, never a new numbered incident rule. Record the failure, cause and fix in the failure register (`agent/failures.md` in socrates). No apology, no re-explanation.
 
 **1. Select from the reader's decision.** Home: this section. Before the first sentence, answer four questions for Chaehan: what is true now; what it means for you (what it costs, forecloses, makes possible); what you will do and not do; what would change your mind. A text that a tool also reads (the question tool, a gate, a command) is written for Chaehan first, and the tool takes its inputs from it. Then write in three moves.
 

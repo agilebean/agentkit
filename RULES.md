@@ -77,7 +77,7 @@ the layout is held. Locate the one place that produces the difference being
 asked for, and change that. A change made before this reading is blind, and a
 blind change to a structure is a rebuild with extra steps.
 
-A request to reorder is a move. The sections and items keep their words and only their order changes, with only the words the user named changed; a tool that rewrites while it orders (note_build's step 3 writes a new summary, new headings and new first lines) is never used for a reorder. Failure 196 in `memory/agentic_ai.md`: asked to put the Osaka note in his priority order, the agent rebuilt it with note_build, and the new summary claimed two March hotel nights Chaehan never planned, put the red-light night into the summary and counted his swims. Chaehan: "your task was to rearrange not rewrite and make it worse!!!"
+A request to reorder is a move. The sections and items keep their words and only their order changes, with only the words the user named changed; a tool that rewrites while it orders (note_build's step 3 writes a new summary, new headings and new first lines) is never used for a reorder. Failure 196 in `agent/failures.md`: asked to put the Osaka note in his priority order, the agent rebuilt it with note_build, and the new summary claimed two March hotel nights Chaehan never planned, put the red-light night into the summary and counted his swims. Chaehan: "your task was to rearrange not rewrite and make it worse!!!"
 
 When a defect appears after your edit, it is your edit's consequence. Shrink the
 edit; never widen it to fit the symptom. Added data crowds the axis, so the card
@@ -373,7 +373,7 @@ A passing test, a clean file, a zero count from `grep` — these are measurement
 **Verify at the user-facing outcome, not the intermediate artifact.**
 The user sees the rendered dashboard, not the CSV. A script sees the API response, not the database row. If you verify at an intermediate layer and stop, you haven't verified the fix — you've verified that layer. The downstream transformation (template rendering, payload generation, API serialization) may reintroduce the bug or mask your fix. Check the artifact the user actually experiences.
 
-An Evernote write read back through our own converter is such an intermediate layer: the converter forgives markup the app does not. Compare the raw ENML with the form Evernote's own editor writes (`<li><div>text</div></li>`, no line break between tags), or open the note in the app. Failure 188 in `memory/agentic_ai.md`: list items written as bare `<li>` with line breaks between them ran together in the app ("service.Photography") while every read-back passed.
+An Evernote write read back through our own converter is such an intermediate layer: the converter forgives markup the app does not. Compare the raw ENML with the form Evernote's own editor writes (`<li><div>text</div></li>`, no line break between tags), or open the note in the app. Failure 188 in `agent/failures.md`: list items written as bare `<li>` with line breaks between them ran together in the app ("service.Photography") while every read-back passed.
 
 **Verify at the external boundary, not at the mock.**
 A mock is an intermediate artifact with the same blind spot. When the real system's acceptance rule lives only in that system (a format validator, a required header, a schema check), a test against a permissive fake proves nothing about the real call. For any seam where the external system enforces a contract, the verification that counts is the one the external system performs: a live call, or a fake that replicates the exact rejection. Green against a permissive fake while the real system rejects the same input is not a green build, it is an unexecuted failure.
@@ -535,7 +535,7 @@ another domain than the task, and its output is checked mechanically: a sentence
 that repeats six words in a row of the instructions is refused as a copy, and a
 number or name that neither the source nor Chaehan's record contains is refused
 as an invention (`agentkit/skills/evernote/scripts/note_build.py`).
-Failure 164 in `memory/agentic_ai.md`: a seven-item plan answered the Osaka
+Failure 164 in `agent/failures.md`: a seven-item plan answered the Osaka
 note's symptoms one by one; Chaehan: "not to fix issues on the symptomatic level
 but strategically as early and high as possible, and hierarchically subsequently
 the smaller issues subsumed".
@@ -954,7 +954,7 @@ bias hypothesis the user rejects is removed from the psych-observations
 file entirely, not defended or marked superseded — their "don't record"
 overrides any never-delete guideline.
 
-The same holds for an insight he gives to be recorded, not only for a pattern: his words go in as stated, with his own why. The agent adds no mechanism, consequence, caveat on his causal claim, or link to older entries; a missing why is asked with the question tool (rule 9), never supplied. Failure, 2026-11-03: a roll and catch insight was recorded with the agent's own mechanism ("the elbow barely bends", which he never said) and a caveat on his "it brought me two breakthroughs"; three corrections followed. Failure 150 in memory/agentic_ai.md.
+The same holds for an insight he gives to be recorded, not only for a pattern: his words go in as stated, with his own why. The agent adds no mechanism, consequence, caveat on his causal claim, or link to older entries; a missing why is asked with the question tool (rule 9), never supplied. Failure, 2026-11-03: a roll and catch insight was recorded with the agent's own mechanism ("the elbow barely bends", which he never said) and a caveat on his "it brought me two breakthroughs"; three corrections followed. Failure 150 in agent/failures.md.
 
 Failure: on 2026-08-24 a "salience" psych observation was
 batch-confirmed, then rejected ("salience is a wrong hypothesis"); the
@@ -1567,7 +1567,7 @@ country, in its own §3.1. (private)
 
 
  Instance:
-`memory/agentic_ai.md` failure 49.
+`agent/failures.md` failure 49.
 
 Same day, the served-country list: the answer said "Bank cannot take a
 Korean address, since Korea is not a country it serves", from Bank's
@@ -1576,7 +1576,7 @@ published list of countries where an account can be opened. (private)
 
 
 
- Instance: `memory/agentic_ai.md` failure 51.
+ Instance: `agent/failures.md` failure 51.
 
 ### 45. Choice questions get the objective answer, never validation of the user's leaning
 
@@ -2305,7 +2305,7 @@ Every tool call is visible to the user. A call that runs for minutes reads as a 
 
 - **Search with `rg` and `fd`, never shell `grep -r` and `find`, and never unbounded over the home directory.** Both are already installed (`/opt/homebrew/bin/rg` 15.2.0, `fd` 10.3.0). Benchmarked 2026-09-26: on the Google Drive KUBS tree `grep -rl` took 14 to 21 s where `rg -l --hidden` took 0.02 to 0.07 s, because `grep -r` opens every file on the mount including the `.key` bundles and the PDFs; on `~/Software/Prototypes` `find -name '*.md'` took 0.92 to 1.86 s against `fd -e md` at 0.02 s, or 0.32 s for the like-for-like `fd -e md -I -H` with the same 391 results. Over the home directory both are unusable — `fd -H -I -d 6` needed 37.7 s and `find` did not finish inside 55 s — because that tree carries the Google Drive mount and `~/Library`, so bound every search to the project directory and to the file types needed. `fd` skips hidden and git-ignored paths by default, so add `-H -I` when the target may live under `~/Library` or behind a `.gitignore`.
 
-- **A command that asks for approval stops the run for Chaehan.** Claude Code's permission check asks about a `cd` inside a compound command, even into a folder the session may use. A command therefore names its paths (`git -C <repo>`, `rg <pattern> <path>`, `wc -l <path>`), and a file is read with the Read tool, never with `cat`. Chaehan, 2026-11-21, when `cd ~/Software/Prototypes/agentkit && wc -l RULES.md rules.index.md && cat rules.index.md` came up as an approval prompt: "why do you ask for permission? all should be allowed!!!" (failure 237 in socrates `memory/agentic_ai.md`).
+- **A command that asks for approval stops the run for Chaehan.** Claude Code's permission check asks about a `cd` inside a compound command, even into a folder the session may use. A command therefore names its paths (`git -C <repo>`, `rg <pattern> <path>`, `wc -l <path>`), and a file is read with the Read tool, never with `cat`. Chaehan, 2026-11-21, when `cd ~/Software/Prototypes/agentkit && wc -l RULES.md rules.index.md && cat rules.index.md` came up as an approval prompt: "why do you ask for permission? all should be allowed!!!" (failure 237 in socrates `agent/failures.md`).
   The command's shape is the second place to look, and the client's configuration is the first. Chaehan has said every permission is allowed. A prompt after that means `~/.claude/settings.json` disagrees with Chaehan's word: read `permissions.defaultMode`, the allow list and `sandbox.autoAllowBashIfSandboxed`, and fix the file in the same turn. Since 2026-11-21 the mode is `bypassPermissions`, the allow list names every tool bare, and a sandboxed shell command runs without a prompt. The mode before, `acceptEdits`, approved file edits and asked about every shell command outside the list, which is how a shell variable and a path in another session's temp folder reached Chaehan as prompts. Chaehan, 2026-11-21: "this is not an excuse. i said all permissions should be allowed so configure it. we cannot every session have this same problem so fix it once and for all" (failure 241).
 
 - **A hang can be upstream of the tool: check the layer before retrying.** When calls stall — including trivial ones like `tail` — the block is usually the host layer, not the command: a VPN or network filter that blackholes a host (Surfshark vs mcp.evernote.com, 2026-09-26: connections neither connected nor refused, they sat until timeout, and opencode's tool responses stalled in the same window), a service mid-restart, or the app's degraded state. Measure reachability (`curl -m 5`), read the app's log, and fix the layer (VPN off, service restart) instead of retrying the command.
@@ -2329,7 +2329,7 @@ Stated 2026-09-25: "why do you do such long timeouts of 600s? the max timeout sh
 
 **A timing is read for its levers.** The measurement exists to cut the time. Each run of another model is split into launch, model steps, tool plumbing between steps, and any idle wait, from its event stream; the report names the largest part and one setting or step change to test against it (opencode's per-step snapshot, the reasoning variant, the number of steps, the size of one write, the probe, the MCP servers connected at launch), and compares a changed run with the earlier runs of the same task. A timeout is judged by what it costs a successful run, which is nothing, and what it costs a stuck one. Chaehan, 2026-11-14: "the reason why you should time all calls with deepseek and evernote/hanji is that you must find out improvement potentials as they take way too long. i suspect too long timeouts but also other parameters". Measured that day (failure 211): five date-analysis runs of 490 to 633 s spent 35 to 42 steps each, 3.5 to 4.8 s of plumbing per tool call (2 to 3 minutes a run), 72 to 93 s on each single-file write at the #high variant, and 4 to 17 s at launch; a five-call probe ran 38.5 and 33.8 s with snapshots and 25.9 and 19.6 s without. The largest part gets the first test, and a setting that removes a protection is first checked for what it protects and kept where it is needed: opencode's snapshot, switched off for all runs on 2026-11-15 after a two-button question, turned out to cover only the repo a run starts in, which git already versions, and never the grading documents and decks on Drive; Chaehan: "this solution is not optimal. can you optimize the slow file writing. can you apply a heuristic to snapshots are taken for important files, like grading or lecture slides" (failure 212). It stays off (the probe then ran 19.1 and 21.7 s, 1.5 s of plumbing per call), and the file-snapshot plugin copies only the important files before a change. A slow write is DeepSeek thinking first: 5600 to 10200 reasoning tokens before 500 to 600 written ones; opencode offers low, high and max, the default thinks like high, nothing turns thinking off, and #low cut a two-section write test from 93 to 137 s to 52 to 63 s, and a full date analysis's generated tokens by 30%. Notes stay at #high: Chaehan, 2026-11-16, "don't switch to low as this makes the wording much worse in previous runs". The provider's speed decides the wall clock as much: 100 to 220 tokens/s from one run to the next, so a changed setting is compared by tokens and by steps, and its wall time only against runs of the same hour.
 
-**A loop that stops improving is stopped, and the next attempt is an experiment.** Every repeated round (a model run, a fix and rerun, a retry) has a count that should fall each round: gate failures, refusals, failing tests. Before the first round, write down that count, the time budget, and two or three other strategies. After two rounds in which the count does not fall, stop: the cause lies in the setup, and a third identical round costs minutes and teaches nothing. Then change one thing at a time against the baseline, on the smallest input that shows the defect (one section, one step, one call), and compare the counts: keep the change that moves the count, drop the one that does not. Fix a transport fault (a cut connection, a timeout, a refused launch) before any round counts, since it turns every comparison into noise. Failure 165 in `memory/agentic_ai.md`: deepseek ran 32 rounds of about two minutes on the Osaka note, 26 of them on refusals it could not satisfy, one refusal 12 times in a row. Chaehan: "if it doesn't improve then 12 rounds are not necessary and you must be more time conscious ... you lack the experimentation and what small changes could comparitively change".
+**A loop that stops improving is stopped, and the next attempt is an experiment.** Every repeated round (a model run, a fix and rerun, a retry) has a count that should fall each round: gate failures, refusals, failing tests. Before the first round, write down that count, the time budget, and two or three other strategies. After two rounds in which the count does not fall, stop: the cause lies in the setup, and a third identical round costs minutes and teaches nothing. Then change one thing at a time against the baseline, on the smallest input that shows the defect (one section, one step, one call), and compare the counts: keep the change that moves the count, drop the one that does not. Fix a transport fault (a cut connection, a timeout, a refused launch) before any round counts, since it turns every comparison into noise. Failure 165 in `agent/failures.md`: deepseek ran 32 rounds of about two minutes on the Osaka note, 26 of them on refusals it could not satisfy, one refusal 12 times in a row. Chaehan: "if it doesn't improve then 12 rounds are not necessary and you must be more time conscious ... you lack the experimentation and what small changes could comparitively change".
 
 ### 75. Heavy local work has a weight budget, a stated cost, and a one-element probe
 
@@ -2564,7 +2564,7 @@ Work that inspects or verifies a result produces scratch: browser screenshots, t
 - Run `git status` before finishing. Delete the untracked paths that are yours. Do not leave them for the user to clear, and never commit them.
 - Keep the files the user asked for, and the tracked artifacts the task legitimately changes. Only your scratch goes away.
 - When a scratch artifact is worth keeping, say so and leave it on purpose.
-- What the user asks to delete is deleted, never first copied into a new file. When an instruction needs it as a model, the few lines it needs are quoted in that instruction. Failure 198 in `memory/agentic_ai.md`: before trashing the experiment notes A and B, the agent saved both as docs files no one asked for. Chaehan, 2026-11-08: "why did you save the old files making clutter?"
+- What the user asks to delete is deleted, never first copied into a new file. When an instruction needs it as a model, the few lines it needs are quoted in that instruction. Failure 198 in `agent/failures.md`: before trashing the experiment notes A and B, the agent saved both as docs files no one asked for. Chaehan, 2026-11-08: "why did you save the old files making clutter?"
 
 Failure mode: the task and the commit are clean, but the tree still holds untracked screenshots and temp files, and a server is still listening.
 
@@ -2903,7 +2903,7 @@ everything the user just flagged.
   aside, and never in the opening line: the user reads a reply from the top,
   and a preamble that still shows the retired words reads as the instruction
   unapplied, whatever the artifact below does. The change is applied and shown
-  in the artifact; it is never narrated back. Instance: `memory/agentic_ai.md`
+  in the artifact; it is never narrated back. Instance: `agent/failures.md`
   failure 66.
 - **A judgment rejects what it names.** A judgment on what was made or applied
   rejects it as a negation does: "stupidly create" means revert the file,
@@ -2937,7 +2937,7 @@ Text written as the user's own words - a script he will speak, an announcement, 
 
 When a spec lives in several carriers (a script, a sheet, a design row, a syllabus) and one carrier shows a value the others contradict, ask which stands; the change is then swept through every carrier in the same pass. A repair that lands in one artifact and not its siblings comes back as the same complaint.
 
-What Chaehan said about a text passes the same provenance check, with its scope kept. A judgment of his is quoted from his message: robotic wording he named inside a note ("what time buys etc.") rejects those phrases, and the note's other sentences keep the praise he gave them. A summary that widens his words ("their wording is the kind you rejected", "take no sentence from them") puts a judgment in his mouth; before his judgment goes into an instruction or a reply, find the message and quote it. Failure 197 in `memory/agentic_ai.md`: Chaehan called the experiment notes A and B "excellent", and the agent wrote into the life-challenges skill that no sentence of theirs may be taken and told him their wording was the kind he rejected. Chaehan, 2026-11-08: "no i didn't reject their sentences, i told you they were good, don't twist my words but read my words again."
+What Chaehan said about a text passes the same provenance check, with its scope kept. A judgment of his is quoted from his message: robotic wording he named inside a note ("what time buys etc.") rejects those phrases, and the note's other sentences keep the praise he gave them. A summary that widens his words ("their wording is the kind you rejected", "take no sentence from them") puts a judgment in his mouth; before his judgment goes into an instruction or a reply, find the message and quote it. Failure 197 in `agent/failures.md`: Chaehan called the experiment notes A and B "excellent", and the agent wrote into the life-challenges skill that no sentence of theirs may be taken and told him their wording was the kind he rejected. Chaehan, 2026-11-08: "no i didn't reject their sentences, i told you they were good, don't twist my words but read my words again."
 
 Failure mode: 2026-10-04, the KUBS S3 script. The silent minute carried the invented "stand up, look at the wall, no phones, no talking" (the students keep sitting, eyes closed); the close still carried "this week is the sprint, not the book", rejected the day before and repaired in the run sheet only, plus a week recital the students gain nothing from.
 
@@ -3003,7 +3003,7 @@ Failure mode: 2026-10-06, the Gmail storage audit. The agent first proposed park
 
 Stated 2026-10-06: "email.md should suffice but link from optimize md".
 
-The same holds inside Evernote. A booking, a flight or a topic that has its own note is one line in another note, with a link to that note under its exact title (`note_build.py link "<words>"` prints it), never a copy of its detail. A section that grows into a topic of its own moves to its own note and leaves that line behind. Failure 174 in `memory/agentic_ai.md`: the Osaka note named the Hotel Meridian stay and both flights without linking their booking notes, and carried the pool comparison itself. Chaehan: "important info should be linked to other evernotes, eg for booking hotel there is clearly an evernote you must find" and "outsource swimming pools osaka as separate evernote".
+The same holds inside Evernote. A booking, a flight or a topic that has its own note is one line in another note, with a link to that note under its exact title (`note_build.py link "<words>"` prints it), never a copy of its detail. A section that grows into a topic of its own moves to its own note and leaves that line behind. Failure 174 in `agent/failures.md`: the Osaka note named the Hotel Meridian stay and both flights without linking their booking notes, and carried the pool comparison itself. Chaehan: "important info should be linked to other evernotes, eg for booking hotel there is clearly an evernote you must find" and "outsource swimming pools osaka as separate evernote".
 
 ### 119. A work item that has converged to minor corrections commits without an ask
 
@@ -3332,7 +3332,7 @@ Instruction basis: 2026-10-12, E06's two banded pages. Pages 5 and 6 carried the
 
 A value read off a render is only as good as the window it was read in: a box that starts or ends inside the object measures the box, not the object. Choose the probe wide enough for the longest run it can contain, and confirm the value by re-measuring with a wider box before it becomes a drawn coordinate, a font size or a crop - two boxes agreeing is the evidence, one box is not. The same discipline governs the claim that a rebuild matches its original: verify it on the elements that changed, reading their ink boxes back in the original's own coordinates and looking at the changed region, never on the elements the check happened to cover. "Reproduces the original within 1-3 px on every unchanged element" states what was probed; the element that was rebuilt still has to be compared.
 
-Instruction basis: 2026-10-13, the JTBD integration diagram v5. The five flow-pill labels were drawn condensed (scaleX 0.765) off an ink width read in a window that began inside the word - "UNDERSTAND" measured 172.5 px where the run is 226.5 - and the pass reported the diagram as matching v4 within 1-3 px, because its probes covered the title, the panels, the band and the boxes and not the labels. Chaehan: "unfortunately you changed the layout of the 5 sprint phases terribly, revert!" Re-measured with a box that bounds the run, the labels are Helvetica Neue Bold 33 (cap height 23.5) and the render's ink boxes match v4's (UNDERSTAND 111.5-335.5 against 106.0-332.5). Instance: `memory/agentic_ai.md` failure 45.
+Instruction basis: 2026-10-13, the JTBD integration diagram v5. The five flow-pill labels were drawn condensed (scaleX 0.765) off an ink width read in a window that began inside the word - "UNDERSTAND" measured 172.5 px where the run is 226.5 - and the pass reported the diagram as matching v4 within 1-3 px, because its probes covered the title, the panels, the band and the boxes and not the labels. Chaehan: "unfortunately you changed the layout of the 5 sprint phases terribly, revert!" Re-measured with a box that bounds the run, the labels are Helvetica Neue Bold 33 (cap height 23.5) and the render's ink boxes match v4's (UNDERSTAND 111.5-335.5 against 106.0-332.5). Instance: `agent/failures.md` failure 45.
 
 ### 157. A label already in the line keeps its place; the value is appended after it
 
@@ -3353,7 +3353,7 @@ sweep added per-rep DPS to the ten rows since 2026-08-11; those rows ended in a
 bare `DPS` token, and the pass produced `400m 2:05/2:04 0.99/0.97 DPS` and put
 that order to him as the choice. Chaehan: "no i wanted the DPS before the
 values!" The rows now read `400m 2:05/2:04 DPS 0.99/0.97`. Instance:
-`memory/agentic_ai.md` failure 46; the evernote skill's cell-edit section
+`agent/failures.md` failure 46; the evernote skill's cell-edit section
 carries the note-level form.
 
 ### 158. A multi-limb test is stated limb by limb; a negation of the whole rule is a false claim
@@ -3380,7 +3380,7 @@ pass itself loaded is the defect, not an acceptable simplification.
 
  (private)
 
- Instance: `memory/agentic_ai.md` failure 47.
+ Instance: `agent/failures.md` failure 47.
 
 ### 159. A service procedure is presented only after its first branch is tested, and a contract change is read in the governing agreement
 
@@ -3412,7 +3412,7 @@ to refuse the creation of duplicate accounts for the same user ... Bank reserves
 the right to close or merge these duplicate accounts without notification to
 you"); it requires all information to be "complete, accurate and truthful"; and
 it permits suspension or termination for breach. Instance:
-`memory/agentic_ai.md` failure 50.
+`agent/failures.md` failure 50.
 
 ### 160. A framing the user names is researched before it is judged, and a criterion is run against the cases it must separate
 
@@ -3457,7 +3457,7 @@ objective) and functional goal as the intended improvement", after two
 further agent definitions failed on his own material ("definition changes a
 thing is not good, bec buying something doesn't change that thing, it is still
 the same!!! bec body is not a thing!!! this is common sense, don't you get
-it??"). Instance: `memory/agentic_ai.md` failure 52.
+it??"). Instance: `agent/failures.md` failure 52.
 
 ### 161. A definition supplies the term's content; a format is not a definition, and a term is never defined by itself
 
@@ -3468,7 +3468,7 @@ Four clauses about what an answer owes when the user asks what a term means:
 - **Testable terms are defined by what they exclude in the user's own material.** A definition of "functional" earns its place only if it says which of his statements fail it and why, in his domain's own words.
 - **A term shared by two fields is translated by keeping the root's core and swapping the field's performer.** Latin *functio* is a performance; who performs is the field's business - in IT the performer is the system, in JTBD it is the person - so the neighbouring field's vocabulary does not fit the person's side ("execution" reads as a system being run), and using it there is a defect, not a paraphrase. The user's own composition keeps the core intact when it names the performer: an activity is performed by the user, so "goal-oriented activity" holds both halves, the performance and the objective, and the objection that it is "a level, not a kind" misses that the performance is the kind.
 
-Instruction basis: 2026-10-15, the KUBS S6 functional goal. The answers had offered Kalbach's end-state sentence, a check of the agent's own making, and the verb-object grammar, and the user had asked three times for the semantics. Chaehan: "i need an explanation of the term functional - what is meant by that in IT vs JTBD? the definition you gave is circular referencing some function! the other definitions are just structural not semantic!" The same turn's second question carried the criterion the semantics gives - how to show students that "i want to be healthy" is not a job when it is an objective and can be described as progress - whose answer is performance, not objective: a job's steps are steps, an aspiration's steps are other jobs. Chaehan, the same day: "avoid execution as this implies a system, not a user. i still disagree that a task does not comply with the etimology, as my definition is goal oriented activity and activity is performed by the user. you cannot \"DO\" be healthy, as this is only a goal, but you do activities to reach this goal. this must be explained to students. it is difficult to apply the same to relieve stress, as you can say that. reconcilation is only possible by saying that you can't do this directly but do some activity to relieve stress. this is a subtle difference but important to point out." Instance: `memory/agentic_ai.md` failure 52, rounds four and five.
+Instruction basis: 2026-10-15, the KUBS S6 functional goal. The answers had offered Kalbach's end-state sentence, a check of the agent's own making, and the verb-object grammar, and the user had asked three times for the semantics. Chaehan: "i need an explanation of the term functional - what is meant by that in IT vs JTBD? the definition you gave is circular referencing some function! the other definitions are just structural not semantic!" The same turn's second question carried the criterion the semantics gives - how to show students that "i want to be healthy" is not a job when it is an objective and can be described as progress - whose answer is performance, not objective: a job's steps are steps, an aspiration's steps are other jobs. Chaehan, the same day: "avoid execution as this implies a system, not a user. i still disagree that a task does not comply with the etimology, as my definition is goal oriented activity and activity is performed by the user. you cannot \"DO\" be healthy, as this is only a goal, but you do activities to reach this goal. this must be explained to students. it is difficult to apply the same to relieve stress, as you can say that. reconcilation is only possible by saying that you can't do this directly but do some activity to relieve stress. this is a subtle difference but important to point out." Instance: `agent/failures.md` failure 52, rounds four and five.
 
 ### 162. A complaint about the agent's own change is resolved by that change's diff, not by a question
 
@@ -3484,7 +3484,7 @@ Rule 62's duty to ask begins where the record stops answering; rule 124's search
 
 **A shortening keeps each element's own property.** Compressing a text moves words, never roles. The element that does something stays the subject that does it, and the thing that sits somewhere stays the thing that sits there: from "I will ask teams which order (last to first), TA puts on whiteboard" comes "the order of presentations last to first on the whiteboard", never "the TA on the whiteboard". A summary that reattaches a property to its neighbour reads as noise to the reader who knows the source. And a card keeps the points it was given: lines brought in from elsewhere are not part of it.
 
-Failure mode, 2026-10-15, the KUBS S7 run sheet: the card was shortened by deleting four pieces of content ("the 4-hour", "every member takes part", "tonight: the strongest improvement into your journal", "1500 words, personal, your own writing"), the before/after sat in the agent's own message, and "the 4 points" was searched for in the course design, the S6 tips sheet, the sibling session folders and the memory files before it was read in the diff. Chaehan: "look which four points you put away. this is really bad: a question you can answer from your own actions and chat history." The draft that followed still carried the wrapup's later bullets, which he does not count among the points, and its summary said "the TA on the whiteboard" where the order goes on the whiteboard: "your summaries of the four points are useless"; "why do you still invent things like 'tonight: ...; the essay: ...'?" Instance: `memory/agentic_ai.md` failure 55.
+Failure mode, 2026-10-15, the KUBS S7 run sheet: the card was shortened by deleting four pieces of content ("the 4-hour", "every member takes part", "tonight: the strongest improvement into your journal", "1500 words, personal, your own writing"), the before/after sat in the agent's own message, and "the 4 points" was searched for in the course design, the S6 tips sheet, the sibling session folders and the memory files before it was read in the diff. Chaehan: "look which four points you put away. this is really bad: a question you can answer from your own actions and chat history." The draft that followed still carried the wrapup's later bullets, which he does not count among the points, and its summary said "the TA on the whiteboard" where the order goes on the whiteboard: "your summaries of the four points are useless"; "why do you still invent things like 'tonight: ...; the essay: ...'?" Instance: `agent/failures.md` failure 55.
 
 ### 163. Nothing unreferenced is left behind; a removal sweeps the code only it reached
 
@@ -3512,7 +3512,7 @@ Where the marks can be located by measurement, do that rather than by eye (the c
 
 When the user gives the values himself, his readings are the record: they are applied, and only the cells where the ink still reads differently to the agent are named, without arguing the mark. A number he states from what he *instructed* is not the delivered value - where the two can differ (a block's planned or ordered length against the one that ran), the delivered value is what the record takes, and the instruction is named beside it.
 
-Instruction basis: 2026-10-17, the KUBS S5 run sheet (`KUBS DT S5/e5 runsheet.jpeg`). Asked whether the minutes written in pen on the annotated sheet were in the session feedback, the agent magnified the crops to 12-16x and reported three mismatches against the record - the homework presentations 25 against 35, the homework sprint 5 against 10, the break 8 against 10 - and a card it read as carrying no mark. Chaehan: "card 2 was 35, card 3 was 25, card 4 was 10 with Q&A, card 5 was 5 card 6 20 card 7 5m. so all in all +10 overrun which is marked." Two readings were wrong (cards 2 and 4); the break's 8 was right, and his "5" for that card was the figure he had instructed - corrected at once: "no the 8 was correct, i just named 5 as this was what i instructed." Instance: `memory/agentic_ai.md` failure 60.
+Instruction basis: 2026-10-17, the KUBS S5 run sheet (`KUBS DT S5/e5 runsheet.jpeg`). Asked whether the minutes written in pen on the annotated sheet were in the session feedback, the agent magnified the crops to 12-16x and reported three mismatches against the record - the homework presentations 25 against 35, the homework sprint 5 against 10, the break 8 against 10 - and a card it read as carrying no mark. Chaehan: "card 2 was 35, card 3 was 25, card 4 was 10 with Q&A, card 5 was 5 card 6 20 card 7 5m. so all in all +10 overrun which is marked." Two readings were wrong (cards 2 and 4); the break's 8 was right, and his "5" for that card was the figure he had instructed - corrected at once: "no the 8 was correct, i just named 5 as this was what i instructed." Instance: `agent/failures.md` failure 60.
 
 ### 166. A shared GUI application is claimed before a run and released after it, and a run that dies inside `open` is a handoff failure
 
@@ -3526,13 +3526,13 @@ A copy of a deck taken off the Google Drive mount carries `com.apple.quarantine`
 
 **A cut event is not re-sent on the same input.** Rule 73's attempt budget binds the Apple event, not only the tool call: when a script is stopped at the cap, the next step is the input and the app (`file`, `xattr`, `count of documents`), never the same script with a larger timeout, in the background, or behind a sleep-poll. A backgrounded repeat does not bound the wedge, it hides it - the process keeps holding the app after the tool has returned, and the poll loop then spends the turn watching the wedge it made. Two error strings are read as input faults, not as reasons to retry: -1712 "AppleEvent timed out" is the app's gate swallowing the event, and -1728 "Can't get POSIX file" from `POSIX file` written inside a `tell application` block is the coercion being answered by the app and failing. The `line:col` osascript prints for these is not a position in the script file (a 4-line script reported `54:81`); the error text carries the information.
 
-Instruction basis: 2026-10-17, the E08 story pass and the E05 next-year pass driving one Keynote. The E05 session: "We are both driving the single Keynote instance and have broken each other's runs several times in the last hour: your E08 rebuild sits at the 'open' phase for ten minutes at a time, and when your deck is open my E05 build dies with 'Connection is invalid (-609)'. Two opens cannot be queued against one Keynote; whichever script is second never returns." An hour of the E08 pass went into misdiagnosing that symptom as a quarantine flag, a duplicate document identity and a cold start. Instance: `memory/agentic_ai.md` failure 63.
+Instruction basis: 2026-10-17, the E08 story pass and the E05 next-year pass driving one Keynote. The E05 session: "We are both driving the single Keynote instance and have broken each other's runs several times in the last hour: your E08 rebuild sits at the 'open' phase for ten minutes at a time, and when your deck is open my E05 build dies with 'Connection is invalid (-609)'. Two opens cannot be queued against one Keynote; whichever script is second never returns." An hour of the E08 pass went into misdiagnosing that symptom as a quarantine flag, a duplicate document identity and a cold start. Instance: `agent/failures.md` failure 63.
 
-Instruction basis for the two paragraphs above: 2026-10-20, the E08 bubble pass. A hand-written script copied `KUBS DT WS2026 E08.key` with `cp` and opened the copy. The first call exited 1 in one second with -1728 (`set p to POSIX file (...)` inside the `tell` block); the second, `open (POSIX file p)`, sat silent until AppleScript's 120 s per-event default and died with -1712, and the same script was then sent again in the background and watched by a 55-iteration sleep-poll. `xattr /tmp/e08_copy.key` listed `com.apple.quarantine` and `com.apple.provenance`; `/tmp/bubble.log` reads `AppleEvent timed out. (-1712)`. Chaehan: "why is this still happening given all the latency reduction methods installed lately?" Instance: `memory/agentic_ai.md` failure 84.
+Instruction basis for the two paragraphs above: 2026-10-20, the E08 bubble pass. A hand-written script copied `KUBS DT WS2026 E08.key` with `cp` and opened the copy. The first call exited 1 in one second with -1728 (`set p to POSIX file (...)` inside the `tell` block); the second, `open (POSIX file p)`, sat silent until AppleScript's 120 s per-event default and died with -1712, and the same script was then sent again in the background and watched by a 55-iteration sleep-poll. `xattr /tmp/e08_copy.key` listed `com.apple.quarantine` and `com.apple.provenance`; `/tmp/bubble.log` reads `AppleEvent timed out. (-1712)`. Chaehan: "why is this still happening given all the latency reduction methods installed lately?" Instance: `agent/failures.md` failure 84.
 
 ### 167. On a recurring symptom, the register, the log and the process are read before any hypothesis
 
-A symptom that has been seen before is looked up first: the work's own failure register (`memory/agentic_ai.md` in the socrates repo, the equivalent file elsewhere) by the symptom's own text, and the newest server log by the failure's own words. Both answer what the agent is about to theorise, and both answer in the system's language rather than the agent's.
+A symptom that has been seen before is looked up first: the work's own failure register (`agent/failures.md` in the socrates repo, the equivalent file elsewhere) by the symptom's own text, and the newest server log by the failure's own words. Both answer what the agent is about to theorise, and both answer in the system's language rather than the agent's.
 
 The order is fixed: the register for the same symptom, the log for the failure's message, the running process for its paths, and only then a hypothesis. A hypothesis formed before those three reads is not a diagnosis; the repairs built on it (a version comparison, a provider switch, a reinstall) leave the cause untouched, because none of them touches what was never read.
 
@@ -4595,7 +4595,7 @@ reply is a legitimate thread language.
 
 Instruction basis, 2026-10-26, the KUBS final-essay handoff: the reply came back
 in Chinese. Chaehan: "why do you answer in chinese now? this is terrible."
-`memory/agentic_ai.md` failure 119 carries the cause analysis.
+`agent/failures.md` failure 119 carries the cause analysis.
 
 **When he names a folder, everything the pass produces goes inside that
 folder.** The backup is a subfolder of it, and the deliverables sit directly
@@ -4607,7 +4607,7 @@ rename to undo. Asked to lay out `final essays`, the pass wrote
 instead of `final essays/backup 2026-10-26/` and `final essays/<studentid>.pdf`;
 Chaehan: "the folders backup should be in the original folder final essays of
 course, isn't that common sense? and the final essays in that folder directly
-not an extra folder." `memory/agentic_ai.md` failure 120 carries the analysis;
+not an extra folder." `agent/failures.md` failure 120 carries the analysis;
 the structure he named is the frame, and a working copy, a converted copy or an
 intermediate is temp-folder material, never a new top-level folder in his Drive.
 
@@ -4643,7 +4643,7 @@ then the backup the script still wrote had to be deleted separately.
 one correction is a turn that did not batch: one call to inspect the destination,
 one script per change set, one read to verify, one commit per repo. Rule 74
 carries the batching standard; this clause is what its violation costs —
-`memory/agentic_ai.md` failure 122 counts the calls and names each redundant
+`agent/failures.md` failure 122 counts the calls and names each redundant
 one.
 
 ### 219. A derivative replaces its source in the working folder, and the source's name is the reason it moves
@@ -4673,7 +4673,7 @@ Chaehan: "you shouldn't delete the backup folder you should delete the duplicate
 copies! why can't you see the obvious thing that i want not those files which
 contain the student names visibly in the final essay folder? this is common
 sense!!" The 30 originals were moved into `backup 2026-10-26/` and the 26 PDFs
-stand alone at the top; `memory/agentic_ai.md` failure 123 carries the analysis.
+stand alone at the top; `agent/failures.md` failure 123 carries the analysis.
 
 ### 220. A fix's blast radius is the surface the user named
 
@@ -5333,7 +5333,7 @@ asks for such an element with no empty case (I1), or writes the empty case as a 
 agent file whenever one is written. Instance, 2026-11-08: the life-overview rule "name who helped and
 how" produced "Minho signed the transfers". Chaehan: "you must prevent that
 deepseek forcibly wants to fill out a requested variable and if it can't,
-uses tricks and hallucination. most plausible-sounding is not enough." The empty case of a section, heading or field is its absence, never a sentence that says it is empty: a heading over "nothing came up" is a section read for nothing. A checker never demands an element the record can lack (a section, a count of quotes on a topic), since that demand forces filler. The test for a note: for each section, ask whether a record line holds its matter; when none does, the heading is gone. Instance, 2026-11-20 (failure 230 in socrates `memory/agentic_ai.md`): the note of the 2026-11-19 date kept "The turning point" over "You felt no change in her" and "Sex and past relationships" over plan talk, because the date skill asked for one sentence when nothing changed and `date_check.py` required every section and three quotes on sex. Chaehan: "sections turning point and sex should not be here if not spoken about this is common sense!"
+uses tricks and hallucination. most plausible-sounding is not enough." The empty case of a section, heading or field is its absence, never a sentence that says it is empty: a heading over "nothing came up" is a section read for nothing. A checker never demands an element the record can lack (a section, a count of quotes on a topic), since that demand forces filler. The test for a note: for each section, ask whether a record line holds its matter; when none does, the heading is gone. Instance, 2026-11-20 (failure 230 in socrates `agent/failures.md`): the note of the 2026-11-19 date kept "The turning point" over "You felt no change in her" and "Sex and past relationships" over plan talk, because the date skill asked for one sentence when nothing changed and `date_check.py` required every section and three quotes on sex. Chaehan: "sections turning point and sex should not be here if not spoken about this is common sense!"
 
 The model is fixed: DeepSeek through opencode, with the direct DeepSeek API as
 its fallback, does the work. A stronger model is never offered as an option;
@@ -5443,7 +5443,7 @@ continuous 60% blocks felt subjectively harder than the interval sessions
 (swim.md), the classic set is 6x100 at 60-70-80% plus 3x50 at 90%, and its
 session average heart rate reads 135-140 against 139-143 on the aerobic days, so
 the only part of it that reaches the top zone is 150 m of 50 m reps. Instance:
-`memory/agentic_ai.md` failure 149.
+`agent/failures.md` failure 149.
 
 ### 253. A comparison is made on equal amounts, and the unit is not spoken aloud
 

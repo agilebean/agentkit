@@ -2,7 +2,7 @@
 
 A whole-note rewrite asks for one judgment over every sentence at once, and a
 weaker model answers it by translating sentence for sentence (failures 163 and
-164 in socrates memory/agentic_ai.md). This script splits that judgment into
+164 in socrates agent/failures.md). This script splits that judgment into
 tasks done one item at a time, and does the rest itself:
 
 1. the model lists the decisions Chaehan makes with the note (decisions.md);

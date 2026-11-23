@@ -21,7 +21,7 @@ Resume: run the *Resume checks* below and continue at the first test whose row i
 | The lint | `python3 scripts/memory_lint.py <file> ...` prints `<file>:<line>: <check> <message>`; its function `lint(text)` returns `(line, check, message)` |
 | Flags | 329 hits on 313 lines in 20 files of `socrates/memory/`: M1 24 (relative time outside a quote), M2 198 (an old value beside its replacement), M3 21 (an inference stated as fact), M5 86 (a quote addressed to the agent) |
 | Files | `agentic_ai.md` 194, `kubs.md` 54, `health.md` 10, `travel.md` 8, `swim.md` 7, `agentic_ai.index.md` 7, `spanish.md` 5, `other.md` 5, `furniture-relocation.md` 4, `_psych_obs.md` 4, `polyboard.md` 3, `optimization_cost.md` 3, `improv.md` 3, `talks.md` 2, `psychological-insight-extraction.md` 2, `macbook.md` 2, `legal.md` 2, `_psych_obs.index.md` 2, `virtualfriend.md` 1, `virtualfriend-marketing.md` 1 |
-| The failure register | `agentic_ai.md` records each failure with Chaehan's correction verbatim and the wrong value beside its fix (AGENTS.md core 0 and core 8), so its M2 and M5 lines and the M5 lines of `_psych_obs.md` are proposed as `keep` |
+| The failure register | `agentic_ai.md` (since 2026-11-23 `agent/failures.md`, outside memory) records each failure with Chaehan's correction verbatim and the wrong value beside its fix (AGENTS.md core 0 and core 8), so its M2 and M5 lines and the M5 lines of `_psych_obs.md` are proposed as `keep` |
 
 ## The proposals file
 

@@ -20,7 +20,7 @@
 | Your course at KUBS (Korea University Business School) | 245 socrates commits for the fall course | many of the socrates runs: grading tables, decks, run sheets | sources, readings and deck skeletons for the spring 2027 course; never a grade |
 | swim dashboard | 47 commits | 24, the most outside socrates | already its work; it stays there |
 | email-digest, invoice-admin, local-chat (public) | 23 commits | 11 | dependency and security upkeep; receipts into a cost register |
-| Memory files | ~300 lines flagged by `memory_lint.py`, 193 of them in `agentic_ai.md` | none | fixes proposed file by file |
+| Memory files | ~300 lines flagged by `memory_lint.py`, 193 of them in `agentic_ai.md`, the failure register, which moved to `agent/failures.md` on 2026-11-23 | none | fixes proposed file by file |
 
 DeepSeek's recorded cost was $56.72 in October and $8.17 in November to the 20th, with most runs on the OpenCode Go subscription, so a further task costs nothing until the weekly quota runs out, as it did on 2026-11-06 (failure 165).
 
