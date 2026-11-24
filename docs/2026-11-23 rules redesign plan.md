@@ -77,9 +77,10 @@ The remaining 216 rules run in batches of 40 without a stop between batches, on 
 | Batch | Rules | Words of its rules | Cuts and strips |
 |---|---|---|---|
 | 4 | the 40 longest left | 15746 to 13686 (13%) | 80 and 3 |
+| 5 | the next 40 | 12462 to 11292 (9%) | 61 and 3 |
 
 What these batches changed:
-- A private detail leaves with its case, as in batch 2: the item comparisons in rules 239 and 43, the travel in rules 209 and 83, your Bank account in rule 159, and the students' names and grades in rule 184, whose list of what to copy now stands without the example.
+- A private detail leaves with its case, as in batch 2: the item comparisons in rules 239 and 43, the travel in rules 209 and 83, your Bank account in rule 159, the plan photos in rule 63, your status in rule 158, and the students' names and grades in rule 184, whose list of what to copy now stands without the example.
 - A rule number or failure number wrapped onto the next line ("Rule\n229") is now found; batches 2 and 3 missed none this way.
 - A rule with no failure and no entry in the register gets the line "Evidence: none recorded in socrates `agent/failures.md`.", so every card has both lines.
 
