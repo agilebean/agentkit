@@ -510,8 +510,7 @@ that at the earliest step of the work, where an error would spread into every
 later step, and at the one point every path passes, such as the write, so that
 no brief or skipped step goes around it. That point recognizes a write by what
 it changes, never by the call's size or shape: a rewrite split into small edits
-is still a rewrite (failure 201, where thirteen find-and-replace edits rebuilt a
-note that the gate saw as surgical). A smaller check stays only for what the
+is still a rewrite. A smaller check stays only for what the
 higher fix cannot reach, and it is listed under the fix it backs up. A flat list
 with one check per defect fixes the instances again. For a weaker model, judgment
 over a whole text is moved into tasks it can do item by item, and a script
@@ -529,14 +528,7 @@ it, never a verdict alone (rule 244). A best-practice question starts from the
 established practices, puts each in a column with its pros and its cons against
 the goals Chaehan named, and recommends from those goals; a design of the
 agent's own comes only after the standard ones fail a goal, and is labeled as
-such. Chaehan, 2026-11-16, of the 2026-11-15 wording
-analysis: "be more concrete on how to improve and write it down for
-implementation by a lower model", "the wording analysis has very little content
-about best practices" and "i asked for suggestions to optimize the memory
-system ... not just a brief verdict" (failure 215). Chaehan, 2026-11-19, after a
-custom daily-file handler and then monthly files were proposed for log rotation:
-"i still don't see the pros/cons for each option" and "remember i asked for best
-practices" (failure 223).
+such.
 A weaker model invents and copies: it fills a gap from its own context, and it repeats
 the instruction's example as its answer. So its instructions give examples from
 another domain than the task, and its output is checked mechanically: a sentence
@@ -547,6 +539,10 @@ Failure 164 in `agent/failures.md`: a seven-item plan answered the Osaka
 note's symptoms one by one; Chaehan: "not to fix issues on the symptomatic level
 but strategically as early and high as possible, and hierarchically subsequently
 the smaller issues subsumed".
+
+Neighbours: rules 244 and 245.
+
+Evidence: failures 164, 201, 215 and 223, and the entry "Evidence for rule 11", in socrates `agent/failures.md`.
 
 ### Extraction into agentkit (externalizing logic from an app)
 
@@ -931,7 +927,7 @@ bias hypothesis the user rejects is removed from the psych-observations
 file entirely, not defended or marked superseded — their "don't record"
 overrides any never-delete guideline.
 
-The same holds for an insight he gives to be recorded, not only for a pattern: his words go in as stated, with his own why. The agent adds no mechanism, consequence, caveat on his causal claim, or link to older entries; a missing why is asked with the question tool (rule 9), never supplied. Failure, 2026-11-03: a roll and catch insight was recorded with the agent's own mechanism ("the elbow barely bends", which he never said) and a caveat on his "it brought me two breakthroughs"; three corrections followed. Failure 150 in agent/failures.md.
+The same holds for an insight he gives to be recorded, not only for a pattern: his words go in as stated, with his own why. The agent adds no mechanism, consequence, caveat on his causal claim, or link to older entries; a missing why is asked with the question tool (rule 9), never supplied.
 
 Failure: on 2026-08-24 a "salience" psych observation was
 batch-confirmed, then rejected ("salience is a wrong hypothesis"); the
@@ -949,37 +945,20 @@ cross-domain observations the agent itself formed and the user endorsed.
 Restating his account there is the same wrong-file error as putting a
 behavior rule in a memory file.
 
-Failure: on 2026-10-24 his deferral ("i had procrastinated since
-2026-10-16 when i started to have less preparation time for my lectures
-to register"), his stopping rule ("it would be overoptimization if i
-tried to negotiate more and longer for maybe 5-10% more discount"), and
-his read on three profiles ("their photos could also be fake or meant to
-lure me in") were put to him as _psych_obs.md candidates; he answered
-"why did you choose the wrong memory file, introspect. there is travel
-. this is common sense!" They belong under Approach & patterns in
-plan.md.
-
 **A stated criterion is a constraint, not a motive to explain.** When the user names
 a trait he wants in a partner, an option he prefers, or a condition he sets, that
 statement is the fact and it is complete. Do not read an earlier pattern in the psych
-file as its explanation, and do not ask him to confirm a motive he did not state. The
-2026-11-01 failure: "I felt i need someone who's curious to know things and can find
-interest in anything so life doesn't go by unnoticed" was mapped onto the 2026-10-02
-contribution-not-received observation and offered as an attention-reciprocity need;
-Chaehan: "that's wrong. I noticed that's a trait important to me and independent from
-while I'm talking." The criterion belongs in plan.md's Soft constraints, as
-a trait requirement on the partner.
+file as its explanation, and do not ask him to confirm a motive he did not state.
 
 **Use the user's concept, and place a check where the information exists.** When he
 names a trait or a mechanism, his definition is the one to work with; never replace it
-with an agent-made dichotomy. On 2026-11-01 curiosity was split into object-directed
-and people-directed, and the split was wrong at the root: "people vs object is
-completely wrong you don't get the concept of curiosity which is also on people!!!!
-correct is curiosity brings their own stimulus." A proposed check must also sit where
-the information can exist. The same reply suggested screening the trait from the
-manager's profile, which cannot carry it: "1 is a stupid suggestion you can't know
-before the traits." A trait observable only in live conversation is tested in the
+with an agent-made dichotomy. A proposed check must also sit where
+the information can exist. A trait observable only in live conversation is tested in the
 conversation, or not at all.
+
+Neighbours: rule 9.
+
+Evidence: failures 107 and 150, and the entry "Evidence for rule 22", in socrates `agent/failures.md`.
 
 ### 23. "General agent instructions" always means agentkit
 
@@ -1214,8 +1193,7 @@ The test: strip the memory entry down to what a future follow-up must know
 without opening the artifact. What remains is the entry. Anything that only
 makes sense as part of the event narrative is artifact content, not memory
 content. A dated entry carries its date in its own text, never in the bold
-run-in header that names its subject (Chaehan, 2026-11-23: "the date should
-never be in the subheader but in the text"). The entry holds the fact and the
+run-in header that names its subject. The entry holds the fact and the
 one reason it needs. The answer's evidence chain, doses, citations and symptom
 branches stay in the chat; an entry rewritten from a long answer is cut back to
 the answer's own conclusion (2026-11-23: "the record is extremely long i asked
@@ -1231,25 +1209,17 @@ an old value that still matters becomes a dated line under a History heading);
 an agent's conclusion stated as fact (M3: say it with "likely" or "may" inside
 the sentence, or cut it); the label "the agent's reading" (M6: the hedge inside
 the sentence is the mark, and the label only adds words and leaves the sentence
-without its subject(private)
-
-
-
-); a person entry with no dated event (M4: a person's role is tied to the
+without its subject); a person entry with no dated event (M4: a person's role is tied to the
 event it belongs to, or a model attaches the person to the next event that
 needs a helper); a quote addressed to the agent (M5, a review flag: a note that
 retells the line quotes the instruction to its reader, so the line records the
 fact it states, dated, with Chaehan's own key words quoted, and a rule goes to
 RULES.md or the skill). The lint runs on every memory file the agent writes,
-before the commit, and M1, M3, M4 and M6 fail it. 2026-11-09: three overview runs
-quoted "my accomplishment to finish my first course at a top university
-Korea's after I retired from yonsei", a sentence Chaehan had written to the
-agent. Instruction basis, 2026-11-08: the
-overview's 19 memory files held 18 relative times, 109 old-beside-new lines,
-56 unmarked inferences and Minho's undated "completed 3 wire transfers",
-which became "Minho signed the transfers" for the furniture shipment.
-Chaehan: "look into the memory files if there is room for improvement for
-better ie errorfree use of the stored info."
+before the commit, and M1, M3, M4 and M6 fail it.
+
+Neighbours: rules 17 and 245.
+
+Evidence: failures 245 and 246, and the entry "Evidence for rule 33", in socrates `agent/failures.md`.
 
 ### 34. There is no catch-all memory file: every fact lives in a file named for its topic
 
@@ -1374,6 +1344,10 @@ calibration for every following draft in that thread.
   length is found by moving toward it, not by swinging past it.
 
 Failure mode: a message built as a structured memo (preamble, rationale, conditions) instead of the sender's plain ask.
+
+Neighbours: rules 2, 57 and 250.
+
+Evidence: the entry "Evidence for rule 37" in socrates `agent/failures.md`.
 
 ### 38. Memory writes start with a search of existing files
 
@@ -1890,19 +1864,12 @@ Failure mode: a reply in headed sections and circling formulations where one pla
 Second instance: on 2026-09-21 a reply on dairy, oat milk and soy milk arrived
 as four bolded sections, one per part of the question, with verdict labels
 ("plausible, not established", "mixed, partly industry-funded") and a bridge
-line ("One thing decides which branch you are on"). The draft was assembled in
-the research order (evidence, comparison, products) and never passed the
-read-aloud test. The user: "the whole formulation is again too robotic. read the
+line ("One thing decides which branch you are on"). The user: "the whole formulation is again too robotic. read the
 agent rules about it and tell me why they are not applied here."
 
-Third instance: on 2026-09-25 a memory-update question reached the user as
-"Record this block in memory (Thu 09-24 + Fri 09-25 + Sun 09-27, 3-4x8 light
-band, ahead of Tuesday's swim restart)?" with option labels naming the internal
-findings ("the light-band-vs-dumbbell finding, and the load-progression
-conclusion"). Every word of it was lifted from the shorthand of the draft entry
-instead of spoken; the reply it closed also carried a bolded lead-in, a table
-and a section per part of the question. The user: "this is incomprehensible.
-read rules 50+ to make it human accessible and less robotic".
+Neighbours: rules 2, 19, 21, 48 and 50.
+
+Evidence: the entry "Evidence for rule 54" in socrates `agent/failures.md`.
 
 ### 55. Expand every abbreviation on first use in anything the user reads
 
@@ -2098,7 +2065,7 @@ The instance is Failure 146 (the swim memory's 2:08 reference, 2026-09-21).
 
 ### 62. Ask with the question tool, before acting, not in prose
 
-When a decision belongs to the user, the question goes through the question tool before any action, with the options laid out so they can answer in one tap. This covers anything that changes their records, files, plans, or money, and every choice where more than one option is defensible. What the answer depends on, such as two versions to compare, is shown in the reply's own text before the question: a preview inside the tool or a file sent beside it may not render where the user reads (2026-11-21, failure 233 in socrates: "i told you 3 times to show me the versions to compare, i can't see them!").
+When a decision belongs to the user, the question goes through the question tool before any action, with the options laid out so they can answer in one tap. This covers anything that changes their records, files, plans, or money, and every choice where more than one option is defensible. What the answer depends on, such as two versions to compare, is shown in the reply's own text before the question: a preview inside the tool or a file sent beside it may not render where the user reads.
 
 The tool is not only for ambiguity. Feeling certain is not a reason to skip it: certainty that a value is stale, that a reading is right, or that the user will agree is the state in which the question gets skipped and the damage happens. When the agent is about to write a sentence that asks the user to decide or provide something ("Tell me which table is yours", "Which should it be?"), that question goes into the question tool instead of the reply. Asking is the next step of the work, never an interruption of it.
 
@@ -2110,9 +2077,13 @@ Failure mode: a decision taken without the question tool, or a question asked in
 
 **A stop is not a suspension.** A pass that ends early - the cost gate of rule 75, a blocked tool, a handoff - still puts its questions into the question tool in that same turn. Stopping to report and stopping to ask are one act: the reply carries the cost line and the findings, the tool carries the decisions. The stop feels different enough to be read as a report-only turn, and that is when the questions come out as a numbered list at the bottom of the findings; 2026-10-18, E08: the pass stopped at the cost gate with four decisions in prose, and the user: "you should ask the questions with the question tool as always".
 
-**Batch: one call per change set, not one question per turn.** The tool takes several questions at once, so when a change set opens more than one decision, they all go into a single call — the deliverable's unknown numbers, its order, the scope of the sweep, the wording of a title. Each separate call ends the turn, waits for the user to read and answer, and starts a fresh turn: on 2026-09-26 the S2 run sheet needed three question rounds for one edit set, and the session ran 76 minutes of wall clock over about 15 seconds of machine time. A later round is justified only when an earlier answer opened a fork that did not exist before.
+**Batch: one call per change set, not one question per turn.** The tool takes several questions at once, so when a change set opens more than one decision, they all go into a single call — the deliverable's unknown numbers, its order, the scope of the sweep, the wording of a title. Each separate call ends the turn, waits for the user to read and answer, and starts a fresh turn. A later round is justified only when an earlier answer opened a fork that did not exist before.
 
-**The option set must contain the shape the user's own structure implies.** A question steers as surely as an action: an option list that offers only variations the agent invented asks him to choose among them. Before writing the options, name the answer the named artifact, folder or record already implies and put it in the list — 2026-10-26, the KUBS final-essay layout was asked with "backup + PDF folder" versus "backup + renamed copies + PDF folder", both of them sibling folders of `final essays/`, and the correct answer — everything inside `final essays/` — was not offered. Chaehan: "isn't that common sense?" Rule 217 carries the placement rule that answer follows.
+**The option set must contain the shape the user's own structure implies.** A question steers as surely as an action: an option list that offers only variations the agent invented asks him to choose among them. Before writing the options, name the answer the named artifact, folder or record already implies and put it in the list. Rule 217 carries the placement rule that answer follows.
+
+Neighbours: rules 75, 214 and 217.
+
+Evidence: failures 68, 120, 150 and 233, and the entry "Evidence for rule 62", in socrates `agent/failures.md`.
 
 ### 63. Under uncertainty, always take the latest observation
 
@@ -2212,15 +2183,19 @@ A settled change propagates in the same pass. When the user fixes the content a 
 
 Failure mode: parallel artifacts multiplying, each a copy of the same content under another name.
 
-Failure mode, 2026-10-11: the KUBS S6 workshop was re-designed and its design doc delivered while the script and the run sheet still carried the old seven cards. The user: "the runsheet is still old and the script. why did you stupidly create the workshop .md and not work it into the script? isn't this common sense?" The script and the sheet were re-cut in the same pass.
+Failure mode, 2026-10-11: the KUBS S6 workshop was re-designed and its design doc delivered while the script and the run sheet still carried the old seven cards. The user: "the runsheet is still old and the script. why did you stupidly create the workshop .md and not work it into the script? isn't this common sense?"
 
-Failure mode, 2026-10-16 (across sessions): the KUBS S7 wrapup's card handed Thursday its running order — the tables, the order of presentations, the wall posters, 9-10 min with timekeeping graded and 5 min of questions — while the S8 script and run sheet still carried their 2026-10-02 starter template. The user: "the card in s7 before wrapup defines 4 steps of the agenda of final presentations in s8 - why didn't you sweep them to the s8 runsheet? isn't that common sense?" A finished session's card that hands work to a later session is that session's source: the later session's script and sheet carry the handover in the pass that writes the card, the source card stays where it is because it is what the room was told, and a later session is not "still to be written" once its predecessor has named its agenda.
+A finished session's card that hands work to a later session is that session's source: the later session's script and sheet carry the handover in the pass that writes the card, the source card stays where it is because it is what the room was told, and a later session is not "still to be written" once its predecessor has named its agenda.
 
 A one-off event within an existing domain (a shoulder flare under health, a
 training block under swim) is filed under that domain's Evernote notebook or
 memory file, not created as a standalone note titled after the episode. Before
 creating a note, ask which existing topic it is an instance of; if one exists,
 place it there.
+
+Neighbours: rules 139 and 148.
+
+Evidence: failures 28 and 37, and the entry "Evidence for rule 69", in socrates `agent/failures.md`.
 
 ### 70. File names stay short enough to read in Finder
 
@@ -2306,24 +2281,22 @@ Evidence: failures 237, 241 and 248, and the entry "Evidence for rule 73", in so
 - One question batch per change set (rule 62). A change set that opens three decisions asks all three in one call; splitting them into two rounds costs a full turn each.
 - One verification read after the last write, not a read after every write.
 - Close a multi-artifact turn with the call count and the measured machine time, so the ratio stays visible.
-- A run of another model (opencode on DeepSeek) reports its wall time with its result, every time, beside its steps and cost. Chaehan, 2026-11-07: "from now time the deepseek response duration".
+- A run of another model (opencode on DeepSeek) reports its wall time with its result, every time, beside its steps and cost.
 
 **The wait the user asks about is the turn, not the command.** When something "takes too long", the number to quote and to cut is the wall clock of the whole request as they wait: their message to the reply, model steps, tool round trips and question waits included. The command's own seconds are the breakdown, never the headline. Read the turn from the session store (`~/.local/share/opencode/opencode.db`: `session_message.time_created` to the message's `data.time.completed`, in ms), or from `date` markers around the pass. The shape to expect: a pipeline command is seconds, a turn of a few model steps is minutes. A report that answers a waiting question with the command's seconds has answered the wrong question.
 
-**A timing is read for its levers.** The measurement exists to cut the time. Each run of another model is split into launch, model steps, tool plumbing between steps, and any idle wait, from its event stream; the report names the largest part and one setting or step change to test against it (opencode's per-step snapshot, the reasoning variant, the number of steps, the size of one write, the probe, the MCP servers connected at launch), and compares a changed run with the earlier runs of the same task. A timeout is judged by what it costs a successful run, which is nothing, and what it costs a stuck one. Chaehan, 2026-11-14: "the reason why you should time all calls with deepseek and evernote/hanji is that you must find out improvement potentials as they take way too long. i suspect too long timeouts but also other parameters". Measured that day (failure 211): five date-analysis runs of 490 to 633 s spent 35 to 42 steps each, 3.5 to 4.8 s of plumbing per tool call (2 to 3 minutes a run), 72 to 93 s on each single-file write at the #high variant, and 4 to 17 s at launch; a five-call probe ran 38.5 and 33.8 s with snapshots and 25.9 and 19.6 s without. The largest part gets the first test, and a setting that removes a protection is first checked for what it protects and kept where it is needed: opencode's snapshot, switched off for all runs on 2026-11-15 after a two-button question, turned out to cover only the repo a run starts in, which git already versions, and never the grading documents and decks on Drive; Chaehan: "this solution is not optimal. can you optimize the slow file writing. can you apply a heuristic to snapshots are taken for important files, like grading or lecture slides" (failure 212). It stays off (the probe then ran 19.1 and 21.7 s, 1.5 s of plumbing per call), and the file-snapshot plugin copies only the important files before a change. A slow write is DeepSeek thinking first: 5600 to 10200 reasoning tokens before 500 to 600 written ones; opencode offers low, high and max, the default thinks like high, nothing turns thinking off, and #low cut a two-section write test from 93 to 137 s to 52 to 63 s, and a full date analysis's generated tokens by 30%. Notes stay at #high: Chaehan, 2026-11-16, "don't switch to low as this makes the wording much worse in previous runs". The provider's speed decides the wall clock as much: 100 to 220 tokens/s from one run to the next, so a changed setting is compared by tokens and by steps, and its wall time only against runs of the same hour.
+**A timing is read for its levers.** The measurement exists to cut the time. Each run of another model is split into launch, model steps, tool plumbing between steps, and any idle wait, from its event stream; the report names the largest part and one setting or step change to test against it (opencode's per-step snapshot, the reasoning variant, the number of steps, the size of one write, the probe, the MCP servers connected at launch), and compares a changed run with the earlier runs of the same task. A timeout is judged by what it costs a successful run, which is nothing, and what it costs a stuck one. The largest part gets the first test, and a setting that removes a protection is first checked for what it protects and kept where it is needed: opencode's snapshot, switched off for all runs on 2026-11-15 after a two-button question, turned out to cover only the repo a run starts in, which git already versions, and never the grading documents and decks on Drive. It stays off (the probe then ran 19.1 and 21.7 s, 1.5 s of plumbing per call), and the file-snapshot plugin copies only the important files before a change. A slow write is DeepSeek thinking first: 5600 to 10200 reasoning tokens before 500 to 600 written ones; opencode offers low, high and max, the default thinks like high, nothing turns thinking off, and #low cut a two-section write test from 93 to 137 s to 52 to 63 s, and a full date analysis's generated tokens by 30%. Notes stay at #high. The provider's speed decides the wall clock as much: 100 to 220 tokens/s from one run to the next, so a changed setting is compared by tokens and by steps, and its wall time only against runs of the same hour.
 
-**A loop that stops improving is stopped, and the next attempt is an experiment.** Every repeated round (a model run, a fix and rerun, a retry) has a count that should fall each round: gate failures, refusals, failing tests. Before the first round, write down that count, the time budget, and two or three other strategies. After two rounds in which the count does not fall, stop: the cause lies in the setup, and a third identical round costs minutes and teaches nothing. Then change one thing at a time against the baseline, on the smallest input that shows the defect (one section, one step, one call), and compare the counts: keep the change that moves the count, drop the one that does not. Fix a transport fault (a cut connection, a timeout, a refused launch) before any round counts, since it turns every comparison into noise. Failure 165 in `agent/failures.md`: deepseek ran 32 rounds of about two minutes on the Osaka note, 26 of them on refusals it could not satisfy, one refusal 12 times in a row. Chaehan: "if it doesn't improve then 12 rounds are not necessary and you must be more time conscious ... you lack the experimentation and what small changes could comparitively change".
+**A loop that stops improving is stopped, and the next attempt is an experiment.** Every repeated round (a model run, a fix and rerun, a retry) has a count that should fall each round: gate failures, refusals, failing tests. Before the first round, write down that count, the time budget, and two or three other strategies. After two rounds in which the count does not fall, stop: the cause lies in the setup, and a third identical round costs minutes and teaches nothing. Then change one thing at a time against the baseline, on the smallest input that shows the defect (one section, one step, one call), and compare the counts: keep the change that moves the count, drop the one that does not. Fix a transport fault (a cut connection, a timeout, a refused launch) before any round counts, since it turns every comparison into noise.
+
+Neighbours: rules 62 and 73.
+
+Evidence: failures 165, 211 and 212, and the entry "Evidence for rule 74", in socrates `agent/failures.md`.
 
 ### 75. Heavy local work has a weight budget, a stated cost, and a one-element probe
 
 Rule 73 caps how long a call may wait. It says nothing about how much the call
-loads onto the machine, and on 2026-09-26 that gap cost two kernel panics:
-18:45:14 and 19:30:58, both `[data.kalloc.1024]: element modified after free`,
-each inside a window where this work ran large headless-Brave renders and
-Keynote automation. A panic is kernel heap corruption, not ordinary memory
-exhaustion, so the load is a trigger candidate and not a proven cause. The
-defect is that the load was never budgeted, so neither of us could see it
-coming. The user: "the agent rules are not good enough for the timing."
+loads onto the machine.
 
 - **State the cost before the pass.** One line: how many renders, the expected
   seconds each, the peak memory, and how many GUI app launches. Then run it. A
@@ -2348,10 +2321,8 @@ coming. The user: "the agent rules are not good enough for the timing."
   attempt budget to machine-level load.
 - **One sweep per change set.** Before writing, grep every file for the wording
   being changed and fix every occurrence in one pass, including paraphrases in
-  neighbouring files. Each missed occurrence costs a full round trip later:
-  2026-09-26, three successive Evernote re-syncs for one changed phrase
-  ("six need types"), one per rediscovery.
-- **The go-gate (the user, 2026-09-26).** A pass expected to exceed about 15 tool
+  neighbouring files. Each missed occurrence costs a full round trip later.
+- **The go-gate.** A pass expected to exceed about 15 tool
   calls, or that launches any GUI app, starts with a cost line and stops for their
   go: "this pass is N calls, about X s of machine time, N app launch(es)". Small
   passes (a read, a text edit, one render) run through and report the cost
@@ -2366,11 +2337,13 @@ coming. The user: "the agent rules are not good enough for the timing."
   in the temp folder, so the next session does not pay for it again. socrates
   carries `projects/kubs_dt/pipeline.py` (context, budget, render, verify, deck,
   sweep) for every KUBS render, deck build and phrase sweep.
-- **Temp artifacts are expendable; deliverables are not.** macOS emptied the
-  session temp folder mid-turn on 2026-09-26 (generators, 26 renders, one
-  reference export). Copy a deliverable to its real folder in the same call that
+- **Temp artifacts are expendable; deliverables are not.** Copy a deliverable to its real folder in the same call that
   creates it, and write a generator that must survive where the project keeps
   its sources.
+
+Neighbours: rules 62 and 73.
+
+Evidence: failures 68 and 106, and the entry "Evidence for rule 75", in socrates `agent/failures.md`.
 
 ### 76. A user-quoted string is content to use, not a pointer to a place
 
@@ -2477,6 +2450,10 @@ Then the shape to hit: what happened and what it costs, in two sentences. The pr
 
 Failure mode: a letter that reads as a generated report, with headings, lists and offers, where a person was supposed to state a problem to an office.
 
+Neighbours: rules 2 and 37.
+
+Evidence: failure 11, and the entry "Evidence for rule 85", in socrates `agent/failures.md`.
+
 ### 86. An official address, fax or phone number is verified before it goes into anything the user will use
 
 A wrong number is a failed delivery, and a fax that never lands looks exactly like silence while the deadline passes. Reading a number once from one page is not verification.
@@ -2507,21 +2484,25 @@ Failure mode: a reply built as a policy memo — the rule stated first, the reco
 
 ### 88. App automation addresses documents by name or path, never by index, and never writes a file the app has open
 
-The user's documents live in two places at once — a Keynote window and a `.key` file on Google Drive — and either identity can be broken by a careless script. Two failures on 2026-09-29 put the rule at the front. A deck export addressed `document 1` while the wrong document was frontmost, closed the user's open E02 without saving (no autosave copy existed; unsaved edits would have been lost silently). And a build copy was overwritten with `cp` while Keynote had the same file open, which made every later save fail ("the file has been changed by another application"); the modal alert that followed then hung every osascript call, `close` included, until Keynote was force-quit.
+The user's documents live in two places at once — a Keynote window and a `.key` file on Google Drive — and either identity can be broken by a careless script.
 
 - **Address documents by name or by file path, never `document 1` or any index.** The frontmost document is not controllable from a script; the only stable handle is `document "<name>"` or a match on `(file of dd)`. When matching by name, use `contains`, not equality: a file copied by `cp` opens as `name.key` while a file saved by Keynote opens as `name`.
 - **Close only what the script itself opened, and only by its own name prefix.** A build script cleans up `slides_build_*` documents; the user's documents are never closed by a script.
 - **Unique build names per run**, with a timestamp. Never reuse a name an earlier run may have left open; never write over a path while any document points at it.
 - **Before a script writes a deck, refuse the run if the deck is open in Keynote** and say so. This is the guard `pipeline.py slides` carries; pattern for anything that saves a `.key`. The guard has one sanctioned exception — the app refuses to open deck copies from the sandbox, so a pass on the user's open document goes through the app itself (`save d`) — and that exception carries the next bullet's conditions.
-- **One writer at a time, and the app's own save is the only write that counts.** The 2026-10-09 E05 corruption: the deck was edited in place through the open document across many passes while the user was editing the same window, and a later write left every themed shape without its style — the boxes and bands came up in Keynote's default black fill, and the file on disk was as broken as the screen. Editing the open document through the app (`save d`) works where an open of a copy is refused, but it is still a write: no `cp` lands on that path during the pass, no other session touches the deck, and the pass is not called done until the deck is exported and its pages looked at. When the user edits the same document between passes, re-read it before every write and say which state the write is based on.
+- **One writer at a time, and the app's own save is the only write that counts.** Editing the open document through the app (`save d`) works where an open of a copy is refused, but it is still a write: no `cp` lands on that path during the pass, no other session touches the deck, and the pass is not called done until the deck is exported and its pages looked at. When the user edits the same document between passes, re-read it before every write and say which state the write is based on.
 - **Recovering a corrupted deck: preserve, close without saving, verify the backup by render, rebuild, install fresh.** (1) Copy the broken file aside first — it holds work nothing else does; (2) close the document in Keynote without saving, so the app cannot write its broken copy again; (3) find the newest backup whose pages render clean — open a copy and export it, never trust a file for its size or timestamp; the per-pass backups in the stage carry the states; (4) rebuild what the backup lacks from the broken file's own content — positions, sizes, fonts and wording survive the style loss, so read them out before anything is touched; (5) install with the app not holding the document.
 - **Keynote shadows a replaced file with the document state it last held for that path.** After an install the app can open the new bytes and show the old state, reporting the document as unmodified while it does — the file was verified byte-identical to the build (same checksum) and the page still rendered from the pre-install state. The cure: quit Keynote, replace the file so it is a new file, reopen, and verify by export. Never trust `open` to have read the file it was handed.
 - **A save failure raises a modal alert, and a modal alert blocks AppleScript forever.** When osascript stops answering or times out: the app is showing an alert on the user's screen; say so plainly, dismiss it (or ask the user to), close the stray document — force-quit the app if `close` hangs too — and fix the cause before retrying. Never relaunch the app into the same trap.
 - **Check the app's visible state, not the script's exit code.** After an export, the pages exist under the name of the destination folder, not the document; after a save, the mtime moved; after a close, `every document` no longer lists it. A script that "succeeded" while the app holds a stale window is not finished.
-- **A failed run restores the app's state before the cause is chased.** An error aborts a generated script at the line that raised, so the document the run had open can be left open; close the run's own prefix first (`slides_build_*`), verify `every document`, and start the diagnosis from a clean app — never retry over a stray window. The slides command closes its copy on error itself since 2026-10-09 (a failed read pass otherwise left a build copy on the user's screen while the cause was chased); the state check stays the operator's.
-- **A stalled GUI script: look at the screen first, clear the blocker, and stop at the first refusal.** A timeout or a refused event means the app is showing — or waiting behind — something the scripts cannot see; capture the screen and look at the first stall, and consult the app's own mechanics notes for the documented cure — and apply it before anything else: a standing dialog is cleared and the app verified unblocked, because any attempt made over a dialog is void. One mechanism gets two attempts, then the work stops and says so — never a chain of retries, and never an open against an app that refused the last one. (2026-10-09: an open the app's sandbox refused left a popup standing; nine further opens stacked on it before it was cleared — the cure sat in the project's notes the whole time.)
+- **A failed run restores the app's state before the cause is chased.** An error aborts a generated script at the line that raised, so the document the run had open can be left open; close the run's own prefix first (`slides_build_*`), verify `every document`, and start the diagnosis from a clean app — never retry over a stray window. The slides command closes its copy on error itself since 2026-10-09; the state check stays the operator's.
+- **A stalled GUI script: look at the screen first, clear the blocker, and stop at the first refusal.** A timeout or a refused event means the app is showing — or waiting behind — something the scripts cannot see; capture the screen and look at the first stall, and consult the app's own mechanics notes for the documented cure — and apply it before anything else: a standing dialog is cleared and the app verified unblocked, because any attempt made over a dialog is void. One mechanism gets two attempts, then the work stops and says so — never a chain of retries, and never an open against an app that refused the last one.
 
 Failure mode: an export that targets `document 1` and closes the user's document; a `cp` over a file the app has open, followed by an error alert nobody sees and a chain of hung scripts; a deck written by two writers at once, its styles gone, discovered only when the user opens it.
+
+Neighbours: rules 73 and 166.
+
+Evidence: failures 22 and 54, and the entry "Evidence for rule 88", in socrates `agent/failures.md`.
 
 ### 89. A difference between two averages is a finding only when it clears the noise in the data
 
@@ -2763,24 +2744,20 @@ open issues answers "what is open", never "how is it going". Before the issues,
 it finds what Chaehan achieved in the chapter, read from the whole record
 rather than from the open items:
 
-- a first(private)
-;
+- a first;
 - a measured plateau broken, against his own baseline and against a benchmark
-  for a good performer(private);
-- a recorded drag overcome, with the price he paid in his own currency(private)
-
-
-. The habit is named as the
+  for a good performer;
+- a recorded drag overcome, with the price he paid in his own currency. The habit is named as the
   record shows it; an example of the habit is its evidence, never a figure to
-  set against the step's price (private)
-. Chaehan, 2026-11-07: "you are
-  taking the 80000 won to agency fee to literally."
+  set against the step's price.
 
 The test: a stranger reading only the snapshot can tell what Chaehan did this
 chapter and what it took from him. A snapshot that reads as an issue list
-fails. Stated 2026-11-07: "the life overview is still underwhelming because it
-just covers issues. I said over and over that every response must be written
-for the human user perspective yet fail totally on that."
+fails.
+
+Neighbours: rule 22.
+
+Evidence: failures 182 and 183, and the entry "Evidence for rule 105", in socrates `agent/failures.md`.
 
 ### 106. Lists are real lists, and a colon subheader gets its own line
 
@@ -2916,13 +2893,13 @@ Text written as the user's own words - a script he will speak, an announcement, 
 
 When a spec lives in several carriers (a script, a sheet, a design row, a syllabus) and one carrier shows a value the others contradict, ask which stands; the change is then swept through every carrier in the same pass. A repair that lands in one artifact and not its siblings comes back as the same complaint.
 
-What Chaehan said about a text passes the same provenance check, with its scope kept. A judgment of his is quoted from his message: robotic wording he named inside a note ("what time buys etc.") rejects those phrases, and the note's other sentences keep the praise he gave them. A summary that widens his words ("their wording is the kind you rejected", "take no sentence from them") puts a judgment in his mouth; before his judgment goes into an instruction or a reply, find the message and quote it. Failure 197 in `agent/failures.md`: Chaehan called the experiment notes A and B "excellent", and the agent wrote into the life-challenges skill that no sentence of theirs may be taken and told him their wording was the kind he rejected. Chaehan, 2026-11-08: "no i didn't reject their sentences, i told you they were good, don't twist my words but read my words again."
-
-Failure mode: 2026-10-04, the KUBS S3 script. The silent minute carried the invented "stand up, look at the wall, no phones, no talking" (the students keep sitting, eyes closed); the close still carried "this week is the sprint, not the book", rejected the day before and repaired in the run sheet only, plus a week recital the students gain nothing from.
-
-Failure mode, 2026-10-15 and 2026-10-16, the same script family (KUBS S7). §4's brainwriting round carried "never write above someone else's line" and the dot vote carried "That one is tonight's journal entry"; §6's wrapup closed on "Tonight: the strongest improvement into your journal - the essay is built from the journal." and "The essay: 1500 words, personal, your own writing, due Friday 2026-10-23."; and the workshop's purpose read "the strongest improvement to your final deliverable, judged by the tips". Chaehan, 2026-10-15: "why do you still invent things like 'tonight: ...; the essay: ...'?"; 2026-10-16: "it happened again many times, so enforce the rule not to invent stupid things like: ... The essay: 1500 words, personal, your own writing, due Friday 2026-10-23." The complaint had been answered by keeping the lines (the log recorded "the wrapup's other lines stay in section 6"), and the workshop's real design was his: the team picks one of the three tips for the final deliverables and works that tip in the standard rounds, brainwriting, sharing, silent dot voting.
+What Chaehan said about a text passes the same provenance check, with its scope kept. A judgment of his is quoted from his message: robotic wording he named inside a note ("what time buys etc.") rejects those phrases, and the note's other sentences keep the praise he gave them. A summary that widens his words ("their wording is the kind you rejected", "take no sentence from them") puts a judgment in his mouth; before his judgment goes into an instruction or a reply, find the message and quote it.
 
 Stated 2026-10-04: "why do you make up things? ... this is totally wrong, they will keep sitting, close their eyes" and "you must think what i say as the instructor which is of value to students learning experience."
+
+Neighbours: rules 37 and 162.
+
+Evidence: failures 57 and 197, and the entry "Evidence for rule 111", in socrates `agent/failures.md`.
 
 ### 112. A submission record verifies the submission, never the delivery
 
@@ -3064,17 +3041,19 @@ Failure mode, 2026-10-09: the S4 homework's Monday presentations (2 people per t
 
 Two or more subjects described against the same attributes - definitions of one term across several sources, job types across authors, methods, formats, candidates - are one table, with the subjects as rows and the attributes as columns. Prose is not the fallback for a comparison. Rule 67 is one instance of this rule, not the whole of it: the same shape covers every comparison, in everything the user reads - the chat answer, the Evernote note, the memory file alike. The test is rule 48's, applied to structure: the reader must not have to reassemble the picture themselves.
 
-A summary's structure is the relation, not the enumeration. The finding comes first as a connected statement - what the sources agree on, where they split, and how the split can be reconciled - and the table below maps the detail onto it. For example: the prevailing definitions name either a goal or a task, and this contrast can be reconciled by defining the job as a task that is a goal-oriented activity (the activity part gives it an end state, the goal part ties it to needs); the mapping runs as follows, one table with each source as a row. One paragraph per source, or one bullet block per item, leaves the reader to assemble the relation the summary was asked to state - that is the failure this rule exists for. A talk that is retold follows the same rule: its structure is the thought, never the order of the turns. The idea one person told comes first, as a claim the reader could explain to a third person. Then come what the other asked about it, the answer in its steps, and what the other did with it. Steps the speaker counted stay steps. A sentence that names the act or its topics ("he admitted his fear", "you gave her four minutes on language, the two girlfriends and the fear") says that something was said and holds none of it. Turns told one after another in time order, each with its quote, leave the reader to assemble the thought. Chaehan, 2026-11-16: it "has no clear train of thought. instead it recites the conversation like a normal summary" (failure 213). When another model writes the retelling, it is first asked in an open question, on that stretch alone, what was said; the rules for quotes, order and wording come after. Put first, they take the thinking: on one stretch the open question drew 900 to 1500 reasoning tokens and named the whole idea in four runs of four, and the format rules drew 6800 to 15100 and named it whole in none of four.
+A summary's structure is the relation, not the enumeration. The finding comes first as a connected statement - what the sources agree on, where they split, and how the split can be reconciled - and the table below maps the detail onto it. For example: the prevailing definitions name either a goal or a task, and this contrast can be reconciled by defining the job as a task that is a goal-oriented activity (the activity part gives it an end state, the goal part ties it to needs); the mapping runs as follows, one table with each source as a row. One paragraph per source, or one bullet block per item, leaves the reader to assemble the relation the summary was asked to state - that is the failure this rule exists for. A talk that is retold follows the same rule: its structure is the thought, never the order of the turns. The idea one person told comes first, as a claim the reader could explain to a third person. Then come what the other asked about it, the answer in its steps, and what the other did with it. Steps the speaker counted stay steps. A sentence that names the act or its topics ("he admitted his fear", "you gave her four minutes on language, the two girlfriends and the fear") says that something was said and holds none of it. Turns told one after another in time order, each with its quote, leave the reader to assemble the thought. When another model writes the retelling, it is first asked in an open question, on that stretch alone, what was said; the rules for quotes, order and wording come after. Put first, they take the thinking: on one stretch the open question drew 900 to 1500 reasoning tokens and named the whole idea in four runs of four, and the format rules drew 6800 to 15100 and named it whole in none of four.
 
 Failure mode, 2026-10-09: a JTBD terminology answer and its Evernote note were written as nine paragraph sections - the three source definitions told one after another, the job ladder as prose bullets, the job types as a list - with no table joining the definitions, the ladder or the types, and the reconciliation left implicit. The user: "i told you 1000 times to use tables if you can make info especially comparisons more concise. why is this still not in agent rules?" and "the summary must be much more concise without losing any detail. instead of different paragraphs you must relate all info to each other."
 
-Every table in a note carries an H3 title of 2 to 6 words on the line above it, naming what the rows are ("Fukuhara houses", "Osaka passes and break-even"), so the reader knows which table is which without reading its header row. Chaehan, 2026-11-07: "the tables lack titles at H3".
+Every table in a note carries an H3 title of 2 to 6 words on the line above it, naming what the rows are ("Fukuhara houses", "Osaka passes and break-even"), so the reader knows which table is which without reading its header row.
 
-A score in a table is computed only from that table's columns. Its formula stands in one line between the H3 title and the table, each factor column shows its value and the points it gives ("66/67/69% → 2"), and the points rules follow the table. A factor, weight or adjustment the reader cannot see in the table is left out of the score. The test: the reader recomputes any row's score from its cells alone. Chaehan, 2026-11-20: "the score is intransparent only use factors which are in the table" (failure 232).
+A score in a table is computed only from that table's columns. Its formula stands in one line between the H3 title and the table, each factor column shows its value and the points it gives ("66/67/69% → 2"), and the points rules follow the table. A factor, weight or adjustment the reader cannot see in the table is left out of the score. The test: the reader recomputes any row's score from its cells alone.
 
 Alternatives offered for a decision are mutually exclusive, and the table carries each option's overall idea in its own column. If two alternatives can be combined - the teams present and still collect cards from each other - they are features of one option, not two: collapse them, or find the axis on which the options truly differ and let the pick exclude the rest. The overall-idea column is the one line that says what the option IS; with it, the reader can answer "what differs" from the table alone, without assembling the picture from separate rundowns. A comparison of whole designs - plans, methods, session shapes - is still one table: the parts every alternative shares are stated once above it, and only the genuinely alternative-specific detail sits below, compact.
 
-Failure mode, 2026-10-11: the workshop methods for KUBS session 6 were four full sections - idea, run of show, mechanics, build cost each - whose options could be combined, and the summary table lacked the overall-idea column. The user: "very bad is that the options are not mutually exclusive ... this severely destroys readability and viability of these options" and "i had told you countless times to use tables for comparison, still not recorded?"
+Neighbours: rules 48 and 67.
+
+Evidence: failures 25, 174, 213 and 232, and the entry "Evidence for rule 127", in socrates `agent/failures.md`.
 
 ### 128. A clarification lands in the artifact that teaches it
 
@@ -3399,44 +3378,25 @@ Four clauses about a definition or a test the agent hands to the user for him to
 teach from:
 
 - **When the user names a framing, a source or an analogy and asks for its definitions, the lookup is the work.** Setting it aside because it "will not land with the audience" is an assumption standing where evidence belongs: the definitions are read first, quoted, and then judged on what they say. A pointer to a body of knowledge the user already works from ("the best way I know is X") is a request for X, not a preference to be weighed against the agent's own framing; the retrieval half of such a sentence is the instruction, and the clause that follows it ("but that won't help ...") is a claim about the audience, never a licence to skip the retrieval.
-- **A criterion offered as a discriminator is run against every neighbouring case before it is presented.** Give it the cases it must separate, not the case it was coined for. "A functional goal has a clear end state" also describes the outcome statements on the same sheet (minimize time is an end state reached) and the emotional and social goals beside them, so it separates nothing; that criterion was reaching for a rule against aspirations and wore a definition's clothes. A test that fails on the page it governs is not a definition. Enumerate that page's own cases first - the columns, rows and cells the sheet or document under discussion has, not the pair the criterion was coined for - and run the test down that list before writing it down. Rule 145's second clause gives the positive form - the test that works names the attribute that exists on one side only.
-- **A claim presented with worked examples is read back against its own terms before it is sent.** The examples are part of the claim, not decoration: each row is checked for whether its cells are of the kind the criterion names. A definition of the functional goal as "the change of state of a thing" shipped with a table whose first row set the *parcel* against the states *unbought and undelivered* - states of the buying, not of the parcel, which is the same parcel before and after - and a row for Ulwick's "stay awake" whose thing was the body, a referent the source never named. Examples filled to fit a criterion certify it falsely.
+- **A criterion offered as a discriminator is run against every neighbouring case before it is presented.** Give it the cases it must separate, not the case it was coined for. A test that fails on the page it governs is not a definition. Enumerate that page's own cases first - the columns, rows and cells the sheet or document under discussion has, not the pair the criterion was coined for - and run the test down that list before writing it down. Rule 145's second clause gives the positive form - the test that works names the attribute that exists on one side only.
+- **A claim presented with worked examples is read back against its own terms before it is sent.** The examples are part of the claim, not decoration: each row is checked for whether its cells are of the kind the criterion names. Examples filled to fit a criterion certify it falsely.
 - **A criterion the user has already settled is held, not re-derived.** Where his record or his words hold a definition of the object under discussion, that definition is the frame the answer works in; a fresh criterion that competes with it is a defect even when it tests clean, and where it disagrees it is checked against his material before it is offered.
 
 This applies to a quoted source line as much as to the agent's own phrasing: a
 sentence is not exempt from the counterexample test because its author is
 famous.
 
-Instruction basis: 2026-10-14, the KUBS S6 functional goal. The agent answered
-"what is a functional goal in simple terms and what are intuitive examples"
-with Kalbach's end-state sentence and, in the same reply, set aside the route
-the user had named - functional versus non-functional requirements in software -
-without reading its definitions. Chaehan: "can/t you see that kalbach's
+Instruction basis: 2026-10-14, the KUBS S6 functional goal. Chaehan: "can/t you see that kalbach's
 definition is very vague and doesn't explain at all the nature of the
 functional goal by pointing to an end state? this is also not true bec the
 outcome statements for needs and emotional social goals would also have an end
 state if they are defined by minimize/maximize or decrease/increase. we need a
 better definition that serves as help. i told you to look at functional
-requirements in software you didn't do it". The lookup he asked for holds the
-working answer: Sommerville's functional requirements are the services the
-system provides and how it behaves in particular situations, and non-functional
-requirements are constraints on those services; ISO/IEC 25010 lists the
-qualities; and the requirements-ontology test makes a requirement
-non-functional exactly when it refers to a quality and functional when it
-refers to a function, with one sentence able to hold both. Ulwick's glossary -
-the author the session's own slide credits - defines the functional job as "the
-underlying process an end user is trying to get done in a given situation", a
-criterion with a testable consequence: a job map can be drawn for it, and no
-steps can be written for an emotional job. The retrieval above stands as
-evidence; the definition the session runs on is his, not the agent's: functional
-job = what gets done, a goal-oriented activity (a task with an objective), and
-functional goal = the intended improvement on it. Chaehan: "better is
-functional job as what gets done as goal-oriented activity (task with
-objective) and functional goal as the intended improvement", after two
-further agent definitions failed on his own material ("definition changes a
-thing is not good, bec buying something doesn't change that thing, it is still
-the same!!! bec body is not a thing!!! this is common sense, don't you get
-it??"). Instance: `agent/failures.md` failure 52.
+requirements in software you didn't do it".
+
+Neighbours: rule 145.
+
+Evidence: failure 52, and the entry "Evidence for rule 160", in socrates `agent/failures.md`.
 
 ### 161. A definition supplies the term's content; a format is not a definition, and a term is never defined by itself
 
@@ -3463,7 +3423,11 @@ Rule 62's duty to ask begins where the record stops answering; rule 124's search
 
 **A shortening keeps each element's own property.** Compressing a text moves words, never roles. The element that does something stays the subject that does it, and the thing that sits somewhere stays the thing that sits there: from "I will ask teams which order (last to first), TA puts on whiteboard" comes "the order of presentations last to first on the whiteboard", never "the TA on the whiteboard". A summary that reattaches a property to its neighbour reads as noise to the reader who knows the source. And a card keeps the points it was given: lines brought in from elsewhere are not part of it.
 
-Failure mode, 2026-10-15, the KUBS S7 run sheet: the card was shortened by deleting four pieces of content ("the 4-hour", "every member takes part", "tonight: the strongest improvement into your journal", "1500 words, personal, your own writing"), the before/after sat in the agent's own message, and "the 4 points" was searched for in the course design, the S6 tips sheet, the sibling session folders and the memory files before it was read in the diff. Chaehan: "look which four points you put away. this is really bad: a question you can answer from your own actions and chat history." The draft that followed still carried the wrapup's later bullets, which he does not count among the points, and its summary said "the TA on the whiteboard" where the order goes on the whiteboard: "your summaries of the four points are useless"; "why do you still invent things like 'tonight: ...; the essay: ...'?" Instance: `agent/failures.md` failure 55.
+Failure mode, 2026-10-15, the KUBS S7 run sheet: the card was shortened by deleting four pieces of content ("the 4-hour", "every member takes part", "tonight: the strongest improvement into your journal", "1500 words, personal, your own writing"), the before/after sat in the agent's own message, and "the 4 points" was searched for in the course design, the S6 tips sheet, the sibling session folders and the memory files before it was read in the diff. Chaehan: "look which four points you put away. this is really bad: a question you can answer from your own actions and chat history."
+
+Neighbours: rules 62 and 124.
+
+Evidence: failure 55, and the entry "Evidence for rule 162", in socrates `agent/failures.md`.
 
 ### 163. Nothing unreferenced is left behind; a removal sweeps the code only it reached
 
@@ -3505,9 +3469,9 @@ A copy of a deck taken off the Google Drive mount carries `com.apple.quarantine`
 
 **A cut event is not re-sent on the same input.** Rule 73's attempt budget binds the Apple event, not only the tool call: when a script is stopped at the cap, the next step is the input and the app (`file`, `xattr`, `count of documents`), never the same script with a larger timeout, in the background, or behind a sleep-poll. A backgrounded repeat does not bound the wedge, it hides it - the process keeps holding the app after the tool has returned, and the poll loop then spends the turn watching the wedge it made. Two error strings are read as input faults, not as reasons to retry: -1712 "AppleEvent timed out" is the app's gate swallowing the event, and -1728 "Can't get POSIX file" from `POSIX file` written inside a `tell application` block is the coercion being answered by the app and failing. The `line:col` osascript prints for these is not a position in the script file (a 4-line script reported `54:81`); the error text carries the information.
 
-Instruction basis: 2026-10-17, the E08 story pass and the E05 next-year pass driving one Keynote. The E05 session: "We are both driving the single Keynote instance and have broken each other's runs several times in the last hour: your E08 rebuild sits at the 'open' phase for ten minutes at a time, and when your deck is open my E05 build dies with 'Connection is invalid (-609)'. Two opens cannot be queued against one Keynote; whichever script is second never returns." An hour of the E08 pass went into misdiagnosing that symptom as a quarantine flag, a duplicate document identity and a cold start. Instance: `agent/failures.md` failure 63.
+Neighbours: rules 73 and 88.
 
-Instruction basis for the two paragraphs above: 2026-10-20, the E08 bubble pass. A hand-written script copied `KUBS DT WS2026 E08.key` with `cp` and opened the copy. The first call exited 1 in one second with -1728 (`set p to POSIX file (...)` inside the `tell` block); the second, `open (POSIX file p)`, sat silent until AppleScript's 120 s per-event default and died with -1712, and the same script was then sent again in the background and watched by a 55-iteration sleep-poll. `xattr /tmp/e08_copy.key` listed `com.apple.quarantine` and `com.apple.provenance`; `/tmp/bubble.log` reads `AppleEvent timed out. (-1712)`. Chaehan: "why is this still happening given all the latency reduction methods installed lately?" Instance: `agent/failures.md` failure 84.
+Evidence: failures 63 and 84, and the entry "Evidence for rule 166", in socrates `agent/failures.md`.
 
 ### 167. On a recurring symptom, the register, the log and the process are read before any hypothesis
 
@@ -3799,7 +3763,11 @@ A projected list or table is not flowed text, and neither is a page the user pri
 
 The test is one glance from a step back: does the block read as a single object sitting in its own space? A row that touches a margin the content does not need, or two cells in different type, fails at that glance and is fixed before the page is shown.
 
-Instruction basis: 2026-10-19, the E08 agenda page. It was built from correct values -- ten blocks at the right times, the right durations -- with the table set left at 120 px and stretched to 1680 px, `.b{flex:1}`, and three sizes (Georgia 44 for the time, Helvetica 40 for the label, Helvetica 34 for the duration). Chaehan: "the agenda is not good, it should be centered and the rows should not be stretched to max width, also you mix 3 different fonts which is terrible stick to georgia, same font size (but color change ok). isn't that all common sense visually?" With it, the label edits his reading had already settled: "write team as Team. capitalize after colons, remove words after welcome and Intro like for the guests. replace intro by Course in review." Nothing in the page required measuring the deck again; the defect was composition, which is decided before any value is read. The same page came back twice more on the same day for the two clauses above: "the text in the rows in agenda slide are not vertically centered, isnt' that common sense??? put the durations even closer, can't you see that you are wasting so much space?" -- the rows were `align-items:baseline` in a 76 px row, so the ink sat in the top 38 px, and the duration column began 297 px after the longest label. The printout scope was added 2026-10-20 on the KUBS S8 grading printout: its first page set three criteria definitions across the full landscape width, 273 mm of prose in a page with two thirds of its height empty. Chaehan: "first slide is not well formatted, the table must be must smaller. how many times do i have to say that the tables should not be stretched to max width if there is enough space, isn't that common sense?"
+Instruction basis: 2026-10-19, the E08 agenda page. Chaehan: "the agenda is not good, it should be centered and the rows should not be stretched to max width, also you mix 3 different fonts which is terrible stick to georgia, same font size (but color change ok). isn't that all common sense visually?"
+
+Neighbours: rules 64, 125 and 134.
+
+Evidence: failures 80, 81, 82, 83 and 94, and the entry "Evidence for rule 185", in socrates `agent/failures.md`.
 
 ### 186. An image is drawn at its own aspect; a box of another shape crops its ink
 
@@ -4488,11 +4456,7 @@ the order they arrived; the second finds the joins; the third keeps only the
 links, and that is the version that ships. This is the normal cost of a
 description, not a polish pass to skip when the text is short.
 
-Instruction basis: 2026-10-25, "My Swim Training", the 2026-10-25 row. It
-reported the roll failure and the catch failure as two entries, and the first
-one as "after the left-side breath the right leg did not lift up, because the
-left arm did not roll down in the needle — the left roll never completed, so
-the right hip never came up". Chaehan gave the merge: "after the left-side
+Instruction basis: 2026-10-25, "My Swim Training", the 2026-10-25 row. Chaehan gave the merge: "after the left-side
 breath, left arm did not roll down in the needle. Because the left roll never
 completed, the right leg and hip did not lift up, and ultimately prevented to
 setup the left arm into a high elbow catch", and said why: "it is not only
@@ -4508,14 +4472,10 @@ an hour earlier; the consequence is what it means for the reader. Lines filed
 one by one under topics never show such a turn, because each loses the question
 it answered and the change it led to. A long turn is judged by what was asked
 before it and what followed it, never by its length or its share of the talk.
-Instance, 2026-11-14 (failure 210): two notes on the third meeting with Person
-Kim filed her fear of men under sex and her "머리가 깨끗해지고 있는 중인 것
-같아요" under her limits, listed his six-minute answer to her own question as
-the moment he lost her, and missed that the 80 minutes before her line were one
-conversation about holding hands. Chaehan: "neither the old nor the new
-captured the extremely important and deep conversational points preceding that
-revelation which changed her whole attitude towards me, as after that she
-allowed me holding her hand."
+
+Neighbours: rule 127.
+
+Evidence: failures 112, 113 and 210, and the entry "Evidence for rule 213", in socrates `agent/failures.md`.
 
 ### 214. A cue is a word the user can hold, not a description of a sensation
 
@@ -5313,16 +5273,15 @@ test: for each element the instruction names, ask what the model writes when
 the record is silent; if the answer is "something", or a sentence saying that nothing happened, the instruction is
 rewritten. `agentkit/scripts/instruction_lint.py` flags a paragraph that
 asks for such an element with no empty case (I1), or writes the empty case as a sentence (I2); it runs on a skill, command or
-agent file whenever one is written. Instance, 2026-11-08: the life-overview rule "name who helped and
-how" produced "Minho signed the transfers". Chaehan: "you must prevent that
-deepseek forcibly wants to fill out a requested variable and if it can't,
-uses tricks and hallucination. most plausible-sounding is not enough." The empty case of a section, heading or field is its absence, never a sentence that says it is empty: a heading over "nothing came up" is a section read for nothing. A checker never demands an element the record can lack (a section, a count of quotes on a topic), since that demand forces filler. The test for a note: for each section, ask whether a record line holds its matter; when none does, the heading is gone. Instance, 2026-11-20 (failure 230 in socrates `agent/failures.md`): the note of the 2026-11-19 date kept "The turning point" over "You felt no change in her" and "Sex and past relationships" over plan talk, because the date skill asked for one sentence when nothing changed and `date_check.py` required every section and three quotes on sex. Chaehan: "sections turning point and sex should not be here if not spoken about this is common sense!"
+agent file whenever one is written. The empty case of a section, heading or field is its absence, never a sentence that says it is empty: a heading over "nothing came up" is a section read for nothing. A checker never demands an element the record can lack (a section, a count of quotes on a topic), since that demand forces filler. The test for a note: for each section, ask whether a record line holds its matter; when none does, the heading is gone.
 
 The model is fixed: DeepSeek through opencode, with the direct DeepSeek API as
 its fallback, does the work. A stronger model is never offered as an option;
-when DeepSeek's output drifts, the instructions or the setup change. Chaehan,
-2026-11-08: "you always always let deepseek via opencode and fallback deepseek
-api do the work - so don't ask again for stronger model."
+when DeepSeek's output drifts, the instructions or the setup change.
+
+Neighbours: rule 11.
+
+Evidence: failures 181, 190, 202 and 230, and the entry "Evidence for rule 245", in socrates `agent/failures.md`.
 
 ### 246. A write or report waits until every source the workflow names is checked
 

@@ -7,6 +7,7 @@
     python3 tools/rules_ledger.py evidence LEDGER.tsv REGISTER.md MAP.tsv   which units the register lacks, and where each goes
     python3 tools/rules_ledger.py apply LEDGER.tsv MAP.tsv REGISTER.md TAG   copies them into the register, word for word
     python3 tools/rules_ledger.py trim RULES.md DECISIONS.tsv REGISTER.md TAG   cuts a batch of rules to cards
+    python3 tools/rules_ledger.py review BEFORE.md AFTER.md OUT.html 160,111,22 TITLE   the batch's before and after
 
 Phases 0 and 1 of `docs/2026-11-23 rules redesign plan.md`. `build` splits RULES.md into units: a sentence
 of a paragraph or bullet, a heading, a table row, a fenced code block. Each unit gets an identifier
@@ -208,7 +209,12 @@ def _scope(u: Unit) -> str:
     return u.id.split(".")[0]
 
 
+CARD_LINE = re.compile(r"(?:Neighbours|Evidence): ")
+
+
 def _pointer_only(u: Unit) -> bool:
+    if CARD_LINE.match(u.text):
+        return True  # a card line of phase 2 names failure numbers; it tells no instance
     if DATE.search(u.text) or LONGQUOTE.search(u.text):
         return False
     return not re.sub(r"[\s.;:,]", "", POINTER_ONLY.sub("", u.text))
@@ -403,8 +409,8 @@ def trim(source: str, decisions: list[dict[str, str]]) -> str:
             if k < len(lines) and not lines[k].strip() and (k == 0 or not lines[k - 1].strip()):
                 del lines[k]
             continue
-        if acts.get(para[0].id, {}).get("action") == "cut":
-            raise ValueError(f"{para[0].id}: cutting a paragraph's first sentence alone would orphan the rest")
+        if acts.get(para[0].id, {}).get("action") == "cut" and BULLET.match(lines[start - 1]):
+            raise ValueError(f"{para[0].id}: cutting a bullet's first sentence alone would orphan the rest")
         raw, pos = "\n".join(lines[start - 1:end]), 0
         for u in para:
             m = _flex(u.text).search(raw, pos)
@@ -455,6 +461,110 @@ def trim_check(units: list[Unit], decisions: list[dict[str, str]], rules: str, r
         if d["action"] == "append" and norm(d["span"]) not in hay_rules:
             problems.append(f"{d['id']}: the card line is missing")
     return problems
+
+
+def _rule_texts(source: str) -> dict[str, str]:
+    out: dict[str, list[str]] = {}
+    cur = None
+    for ln in source.split("\n"):
+        if m := re.match(r"### (\d+)\. ", ln):
+            cur = m.group(1)
+            out[cur] = [ln]
+            continue
+        if re.match(r"#{1,2} ", ln):
+            cur = None
+        if cur:
+            out[cur].append(ln)
+    return {k: "\n".join(v).strip() for k, v in out.items()}
+
+
+def _blocks(text: str) -> list[str]:
+    out: list[list[str] | None] = []
+    for ln in text.split("\n"):
+        if not ln.strip():
+            out.append(None)
+        elif not out or out[-1] is None or re.match(r"(- |\d+\. |### )", ln):
+            out.append([ln])
+        else:
+            out[-1].append(ln)
+    return ["\n".join(b) for b in out if b]
+
+
+def _word_diff(x: str, y: str) -> str:
+    import difflib
+    import html
+    tok = lambda s: re.findall(r"\n+|[^\S\n]+|[\w'’-]+|[^\w\s]", s)
+    tx, ty, out = tok(x), tok(y), []
+    for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, tx, ty, autojunk=False).get_opcodes():
+        if op == "equal":
+            out.append(html.escape("".join(tx[i1:i2])))
+        if op in ("delete", "replace"):
+            out.append("<del>" + html.escape("".join(tx[i1:i2])) + "</del>")
+        if op in ("insert", "replace"):
+            out.append("<ins>" + html.escape("".join(ty[j1:j2])) + "</ins>")
+    return "".join(out)
+
+
+def review(before: str, after: str, rules: list[str], title: str) -> str:
+    """An HTML page of each rule's before and after: cut text struck in red, added lines in green,
+    unchanged paragraphs folded behind a click. For Chaehan's review of a batch."""
+    import difflib
+    import html
+    b, a = _rule_texts(before), _rule_texts(after)
+
+    def ratio(x: str, y: str) -> float:
+        """The share of y's words that x holds in order; a card line is new and pairs with nothing."""
+        if CARD_LINE.match(y):
+            return 0.0
+        wx, wy = re.findall(r"\w+", x), re.findall(r"\w+", y)
+        matched = sum(m.size for m in difflib.SequenceMatcher(None, wx, wy, autojunk=False).get_matching_blocks())
+        return matched / max(1, len(wy))
+
+    sections = []
+    for r in rules:
+        xb, xa, items, same = _blocks(b[r]), _blocks(a[r]), [], []
+
+        def fold() -> None:
+            if same:
+                n = len(same)
+                items.append(f'<details><summary>{n} unchanged paragraph{"s" if n > 1 else ""}</summary>'
+                             f'<div class="t">' + "\n\n".join(html.escape(z) for z in same) + "</div></details>")
+                same.clear()
+
+        for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, xb, xa, autojunk=False).get_opcodes():
+            if op == "equal":
+                same.extend(xb[i1:i2])
+                continue
+            fold()
+            ys, j = xa[j1:j2], 0
+            for x in xb[i1:i2]:
+                best = max(range(j, len(ys)), key=lambda k: ratio(x, ys[k]), default=None)
+                if best is not None and ratio(x, ys[best]) > 0.8:
+                    items += [f'<div class="t"><ins>{html.escape(y)}</ins></div>' for y in ys[j:best]]
+                    items.append(f'<div class="t">{_word_diff(x, ys[best])}</div>')
+                    j = best + 1
+                else:
+                    items.append(f'<div class="t"><del>{html.escape(x)}</del></div>')
+            items += [f'<div class="t"><ins>{html.escape(y)}</ins></div>' for y in ys[j:]]
+        fold()
+        wb, wa = len(b[r].split()), len(a[r].split())
+        sections.append(f"<section><h2>Rule {r}: {wb} to {wa} words</h2>{''.join(items)}</section>")
+    style = (":root{--bg:#fbfaf7;--fg:#1d1d1b;--mut:#6b6a66;--del:#b3261e;--delbg:#fbe9e7;--ins:#1b6e3a;--insbg:#e5f4ea;--line:#e4e2dc}"
+             "@media (prefers-color-scheme:dark){:root{--bg:#161615;--fg:#e9e7e2;--mut:#a09d96;--del:#ff8a80;--delbg:#3a1d1b;"
+             "--ins:#8ee0a8;--insbg:#16301f;--line:#33322f}}"
+             "body{background:var(--bg);color:var(--fg);font:16px/1.55 -apple-system,Segoe UI,sans-serif;margin:0;padding:24px 16px}"
+             "main{max-width:860px;margin:0 auto}h1{font-size:22px;margin:0 0 6px}p.lead{color:var(--mut);margin:0 0 20px}"
+             "h2{font-size:17px;border-top:1px solid var(--line);padding-top:18px}"
+             ".t{margin:0 0 12px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14.5px}"
+             "summary{color:var(--mut);cursor:pointer;margin:0 0 12px;font-size:14px}"
+             "del{color:var(--del);background:var(--delbg);text-decoration:line-through}"
+             "ins{color:var(--ins);background:var(--insbg);text-decoration:none}")
+    return (f'<!doctype html><html lang="en"><head><meta charset="utf-8">'
+            f'<meta name="viewport" content="width=device-width,initial-scale=1"><title>{html.escape(title)}</title>'
+            f"<style>{style}</style></head><body><main><h1>{html.escape(title)}</h1>"
+            '<p class="lead">Red, struck through: text that left RULES.md; every word of it stands in socrates '
+            "agent/failures.md. Green: the two card lines added. Everything else is unchanged, word for word.</p>"
+            + "".join(sections) + "</main></body></html>")
 
 
 def main(argv: list[str]) -> int:
@@ -521,6 +631,11 @@ def main(argv: list[str]) -> int:
         print(f"rules_ledger: RULES.md {len(rules.split())} -> {len(new_rules.split())} words; "
               f"{len(new_register.split()) - len(register.split())} words copied into the register; "
               f"quotes in the register: {found} of {total}")
+        return 0
+    if len(argv) == 6 and argv[0] == "review":
+        before, after = Path(argv[1]).read_text(encoding="utf-8"), Path(argv[2]).read_text(encoding="utf-8")
+        Path(argv[3]).write_text(review(before, after, argv[4].split(","), argv[5]), encoding="utf-8")
+        print(f"rules_ledger: review page written to {argv[3]}")
         return 0
     print(__doc__.splitlines()[2].strip())
     return 1

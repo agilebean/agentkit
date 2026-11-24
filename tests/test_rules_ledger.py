@@ -273,6 +273,12 @@ def test_trim_refuses_to_orphan_a_bullet():
         raise AssertionError("the bullet lost its marker")
 
 
+def test_trim_cuts_the_first_sentence_of_a_plain_paragraph():
+    first = next(u for u in ledger.split(CARDS) if u.text.startswith("Failure mode: 2026-10-05"))
+    new = ledger.trim(CARDS, decide((first.id, "cut", "", "r", first.text)))
+    assert '\nThe user: "this paragraph is only the instance and goes away".\n' in new
+
+
 def test_to_register_copies_a_cut_unit_the_register_lacks_and_the_check_passes():
     units, rows = ledger.split(CARDS), cards_decisions()
     register = ledger.to_register(units, rows, REGISTER, "T")
@@ -286,3 +292,17 @@ def test_trim_check_names_a_kept_sentence_that_left_and_a_cut_one_the_register_l
     problems = ledger.trim_check(units, rows, damaged, REGISTER)
     assert any("is kept but" in p for p in problems)
     assert any("is cut but" in p for p in problems)
+
+
+def test_evidence_plan_reads_a_card_line_as_a_pointer():
+    trimmed = ledger.trim(CARDS, cards_decisions())
+    rows = {u.text: d for u, d, _ in ledger.evidence_plan(ledger.split(trimmed), REGISTER)}
+    assert rows["Evidence: failure 12."] == "pointer"
+
+
+def test_review_strikes_the_cut_text_adds_the_card_and_folds_the_rest():
+    page = ledger.review(CARDS, ledger.trim(CARDS, cards_decisions()), ["7", "8"], "Batch T")
+    rule7 = page.split("<h2>Rule 7")[1].split("<h2>Rule 8")[0]
+    assert "<del>On 2026-10-03 the agent broke\n  it twice. </del>The behaviour holds next time." in rule7
+    assert "<ins>Evidence: failure 12.</ins>" in rule7
+    assert "<summary>2 unchanged paragraphs</summary>" in page.split("<h2>Rule 8")[1]

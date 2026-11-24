@@ -1,9 +1,9 @@
 # RULES.md redesign plan, 2026-11-23
 
-RULES.md loses ~19% of its words when each rule keeps its principle sentences word for word, one quote and its failure numbers: the first batch of phase 2 took rules 2, 10, 17, 73 and 104 from 7727 to 6275 words on 2026-11-24, and at that share the file ends near ~75000 of its 92666 words. A smaller file needs phase 3, where rules merge and their wording changes on your yes. The order makes it safe: phase 1 copied every incident into the failure register on 2026-11-24, so all 783 distinct long quotes of RULES.md stand there, against 281 the day before, and no cut loses your words.
+RULES.md loses ~18% of its words when each rule keeps its principle sentences word for word, one quote and its failure numbers: the first two batches of phase 2 took the 25 longest rules from 23102 to 18944 words on 2026-11-24, and at that share the file ends near ~75000 of its 92666 words. A smaller file needs phase 3, where rules merge and their wording changes on your yes. The order makes it safe: phase 1 copied every incident into the failure register on 2026-11-24, so all 783 distinct long quotes of RULES.md stand there, against 281 the day before, and no cut loses your words.
 
 Three measurements make the plan necessary and safe:
-- 35% of RULES.md (~32600 of 92666 words) is in sentences with a date, a quote or a failure number, and the file's own writing standard (its line 9) says a rule tells no incident. That share is an upper bound: the first batch cut 48% of those words, and the rest are quoted examples, such as the kinds of rule 2, or rules that state a date.
+- 35% of RULES.md (~32600 of 92666 words) is in sentences with a date, a quote or a failure number, and the file's own writing standard (its line 9) says a rule tells no incident. That share is an upper bound: each of the first two batches cut 48% of those words, and the rest are quoted examples, such as the kinds of rule 2, or rules that state a date.
 - Of the 783 distinct quotes of 25 characters or more, 281 (36%) stood verbatim in socrates `agent/failures.md` on 2026-11-23, matched across line breaks by the ledger of phase 0. 223 rules tell a dated incident, and 195 of them cite no failure number.
 - 79 files in agentkit and socrates cite 180 rules by number, 634 times. Numbers therefore never change.
 
@@ -57,6 +57,14 @@ The first batch ran on 2026-11-24, on a RULES.md identical to the tag, so `evide
 - Every unit the file does not name stays word for word, and each rule keeps one dated quote in place: rule 2 the one on "save", rule 10 the one on amending a correction, rule 17 the one on a constraint's age, rule 73 the one on 600-second timeouts, rule 104 the one on the E08 story pages.
 
 `tools/rules_ledger.py trim` applies the file. It changes only the lines that lose text, copies into the register any cut sentence it lacks (one, from rule 10), and writes nothing when a kept sentence would stand in no line of RULES.md or a cut one in no line of the register. Rules 2 and 10 lost 1% and 4%, because they are mostly principle; rules 17, 73 and 104 lost 29%, 25% and 41%. A phase 2 card is therefore the rule's remaining text, then the two lines: a principle of one to three sentences and a separate Test line need rewording, so they come with phase 3.
+
+The second batch ran the same day, after your yes to the first: rules 88, 74, 127, 160, 11, 185, 85, 105, 69, 245, 166, 111, 162, 62, 22, 75, 54, 33, 37 and 213, from 15375 to 12669 words (18%), with 81 cuts and 18 strips in `docs/2026-11-24 rules trim batch 2.tsv`. Four things the batch added to the method:
+- The ledger of the day showed the batch 1 "Evidence:" lines as incidents, since they name failure numbers; `evidence` now reads a card line as a pointer, so nothing is copied for it.
+- A dated sentence that opens a plain paragraph can be cut while the principle after it stays (rule 69); only a bullet's first sentence is refused, since the rest would lose its marker.
+- A private detail of your life that stood in a rule as an example leaves with its dated case, and the example's kind stays: the achievements listed in rule 105, the health detail in rule 33, the plan quotes in rule 22.
+- `tools/rules_ledger.py review` writes the batch's before and after as a page, so every batch is reviewed the same way. A kept paragraph pairs with its earlier form by the share of its words the earlier form holds, so only the card lines show as added.
+
+Rules 85 and 37 grew by 3%: every dated or quoted sentence in them is an example of a kind the rule forbids, so only the card lines changed. A rule's Neighbours are the rules its own text names; where it names none, the rules nearest its subject in `rules.index.md`.
 
 **Phase 3, merge and route, each merge on your yes.** Rules on one theme merge into one card: wording (2, 19, 37, 48, 54, 57, 85, whose duplicated markers `common_sense.md` already lists as waiting on your word) and commits (3, 10, 46, 119) are the first candidates. Then `rules.index.md` is regrouped by the moment of use.
 
