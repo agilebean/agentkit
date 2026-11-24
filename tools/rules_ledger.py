@@ -5,8 +5,8 @@
     python3 tools/rules_ledger.py check LEDGER.tsv DEST.md [DEST.md ...]   exit 2 when a sentence stands in no destination
     python3 tools/rules_ledger.py stats LEDGER.tsv REGISTER.md
     python3 tools/rules_ledger.py evidence LEDGER.tsv REGISTER.md MAP.tsv   which units the register lacks, and where each goes
-    python3 tools/rules_ledger.py apply LEDGER.tsv MAP.tsv REGISTER.md TAG   copies them into the register, word for word
-    python3 tools/rules_ledger.py trim RULES.md DECISIONS.tsv REGISTER.md TAG   cuts a batch of rules to cards
+    python3 tools/rules_ledger.py apply LEDGER.tsv MAP.tsv REGISTER.md REF   copies them into the register, word for word
+    python3 tools/rules_ledger.py trim RULES.md DECISIONS.tsv REGISTER.md REF   cuts a batch of rules to cards
     python3 tools/rules_ledger.py review BEFORE.md AFTER.md OUT.html 160,111,22 TITLE   the batch's before and after
 
 Phases 0 and 1 of `docs/2026-11-23 rules redesign plan.md`. `build` splits RULES.md into units: a sentence
@@ -25,6 +25,8 @@ one failure of the register goes into that failure's entry; any other goes into 
 incident in its paragraph are copied with it, because an incident often runs on in sentences with no
 date or quote of their own; a copied principle sentence is a harmless duplicate. `apply` writes the
 copies, word for word, and copies nothing the register already holds, so a second run changes nothing.
+REF is the git tag or commit of agentkit whose RULES.md the ledger was built from, so the line numbers each
+copy carries can be found: the tag `2026-11-23_rules` in phase 1, and for `trim` the commit before the batch.
 
 `trim` is phase 2. DECISIONS.tsv (columns id, action, span, reason, text) names each unit of a batch that
 leaves RULES.md: "cut" removes the sentence, "strip" removes only `span` from it (a dated citation inside a
@@ -61,8 +63,8 @@ POINTER_ONLY = re.compile(r"(?i)(?:Instance: )?`?agent/failures\.md`? failures? 
 EVIDENCE = "## Evidence for the rules"
 BEFORE = "## Key learnings & principles"
 INTRO = ("Each sentence of agentkit `RULES.md` that tells an instance, and that the failures below lacked, "
-         "copied word for word by agentkit `tools/rules_ledger.py apply`: one entry per rule, each instance "
-         "with the sentences after it in its paragraph, under the tag and lines it came from. A paragraph "
+         "copied word for word by agentkit `tools/rules_ledger.py apply`, or by its `trim` when a phase 2 batch cuts it: one entry per rule, each instance "
+         "with the sentences after it in its paragraph, under the tag or commit and the lines it came from. A paragraph "
          "that cites one failure stands in that failure's entry instead, after a line that names its rule.")
 
 
@@ -319,7 +321,7 @@ def apply(units: list[Unit], rows: list[tuple[Unit, str, str]], register: str, t
     for dest, scope, line, texts in runs:
         if dest.startswith("failure "):
             to_failure.setdefault(dest.split()[1], []).extend(
-                ["", f"**From {_where(scope, titles)}**, tag `{tag}`, line {line}:", "", " ".join(texts)])
+                ["", f"**From {_where(scope, titles)}**, RULES.md at `{tag}`, line {line}:", "", " ".join(texts)])
     for n in sorted(to_failure, key=lambda n: heads[n], reverse=True):
         _insert(lines, _end_of_entry(lines, heads[n]), to_failure[n])
     to_entry: dict[str, list[tuple[int, list[str]]]] = {}
@@ -333,7 +335,7 @@ def apply(units: list[Unit], rows: list[tuple[Unit, str, str]], register: str, t
         head, prefix = _entry_head(scope, titles)
         first, final = items[0][0], items[-1][0]
         span = f"line {first}" if first == final else f"lines {first} to {final}"
-        body = [f"Tag `{tag}`, RULES.md {span}."]
+        body = [f"RULES.md at `{tag}`, {span}."]
         for _, texts in items:
             body += ["", " ".join(texts)]
         start = lines.index(EVIDENCE)

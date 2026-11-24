@@ -264,7 +264,7 @@ Evidence: failures 11, 24, 70, 90, 104, 105, 164, 165, 194, 208 and 238, and the
 ### 3. Commit and push on main when told, when satisfaction is detected, or when the work has converged
 Run `git commit` and `git push` when the user says "commit", "push" or "commit and push", when you detect satisfaction (rule 46), or when the work has converged (rule 119). Never wait for the word in the last two cases. "Commit" alone authorizes both commit and push. Git commit amend is allowed.
 
-Work happens on main. Chaehan is the only contributor, so a branch costs a merge and buys isolation only from another session. At session start, check whether another session is changing the files you are likely to touch: its uncommitted edits in `git status` of the checkout, or a running session listed on the same files. Only then work on a branch, and merge it into main and push when the work is done. Otherwise use no branch and no worktree. A session that the Claude desktop app starts in a worktree cannot edit the main checkout (the app's hook refuses the write), so it commits on its branch, fast-forwards main to it and pushes after each commit, which leaves no merge for Chaehan. The app's per-session **Worktree** toggle, in the row under the prompt box, is off by default and keeps a session out of worktrees. The protection against concurrent sessions is the immediate commit, which leaves the next session a clean tree. Instruction basis, 2026-11-07: "you should work on a branch if you detect at session start that another session is working on the same files you are likely to touch. otherwise do not work on a worktree". Instruction basis, 2026-11-07: "i configured opencode to work only on main as i'm the only contributor and constant merging is unnecessary overhead" and "explain why you always hesitate to commit and not follow the rules for that in opencode. it creates unnecessary work for me". The always-loaded core 7 had said "Commit and push only when told", which overrode rules 46 and 119 in every session that did not open this file.
+Work happens on main. Chaehan is the only contributor, so a branch costs a merge and buys isolation only from another session. At session start, check whether another session is changing the files you are likely to touch: its uncommitted edits in `git status` of the checkout, or a running session listed on the same files. Only then work on a branch, and merge it into main and push when the work is done. Otherwise use no branch and no worktree. A session that the Claude desktop app starts in a worktree cannot edit the main checkout (the app's hook refuses the write), so it commits on its branch, fast-forwards main to it and pushes after each commit, which leaves no merge for Chaehan. The app's per-session **Worktree** toggle, in the row under the prompt box, is off by default and keeps a session out of worktrees. The protection against concurrent sessions is the immediate commit, which leaves the next session a clean tree. Instruction basis, 2026-11-07: "i configured opencode to work only on main as i'm the only contributor and constant merging is unnecessary overhead" and "explain why you always hesitate to commit and not follow the rules for that in opencode. it creates unnecessary work for me".
 
 The word is not a halfway permission. A run that ends on `git commit` is an unfinished run: the push happens in the same turn, and the report states the remote and the range it moved (`main -> main`, `7d83b19..e0999ec`). A report that ends "not pushed, since you said commit" misreads the authorization clause above as a bare boundary and is a defect in its own right.
 
@@ -273,13 +273,13 @@ fact and left there: "I can't push it", with the reason. The reply offers nothin
 that suggests the agent could still do it: no "allow me", no button or question
 that asks Chaehan to grant it. The refusal is his own configuration (opencode's
 permissions, Claude Code's permission check), so an offer to do it anyway asks him
-to overrule a decision he already made. Instruction basis, 2026-11-07: the agentkit
-push was refused by Claude Code's permission check, and the reply asked "Push
-agentkit main yourself, or allow me to?" Chaehan: "if you can't push it, then say
-so as i configured in opencode. don't suggest you could do it. put this into agent
-rules".
+to overrule a decision he already made.
 
-When fixing an error, do not push until the user confirms the fix works. Trigger extension (2026-09-15): detected user satisfaction also authorizes the commit; see rule 46. Trigger extension (2026-10-06): a work item converged to minor corrections commits without an ask; see rule 119.
+When fixing an error, do not push until the user confirms the fix works.
+
+Neighbours: rules 46 and 119.
+
+Evidence: failures 173 and 176, and the entry "Evidence for rule 3", in socrates `agent/failures.md`.
 
 ### 4. Detect when a task evolves into a parallel task touching the same files
 A task starts with one goal. If you find yourself modifying the same file for a DIFFERENT reason than the original task, stop and ask. Example: you are fixing a parsing error in `invoice_pdf.py` but also want to apply an extraction shim to `browser_download.py`. These are not the same task — the shim change is a separate goal that happens to touch shared dependencies. Continuing both simultaneously creates a loop where every fix to one undoes progress on the other. Ask the user: "I need to change browser_download.py for two reasons — the CLI refactor and the module extraction. Which should I complete first?"
@@ -839,9 +839,6 @@ text is selected by `AGENTS.md` core 1; this rule governs how it reads.
   no decision gets no sentence. A skill or template gives a summary its parts,
   never a bullet count, because a count gets filled. The test: each summary
   sentence names a decision he makes, and one that names none moves below.
-  Chaehan, 2026-11-20: "quality over quantity and not filling the space just
-  for the sake of finishing the task"; on a line per item: "this long bullet
-  point structure is unreadable" (failure 226).
 
 Detection signal: if a note reads like the transcript of an analysis
 (reframe, enumeration, assumptions, reveal), it is in the wrong order. The
@@ -849,6 +846,10 @@ reader's questions are: what do I do, why, what would change it. In that
 order.
 
 Failure mode: the reply reads plainly and the note carrying the same content does not.
+
+Neighbours: rule 2.
+
+Evidence: failures 205 and 226, and the entry "Evidence for rule 19", in socrates `agent/failures.md`.
 
 ### 20. The date goes at the beginning of the title, never in the body
 
@@ -1508,28 +1509,9 @@ they can be answered from a different country than the phone number, the
 document or the address suggests. "They do not serve your country" is a claim
 about the company, and the user's question is whether he can open the account.
 
-Instruction basis: 2026-10-14, the Bank question. The answer said a German Bank
-account would be "honest only if you are a German status", reading Bank's
-eligibility off German tax law. Bank's own requirements are an address in the
-account's country, a right-to-reside document, and a verified address document;
-the EEA investment agreement (Bank Assets Europe, section 5) requires only that
-the customer already holds a Bank account, is 18+ and is not a U.S. Person, and
-it handles tax through a CRS self-certification with reporting to the Estonian
-tax board. The Canadian program is the one that requires status in its
-country, in its own §3.1. (private)
+Neighbours: rule 30.
 
-
- Instance:
-`agent/failures.md` failure 49.
-
-Same day, the served-country list: the answer said "Bank cannot take a
-Korean address, since Korea is not a country it serves", from Bank's
-published list of countries where an account can be opened. (private)
-
-
-
-
- Instance: `agent/failures.md` failure 51.
+Evidence: failures 49 and 51, and the entry "Evidence for rule 44", in socrates `agent/failures.md`.
 
 ### 45. Choice questions get the objective answer, never validation of the user's leaning
 
@@ -1591,8 +1573,7 @@ to every go-ahead request, not only commits.
 On satisfaction: run git status, stage only this session's files by name,
 commit, push, and report in one line what was committed. Act when
 satisfaction appears, not at session end; a session never ends with its
-own tracked-file changes uncommitted. Uncommitted accepted work is how
-rules 43-44 sat in this file from 2026-09-12 until 2026-09-15.
+own tracked-file changes uncommitted.
 
 Other sessions' edits: leave other files unstaged and name them in the
 report. If one file mixes this session's edits with another session's,
@@ -1602,20 +1583,18 @@ the attribution, and leaving accepted work dirty is the worse failure.
 Instruction basis: on 2026-09-15 the user asked why rules 43-45 were still
 uncommitted and instructed: "establish a rule that each session is
 responsible for committing as soon as i'm satisfied which the agent
-should detect." On 2026-09-19 a reply ended "I have not committed; say the
-word and I will commit and push"; the user: "change this wording - i cannot
-parse this quickly. always ask as a question!"
+should detect."
 
 The ask must reach the screen even when the tool call dies. An interrupted
 question call leaves nothing to answer and no record that anything was
-asked. On 2026-09-29 the deck work was verified and the commit ask lived
-only inside the question-tool call "Commit and push?"; the call was
-interrupted before it showed, the session ended with its own tracked-file
-changes uncommitted, and the user asked the next day: "why didn't you
-commit?". So when the ask is made, it goes in two places: the question
+asked. So when the ask is made, it goes in two places: the question
 tool and the reply's closing line ("Commit and push?"). A later message
 that asks about the missing commit is itself the go-ahead — commit and
 push in that turn, no second ask.
+
+Neighbours: rules 3 and 119.
+
+Evidence: failure 168, and the entry "Evidence for rule 46", in socrates `agent/failures.md`.
 
 ### 47. Artifacts built on the user's own plan must add value beyond it
 
@@ -1625,7 +1604,7 @@ restating that material in cleaner wording is not a deliverable. They
 already has it. The artifact is defective if a reader comparing it with
 the user's input finds only reorganized input.
 
-Support is the maximum of work the agent can do, and its minimum is researching websites and the record for the answers that move a decision: the answer goes on the page, not the question. Questions are very few, and each one triangulates a problem by linking it to as many related parts of Chaehan's life as the record shows. Every issue is placed in one big picture, never as one absolute answer: two competing scenarios make sense of it. Commands, keyword tables and tooling are not support; they leave clutter to clean up. Chaehan, 2026-11-07: "what I wanted is real support from you , not creating many commands which create a lot of clutter and need for cleanup. support is the maximum of work you can do for me and the minimum is the analysis of websites and other info to find answers that facilitate my decision making process, find very few questions that triangulate the problem taking into account links to as many related life info as possible, and to bring all issues into a big picture and not in an absolute way but maybe two competing scenarios for sense making."
+Support is the maximum of work the agent can do, and its minimum is researching websites and the record for the answers that move a decision: the answer goes on the page, not the question. Questions are very few, and each one triangulates a problem by linking it to as many related parts of Chaehan's life as the record shows. Every issue is placed in one big picture, never as one absolute answer: two competing scenarios make sense of it. Commands, keyword tables and tooling are not support; they leave clutter to clean up.
 
 Every such artifact must add at least:
 
@@ -1653,6 +1632,10 @@ input - i expected a much more intellectual, human and witty reflection,
 not just a rephrasing. i already gave you the whole structure. you must
 give added benefit, e.g. interesting new info, speculative optimistic
 pessimistic scenarios, optimization ideas, etc."
+
+Neighbours: rules 58 and 93.
+
+Evidence: failure 184, and the entry "Evidence for rule 47", in socrates `agent/failures.md`.
 
 ### 48. Artifacts must be readable without decoding
 
@@ -2017,6 +2000,10 @@ say it) apply to work reports as much as to any other writing.
 
 Failure mode: a report in process order, with the item needing the user's decision buried at the end.
 
+Neighbours: rules 42 and 54.
+
+Evidence: the entry "Evidence for rule 59" in socrates `agent/failures.md`.
+
 ### 60. Explanations teach the mechanism and take the shape of the reader's questions
 
 A reply that only reports what happened leaves the reader dependent on the next
@@ -2154,6 +2141,10 @@ Failure mode: one item set split into one list per option.
 Three or more competing providers, services, tools or websites are always a table, never a bullet list, and each provider's name is a hyperlink to its website (`[Name](https://...)`), so the reader can open the option he picks from the row itself. Defaults the rows share ("door-to-door, customs included, destination Seoul") are declared once above the table; a column the default covers entirely is deleted, and only deviations appear in the rows.
 
 Every row also states why it is there — see rule 68.
+
+Neighbours: rules 48 and 68.
+
+Evidence: failure 25, and the entry "Evidence for rule 67", in socrates `agent/failures.md`.
 
 ### 68. Every row states why it is there, in a column of its own
 
@@ -2482,6 +2473,10 @@ When someone asks the user for a judgment that affects them (a student asking ab
 
 Failure mode: a reply built as a policy memo — the rule stated first, the recommendation announced before its ground, reasons appended with "and", a consequence attached to the reader's own case, and a close that instructs where the decision should have been handed back.
 
+Neighbours: rules 37 and 57.
+
+Evidence: the entry "Evidence for rule 87" in socrates `agent/failures.md`.
+
 ### 88. App automation addresses documents by name or path, never by index, and never writes a file the app has open
 
 The user's documents live in two places at once — a Keynote window and a `.key` file on Google Drive — and either identity can be broken by a careless script.
@@ -2794,13 +2789,11 @@ second level marked with a bare letter ("**a the Peizhi deck**" for
 "**a) the Peizhi deck**").
 
 Stated 2026-10-02: "the lists 1,2,3 must be shown in real numbered lists."
-and "always make a new line for a subheader that ends with a colon". Stated
-2026-10-15: "isn't it common sense that the run of show containing four points
-must be a numbered list?" Stated 2026-10-16: "if there is list, enumerate it
-... you can use a,b,c on the second indent but with a), b) not just the
-letter ... this enumeration is especially important in the script where there
-are many points, e.g. Thursday's run of show - that should tell exactly what
-the four parts are in a list! and use indents!"
+and "always make a new line for a subheader that ends with a colon".
+
+Neighbours: rules 42 and 67.
+
+Evidence: failure 57, and the entry "Evidence for rule 106", in socrates `agent/failures.md`.
 
 ### 107. A rebuild is acceptance-tested against the standard, not against the copy it reproduces
 
@@ -2859,30 +2852,19 @@ everything the user just flagged.
   aside, and never in the opening line: the user reads a reply from the top,
   and a preamble that still shows the retired words reads as the instruction
   unapplied, whatever the artifact below does. The change is applied and shown
-  in the artifact; it is never narrated back. Instance: `agent/failures.md`
-  failure 66.
+  in the artifact; it is never narrated back.
 - **A judgment rejects what it names.** A judgment on what was made or applied
   rejects it as a negation does: "stupidly create" means revert the file,
   "wrong rule" means never apply the rule again. Test: list each rejected file
-  and rule before the next pass, and search its output for them. On 2026-10-12
-  the agent explained why a standalone workshop file existed and left the file
-  in place: "i can't believe you didn't understand "stupidly create" as
-  this shouldn't had been done and therefore must be reverted". On 2026-10-31
-  it applied the rejected top-16 fill to the essay grades again: "i had told
-  you twice that 16 top is wrong rule so abandon it!"
-
-Failure mode: 2026-10-03, the KUBS S3 team design challenge. The user rejected
-"Design how older adults stay in charge of their own day." / "Design how
-someone living alone makes a routine stick." because the wordings pre-decided
-the students' problem; the agent read "But how older adults stay in charge nor
-makes a routine stick is a good goal for a challenge" as approval of both
-phrases (treating "nor" as a typo for "or"), then offered three reformulations
-that all kept them. The user: "you mustn't decide if it's stay in charge or
-learning routines!!!!!" and "Why don't you get it but persist on that?"
+  and rule before the next pass, and search its output for them.
 
 Stated 2026-10-03: "i already told you that you made decision by these current
 wordings! Why don't you get it but persist on that? you mustn't decide if it's
 stay in charge or learning routines!!!!!"
+
+Neighbours: rules 114, 148 and 194.
+
+Evidence: failures 66 and 240, and the entry "Evidence for rule 110", in socrates `agent/failures.md`.
 
 ### 111. The user's voice carries only sourced content, and his spoken lines serve their audience
 
@@ -3001,11 +2983,13 @@ Failure mode, 2026-10-07: the Kobe beef block said "nothing rated 3.5 or higher 
 
 The user reads **German, English and Korean**. Any other language is at most a search key, never the content. A foreign name may appear only beside its English name, "Sakurabashi exit (桜橋口)", where the Japanese form is what Google Maps resolves; the English or romanized form leads and the characters follow in parentheses, "Kitahama (北浜)", never "北浜 (Kitahama)", because the left-hand text is what the eye takes and a line that opens with characters is unreadable at a glance even when the romanization is technically present; and a graphic whose labels are only Japanese is a broken artifact even when everything else about it is correct, because the reader cannot tell the ticket gate from the taxi stand and cannot check the agent's reading of it. The rule covers chat replies, memory files, Evernote notes and every embedded image. When the only available map, sign, screenshot or form is in a language he does not read, build a readable version before recording or attaching it (Google Maps with `hl=en`, or the same image redrawn with English labels) and keep the untranslated original out of the artifact; a link to it may stay, with a note that its content is unreadable.
 
-Failure mode, 2026-10-09: asked for the Hotel Meridian Osaka shuttle stop, the agent embedded the hotel's Japanese bus-stop map, Japanese labels and all, in the booking note, having overlooked that the same page serves the map in English. The user: "you recorded the japanese versions of images which i cannot read. didn't you register that i can't read japanese?" Told to use the English images from the URL, the agent then asserted the English page had no map and substituted a Google Maps satellite capture of its own making; the user rejected that too, because the marked spot sat inside the station rather than at the exit the map names. Resolution: the English map from the URL went into the note, the satellite capture was removed, and the language fact was written into `memory/_misc.md`.
+Failure mode, 2026-10-09: asked for the Hotel Meridian Osaka shuttle stop, the agent embedded the hotel's Japanese bus-stop map, Japanese labels and all, in the booking note, having overlooked that the same page serves the map in English. The user: "you recorded the japanese versions of images which i cannot read. didn't you register that i can't read japanese?"
 
 **The order is the part that fails, because the source does.** Names are collected from Japanese pages and signage, so they arrive in Japanese and the romanization is appended afterwards as a courtesy. The preventive pass, before a reply or an artifact ships: walk its text for Japanese characters and for each string confirm the romanized form stands in front of it in the same cell, bullet or line; any string with no romanization, or with the characters leading, is fixed there. A stored-body read is not the test, and neither is an Evernote search hit — read the artifact's own rendered text the way he will.
 
-Failure mode, 2026-10-23: a March 2027 Osaka long-stay answer named places in the order the sources gave them — "中央屋内プール (Shimanouchi)", "今池/今船" with no romanization at all, "飛田新地料理組合", "八戸ノ里" — and the note built from it carried the same shape. The user: "you forgot again to put the english name (searchable in google maps) before the japanese one in parentheses as i cannot read them anyways." The note was corrected the same day to "Chuo Indoor Pool (中央屋内プール)", "Imafune (今船)", "Yaenosato (八戸ノ里)", and the English-first order was adopted for every new section; the note's older sections still lead with characters and wait for a separate normalization pass.
+Neighbours: rules 55 and 217.
+
+Evidence: failures 105 and 119, and the entry "Evidence for rule 123", in socrates `agent/failures.md`.
 
 ### 124. Before asking the user to supply something, search the record — he may already have given it
 
@@ -3013,11 +2997,13 @@ A record missing an entry is evidence of a capture failure, never a cue for the 
 
 The capture side of the same rule: feedback is filed in the turn it is given, and it stays feedback even when it arrives bundled with a task. A message that requests a grading analysis and also carries delivered-run facts is two things; the facts get their section in the session feedback file whether or not the rest of the message is a job.
 
-Failure mode, 2026-10-05 and 2026-10-08: the S3 feedback (20 minutes over on the presentations, the quality read, the few who stood out) arrived with a grading-analysis request and never reached "KUBS DT Course Design/KUBS DT session feedback.md". On 2026-10-08, adding the S4 section, the agent saw the file read S4, S2, S1 and asked the user for the S3 notes — which he had given three days earlier. The user: "why did you not show my feedback kubs dt s3? i gave detailed feedback, search for it."
+On 2026-10-08, adding the S4 section, the agent saw the file read S4, S2, S1 and asked the user for the S3 notes — which he had given three days earlier. The user: "why did you not show my feedback kubs dt s3? i gave detailed feedback, search for it."
 
 The same rule covers the record's two carriers. Where one content lives in a source and a delivered artifact (a slides markdown and the deck built from it, a note and its synced twin, a plan and its render), the source the record already marks stale is **not** the record. A question whose premise is what the user's artifact carries is answered by reading the live carrier - the deck's own export or PDF, the note itself - and never by putting the fork to him; where a log line names the divergence (`/slides N` parked, the md stale against the deck), that line is the pointer at the moment of the question. When the two carriers disagree, the delivered one is ground truth and the source is levelled to it in the same turn.
 
-Failure mode, 2026-10-15 (KUBS S7): asked whether the Value Proposition Canvas was to be mapped in the Monday workshop or prepared at home, the agent put the fork to the user although the delivered deck answered it - E06's homework row reads "2. show the opportunity score & value proposition canvas", a hand edit made after the slides md was written, with the md's staleness already recorded and the log's own line from 2026-10-11 ("specify as homework only the canvas"). The user: "read the e5 homework! it is clearly defined there!" Two of his turns went to what the deck's page 5 already said.
+Neighbours: rules 62, 190 and 207.
+
+Evidence: the entry "Evidence for rule 124" in socrates `agent/failures.md`.
 
 ### 125. A placed object is verified as the whole slide, not by its own metrics
 
@@ -3027,9 +3013,11 @@ The anchor is the deck's geometry - the band's bottom edge, the page-number box,
 
 An element that carries a direction is judged by the direction and by its target, not by its own box. A pointer, an arrow, a speech bubble's tail, a callout corner: the direction is read first - it must aim at the thing it refers to, not away from it - and then the element's extent is read against that thing, because a pointer that reaches over its target is no better than one that points the wrong way. A shape copied from a source arrives with the orientation the source's layout needed; placing it somewhere else means re-checking which way it points. Shrinking or mirroring the shape is a separate edit from placing it, and both are confirmed on the rendered slide.
 
-Failure mode, 2026-10-20 (E08 cover): the speech bubble was cut from the deck's own export, whose tail pointed down-left because there the bubble sat to the figure's right. It was placed to the figure's left, so the tail pointed away from him, across the top of his head. Chaehan: "can't you see that the speech pointer points away from homer now and overlaps with his head so must be smaller?" The asset was mirrored so the tail aims down-right at him and the whole bubble was cut from 335x232 to 280x194 and raised to y 42, clearing his head.
+Failure mode, 2026-10-09 (E05 slides 10-13): four book diagrams were re-rendered, cropped tight, colour-matched to the slide background and verified by ink extent, invisible image edge and uniform scale - then bottom-anchored at y 1036, because an earlier request on the same slides had said "more to the bottom". The user: "you left an incredible large space above the image. it should be centered below the title line of course. why can't you see that?"
 
-Failure mode, 2026-10-09 (E05 slides 10-13): four book diagrams were re-rendered, cropped tight, colour-matched to the slide background and verified by ink extent, invisible image edge and uniform scale - then bottom-anchored at y 1036, because an earlier request on the same slides had said "more to the bottom". The two short figures were left with 231 px and 205 px of empty slide above them. The user: "you left an incredible large space above the image. it should be centered below the title line of course. why can't you see that?"
+Neighbours: rules 134, 156 and 229.
+
+Evidence: failure 85, and the entry "Evidence for rule 125", in socrates `agent/failures.md`.
 
 ### 126. A change carries its landing into the next step, computed, not flagged
 
@@ -3224,7 +3212,11 @@ Rehome what the target must not carry — the design rationale, an open decision
 
 A consolidation is not a sweep target. A later pass that propagates content into the target, or into the folder the target sits in, must not keep the retired source level with it: a pass that finds the retired file still in place removes it and reports the removal, rather than re-syncing it and recording that as a deliverable. The test for any copy that is about to be kept or made: what does this file answer that the artifact beside it does not, for a reader who would ever open it?
 
-Instruction basis: 2026-10-11, the KUBS S6 workshop. A re-designed workshop was written as its own document, and the re-cut of the script was framed as a later build pass waiting on the user's read. He asked why the document had not been worked into the script; the pass re-cut the script and the run sheet in the same turn and left the document in place. Every pass after that maintained the duplicate: the file was renamed, its Evernote twin resynced twice, and a 13-rule sweep on 2026-10-12 landed 8 of its hits in it. On 2026-10-12: "find out why the 'KUBS DT session 6 - workshop design.md' is still there, find the session where i asked you to integrate it into the s6 script and then remove it, and why you didn't." His correction of the reading itself, the same day: "i can't believe you didn't understand 'stupidly create' as this shouldn't had been done and therefore must be reverted."
+On 2026-10-12: "find out why the 'KUBS DT session 6 - workshop design.md' is still there, find the session where i asked you to integrate it into the s6 script and then remove it, and why you didn't."
+
+Neighbours: rules 110, 218 and 240.
+
+Evidence: failure 37, and the entry "Evidence for rule 148", in socrates `agent/failures.md`.
 
 ### 149. Width is spent where it removes height, and nowhere else
 
@@ -3405,9 +3397,13 @@ Four clauses about what an answer owes when the user asks what a term means:
 - **A grammar is not a definition.** When the question is "what is meant by X", the answer names what kind of thing X denotes and what it is contrasted with. A template for writing statements of that kind (verb + object + clarifier) is a specification for producing them; offered as the answer it leaves the term exactly as unexplained as before.
 - **A definition that reuses the term being defined is not a definition.** "An obligation to perform some function" explains nothing about function. Where every candidate phrasing is circular, the content is recovered from two places: the root of the word and the term's contrast partner. *Functio* is Latin for the performance or execution of something (from *fungor*, to perform or discharge), so "functional" means of the performance - and it is a relational term, so it is only defined with the other side of its pair named: in IT, what the system does against how well it does it; in JTBD, what the user performs against what is felt or seen while it is performed.
 - **Testable terms are defined by what they exclude in the user's own material.** A definition of "functional" earns its place only if it says which of his statements fail it and why, in his domain's own words.
-- **A term shared by two fields is translated by keeping the root's core and swapping the field's performer.** Latin *functio* is a performance; who performs is the field's business - in IT the performer is the system, in JTBD it is the person - so the neighbouring field's vocabulary does not fit the person's side ("execution" reads as a system being run), and using it there is a defect, not a paraphrase. The user's own composition keeps the core intact when it names the performer: an activity is performed by the user, so "goal-oriented activity" holds both halves, the performance and the objective, and the objection that it is "a level, not a kind" misses that the performance is the kind.
+- **A term shared by two fields is translated by keeping the root's core and swapping the field's performer.** Latin *functio* is a performance; who performs is the field's business - in IT the performer is the system, in JTBD it is the person - so the neighbouring field's vocabulary does not fit the person's side ("execution" reads as a system being run), and using it there is a defect, not a paraphrase.
 
-Instruction basis: 2026-10-15, the KUBS S6 functional goal. The answers had offered Kalbach's end-state sentence, a check of the agent's own making, and the verb-object grammar, and the user had asked three times for the semantics. Chaehan: "i need an explanation of the term functional - what is meant by that in IT vs JTBD? the definition you gave is circular referencing some function! the other definitions are just structural not semantic!" The same turn's second question carried the criterion the semantics gives - how to show students that "i want to be healthy" is not a job when it is an objective and can be described as progress - whose answer is performance, not objective: a job's steps are steps, an aspiration's steps are other jobs. Chaehan, the same day: "avoid execution as this implies a system, not a user. i still disagree that a task does not comply with the etimology, as my definition is goal oriented activity and activity is performed by the user. you cannot \"DO\" be healthy, as this is only a goal, but you do activities to reach this goal. this must be explained to students. it is difficult to apply the same to relieve stress, as you can say that. reconcilation is only possible by saying that you can't do this directly but do some activity to relieve stress. this is a subtle difference but important to point out." Instance: `agent/failures.md` failure 52, rounds four and five.
+Instruction basis: 2026-10-15, the KUBS S6 functional goal. Chaehan: "i need an explanation of the term functional - what is meant by that in IT vs JTBD? the definition you gave is circular referencing some function! the other definitions are just structural not semantic!"
+
+Neighbours: rules 145 and 160.
+
+Evidence: failure 52, and the entry "Evidence for rule 161", in socrates `agent/failures.md`.
 
 ### 162. A complaint about the agent's own change is resolved by that change's diff, not by a question
 
@@ -3481,7 +3477,7 @@ The order is fixed: the register for the same symptom, the log for the failure's
 
 Where the failure message carries an instruction - create a new key, re-authorise, restart - that instruction is executed before any mechanism is constructed.
 
-Instruction basis: 2026-10-18, the OpenCode Go key expiry. Four hypotheses (a version mismatch between opencode servers, a key-switching mechanism retired by a release, the application window as the thrower of the tool error, one cause behind both symptoms) preceded the log line `~/.local/share/opencode/log/opencode.log` 121841, "This API key has expired. Create a new API key in OpenCode Console and replace it in your client or secret store. Signing in again will not renew this key.", which named the cause; and the tool-channel symptom of the same session was already recorded as failure 67 with its cause and its fix. Chaehan: "the opencode authentication failed. find out why and fix it"; "you still don't get it: the bash alias switched the api keys."
+Instruction basis: 2026-10-18, the OpenCode Go key expiry. Four hypotheses (a version mismatch between opencode servers, a key-switching mechanism retired by a release, the application window as the thrower of the tool error, one cause behind both symptoms) preceded the log line `~/.local/share/opencode/log/opencode.log` 121841, "This API key has expired. Create a new API key in OpenCode Console and replace it in your client or secret store. Signing in again will not renew this key.", which named the cause; and the tool-channel symptom of the same session was already recorded as failure 67 with its cause and its fix.
 
 The read also runs on a cadence, because a defect that only the log knows about
 never arrives as a symptom. Sweep the error stream for tracebacks and 5xx, count
@@ -3496,11 +3492,9 @@ are counted together before any of them is called noise.
 Test: an error stream holding exceptions from last month that no session has
 read is the failure, whatever the endpoint does with a well-formed request.
 
-Basis, 2026-11-21: Chaehan pasted four lines of virtualfriend's production log
-and asked why the agent had not caught them before. The stream held 135 ASGI
-exceptions since 2025-06-17, 133 of them one defect - FastAPI's default
-validation handler failing to decode a non-UTF-8 body, so a malformed `POST /`
-answered 500 with a traceback - and no session had opened it (failure 243).
+Neighbours: rules 168, 169 and 170.
+
+Evidence: failures 67, 70 and 243 in socrates `agent/failures.md`.
 
 ### 168. Configuration paths come from the running process, never from an assumed filename
 
@@ -3592,16 +3586,15 @@ products:
   he can read a label, the figure he reads is the reference; a compiled table is
   accepted once it reproduces a figure he has read himself.
 
-Instruction basis: 2026-10-18, the Korean 게토레이 potassium comparison. The
-agent answered with US Gatorade and US Gatorade Zero figures; Chaehan: "you
-should compare not the us baselines but korean gatorades." Told the label read
+Instruction basis: 2026-10-18, the Korean 게토레이 potassium comparison. Told the label read
 2.4 mEq, the agent converted it and then offered three possible bases with three
 different verdicts instead of fetching the two Korean labels; Chaehan: "you
 should do your research not base on assumption, remember that. it is for
-600ml". With the tools back, four queries produced the figures (regular
-게토레이 레몬 3.7 mEq against 게토레이 제로 2.4 mEq per 600 mL bottle), the
-basis proof from the same label's sodium line, and the validation that the
-compilation reproduced the figure he had read off his own bottle.
+600ml".
+
+Neighbours: rules 44, 117 and 178.
+
+Evidence: the entry "Evidence for rule 175" in socrates `agent/failures.md`.
 
 ### 176. A pending action is executed when the tool channel returns; only the user's editor is handed over
 
@@ -3875,8 +3868,7 @@ other, unnamed person.
 Where a sentence carries two people, both are named. A pronoun that could point
 at either is a write-time defect, not a sentence to read twice.
 
-Instruction basis: 2026-10-20, the swim cue options. The reply said "his own
-numbers fit that" and "the length he already owns" about the user himself.
+Instruction basis: 2026-10-20, the swim cue options.
 Chaehan: "wording change in all agents: never say He/his if you mean me, say
 You, yours, or Chaehan if neutral text is more appropriate."
 
@@ -3884,8 +3876,6 @@ You, yours, or Chaehan if neutral text is more appropriate."
 "record" above is a file he never reads as prose: a memory file, a log, an
 agent-facing summary. An Evernote note, a report, a plan he opens is written to
 him: "the water you cannot feel on the left", not "the water he cannot feel".
-Classifying such a note as a record is what put "he" and "his" into his own
-training log.
 
 **A term is written in quotes; it is never introduced by its owner.** A phrase
 Chaehan coins enters the text as the term itself: `"hold-forward"`,
@@ -3900,13 +3890,9 @@ is what the reader came for.
 The shared checker warns on he/his/him (`robot_markers.tsv`); run it on the
 finished text before a note or message is written.
 
-Instruction basis, 2026-10-25, "My Swim Training": the 2026-10-25 row read
-"**hold-forward** (his name for the catch-hold momentum)" and the drills table
-read "which is the water he cannot feel on the left". Chaehan: "for the 1000th
-time you used 'his/him' which i absolutely forbid to use ... instead of writing
-e.g. 'his name for the catch-hold momentum', put the word or term into quotes
-'hold-forward' isn't that common sense? don't stupidly remember this one phrase
-but understand to generalize to other words!"
+Neighbours: rules 19 and 54.
+
+Evidence: failures 89, 104 and 112, and the entry "Evidence for rule 195", in socrates `agent/failures.md`.
 
 ### 196. Code is written once, and a second project imports it
 
@@ -4288,8 +4274,7 @@ note carried 126.25 h in total and 87.25 h across the eight delivered lectures.
 Chaehan: "the calculation of 10.18 hours per lecture is wrong, we had 8
 documented ones and you must add the fix cost", then "you said the total is over
 126 and 87 is the 8 lectures. why don't you look at the current calculation
-evernote to see that?" and "isn't that common sense?" The per-lecture figure is
-15.78 h: 126.25 over eight.
+evernote to see that?" and "isn't that common sense?"
 
 **Two cases are compared on what differs between them.** When a table puts one
 case beside another (a city and a city, a winter away and a winter at home), each
@@ -4302,16 +4287,9 @@ total the source states: a part computed that way reproduces the total and prove
 nothing else. Before a difference is written, name the one mechanism that makes
 that line differ between the cases; a line with no such mechanism is a zero.
 
-(private)
+Neighbours: rules 50, 241 and 243.
 
- (private)
-
-
- (private)
- (private)
- (private)
-
-
+Evidence: failures 103 and 228, and the entry "Evidence for rule 208", in socrates `agent/failures.md`.
 
 ### 209. An option search starts from the user's outcome and gates, never from the visible brand set
 
@@ -4887,26 +4865,21 @@ a blank page:
 Why this rule exists. On the swim dashboard, 2026-10-29, a dozen rounds went into
 placing two such curves. Four failure modes, each of which this rule closes:
 
-1. I optimized constraints instead of looking. "Never cross the primary lines", "the
-   axis must be fitted to the data", "both bands equal" were my inventions; each one
-   forced an empty reserved gutter under the axis scale, which reads to the user as "the
-   curves are too low", and set range against position so no arrangement satisfied both.
+1. I optimized constraints instead of looking.
 2. I read his relative notes as absolute geometry. "DPS too high, stroke rate too low"
-   means move each curve in that direction; re-deriving the whole layout from it moved
-   the pair the opposite way on the next round.
-3. I let a chat sentence override his own edit. He had set the curves' order in
-   `constants.py` and in the project's AGENTS.md; two later chat lines said the reverse,
-   I followed the chat, and every following note landed on a build that could not obey
-   it. His edits in the repository outrank his chat shorthand.
-4. I never showed him the render early. The first two confirmations went out as an inline
-   HTML page his client did not draw ("i cannot see your graphs, they are empty"); a
-   screenshot of the real dashboard would have exposed every problem in one round.
+   means move each curve in that direction.
+3. I let a chat sentence override his own edit. His edits in the repository outrank his chat shorthand.
+4. I never showed him the render early.
 
 The user's closing ask, in his words: "i expect now that i don't have to tell these
 visual design every time you create a new chart with curves." That is what the default
 arrangement above is for. The concrete numbers live in the project (swim:
 `STRIP_EDGE_TOP`, `STRIP_EDGE_FLOOR`, `STRIP_CROSS_OVERLAP` in
 `src/swim/dashboard/constants.py`, held by `tests/test_strip_bands.py`).
+
+Neighbours: rules 16 and 261.
+
+Evidence: the entry "Evidence for rule 229" in socrates `agent/failures.md`.
 
 ### 230. A capability is not an intent; the activity's limits are asked, never inferred from the training record
 

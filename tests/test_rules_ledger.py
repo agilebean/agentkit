@@ -181,10 +181,10 @@ def test_apply_places_the_cited_paragraph_in_its_failure_and_the_rest_in_the_rul
     units = ledger.split(RULES)
     new = ledger.apply(units, ledger.evidence_plan(units, REGISTER), REGISTER, "T")
     f12 = new.split("### Failure 12:")[1].split("### Failure 13:")[0]
-    assert "**From RULES.md rule 5**, tag `T`, line 9:" in f12 and "It broke the build." in f12
+    assert "**From RULES.md rule 5**, RULES.md at `T`, line 9:" in f12 and "It broke the build." in f12
     section = new.split(ledger.EVIDENCE)[1].split(ledger.BEFORE)[0]
     assert "### Evidence for rule 6: Quote the user" in section
-    assert "Tag `T`, RULES.md line 15." in section and "The paraphrase lost the point." in section
+    assert "RULES.md at `T`, line 15." in section and "The paraphrase lost the point." in section
     assert new.index(ledger.EVIDENCE) < new.index(ledger.BEFORE)
 
 

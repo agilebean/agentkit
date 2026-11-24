@@ -1,9 +1,9 @@
 # RULES.md redesign plan, 2026-11-23
 
-RULES.md loses ~18% of its words when each rule keeps its principle sentences word for word, one quote and its failure numbers: the first two batches of phase 2 took the 25 longest rules from 23102 to 18944 words on 2026-11-24, and at that share the file ends near ~75000 of its 92666 words. A smaller file needs phase 3, where rules merge and their wording changes on your yes. The order makes it safe: phase 1 copied every incident into the failure register on 2026-11-24, so all 783 distinct long quotes of RULES.md stand there, against 281 the day before, and no cut loses your words.
+RULES.md ends phase 2 near ~81000 words, 12% below its 92925 at the tag, when each rule keeps its principle sentences word for word, one quote and its failure numbers. The first three batches took the 45 longest rules from 33850 to 27796 words (18%) on 2026-11-24 and 2026-11-25, and the file now has 86871. The 216 rules left are shorter, only 28% of their words tell an instance against 33% in the batches so far, and each gains two card lines of ~18 words, so their share cut is smaller. A smaller file needs phase 3, where rules merge and their wording changes on your yes. The order makes it safe: phase 1 copied every incident into the failure register on 2026-11-24, so all 783 distinct long quotes of RULES.md stand there, against 281 the day before, and no cut loses your words.
 
 Three measurements make the plan necessary and safe:
-- 35% of RULES.md (~32600 of 92666 words) is in sentences with a date, a quote or a failure number, and the file's own writing standard (its line 9) says a rule tells no incident. That share is an upper bound: each of the first two batches cut 48% of those words, and the rest are quoted examples, such as the kinds of rule 2, or rules that state a date.
+- 35% of RULES.md (~32600 of 92666 words) is in sentences with a date, a quote or a failure number, and the file's own writing standard (its line 9) says a rule tells no incident. That share is an upper bound: each of the first three batches cut 48% or 49% of those words, and the rest are quoted examples, such as the kinds of rule 2, or rules that state a date.
 - Of the 783 distinct quotes of 25 characters or more, 281 (36%) stood verbatim in socrates `agent/failures.md` on 2026-11-23, matched across line breaks by the ledger of phase 0. 223 rules tell a dated incident, and 195 of them cite no failure number.
 - 79 files in agentkit and socrates cite 180 rules by number, 634 times. Numbers therefore never change.
 
@@ -66,6 +66,12 @@ The second batch ran the same day, after your yes to the first: rules 88, 74, 12
 
 Rules 85 and 37 grew by 3%: every dated or quoted sentence in them is an example of a kind the rule forbids, so only the card lines changed. A rule's Neighbours are the rules its own text names; where it names none, the rules nearest its subject in `rules.index.md`.
 
+The third batch ran on 2026-11-25: rules 161, 229, 110, 44, 208, 19, 3, 123, 148, 46, 195, 125, 167, 87, 175, 124, 67, 47, 59 and 106, from 10748 to 8852 words (18%), with 71 cuts and 1 strip in socrates `docs/2026-11-25 rules trim batch 3.tsv`. What it changed:
+- A sentence copied into the register now names the commit its line numbers come from, since a batch reads a RULES.md that earlier batches changed: `trim` takes the commit before the batch (`6aacfff` for this one). The six passages batch 2 copied named the tag with line numbers of the file after batch 1; they now name `1e53fef`, where each stands at its line.
+- Rule 44 keeps no quote, because both of its quotes name your status and your accounts, and rule 208 lost its second case, which held another person's business figures; the clauses state the kind.
+- Rule 167's two cases each stood under the failure they cite, so the register has no entry "Evidence for rule 167", and its Evidence line names failures 67, 70 and 243 only.
+- Rules 87, 67 and 59 grew by 3% or 4%: they tell no dated case, so they only gained the card lines. 19 of the 216 rules left are like them.
+
 **Phase 3, merge and route, each merge on your yes.** Rules on one theme merge into one card: wording (2, 19, 37, 48, 54, 57, 85, whose duplicated markers `common_sense.md` already lists as waiting on your word) and commits (3, 10, 46, 119) are the first candidates. Then `rules.index.md` is regrouped by the moment of use.
 
 ## The checks that prove nothing is lost
@@ -78,7 +84,7 @@ Each check runs in `tests/` on every push:
 
 ## What you get
 
-After phase 2, RULES.md drops from 92666 to ~75000 words, and every rule ends in its neighbours and its evidence numbers. After phase 3 the index routes by task, each rule fits on a screen, and the size depends on how many merges and rewordings you accept. The register grew by 42970 words in phase 1 and is read only by section.
+After phase 2, RULES.md drops from 92925 to ~81000 words, and every rule ends in its neighbours and its evidence numbers. After phase 3 the index routes by task, each rule fits on a screen, and the size depends on how many merges and rewordings you accept. The register grew by 42970 words in phase 1 and is read only by section.
 
 ## Decisions, settled on 2026-11-23
 
