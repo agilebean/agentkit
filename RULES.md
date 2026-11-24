@@ -169,6 +169,10 @@ connection. Always edit the source file in the repository, never the symlink
 target. Tool-specific symlink paths are documented in each tool's convention
 file.
 
+Neighbours: rules 23 and 257.
+
+Evidence: none recorded in socrates `agent/failures.md`.
+
 ### 2. No AI-generated artifacts in writing — avoid em-dashes, filler phrases, and complex sentence structures
 
 Em-dashes, long sentences with embedded clauses, and filler transitions are telltale signs of AI writing. Never use em-dashes. Write short, direct sentences. Prefer concrete details over abstract descriptions. Write from the reader's perspective, not an omniscient narrator.
@@ -343,6 +347,10 @@ pytest. Fix all failures before marking the task done. A filtered run
 (``-k``) is not a full run and does not satisfy this rule. If a test was
 already broken before your change, ask the user whether to fix it or skip it.
 
+Neighbours: rules 7 and 8.
+
+Evidence: none recorded in socrates `agent/failures.md`.
+
 ### 7. Do not trust tests you just refreshed; do not repeat a failed fix
 
 **Snapshots are not validation after refresh.**
@@ -399,6 +407,10 @@ If you apply the same fix three times and the user reports the same bug three ti
 
 ### 8. Never revert or overwrite production/user files to make tests pass
 Tests should be self-contained. When a test fails because a production file (config, data, topics YAML, `.env`, keep-list JSON, etc.) was changed in the working tree, the **test** is coupled wrong — the production file is user data. Fix the *test* (make it use temp fixtures or a copy), never `git checkout` or modify the production file to green the suite. Reverting a user's working-tree changes is data loss.
+
+Neighbours: rules 6 and 7.
+
+Evidence: none recorded in socrates `agent/failures.md`.
 
 ### 9. When a user's input is ambiguous, ask before acting
 User messages can have multiple reasonable interpretations, especially when they embed output from one tool as part of their complaint. Before acting, think about what the user most likely means from their perspective (not yours). If another interpretation is plausible and would lead to different code changes, use the question tool to narrow it down. Do not assume your first reading is correct. Before acting, ask yourself: "Is this what the user meant?" If you are in doubt, use the question tool. Do not implement one reading and hope it was right.
@@ -1031,6 +1043,10 @@ the agent swapped them and presented the fallback as the main week.
 
 Failure mode: the option the user designated as the alternative presented as the main course.
 
+Neighbours: rules 5 and 197.
+
+Evidence: the entry "Evidence for rule 24" in socrates `agent/failures.md`.
+
 ### 25. Protocol schemes must match the stated training goal
 
 When proposing a training or dosing scheme, anchor every parameter
@@ -1060,6 +1076,10 @@ same failing command or hand the user a manual fix while an
 already-documented recovery command exists on disk.
 
 Failure mode: a capability declared missing from a stale skill snapshot instead of re-reading the skill file from disk.
+
+Neighbours: rules 7 and 30.
+
+Evidence: failure 179 in socrates `agent/failures.md`.
 
 ### 27. Artifacts are standalone, never pointers
 
@@ -1240,6 +1260,10 @@ a follow-up: help output and README must agree at commit time. If a project
 has no README section for its CLI, the change must add one.
 
 Failure mode: a CLI change shipped without its README line.
+
+Neighbours: rules 12 and 72.
+
+Evidence: none recorded in socrates `agent/failures.md`.
 
 ### 33. Memory files serve future planning, not exhaustive event records
 
@@ -2252,6 +2276,10 @@ When the user describes a sensation by comparison — "scratchy like when hoarse
 
 Failure mode: a simile read as a symptom and carried into the analysis or the memory file.
 
+Neighbours: rules 15 and 214.
+
+Evidence: the entry "Evidence for rule 66" in socrates `agent/failures.md`.
+
 ### 67. Options are columns, never separate lists
 
 When one set of items can be obtained, done, or routed through more than one option — two shops, two channels, two vendors, two methods, two dates, two formats — the artifact is one table, not one list per option. The items run down the rows. Each option gets a column. A cell says what that option means for that item: the local product name, the price, the lead time, the requirement. A cell with no route says so in plain words ("not sold", "no route") instead of being left blank or dropped.
@@ -2549,6 +2577,10 @@ Evidence: failure 231, and the entry "Evidence for rule 79", in socrates `agent/
 
 The user's artifacts are the routing table. When they hand over content for a named card, block or section, resolve the destination from the artifacts — the run sheet's card number and its Source column, the session script's section headings, the document that already carries the block — and edit it there. Do not ask which file it belongs in, and do not offer alternatives: the question tells them you did not look at what they built. Ask only when no artifact names the destination, or when two artifacts both carry the block and the choice decides which is master and which is twin.
 
+Neighbours: rules 77 and 150.
+
+Evidence: none recorded in socrates `agent/failures.md`.
+
 ### 81. Name a thing so the user can look it up; never invent a reference
 
 Every artifact is named by the name the user can resolve — its path and its literal heading, with a parenthetical saying what it is — never by a shorthand of the agent's own. A reference the user cannot follow is not a reference: it reads as a name they gave, and the work stops while they ask what it means.
@@ -2566,7 +2598,11 @@ Evidence: the entry "Evidence for rule 81" in socrates `agent/failures.md`.
 
 ### 82. When a block is removed, the lines that exist only to serve it go in the same pass
 
-A removal is a decision, not a finding. Text elsewhere may exist only to point at the removed block — a spoken hand-off into it, a staging note before it, a reference in a neighbouring document. Those lines follow the removal in the same turn: rewrite or delete them, do not list them as open items and do not ask whether to touch them. A sentence whose whole content is the removed block has nothing left to say. The user, 2026-09-28.
+A removal is a decision, not a finding. Text elsewhere may exist only to point at the removed block — a spoken hand-off into it, a staging note before it, a reference in a neighbouring document. Those lines follow the removal in the same turn: rewrite or delete them, do not list them as open items and do not ask whether to touch them. A sentence whose whole content is the removed block has nothing left to say.
+
+Neighbours: rules 71 and 163.
+
+Evidence: the entry "Evidence for rule 82" in socrates `agent/failures.md`.
 
 ### 83. A line about the user names where it came from, and an untraceable requirement is checked, not obeyed
 
@@ -3401,7 +3437,11 @@ Evidence: failures 15, 187, 205 and 250, and the entry "Evidence for rule 136", 
 
 ### 137. Verification must be differential and able to fail
 
-A check that compares the result against the pass's own intent cannot fail and proves nothing. The check compares the result against the reference instance (its pixels, its measured geometry) or against an independently derived expectation, and where it is mechanical it lives in a script the project runs, not in prose. Before trusting a check, run it against the defect it exists for and see it flag. Visual reads are evidence only at a zoom that can show the defect class: 2026-10-09, three passing measurements missed a 6 px overhang the user saw at once, and a fitted render "showed" a defect that was not in the pixels.
+A check that compares the result against the pass's own intent cannot fail and proves nothing. The check compares the result against the reference instance (its pixels, its measured geometry) or against an independently derived expectation, and where it is mechanical it lives in a script the project runs, not in prose. Before trusting a check, run it against the defect it exists for and see it flag. Visual reads are evidence only at a zoom that can show the defect class.
+
+Neighbours: rules 7, 13 and 152.
+
+Evidence: failure 16, and the entry "Evidence for rule 137", in socrates `agent/failures.md`.
 
 ### 138. The user's own practice is read from his record, never filled in from the default
 
@@ -3888,13 +3928,19 @@ Evidence: failure 67, and the entry "Evidence for rule 169", in socrates `agent/
 
 Errors that appear together are counted separately until a log line, an action or a version number shows they share a cause. The same session, the same minute and the same screen are not links.
 
-Instruction basis: 2026-10-18. The key expiry and the tool-channel failure were read as one cause; after the new key, model replies resumed while every tool call still failed.
+Neighbours: rules 167 and 169.
+
+Evidence: the entry "Evidence for rule 170" in socrates `agent/failures.md`.
 
 ### 171. A statement by the user about his own system is ground truth
 
 What the user says his own machinery does - which file his alias writes, which key is in use, what he changed by hand - is the record, and a hypothesis that conflicts with it is discarded rather than held beside it. Where the agent's picture rests on files it has not read, the picture is what goes.
 
-Instruction basis: 2026-10-18. The agent's theory that a release had retired the key-switching mechanism rested on files it had never opened. Chaehan: "you still don't get it: the bash alias switched the api keys. so first find out the location of the file that contains these keys."
+Instruction basis: 2026-10-18. Chaehan: "you still don't get it: the bash alias switched the api keys. so first find out the location of the file that contains these keys."
+
+Neighbours: rules 165, 167 and 168.
+
+Evidence: the entry "Evidence for rule 171" in socrates `agent/failures.md`.
 
 ### 172. Whether a release changed a mechanism is answered by three checks, in order
 
@@ -3913,6 +3959,10 @@ Evidence: the entry "Evidence for rule 172" in socrates `agent/failures.md`.
 When the fix is a value in a settings file, the agent gives the single command that reveals or triggers the write and leaves the edit to the user. A multi-step shell procedure for an edit he will make by hand costs him reading time and replaces his editor with the agent's script.
 
 Instruction basis: 2026-10-18, the four-command install procedure for the new key. Chaehan: "the write procedure was too complicated, i just entered the key with nano."
+
+Neighbours: rules 108 and 176.
+
+Evidence: the entry "Evidence for rule 173" in socrates `agent/failures.md`.
 
 ### 174. The second correction on a subject stores the learning in that turn
 
@@ -5771,6 +5821,10 @@ data, and only then compare it with his account. Do not reason from memory of
 the conversation: memory is compressed and unreliable, and the data corrects you
 faster than he can.
 
+Neighbours: rules 171, 236 and 238.
+
+Evidence: none recorded in socrates `agent/failures.md`.
+
 ### 250. Outgoing text never contains a private position
 
 Chaehan's private positions (his negotiation floors, fallback strategies,
@@ -5780,6 +5834,10 @@ embed his floor, minimum or fallback in any text meant for the other party,
 unless he explicitly instructs that specific number or phrase for that specific
 message. This rule applies to all outgoing communication, not only to
 negotiation contexts.
+
+Neighbours: rules 37 and 84.
+
+Evidence: none recorded in socrates `agent/failures.md`.
 
 ### 251. Concise trims filler, never data
 
@@ -5875,6 +5933,10 @@ do not ask him to choose between the hypothetical and the plan on file.
 
 Instruction basis, 2026-10-14: "Melbourne is main target in this hypothetical
 scenario in which i'm asking and looking for closure".
+
+Neighbours: rules 41 and 45.
+
+Evidence: the entry "Evidence for rule 256" in socrates `agent/failures.md`.
 
 ### 257. Instructions live in opencode files; a CLAUDE.md is an import stub
 
