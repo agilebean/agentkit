@@ -72,6 +72,17 @@ The third batch ran on 2026-11-25: rules 161, 229, 110, 44, 208, 19, 3, 123, 148
 - Rule 167's two cases each stood under the failure they cite, so the register has no entry "Evidence for rule 167", and its Evidence line names failures 67, 70 and 243 only.
 - Rules 87, 67 and 59 grew by 3% or 4%: they tell no dated case, so they only gained the card lines. 19 of the 216 rules left are like them.
 
+The remaining 216 rules run in batches of 40 without a stop between batches, on your word of 2026-11-25 ("yes run the rest now automatically continually in batches of 40"). Each batch has its decision file and its review page in socrates `docs/`, named `2026-11-25 rules trim batch N`, and its own commits:
+
+| Batch | Rules | Words of its rules | Cuts and strips |
+|---|---|---|---|
+| 4 | the 40 longest left | 15746 to 13686 (13%) | 80 and 3 |
+
+What these batches changed:
+- A private detail leaves with its case, as in batch 2: the item comparisons in rules 239 and 43, the travel in rules 209 and 83, your Bank account in rule 159, and the students' names and grades in rule 184, whose list of what to copy now stands without the example.
+- A rule number or failure number wrapped onto the next line ("Rule\n229") is now found; batches 2 and 3 missed none this way.
+- A rule with no failure and no entry in the register gets the line "Evidence: none recorded in socrates `agent/failures.md`.", so every card has both lines.
+
 **Phase 3, merge and route, each merge on your yes.** Rules on one theme merge into one card: wording (2, 19, 37, 48, 54, 57, 85, whose duplicated markers `common_sense.md` already lists as waiting on your word) and commits (3, 10, 46, 119) are the first candidates. Then `rules.index.md` is regrouped by the moment of use.
 
 ## The checks that prove nothing is lost

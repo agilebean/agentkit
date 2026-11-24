@@ -327,6 +327,10 @@ do not delete items from it. If he listed 48 GB and 32 GB options and then
 expressed a preference for 64 GB, all options stay in play until he says
 otherwise.
 
+Neighbours: rules 135 and 177.
+
+Evidence: failure 1, and the entry "Evidence for rule 5", in socrates `agent/failures.md`.
+
 ### 6. Update tests after every fix (non-waivable)
 
 After fixing an error or implementing a feature — including any edit to a
@@ -347,13 +351,17 @@ Your first instinct will be to try the same fix again (delete the rows again, ch
 If a data file is an artifact of a pipeline (CSV from merge, JSON from build step, HTML from template + data), editing the artifact is fragile. Find the source of truth and fix it there. If you must edit the artifact directly, verify the fix survives a full pipeline regeneration before claiming success.
 
 **Render the visual with the documented command; never reverse-engineer the PNG.**
-A change to a generated visual is a text edit plus the render command, nothing else. Render it (headless Brave at 2x, then the crop) and look at the result. If a stage is missing from the recipe, ask for the command instead of matching pixels of the output. 2026-09-26: two text edits in the S2 run sheet became pixel matching; the user: "remember this, not the clutter."
+A change to a generated visual is a text edit plus the render command, nothing else. Render it (headless Brave at 2x, then the crop) and look at the result. If a stage is missing from the recipe, ask for the command instead of matching pixels of the output.
 
 **Pipeline commands in repo docs are for normal workflow, not for fix loops.**
 The project rules file or README may say "run `python -m swim && python -m swim dashboard`" — that command regenerates everything from source data. If you just manually edited a pipeline artifact, running the full pipeline will silently overwrite your edit. Use only the subcommand that targets what you changed (e.g. `python -m swim dashboard` to regenerate just the dashboard from existing CSV).
 
 **If you make the same fix more than twice, stop and state what you haven't investigated.**
 Repeated fix-attempt cycles without tracing the regeneration path is the fastest way to burn trust. On the third attempt, tell the user what you have not yet checked and ask for direction.
+
+Neighbours: rules 6, 13 and 137.
+
+Evidence: failures 188 and 192, and the entry "Evidence for rule 7", in socrates `agent/failures.md`.
 
 ## Causal reasoning and consequence tracing
 
@@ -600,6 +608,10 @@ This applies especially to:
 - Name extraction where frequency-based heuristics pick OCR noise over real names
 - Classification where keyword lists miss the domain-specific terms in real data
 
+Neighbours: rules 137 and 204.
+
+Evidence: the entry "Evidence for rule 13" in socrates `agent/failures.md`.
+
 ### 14. Environment substitution is a false convenience — never auto-launch a substitute profile, credential, or directory
 
 When a helper detects that a required environment is absent (browser session, login context, data directory), it must NOT silently substitute a different one. The substitute has different state — different cookies, permissions, data — and downstream code will fail in ways that are hard to diagnose because the swap is hidden inside a convenience function.
@@ -631,7 +643,9 @@ noise, a deliberate protocol choice). If a plan's execution is unknown, ask, or
 frame it as if-then covering both branches. When the user corrects you, record
 his report as ground truth and update the memory file.
 
-The instance is Failure 147 (Zurich, 2026-08-24).
+Neighbours: rule 11.
+
+Evidence: failure 147, and the entry "Evidence for rule 15", in socrates `agent/failures.md`.
 
 ### 16. Chart annotation placement: measure the rendered geometry, never guess coordinates
 
@@ -649,6 +663,10 @@ axis fit, where a secondary curve's band sits, how far a label sits from its mar
 tall that band is. Each is judged on the render, because a number read back out of the
 payload cannot show a label over another label or a label clipped by the axis line. Rule
 229 carries the placement of secondary curves and the arrangement a new chart starts from.
+
+Neighbours: rule 229.
+
+Evidence: the entry "Evidence for rule 16" in socrates `agent/failures.md`.
 
 ### 17. Notes must bind every datum to its referent — an ambiguous note is a write-time defect
 
@@ -1129,7 +1147,11 @@ first call to it, and before the first line of a script that calls it.
 
 Failure mode: a named product read as a common noun, so the tool that answers the question is never resolved.
 
-Instruction basis, 2026-11-07: asked to time Hanji's activities against "evernote cli", the agent ran the Evernote shell CLI from Claude Code, on the skill's line that the CLI is "the only path outside an opencode session". Chaehan: "this is wrong. only use the evernote mcp not cli! the cli is buggy". The same day, the itinerary-sync skill's first script wrote the itinerary notes through the Thrift client, on the evernote skill text a session had loaded before that correction. Chaehan: "you are wrong. by default, the evernote mcp is used, not the cli! don't use thrift!"
+Instruction basis, 2026-11-07: asked to time Hanji's activities against "evernote cli", the agent ran the Evernote shell CLI from Claude Code, on the skill's line that the CLI is "the only path outside an opencode session". Chaehan: "this is wrong. only use the evernote mcp not cli! the cli is buggy".
+
+Neighbours: rules 81, 146 and 171.
+
+Evidence: failures 10, 177 and 179, and the entry "Evidence for rule 30", in socrates `agent/failures.md`.
 
 ### 31. New or reworked notes sweep the superseded Evernote copies automatically
 
@@ -1163,7 +1185,11 @@ no fold, no trash, no rename. The sweep above covers undated working notes and
 same-date drafts of one snapshot, never an earlier date. When in doubt whether
 a note is a dated snapshot, ask.
 
-Failure mode: a new or reworked note left beside its superseded sibling in the notebook. Its inverse, 2026-11-04: the 2026-10-23 Life Overview was trashed when the 2026-11-03 note was reworked, and had to be restored.
+Failure mode: a new or reworked note left beside its superseded sibling in the notebook.
+
+Neighbours: rule 28.
+
+Evidence: the entry "Evidence for rule 31" in socrates `agent/failures.md`.
 
 
 ### 32. README is part of the CLI change — update it in the same slice
@@ -1470,11 +1496,9 @@ user asked for selection.
 
 Failure mode: an integration that keeps every extracted item instead of choosing.
 
-(private) (private)
+Neighbours: rules 69 and 113.
 
-
-(private)
-
+Evidence: the entry "Evidence for rule 43" in socrates `agent/failures.md`.
 
 ### 44. Availability and licensing claims are verified at the official source
 
@@ -1798,6 +1822,10 @@ design work the plan owed.
 
 Failure mode: objects created before the layout is settled, then rebuilt to repair positions, widths or heights.
 
+Neighbours: rules 99 and 100.
+
+Evidence: none recorded in socrates `agent/failures.md`.
+
 ### 54. Chat replies: say it the way a person would say it
 
 A chat reply is one person answering another in writing. Read it aloud before
@@ -1928,6 +1956,10 @@ housekeeping.
 
 Failure mode: reader-facing text that hides the change, leads with the process, or drops the reader's benefit.
 
+Neighbours: rules 37, 87 and 151.
+
+Evidence: the entry "Evidence for rule 57" in socrates `agent/failures.md`.
+
 ### 58. A pointer or a summary is never the content it replaces
 
 When a document's function is taken over by another document, another file, or a
@@ -1961,6 +1993,10 @@ contains this sentence? If the answer is "it can look it up", the item is lost.
   from an earlier note is counted again before it is stated.
 
 Failure mode: a retired document replaced by a pointer or a folder map, with its unique instructions lost.
+
+Neighbours: rules 27 and 71.
+
+Evidence: none recorded in socrates `agent/failures.md`.
 
 ### 59. A completion report follows the user's order of relevance, not the agent's process order
 
@@ -2108,6 +2144,10 @@ This is the user's index of what to open, diff, or send, and it is also their re
 
 Stated 2026-09-25: "the artefacts list should be two fold: first the most relevant files in order of highest priority first as requested or seen by the user. second all related files, to be comprehensive, eg deleted or merged files. put things like evernote as a bullet point of second tab."
 
+Neighbours: rules 59 and 183.
+
+Evidence: the entry "Evidence for rule 65" in socrates `agent/failures.md`.
+
 ### 66. A simile reports degree, never a symptom
 
 When the user describes a sensation by comparison — "scratchy like when hoarse", "like a burn", "as if stung" — the comparison is their yardstick for intensity or quality, not a report of that condition. Never promote it into a clinical sign, a diagnosis input, or a recorded fact. If the distinction would change the answer, ask which they mean before writing anything. Record the sensation in their own words and keep the simile attached to the word they attached it to.
@@ -2222,9 +2262,13 @@ When the source of truth changes — a chart, a script, a design decision, a rea
 
 **A required sync is executed, never offered back as a question.** When the dependent set is fixed by a standing convention (the run sheet follows its script, the deck follows its slides md, a plan document's section and the memory file's state paragraph follow the change they describe), the dependent is updated as part of the change, in the same turn. The question tool is for decisions that are genuinely still open, not for handing the user a step their own conventions already require. The user's standard: "all must be synced automatically."
 
-**A missing generator is not a missing sync.** When the dependent has no build command — a deck without a slides md, a hand-placed image, a note without a twin — the sync is still executed in the same turn by the artifact's own route (patch it, move it, replace it), and a real block is reported as blocked with its gate named. "No md yet, a later pass" is neither. 2026-10-02: the post-it craft and the dot vote moved from the S4 session to S3; scripts, sheets, logs, design rows and memory were swept while both decks kept the moved pages in their old sessions, filed as a separate deck pass — and the user had to order the move.
+**A missing generator is not a missing sync.** When the dependent has no build command — a deck without a slides md, a hand-placed image, a note without a twin — the sync is still executed in the same turn by the artifact's own route (patch it, move it, replace it), and a real block is reported as blocked with its gate named. "No md yet, a later pass" is neither.
 
 Failure mode: a canonical change landed in one artifact while its dependents keep the older version, or a required sync offered back as a question instead of executed.
+
+Neighbours: rules 28, 71 and 77.
+
+Evidence: the entry "Evidence for rule 72" in socrates `agent/failures.md`.
 
 ### 73. Never wait more than 60 seconds for a tool call: 20, then 40, then 60
 
@@ -2350,10 +2394,14 @@ When a document and a generated artifact carry the same plan — a session scrip
 - **Prefer reading a value over copying it.** If the value lives in another document of record — a session's learning goal in the course design — the render reads it from there. A copy is a second place to keep true.
 - **A change to the source is a sweep, not an edit.** The script has more than one place carrying a session's minutes: the run of show table, each section header's cumulative minutes, the block's chips, the note paragraph. One changed number means all of them, in one pass, plus the re-render.
 - **One command, the project's.** Regenerating is not a recipe to re-derive each time (`projects/kubs_dt/pipeline.py runsheet --session N`, exposed as `/runsheet N`).
-- **The source is hand-edited markdown, so the renderer owns its escapes.** The writer protects markdown-significant characters with a backslash throughout the block (`\#` in the header, `\-` in a Source cell, `\[3x20s\]` in a card body). Every `\X` is the plain character in the render, and resolving them is the renderer's job — once, in the parser, before any card text is drawn. A backslash that reaches the ink is a parser defect: fix `pipeline.py`, never the block's wording. On 2026-09-28 only `\|` was resolved, so the sheet printed `\[3x20s\]` and `\[2x2min\]` in chips 2 and 6.
+- **The source is hand-edited markdown, so the renderer owns its escapes.** The writer protects markdown-significant characters with a backslash throughout the block (`\#` in the header, `\-` in a Source cell, `\[3x20s\]` in a card body). Every `\X` is the plain character in the render, and resolving them is the renderer's job — once, in the parser, before any card text is drawn. A backslash that reaches the ink is a parser defect: fix `pipeline.py`, never the block's wording.
 - **A render is verified by its ink, not by its exit code.** Exit 0, a plausible pixel size and the expected card count say nothing about what the sheet prints. Read back the text the page drew (the generated `rsn.html`, or the cropped PNG) for stray markup, an overflowing card, or a card whose wording the block no longer holds, before reporting the sheet rebuilt.
 
 Failure mode: a derived view rendered from a stale source, or a render reported from the command's exit code without reading the ink.
+
+Neighbours: rule 72.
+
+Evidence: the entry "Evidence for rule 77" in socrates `agent/failures.md`.
 
 ### 78. A learning goal says what the student can do with it: name the level, tie it to the assignment, keep it attainable
 
@@ -2371,9 +2419,13 @@ Worked example: the KUBS DT design's eight goals climb the taxonomy deliberately
 - **One log per folder of one work**, holding the history of every document in it: dated entries, newest first, one entry per change with the reason. A folder whose documents serve one work (a session, a course, a deck) and are live gets one; folders that hold retired documents do not, because those documents are history themselves and keep their own logs.
 - **A living document in a folder of unrelated documents keeps its log as its last section**, dated entries, newest first: a plan in `agentkit/docs`, say. The test: would a reader of the log need the folder's other documents? When not, a folder log mixes this document's reasons with others no reader of it needs. Instruction basis, 2026-11-20, the human quality plan: "_log is too generic so put it in the same file to the bottom".
 - **Other documents carry no change-log sections.** A document is read for what is true now. Where a log was removed, a one-line "History" pointer stands in its place.
-- **The convention is stated once, here.** A log file carries a title line and its entries, nothing else — no preamble, no restatement of what a change log is. The user, 2026-09-27, after five logs opened with the same four-line introduction: "you included trivial things in the logs ... and it is repeated in each log file. we need to optimize the knowledge architecture!"
+- **The convention is stated once, here.** A log file carries a title line and its entries, nothing else — no preamble, no restatement of what a change log is.
 - **What the log is for.** A diff says what changed; only the log says why, and the why is what a later session needs so it does not silently undo a deliberate decision. Read it when a value looks odd ("why is S3's results block 30 minutes when the headers say 40?"), when reviving something retired, and before changing anything a dated entry explains.
-- **A document that describes something current follows its source in the same pass** — syllabus, guideline, announcement, run sheet, Evernote twin. Never report a known staleness as an open item instead of fixing it. The user, 2026-09-27: "why don't you keep the syllabus in sync? don't understand. this makes me iterate trivial things". Only copies that were explicitly sent are frozen ("... (sent version).pdf") and even then their live sibling is updated.
+- **A document that describes something current follows its source in the same pass** — syllabus, guideline, announcement, run sheet, Evernote twin. Never report a known staleness as an open item instead of fixing it. Only copies that were explicitly sent are frozen ("... (sent version).pdf") and even then their live sibling is updated.
+
+Neighbours: rules 77 and 182.
+
+Evidence: failure 231, and the entry "Evidence for rule 79", in socrates `agent/failures.md`.
 
 ### 80. Content handed over for a block goes where that block already lives
 
@@ -2402,9 +2454,13 @@ Two habits, one for writing a line and one for reading one.
 
 **Reading.** An existing line whose stated source you cannot find is not binding. Do not carry it into a plan, a question or an instruction, and do not repeat it as a fact. Replace the source with what you can show, and where the line gates an action, keep the action and swap the requirement for the check that settles it. "The submission needs the X number" becomes "no X number is on record; check Y before submitting".
 
-**An open question is a line about the user too.** An open task, a "missing fact" or a "probe" that a note or plan carries is Chaehan's question only when a message of Chaehan's asks it, or it decides an action Chaehan named. Otherwise it is an earlier agent's question, and it is asked of Chaehan before it frames a decision, a knot or a plan. The test: name the message in which Chaehan asks it. 2026-11-06, the Life Problems restructure: "ask Sunrise how many dates a week it yields" stood as an open task in the 2026-11-05 overview and as a "missing fact" in the 2026-11-03 note, and the proposal made it the fact that decides the March route. Chaehan: "the Sunrise how many dates was never a question. i have 4 dates already planned with date after 5d. so no worry".
+**An open question is a line about the user too.** An open task, a "missing fact" or a "probe" that a note or plan carries is Chaehan's question only when a message of Chaehan's asks it, or it decides an action Chaehan named. Otherwise it is an earlier agent's question, and it is asked of Chaehan before it frames a decision, a knot or a plan. The test: name the message in which Chaehan asks it.
 
 Why it matters: such a line is the agent's own earlier inference, and a file makes it read as the user's own requirement. It then blocks work they never asked to block, and each later session copies it forward again.
+
+Neighbours: rules 15, 61 and 238.
+
+Evidence: the entry "Evidence for rule 83" in socrates `agent/failures.md`.
 
 ### 84. Nothing goes out that the user has not read in its final form, with every field its recipient needs
 
@@ -2555,13 +2611,17 @@ Stated 2026-09-30: "the study results should be in bullet points or sub bullet p
 
 When a change moves, swaps, reorders or merges text the user has edited by hand (a warmup swapped between two blocks, a section relocated, a list reordered), the unit of work is their line. Cut it and place it at the new location with its wording, punctuation, line breaks and formatting intact: three formatted lines do not collapse into one compressed sentence, and their fix is not re-invented from an older version of the text. Re-read the region immediately before moving it and work from their latest text, not from memory, so their edits are caught rather than bypassed. Glue that the move needs (a heading, a lead-in, a name that must change with the position) is added around their lines and kept minimal. After the move, show the before and after of every moved line; only they can confirm the move was faithful.
 
-Chaehan's line goes in verbatim, at its own length, in the place Chaehan wrote it for. A text Chaehan wrote for another place gets a summary written for the new one. Test: before placing a line of Chaehan's, name the place it was written for. On 2026-10-19 the agent expanded Chaehan's five tips in the S8 script into long sentences: "1-5 are too verbose, use my wording". On 2026-10-01 it pasted the team project description onto the assessment slide: "you copied the team project desc, you should think about the best summary of it instead!"
+Chaehan's line goes in verbatim, at its own length, in the place Chaehan wrote it for. A text Chaehan wrote for another place gets a summary written for the new one. Test: before placing a line of Chaehan's, name the place it was written for.
 
-A note's gate reshapes none of the user's lines: they are named to it (`note_build.py init --verbatim <file>`, `overview_gate.py --verbatim`), it leaves their form alone, and its T20 fails when one of their paragraphs is not one unbroken run of the original words. When a change touches one section, only that section is written (`init --as-is --replace-section`), so the user's edits elsewhere in the note stay byte for byte. A write by guid names the text it started from (`--base`) and is refused when the note changed since. On 2026-11-10 the gate turned Chaehan's feedback paragraph into six bullets under a lead line; asked whether to fix it, Chaehan: "Yes, fix it". The fix's first write was refused: Chaehan had added a list and a photo table to the note the same day.
+A note's gate reshapes none of the user's lines: they are named to it (`note_build.py init --verbatim <file>`, `overview_gate.py --verbatim`), it leaves their form alone, and its T20 fails when one of their paragraphs is not one unbroken run of the original words. When a change touches one section, only that section is written (`init --as-is --replace-section`), so the user's edits elsewhere in the note stay byte for byte. A write by guid names the text it started from (`--base`) and is refused when the note changed since.
 
 Failure mode: a relocation that deletes the user's formatted lines and inserts agent-rewritten ones.
 
 Stated 2026-09-30: "take my edits and move them around."
+
+Neighbours: rules 47, 56 and 157.
+
+Evidence: failure 239, and the entry "Evidence for rule 93", in socrates `agent/failures.md`.
 
 ### 94. An outbound message is verified by its sent record, not by the send command's exit code
 
@@ -2643,8 +2703,6 @@ When the user says an artifact should carry something — "the 7 card should hav
 
 The same message usually carries a second tell — "the script got a wrong update" — which means the artifact's current content is the suspect: compare it against the sources and fix it. Do not swap in a different discrepancy you find easier to resolve, and do not re-assert the current state. When the user says you found the content but did not change it, the finding was an owed edit, not a report. "The wording is the user's" guards invented content; it never blocks applying the content they named. A question in the same message is answered; it does not discharge the directive.
 
-Failure mode: 2026-10-02, the KUBS S3 run sheet. The user: "the script got a wrong update. the 7 card should have the bad interview relay. which session lost it and why?" The agent traced the relay correctly (session 2 did not run it; its text moved into session 3's interview block) but read "should have" as "confirm it is present", matched the card's old phrase ("the bad interview from session 2: ...") as proof, spent the turn on a different contradiction (the block vs body minutes), and left card 7 unchanged.
-
 Stated 2026-10-02: "you still have the old content for card 7! you found the bad interview relay but why didn't you change it? explain this clearly we must correct your agent rules and thinking. this is really really bad"
 
 A correction he has already given, in a direct report or a prior session, is
@@ -2653,7 +2711,9 @@ correct it?" about a fact already settled. Never claim a file still contains an
 error without re-reading it this turn: a concurrent session may already have
 fixed and committed it.
 
-The instance is Failure 148 (health.md, 2026-08-24).
+Neighbours: rules 76, 140 and 144.
+
+Evidence: failure 148, and the entry "Evidence for rule 102", in socrates `agent/failures.md`.
 
 ### 103. Send-ready text is delivered copy-paste-ready: plain text, no markers
 
@@ -2951,11 +3011,13 @@ Not converged, and rule 46's ask applies as usual: any round that changes struct
 
 **A record that grades other people is never committed without his word, converged or not.** Gradebooks, score sheets, transcripts and the artifacts derived from them are his signature over someone else's outcome: a commit publishes them, and a wrong rule inside them is a wrong grade for a student who cannot see the working. Apply the round, rebuild, verify, show the table, and stop. The same holds for the rule that produces the letters, not only the numbers: replacing a curve with a threshold is a decision about every student in the class, so it waits for his approval even when the numbers it produces look right to the agent.
 
-Failure, 2026-10-31: three rule changes to the KUBS DT gradebook (a halves cap, then absolute Total thresholds) and two score rounds were committed one after another on the converged-work trigger. Chaehan: "you shouldn't have committed the last changes without my approval. i'm still not satisfied at all. there are too many changes in overall grades." Every one of them was reverted by hand.
-
 Mechanics follow rules 10 and 46: other sessions' dirty files stay unstaged and are named in the report; when the item already sits in the tip commit, fold the round into it (rule 10's amend clause) rather than stacking a repair commit.
 
 Stated 2026-10-06: "you can commit when i gave several times feedback and my agreement is converging and only giving minor modifications. i feel that this would at least cover 50% of all runs where we can save another llm call and finish faster"
+
+Neighbours: rules 3, 10 and 46.
+
+Evidence: failure 168, and the entry "Evidence for rule 119", in socrates `agent/failures.md`.
 
 ### 120. A rule of thumb the user states in passing is the payload — store it in the domain's memory file that turn
 
@@ -3095,7 +3157,11 @@ A task survives its own sub-steps the same way. When Chaehan answers a question 
 
 ### 136. A specification applies to its class
 
-A specification the user states governs every instance of the class it names, not the instance at hand. Enumerate the class before acting, apply it to all of it in the same pass, and name the sweep in the report ("all 21 pages", "every carrier of the reading"). When the class is ambiguous, name the class you inferred and the count you are acting on; a question costs one turn, a half-applied spec costs a repeat report. 2026-10-09: "all pasted slides should be on a white background" was applied to the named slide while another stayed transparent - "why didn't you register that all pasted slides should be on a white background?" An instruction on one constraint of a tool names the class of constraints that tool puts on the sessions: list them from the transcripts before calling the instruction done, where a bypass repeated command by command (`dangerouslyDisableSandbox`) marks a setting not yet changed, and settle them all in the same pass. A writing standard Chaehan set on one kind of note governs every note he reads, and his asking whether it holds only there is the signal that it holds everywhere: 2026-11-09, "i wonder is that all only applied in the life overview and life challenges skill?" was answered as a question about checks, and Chaehan: "you should have inferred that the writing style of life overview should be used as general style" (failure 205). 2026-11-06: "the sandbox proxy cutoff is unacceptable, find a different solution, and if too effortful switch off the sandbox" got a streaming fix for the cutoff alone, while 104 commands in three days bypassed the sandbox for its other refusals; Chaehan: "i had instructed to deactivate the sandbox as it constrains the sessions in an unnecessary way" (failure 187). A check built from one incident, a lint pattern or a test, matches the word that marks the class, never the sentence the incident came in: 2026-11-23, check M5 of `memory_lint.py` got "isn't that common sense" from one quote; Chaehan: "the lint should catch common sense alone not the phrase isn't that common sense" (failure 250).
+A specification the user states governs every instance of the class it names, not the instance at hand. Enumerate the class before acting, apply it to all of it in the same pass, and name the sweep in the report ("all 21 pages", "every carrier of the reading"). When the class is ambiguous, name the class you inferred and the count you are acting on; a question costs one turn, a half-applied spec costs a repeat report. 2026-10-09: "all pasted slides should be on a white background" was applied to the named slide while another stayed transparent - "why didn't you register that all pasted slides should be on a white background?" An instruction on one constraint of a tool names the class of constraints that tool puts on the sessions: list them from the transcripts before calling the instruction done, where a bypass repeated command by command (`dangerouslyDisableSandbox`) marks a setting not yet changed, and settle them all in the same pass. A writing standard Chaehan set on one kind of note governs every note he reads, and his asking whether it holds only there is the signal that it holds everywhere. A check built from one incident, a lint pattern or a test, matches the word that marks the class, never the sentence the incident came in.
+
+Neighbours: rules 11, 135 and 220.
+
+Evidence: failures 15, 187, 205 and 250, and the entry "Evidence for rule 136", in socrates `agent/failures.md`.
 
 ### 137. Verification must be differential and able to fail
 
@@ -3200,7 +3266,11 @@ When the user corrects the appearance or the layout of an artifact ("optimize th
 
 The test before encoding such a rule: would it produce the same value for the smallest instance of the class and the largest? If yes, it is a constant and it is wrong. Encode the function, and carry the two instances that show its range (the corrected one and the anti-shape it replaced).
 
-Instruction basis: 2026-10-09 the evernote skill took the pane width it had just measured (1108.64 px) and wrote "Every table runs the note's full width" as the rule for every table. 2026-10-12: "the evernotes for kubs dt are still not well formatted in the tables. i said to optimize the vertical space, but that doesn't mean by extend all tables to max. width." His corrected instance was the Osaka trip note's table, dragged by hand to 938.88 px (188/116/79/132/85/339); the anti-instance sat in the same note's history, 1128 px with six equal 188 px columns. The measured 1108.64 px turned out to be circular: every table that wide in the account had been written by an agent, and no table of his own runs past 939 px. The first repair showed the other half of the failure - a constant is not the only wrong shape, an ad-hoc procedure is too: it cut the widest column until the total fit, and he reported "you broke 'Mandatory, 10% of the grade; more than 30% of sessions missed = F' across 5 rows!!" The rule is now a model (`fit_table_widths`: a column's natural width from its own cells, the columns compressed together by a power law when their sum exceeds the ceiling, the ceiling taken from the widest instance of his own).
+2026-10-12: "the evernotes for kubs dt are still not well formatted in the tables. i said to optimize the vertical space, but that doesn't mean by extend all tables to max. width." The rule is now a model (`fit_table_widths`: a column's natural width from its own cells, the columns compressed together by a power law when their sum exceeds the ceiling, the ceiling taken from the widest instance of his own).
+
+Neighbours: rules 136 and 149.
+
+Evidence: the entry "Evidence for rule 147" in socrates `agent/failures.md`.
 
 ### 148. An instruction to consolidate is a move: the source artifact retires in the same turn
 
@@ -3226,7 +3296,11 @@ A layout dimension is spent only where it buys the value the layout is for. In a
 - A question that offers a trade which the artifact does not actually contain ("keep this column on one line, or give the room to that one") is the signal that the value of the dimension has not been worked out. Answer it with the artifact's own geometry, not with the choice.
 - Same family as rule 147 (a model, not a constant), rule 48 (readable without decoding) and rule 139.
 
-Instruction basis: 2026-10-12, on the KUBS DT S6 note's workshop table. The fitting had stretched a four-column table to the 939 px ceiling and the question put to him was whether the narrow "Block" column should take 250 px so its titles keep one line. Chaehan: "can't you apply common sense? it doesn't matter if there is a second or third line if another column already has 3 lines!!!! record this in rules, this is really basic!!!! keep 130 but shorten the text line bec the goal is not to use max width with so few cols!" The fitting now trims the wrapping column back to the point where its content stops saving the table a line: the S6 table lands at 907 px, the Peer Syllabi table at 891, neither at the ceiling.
+Instruction basis: 2026-10-12, on the KUBS DT S6 note's workshop table. Chaehan: "can't you apply common sense? it doesn't matter if there is a second or third line if another column already has 3 lines!!!! record this in rules, this is really basic!!!! keep 130 but shorten the text line bec the goal is not to use max width with so few cols!"
+
+Neighbours: rules 48, 139 and 147.
+
+Evidence: the entry "Evidence for rule 149" in socrates `agent/failures.md`.
 
 ### 150. Deliverable content is created in its home folder from the first write
 
@@ -3255,7 +3329,11 @@ When a deliverable is an extract of a source (page ranges of a book, selected re
 - A note is not a flag: a page absent from a declared range may belong to a sibling extract; a page carried twice, an out-of-order page, a page that is not in the source and a count the name does not declare cannot.
 - Same family as rule 137 (verification must be differential and able to fail), rule 13 (verify the output on real data) and rules 133-137 (the deck family's values, checks and gates).
 
-Instruction basis: 2026-10-12, the KUBS DT Part 2 Annex reading, the extract E06's Reading slide hands to the class for S6. It had been cut on 2026-10-05 and carried 18 pages of which 11 were its declared set: pages 77-81 (the whole switch-interview technique - the timeline and its six phases, Figure 3.2, the variations, customer case research) were absent and pages 83-87 appeared twice, so the switch-interview part stopped one page after it began. Chaehan: "kubs dt Reading Kalbach part 2 annex is wrong! the part for switch interviews is cutoff after the first page!!!" No pass since the build had read the file's pages; the renames of 2026-10-09 and 2026-10-12 both touched its name and never its contents.
+Instruction basis: 2026-10-12, the KUBS DT Part 2 Annex reading, the extract E06's Reading slide hands to the class for S6. Chaehan: "kubs dt Reading Kalbach part 2 annex is wrong! the part for switch interviews is cutoff after the first page!!!"
+
+Neighbours: rules 13, 133 and 137.
+
+Evidence: the entry "Evidence for rule 152" in socrates `agent/failures.md`.
 
 ### 153. An artifact's owner is the carrier that lists it, not the session whose end announces it
 
@@ -3276,7 +3354,11 @@ Instruction basis: 2026-10-12, the prep-hours per-lecture table in chat (Lecture
 
 A page duplicated from another page is a source of pixels, not a valid instance: it brings objects the values file does not describe - a band shape whose outline shows as a hairline outside the band image, the source's own text copies - and they arrive silently, because copying is not creating and no write step looks at them. When an artifact is made by copying rather than building, its construction is read from the values file, the inherited objects are checked against it and removed, and the values file itself states what the element is made of, not only where it sits - a reference of placement alone cannot fail the object it should not have. The object dump of a copied page is part of the verification, beside the export's pixels.
 
-Instruction basis: 2026-10-12, E06's two banded pages. Pages 5 and 6 carried the band as an image over a band shape at the same rect, whose red outline showed as a full-width hairline at y 11 and y 124-125; both bands came from duplicated pages (slide 5 rebuilt from the blue Yes-and slide, the Tips page from slide 5's frame). The same hairline sat on 17 pages of the family (E01 4,5,6,7,11,20; E02 3,4,5,6; E03 61; E06 5,6; E07 3,4; E08 3,4), in two constructions: where the shape sits under a band image it is a leftover and is deleted (10 pages, swept that day), and where the band IS the shape its blue fill is the band and the red outline is its border, so the removal would take the band with it and the fix is a build instead (E01's six pages). E05's nine shapes were deleted on 2026-10-09 under an instruction the record kept as E05's slide numbers, so the class was never swept. Chaehan: "KUBS DT WS2026 E06.key has two title bars which have a red line border - how is that possible and why don't you get the reference from the deck preferences?" `deck_reference.json`'s `band` block now carries the construction and the defect's signature, and `deckcheck`'s `stroke` check flags it.
+Instruction basis: 2026-10-12, E06's two banded pages. Chaehan: "KUBS DT WS2026 E06.key has two title bars which have a red line border - how is that possible and why don't you get the reference from the deck preferences?" `deck_reference.json`'s `band` block now carries the construction and the defect's signature, and `deckcheck`'s `stroke` check flags it.
+
+Neighbours: rules 134, 156 and 260.
+
+Evidence: failure 43, and the entry "Evidence for rule 155", in socrates `agent/failures.md`.
 
 ### 156. A probe box must bound the object, and a rebuild is verified on the element that changed
 
@@ -3348,21 +3430,9 @@ what the attempt costs. Steps first and the caveat last inverts the decision
 the user is making: he tries the thing that does not exist, and the real path,
 usually a support review or a new relationship, is the part he was not told.
 
-Instruction basis: 2026-10-14, the Bank country change. The answer carried six
-numbered UI steps plus the support fallback, taken from "How do I update my
-country of residence?", whose opening line says the option appears only "if you
-have recently moved to another country" and is absent where the feature is not
-available. (private)
+Neighbours: rules 44, 98 and 231.
 
-
- The Bank Canada Customer Agreement,
-not read before that answer, settles what the alternatives cost: it is scoped to
-"customers residing in Canada"; it refuses duplicates ("Bank reserves the right
-to refuse the creation of duplicate accounts for the same user ... Bank reserves
-the right to close or merge these duplicate accounts without notification to
-you"); it requires all information to be "complete, accurate and truthful"; and
-it permits suspension or termination for breach. Instance:
-`agent/failures.md` failure 50.
+Evidence: failure 50, and the entry "Evidence for rule 159", in socrates `agent/failures.md`.
 
 ### 160. A framing the user names is researched before it is judged, and a criterion is run against the cases it must separate
 
@@ -3451,7 +3521,11 @@ Where the marks can be located by measurement, do that rather than by eye (the c
 
 When the user gives the values himself, his readings are the record: they are applied, and only the cells where the ink still reads differently to the agent are named, without arguing the mark. A number he states from what he *instructed* is not the delivered value - where the two can differ (a block's planned or ordered length against the one that ran), the delivered value is what the record takes, and the instruction is named beside it.
 
-Instruction basis: 2026-10-17, the KUBS S5 run sheet (`KUBS DT S5/e5 runsheet.jpeg`). Asked whether the minutes written in pen on the annotated sheet were in the session feedback, the agent magnified the crops to 12-16x and reported three mismatches against the record - the homework presentations 25 against 35, the homework sprint 5 against 10, the break 8 against 10 - and a card it read as carrying no mark. Chaehan: "card 2 was 35, card 3 was 25, card 4 was 10 with Q&A, card 5 was 5 card 6 20 card 7 5m. so all in all +10 overrun which is marked." Two readings were wrong (cards 2 and 4); the break's 8 was right, and his "5" for that card was the figure he had instructed - corrected at once: "no the 8 was correct, i just named 5 as this was what i instructed." Instance: `agent/failures.md` failure 60.
+Instruction basis: 2026-10-17, the KUBS S5 run sheet (`KUBS DT S5/e5 runsheet.jpeg`). Chaehan: "card 2 was 35, card 3 was 25, card 4 was 10 with Q&A, card 5 was 5 card 6 20 card 7 5m. so all in all +10 overrun which is marked."
+
+Neighbours: rules 171 and 249.
+
+Evidence: failure 60 in socrates `agent/failures.md`.
 
 ### 166. A shared GUI application is claimed before a run and released after it, and a run that dies inside `open` is a handoff failure
 
@@ -3647,17 +3721,13 @@ constraint he does not have. Once the product is settled, the record carries the
 product, its price per serve and the reason the alternative lost, not a lattice
 of pack sizes he never asked to optimize.
 
-Instruction basis: 2026-10-19, the Kikkoman latte-base comparison. The answer
-recommended the barista carton over the cheaper original on a 39% per-litre
-premium and a 1.3 g protein per 200 ml gap, and framed the premium as "about
-15% of the cup". Chaehan: "you advised wrongly. the more protein and carbs is
+Instruction basis: 2026-10-19, the Kikkoman latte-base comparison. Chaehan: "you advised wrongly. the more protein and carbs is
 tiny, if perceptable at all. for that the higher price? also, i use much less
 milk as i don't do a full latte, only max 50ml. so the difference is even less."
-The corrected answer then added a 200 ml carton option to work around the
-carton's printed three-day life; his practice contradicts it: "you put in too
-much complexity, remove the 200ml and the optimization of the 3days which is not
-important as soy milk stays ok for 5-7d and i use it also for overnight oats
-where it provides more protein than oat milk."
+
+Neighbours: rules 175, 177 and 253.
+
+Evidence: failure 73, and the entry "Evidence for rule 178", in socrates `agent/failures.md`.
 
 ### 179. An artifact named as a kind carries that kind's affordances, not only its content
 
@@ -3691,7 +3761,11 @@ A session deck belongs in the session's folder beside the deck it derives from, 
 
 A purpose does not demote an artifact. When one request asks both for something to be built and for a measurement of the work — recreate these slides in another format *and* time it against how the originals were made — what it asks to be built is a deliverable from its first build and goes to its kind's home then; "it was only evidence for the assessment" is not a lower tier, and a deliverable that waits for the user to ask where it is has already cost him the asking. The artifact the user will open is the one that is somewhere he opens things from.
 
-Instruction basis: 2026-10-19, the E08 HTML deck. It was built, verified and handed over from `projects/kubs_dt/out/html_proto/e08/`, a git-ignored working directory of the socrates repo, while the deck's own folder on the Drive ("KUBS DT S8") holds the .key, the slides md and the PDF export as one file each. Chaehan: "i still don't get why you don't put the slide deck on the session folder, why is that?" The port had been filed as evidence for a format assessment, and that filing was never revisited when the port became a deck. Reached for again the same day, with the file verifiably in place: "i'm getting crazy. in this session i told you to put the html on the session folder!!!" — the file had existed in the repo for about a day and a half before it reached the folder, because a placement was treated as a step to be asked for rather than part of the deliverable.
+Instruction basis: 2026-10-19, the E08 HTML deck. Chaehan: "i still don't get why you don't put the slide deck on the session folder, why is that?"
+
+Neighbours: rules 150, 183 and 217.
+
+Evidence: failure 75, and the entry "Evidence for rule 180", in socrates `agent/failures.md`.
 
 ### 181. Every layer of a ported artifact is read or observed, and each layer's provenance is stated
 
@@ -3703,7 +3777,11 @@ A faithful copy has three layers, and none of them follows from another:
 
 Verification of one layer says nothing about the others. A render that matches to a few percent of pixels proves geometry; it proves nothing about an animation that is invisible in a static render, and a single frame comparison cannot see a colour that covers a few percent of the page. Before calling a port faithful, name for each layer how its values were obtained, and where a value cannot be read, observe it — a layer labelled "unverified" in a code comment and shipped anyway is a guess wearing a caveat.
 
-Instruction basis: 2026-10-19, the E08 HTML deck. Its geometry had been fitted and checked against the deck's export page by page, and its port to HTML was reported as faithful. Chaehan: "the animations are mostly to fast, eg the transitions fall, and you missed many transitions like the title slide showing holmer wandering left to right. where all the animations that build up the slide eg two books: first me, then the books? ... the last two slides have strongly different color and fonts from the original that's terrible given you can read all attributes." The transitions were a fixed 0.5 s where the deck runs 1.0 s on six slides; the builds were one guessed appearance step per page where the deck runs up to three, in its own order; the cover's Homer did not move; slide 11's type was Roboto 150 where the deck is HelveticaNeue-Bold 184, and slide 12's headline was white where the deck is #1682B0 — all readable through `font of object text`, `size of object text` and `color of object text`, and all of it observable by playing the deck and screenshotting each step.
+Instruction basis: 2026-10-19, the E08 HTML deck. Chaehan: "the animations are mostly to fast, eg the transitions fall, and you missed many transitions like the title slide showing holmer wandering left to right. where all the animations that build up the slide eg two books: first me, then the books? ... the last two slides have strongly different color and fonts from the original that's terrible given you can read all attributes."
+
+Neighbours: rules 134, 188 and 260.
+
+Evidence: the entry "Evidence for rule 181" in socrates `agent/failures.md`.
 
 ### 182. A shared folder's change log is the cross-session channel
 
@@ -3727,8 +3805,6 @@ A summary is written from the result, not from the work; it makes three moves, i
 2. The two or three cases that moved, each with where it went and the one trait that explains it.
 3. The sharpest case, and what it shows about the instrument, the record or the process.
 
-(private)
-
 What makes it work, and what to copy:
 
 - it opens on the effect, not on the procedure;
@@ -3740,7 +3816,9 @@ The reader has the table. The summary tells him what changed in it and which row
 
 This applies to every kind of summary an agent writes: a grading pass, a diff, a test run, a research sweep, a status note, the closing section of a report.
 
-(private) (private)
+Neighbours: rules 19, 59 and 127.
+
+Evidence: failures 79 and 111, and the entry "Evidence for rule 184", in socrates `agent/failures.md`.
 
 ### 185. A list on a page is composed to its own width, in one typeface at one size, with no explanatory tails
 
@@ -3837,9 +3915,13 @@ The distinction that matters: a **new** piece of work is a new commit, however s
 
 Once the user has named amend for a change, that choice holds for the rest of the session: a correction that arrives a turn later, such as a distance total missing the warmup after the reps were re-keyed, goes into the same commit too. The test before any commit is whether HEAD's subject still describes the whole change; when it does, reset the commits above it softly and re-commit, and a new commit is only for work the subject no longer covers.
 
-The force-push is allowed: on 2026-11-11 auto mode refused one as destructive, and on 2026-11-12 Chaehan, asked which way rule 193 should go, answered "I'll allow force pushes". The lease names the tip you replace, and a commit someone else built on yours is never rewritten: check `git branch -a --contains <sha>` first, and leave the history as it is when another branch holds it.
+The force-push is allowed. The lease names the tip you replace, and a commit someone else built on yours is never rewritten: check `git branch -a --contains <sha>` first, and leave the history as it is when another branch holds it.
 
-Instruction basis: 2026-10-20, the E08 deck's page count. Adding the navy agenda made the deck 16 pages; the build test still asserted 15, CI failed, and I fixed the literal and pushed it as its own commit. Chaehan: "you shouldn't push such fixes but git amend them." Repeated 2026-11-23: after the 2026-11-22 swim entry was amended on his "relabel it 60% and git amend", the next correction to the same entry (`distance_adjustment: 200` for the warmup and cooldown) was pushed as a new commit. Chaehan: "no it should have git amended not new commit".
+Instruction basis: 2026-10-20, the E08 deck's page count. Chaehan: "you shouldn't push such fixes but git amend them."
+
+Neighbours: rules 3 and 10.
+
+Evidence: failures 87 and 247, and the entry "Evidence for rule 193", in socrates `agent/failures.md`.
 
 ### 194. "Replace A with B" removes A
 
@@ -3922,11 +4004,13 @@ moves to `src/deckkit/`", never "where it lives: `src/deckkit/`". A proposal
 written in the present tense reads as a description of the system, and Chaehan
 has to ask whether it exists.
 
-Instruction basis: 2026-10-20, the finance deck. The reuse of the KUBS DT HTML
-generator was reported as 70 to 75 percent, measured across the stylesheet, and
-copying the generator was named as an option. Chaehan: "i don't want to copy -
+Instruction basis: 2026-10-20, the finance deck. Chaehan: "i don't want to copy -
 no duplicate code anywhere ever, this should be common sense!!!" and "we need to
 increase the reuse rate, i had hoped for 90%".
+
+Neighbours: rules 12 and 203.
+
+Evidence: failure 91, and the entry "Evidence for rule 196", in socrates `agent/failures.md`.
 
 ### 197. A stated plan is applied, and a variant of a live element is not a new element
 
@@ -4125,23 +4209,22 @@ reported as done until the run itself is read and its conclusion quoted.
   proves the machine.
 - Read a CI crash as environmental before reading it as logic: "No module named
   X" is a file the commit does not carry (`git ls-files` it), "cannot open
-  resource" is a path only this machine has. Both were the answer in one
-  evening.
+  resource" is a path only this machine has.
 - Its corollary for the code: nothing that a test or a build exercises may
   depend on an absolute path of one machine. A font, a binary, a data folder is
   chosen from a candidate list that ends in a portable fallback.
 - If the run cannot be read (no `gh`, no token), say that, with the reason, in
   place of the claim.
 
-Instruction basis: 2026-10-20, the finance deck. A test importing a project that
-was never committed failed in CI while passing here, and the failure was told to
-the user as "a timing artefact". The next push then died on
-`/System/Library/Fonts/HelveticaNeue.ttc`, which Ubuntu does not have, after a
-clean-worktree run on macOS had been quoted as proof. Chaehan: "you still didn't
+Instruction basis: 2026-10-20, the finance deck. Chaehan: "you still didn't
 fix the CI error, why did you ignore that?" and then "why do you lie?
 https://github.com/agilebean/socrates/actions/runs/39418107193 i want you to
 check the CI runs now automatically without me helping you. remember in all
 agents".
+
+Neighbours: rules 13 and 94.
+
+Evidence: the entry "Evidence for rule 204" in socrates `agent/failures.md`.
 
 ### 205. A verification pass never writes the artifact the user presents from
 
@@ -4193,15 +4276,16 @@ specification of the *pipeline*, not only of how the result looks.
 
 Instruction basis: 2026-10-21, the finance deck. e08 had been the master since
 the start - its page types, its colours, its animation classes, its asset
-provider. Its `out` block carries `dir` and `single`; the finance spec I wrote
-carries `dir` plus an `html` key of my own. The pages were copied faithfully and
-the delivery path was not, so the one file Chaehan opened had no styles and no
-pictures. Chaehan: "i don't understand why this html doesn't embed everything
+provider. Chaehan: "i don't understand why this html doesn't embed everything
 even though we used the same deckkit as for kubsdt" and then "i said that e08 was
 the master for this build which embedded all assets. why did you ignore that and
 do a totally different rendering method? introspect that and put into agentic_ai.
 we need to learn why using the same method for a given clear master file and
 clear spec is not common sense for you".
+
+Neighbours: rules 134, 155 and 202.
+
+Evidence: the entry "Evidence for rule 260" in socrates `agent/failures.md`.
 
 ### 206. Prose never sits in a crowded last column; the evidence takes its own full-width line
 
@@ -4314,20 +4398,9 @@ become the universe, and the right provider is never in the list.
 *Verifiability bias*: the provider with the most published data wins a
 comparison whose deciding attribute it does not publish.
 
-(private) The 2026-03-23 note
-"Korean plan agencies" compared five agencies gathered from blog and
-press pages (their links still carried `utm_source=chatgpt.com`) on tier,
-a star-guessed "pool quality (PhD/abroad)", package size and price; J
-Sunrise, which later proved to have the only formal study-abroad member
-class, was not in it. The 2026-09-19 benchmark did find Sunrise and
-described the program correctly, but ranked on published member counts,
-education percentages, traffic and fee ladders — all of which Sunrise
-withholds — so it sat in the elite lane "at higher price and with
-unverifiable counts" while Duo, the most published, was recommended for
-registration and turned out to refuse foreign-passport holders. Chaehan
-registered at Sunrise on 2026-10-24 and read the pool as the best he had
-seen: "this is important to improve your search so it is not random but
-more systematic to find what i want."
+Neighbours: rules 177, 211 and 247.
+
+Evidence: failure 108, and the entry "Evidence for rule 209", in socrates `agent/failures.md`.
 
 ### 210. A requirements document names outcomes, never the technology that delivers them
 
@@ -4504,9 +4577,7 @@ one of his languages. This holds for the reply's own voice only — a quoted
 document, a filename or a form field may keep its original script, and rule 123
 governs how foreign text is presented.
 
-**The check is mechanical, because the drift is.** Knowing the rule is not
-enough: it shipped in this file on 2026-10-26 and the next reply came back in
-Chinese anyway. `scripts/wording_lint.py` flags any Han character in the
+**The check is mechanical, because the drift is.** `scripts/wording_lint.py` flags any Han character in the
 writer's own text (inline code and a declared excerpt exempt) and exits 2, so
 the finished reply is written to a temp file and run through it before it is
 sent — the same gate the wording markers already use. Hangul passes: a Korean
@@ -4514,21 +4585,19 @@ reply is a legitimate thread language.
 
 Instruction basis, 2026-10-26, the KUBS final-essay handoff: the reply came back
 in Chinese. Chaehan: "why do you answer in chinese now? this is terrible."
-`agent/failures.md` failure 119 carries the cause analysis.
 
 **When he names a folder, everything the pass produces goes inside that
 folder.** The backup is a subfolder of it, and the deliverables sit directly
 beside the originals. A sibling folder invented next to the named one — a
 `<folder> by studentid/`, a `<folder> output/`, a dated copy one level up — is
 not the instruction however tidy it looks: he then has two places to look and a
-rename to undo. Asked to lay out `final essays`, the pass wrote
-`final essays - backup 2026-10-26/` and `final essays by studentid/` beside it
-instead of `final essays/backup 2026-10-26/` and `final essays/<studentid>.pdf`;
-Chaehan: "the folders backup should be in the original folder final essays of
-course, isn't that common sense? and the final essays in that folder directly
-not an extra folder." `agent/failures.md` failure 120 carries the analysis;
+rename to undo. `agent/failures.md` failure 120 carries the analysis;
 the structure he named is the frame, and a working copy, a converted copy or an
 intermediate is temp-folder material, never a new top-level folder in his Drive.
+
+Neighbours: rule 123.
+
+Evidence: failures 119, 120 and 124, and the entry "Evidence for rule 217", in socrates `agent/failures.md`.
 
 ### 218. A copy is made only where it can outlive the original, and a correction is a move, not another run of the pass
 
@@ -4554,9 +4623,7 @@ already verified. Re-running the producing pass to land them in the new place
 re-renders every file, rewrites Drive, spends the machine time twice and can
 change the artifacts it was only supposed to relocate. Re-run only when the
 correction changed the *content* rule; test a changed script on one input, and
-relocate the existing outputs. 2026-10-26: the folder-placement correction was
-applied by re-running the whole 26-student conversion, then verifying it, and
-then the backup the script still wrote had to be deleted separately.
+relocate the existing outputs.
 
 **The count is part of the answer.** A turn that visits eighteen shell calls for
 one correction is a turn that did not batch: one call to inspect the destination,
@@ -4564,6 +4631,10 @@ one script per change set, one read to verify, one commit per repo. Rule 74
 carries the batching standard; this clause is what its violation costs —
 `agent/failures.md` failure 122 counts the calls and names each redundant
 one.
+
+Neighbours: rule 74.
+
+Evidence: failures 121 and 122, and the entry "Evidence for rule 218", in socrates `agent/failures.md`.
 
 ### 219. A derivative replaces its source in the working folder, and the source's name is the reason it moves
 
@@ -4687,16 +4758,14 @@ audited against its source in the same turn, because the fault is in the method
 that produced it, not in the single sentence.
 
 Failure, 2026-10-27, KUBS DT Team 1: three claims in one read were not in the
-record. A role-play test was inferred from an acted scene in the presentation;
-the sprint-two shift was written as "from memory to anxiety" when the sprint-one
-problem was helplessness and the failure was not only forgetting the way home but
-also feeling lost; and "hiding the device does not remove stigma" was built on a
-dialogue that says nobody would know the button was pressed. Chaehan: "where did
+record. Chaehan: "where did
 you find hiding device was mentioned? i think it wasn't. so really once and for
 all, remember not to make up things, especially when grading!!! this is utmost
-priority in grading!!!" And on the deduction: "you must downgrade if a method
-element like testing was not done but you must be sure of it, as there might be
-references like the user interviews of grandparents hidden in a paragraph."
+priority in grading!!!"
+
+Neighbours: rules 109, 122 and 145.
+
+Evidence: the entry "Evidence for rule 222" in socrates `agent/failures.md`.
 
 ### 223. A page that renders blank is reported in the pass that finds it
 
@@ -4746,8 +4815,11 @@ order the user meant — student number ascending, the order of the LMS sheet �
 never looked for; three passes each delivered a differently shaped table. His
 words: "why did you change the sorting table which was alphabetical?", "you
 changed again totally the content of the table! this is annoying! show the whole
-table!". In the same passes two evidence cells were lost to a field appended one
-place too far.
+table!".
+
+Neighbours: rules 114, 232 and 239.
+
+Evidence: failure 127, and the entry "Evidence for rule 224", in socrates `agent/failures.md`.
 
 ### 225. A repeated row is copied from its generator, never retyped
 
@@ -5099,21 +5171,11 @@ highest first. Grouping those rows by brand, or appending a new row at the
 bottom because it was written last, is not an order the reader can scan. The
 test for which order applies: does the row order itself say something — a date,
 a sequence, a layout he dragged — or is it the order things happened to be
-typed in? The first keeps his order, the second is sorted. (private)
+typed in? The first keeps his order, the second is sorted.
 
+Neighbours: rules 154 and 224.
 
-
-
-
-Failure, 2026-10-29, the Training Plan table of "My Swim Training". The swim
-pipeline's plan sync sorted the blocks ascending in `plan_blocks()` and
-`render_table()` wrote that order into the note, so the table that had read
-newest-first in every stored version up to 2026-10-28 came back oldest-first at
-10:04 on 10-29. Chaehan, 2026-11-02: "explain to me why you changed the sorting
-of the table in my swim training evernote - it should always be newest on top but
-the training plan is opposite". Repaired by rendering the projection
-newest-first, keeping the master oldest-first for the carry-forward logic, and
-writing the note back newest-first; a test in the swim repo holds the order.
+Evidence: the entry "Evidence for rule 239" in socrates `agent/failures.md`.
 
 ### 240. A dated note named as the target of a consolidation is a source too
 
