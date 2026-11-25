@@ -1325,7 +1325,7 @@ every file's name says what is inside it.
 Instruction basis, 2026-11-08: `_misc.md` was split into `family.md`,
 `evernote.md`, `friendships.md`, `startup.md`, `talks.md`, `shopping.md`,
 `googleads-mcp.md` and `optimize-my-life.md`, and deleted. Chaehan:
-"jaekeun should not be in _misc - i hate this file it should always be in a
+"Minho should not be in _misc - i hate this file it should always be in a
 semantically meaningfully name file!"
 
 A file that moves out of memory is split by kind first: its failures go to the register, its lessons stay in memory under their topic, and the line check covers every destination.
@@ -2124,6 +2124,11 @@ much it matters to them, and group like items under headings they would use.
    expected, including what you fixed mid-way and what you could not do.
 4. **Supporting detail.** File names, hashes, counts, and only where they let
    them verify or act.
+
+A report on a large change, one of many items, batches or files, first says for
+each kind of change what it is and what it does for the user, one plain sentence
+each. Its numbers are one to three totals; a table per batch or per item goes
+into a file the report links.
 
 - **Group like items under short plain headings.** A heading is the noun for the
   group ("Waiting on you", "What moved", "Not done"), not a stage of your process
@@ -5835,9 +5840,16 @@ unless he explicitly instructs that specific number or phrase for that specific
 message. This rule applies to all outgoing communication, not only to
 negotiation contexts.
 
+A commit to agentkit is outgoing text, because agentkit is public. It carries no
+detail of Chaehan's life or of another person: no name, health fact, tax or
+residence status, relationship or dated case. An example from his life goes to
+socrates, and agentkit keeps the rule with an invented example. The commit hook
+refuses a staged file that holds a term of the private replacement list
+(`scripts/private_term_check.py`).
+
 Neighbours: rules 37 and 84.
 
-Evidence: none recorded in socrates `agent/failures.md`.
+Evidence: failure 257 in socrates `agent/failures.md`.
 
 ### 251. Concise trims filler, never data
 

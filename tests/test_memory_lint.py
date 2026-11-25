@@ -17,7 +17,7 @@ def codes(text: str) -> list[str]:
 
 
 def test_hedge_inside_the_sentence_passes():
-    line = "After a long abstinence, the yellow sample color likely comes from sample vesicle fluid.\n"
+    line = "After a long run, the dark urine color likely comes from too little water.\n"
     assert codes(line) == []
 
 
