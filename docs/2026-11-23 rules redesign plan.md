@@ -91,6 +91,8 @@ What these batches changed:
 
 **Phase 3, merge and route, each merge on your yes.** Rules on one theme merge into one card: wording (2, 19, 37, 48, 54, 57, 85, whose duplicated markers `common_sense.md` already lists as waiting on your word) and commits (3, 10, 46, 119) are the first candidates. Then `rules.index.md` is regrouped by the moment of use.
 
+The first merge ran on 2026-11-25, on your word ("why do you need to merge is that savings? if yes do it. for the wordings make sure the rules can be followed by a weaker llm like deepseek v4.1 flash"). Merging saves words where rules on one theme repeat each other, and the merged card is written for a weak model: numbered steps, one action per sentence, Chaehan named instead of "he", and a Test line. The six commit rules became rule 3 (2711 to 1125 words with the pointers). The seven wording rules became three cards by the moment they apply: rule 2 for every sentence (with 48), rule 19 for a reply's or a note's order, shape and length (with 54), and rule 37 for a message, an announcement or a letter to an office (with 57 and 85); 5572 to 4130 words. Rule 2 keeps its five classes and 38 kinds word for word, because the checker and the writers use them as the list of detectors. Each merged rule keeps its number with one line, "Merged into rule N on 2026-11-25.", so every citation resolves. Rule 10's clause on citing a measurement moved word for word into rule 238. socrates `docs/2026-11-25 rules merge 1.tsv` holds every sentence of the 13 rules, today's and the frozen tag's, with where it went, and `check` finds all 4091 units of the tag in RULES.md, the register or that file.
+
 ## The checks that prove nothing is lost
 
 Each check runs in `tests/` on every push:
