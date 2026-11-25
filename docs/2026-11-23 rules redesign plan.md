@@ -61,14 +61,14 @@ The first batch ran on 2026-11-24, on a RULES.md identical to the tag, so `evide
 The second batch ran the same day, after your yes to the first: rules 88, 74, 127, 160, 11, 185, 85, 105, 69, 245, 166, 111, 162, 62, 22, 75, 54, 33, 37 and 213, from 15375 to 12669 words (18%), with 81 cuts and 18 strips in `docs/2026-11-24 rules trim batch 2.tsv`. Four things the batch added to the method:
 - The ledger of the day showed the batch 1 "Evidence:" lines as incidents, since they name failure numbers; `evidence` now reads a card line as a pointer, so nothing is copied for it.
 - A dated sentence that opens a plain paragraph can be cut while the principle after it stays (rule 69); only a bullet's first sentence is refused, since the rest would lose its marker.
-- A private detail of your life that stood in a rule as an example leaves with its dated case, and the example's kind stays: the achievements listed in rule 105, the health detail in rule 33, the plan quotes in rule 22.
+- A private detail of your life that stood in a rule as an example leaves with its dated case, and the example's kind stays; the decision file names each one, and it stays in socrates.
 - `tools/rules_ledger.py review` writes the batch's before and after as a page, so every batch is reviewed the same way. A kept paragraph pairs with its earlier form by the share of its words the earlier form holds, so only the card lines show as added.
 
 Rules 85 and 37 grew by 3%: every dated or quoted sentence in them is an example of a kind the rule forbids, so only the card lines changed. A rule's Neighbours are the rules its own text names; where it names none, the rules nearest its subject in `rules.index.md`.
 
 The third batch ran on 2026-11-25: rules 161, 229, 110, 44, 208, 19, 3, 123, 148, 46, 195, 125, 167, 87, 175, 124, 67, 47, 59 and 106, from 10748 to 8852 words (18%), with 71 cuts and 1 strip in socrates `docs/2026-11-25 rules trim batch 3.tsv`. What it changed:
 - A sentence copied into the register now names the commit its line numbers come from, since a batch reads a RULES.md that earlier batches changed: `trim` takes the commit before the batch (`6aacfff` for this one). The six passages batch 2 copied named the tag with line numbers of the file after batch 1; they now name `1e53fef`, where each stands at its line.
-- Rule 44 keeps no quote, because both of its quotes name your status and your accounts, and rule 208 lost its second case, which held another person's business figures; the clauses state the kind.
+- Rules 44 and 208 lost the cases that named a private detail of your life or of another person, and the clauses state the kind.
 - Rule 167's two cases each stood under the failure they cite, so the register has no entry "Evidence for rule 167", and its Evidence line names failures 67, 70 and 243 only.
 - Rules 87, 67 and 59 grew by 3% or 4%: they tell no dated case, so they only gained the card lines. 19 of the 216 rules left are like them.
 
@@ -84,7 +84,7 @@ The remaining 216 rules run in batches of 40 without a stop between batches, on 
 | 9 | the last 16 | 1499 to 1637 (9% more) | 4 and 1 |
 
 What these batches changed:
-- A private detail leaves with its case, as in batch 2: the item comparisons in rules 239 and 43, the travel in rules 209, 83, 237, 41, 117 and 103, your residence status in rule 48, another person's transfers in rule 34, your Bank account in rule 159, the plan photos in rule 63, your status in rules 158 and 51, the health cases in rules 212, 35, 207, 254 and 255, another person's project in rule 210, and the students' names and grades in rule 184, whose list of what to copy now stands without the example.
+- A private detail of your life or of another person leaves with its case, as in batch 2; the decision files in socrates name each one, and the rule keeps the kind.
 - A rule number or failure number wrapped onto the next line ("Rule\n229") is now found; batches 2 and 3 missed none this way.
 - A rule with no failure and no entry in the register gets the line "Evidence: none recorded in socrates `agent/failures.md`.", so every card has both lines; 17 rules have it.
 - You did not review batches 4 to 9 before they ran; each review page stands beside its decision file, and a cut you want back is a copy from the register, where every cut sentence stands word for word.
