@@ -4,17 +4,7 @@
 Usage:
     python life_widgets.py <spec.json> <out.png>
 
-Chaehan chose the cards of the 2026-11-09 variant B ("how far you have come") and narrowed them the same day: only the important or distinct changes, each as a curve with a baseline of three data points, the minimum on the left with its number, and the vertically shortest chart possible. The set of cards is not fixed (2026-11-10): the chart shows 2, 4 or 6 of the most important life changes over 6 to 12 months.
-
-
-
-
-
-
-
-
-
- The spec decides
+Chaehan chose the cards of the 2026-11-09 variant B ("how far you have come") and narrowed them the same day: only the important or distinct changes, each as a curve with a baseline of three data points, the minimum on the left with its number, and the vertically shortest chart possible. The set of cards is not fixed (2026-11-10): the chart shows 2, 4 or 6 of the most important life changes over 6 to 12 months. The spec decides
 which measures; the renderer only lays them out, two to a row, and takes the
 number of cards the spec holds: 2, 4 or 6.
 

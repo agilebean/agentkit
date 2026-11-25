@@ -1805,9 +1805,7 @@ def main(argv: list[str] | None = None) -> int:
                    "section of the note (its heading's text) and leave every other byte as it stands")
     i.add_argument("--base", help="with --as-is --guid: the note's text as you read it; the write refuses when the "
                    "note changed since")
-    i.add_argument("--person", help="with --as-is: the other person a note is about; the gate " "takes she, her and her name as a subject beside you"
-
-)
+    i.add_argument("--person", help="with --as-is: the other person a note is about; the gate " "takes she, her and her name as a subject beside you")
     i.add_argument("--as-is", dest="as_is", help="a text written elsewhere (Claude, Chaehan) is the note: only the gate "
                    "checks it; photo lines at its top are uploaded by write")
     lk = sub.add_parser("link", help="print the exact Evernote link for notes matching the words")

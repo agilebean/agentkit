@@ -31,12 +31,12 @@ code's design in the skill: the project README is the source and drifts first.
 | `hanji` | reads and writes Hanji notes through the local `hanji` CLI and `hanji_note.py`, with images, tags and versions | `scripts/` |
 | `itinerary-sync` | writes a booking's dates into `memory/travel.md`, `travelitinerary.csv` and the year's itinerary note in one pass | `scripts/`, socrates `memory/travel.md` |
 | `kubs-deck` | builds, fixes and verifies the E01-E08 Keynote decks; deckcheck runs before any install | socrates session folders |
-| `kubs-essay-grading` | grades the 35 percent essay round, sweeps a single student, builds the course gradebook | socrates `docs/` |
-| `kubs-grading` | team (65 percent) and solo assessment, the comparison against Chaehan's read, the rendered curve | Drive "KUBS DT Grading" |
+| `kubs-essay-grading` | grades the 35 percent essay round; the instructions live in socrates `skills/`, because they quote students' grades | socrates `docs/` |
+| `kubs-grading` | team (65 percent) and solo assessment; the instructions live in socrates `skills/`, because they quote students' grades | Drive "KUBS DT Grading" |
 | `kubs-mail` | reads the KUBS mailbox into a ranked list of what to attend, each row with its venue and registration link | `scripts/` |
 | `kubs-printout` | session script PDF and run sheet PNG for the TA, sent over Signal | socrates printout files |
-| `life-challenges` | the dated Life Challenges note: the dilemma as two ways, the questions that decide, research per issue | `scripts/`; socrates `projects/applecalendar`, `projects/omnifocus` |
-| `life-overview` | the dated Life Overview: status per domain, timeline, what went well | `scripts/`; the same two adapters |
+| `life-challenges` | the dated Life Challenges note; the instructions live in socrates `skills/`, the gate and scripts here | `scripts/`; socrates `projects/applecalendar`, `projects/omnifocus` |
+| `life-overview` | the dated Life Overview; the instructions live in socrates `skills/`, the note gate and scripts here | `scripts/`; the same two adapters |
 | `llm-smoke` | verifies LLM auth and connectivity end to end and reports which key source resolved | `scripts/` |
 | `receipt-note` | a receipt or booking into an Evernote note with an itinerary card at the top | `email_shot.py`, `render_card.py` |
 | `sourcing` | provider comparison tables in `memory/src_*.md`: vendors, quotes, reply checks | `README.md` (the routing rule for `src_` files) |

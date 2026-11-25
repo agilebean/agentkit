@@ -11,10 +11,10 @@ The standard behind every row of table one: anything the user will read or hear 
 ## The system
 
 - `RULES.md` rule 2: the standing classes and the thirty-five kinds, each with its fix. The reference for the word "robotic". Their examples are in the section "Examples of rule 2's kinds".
-- This file, table one: one row per wording instance: location and date, the flagged wording, why the user rejected it, the repair, and why the repair is better.
-- This file, table two: one row per "not common sense" correction: date, what he flagged, his words, what should have been obvious, and the rule or repair it produced.
+- socrates `agent/wording cases.md` (private, because the rows quote Chaehan's notes), table one: one row per wording instance: location and date, the flagged wording, why the user rejected it, the repair, and why the repair is better.
+- The same socrates file, table two: one row per "not common sense" correction: date, what he flagged, his words, what should have been obvious, and the rule or repair it produced.
 - Checker: `robot_markers.tsv` (this folder) holds the machine-checkable subset; `scripts/wording_lint.py` runs it on any file, in any project. The KUBS pipeline wraps it (`pipeline.py lint --session N`).
-- Reading: a writer reads this file down to the heading "The wording instances": the standing repair instructions, the examples of rule 2's kinds, where the markers live and the search procedure. The two tables after it are searched for a precedent by a word or a date, and read whole only to append a row or to build a test set from them.
+- Reading: a writer reads this file down to the heading "The wording instances": the standing repair instructions, the examples of rule 2's kinds, where the markers live and the search procedure. The two tables in socrates are searched for a precedent by a word or a date, and read whole only to append a row or to build a test set from them.
 
 Maintenance: every new correction is appended at the end of its table in the same turn as one row. Table one: location and date, the flagged words, why the user rejected them (the user's words where the record has them), the repair, and why the repair is better. Table two: date, the miss, the user's words, what should have been obvious, and the rule or repair. Keep cells short: quotes are trimmed to the carrier fragment, one or two sentences per cell. A correction without the reasoning is incomplete; when the exchange carries none and the reason is not evident, ask before appending. A new class becomes a bullet in rule 2; a class a machine can catch becomes a row in `robot_markers.tsv`, checked by `scripts/wording_lint.py`.
 

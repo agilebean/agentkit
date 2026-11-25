@@ -30,9 +30,7 @@ Clutter is descriptive structural information: words that describe the record
 itself (what it was read from, how many sources, which method, what a section
 holds, how an observation was made) instead of stating a fact Chaehan acts on.
 The test: delete the phrase. If no fact about the world or about Chaehan is lost
-and no decision changes, it was clutter. "2026-11-06 kitchen quote, 3 photos:" keeps its whole point as "2026-11-06 kitchen quote:", because the photo count
-
- describes the evidence, not the result. Where the basis changes a decision,
+and no decision changes, it was clutter. "2026-11-06 kitchen quote, 3 photos:" keeps its whole point as "2026-11-06 kitchen quote:", because the photo count describes the evidence, not the result. Where the basis changes a decision,
 it is stated as that fact in the sentence it changes, never as a label in a
 heading or a bracket.
 
@@ -56,9 +54,7 @@ complexity!" and "the whole point of making notes is to bring all to the point,
 not describe a lot. the more you remove the clutter, the more valuable becomes
 whatever is left!!!! this is common sense!!!!"
 
-Instruction basis, 2026-11-07, a note whose table cells each opened with a description of their own source.
-
- Chaehan:
+Instruction basis, 2026-11-07, a note whose table cells each opened with a description of their own source. Chaehan:
 "generalize in agent rules what i mean by clutter - it is descriptive structural
 information".
 
@@ -259,9 +255,9 @@ Anything Chaehan or another reader will read or hear is understood on the first 
 
 **Every wording correction becomes a check.** When Chaehan flags wording, do all four in the same turn:
 
-1. Append a row to `common_sense.md` (this folder): the flagged words and where they stood, why Chaehan rejected them in his words, the repair, and why the repair is better. When the exchange holds no reason, ask Chaehan for it. A complaint that something ordinary was missed goes into the file's second table.
+1. Append a row to socrates `agent/wording cases.md`, which is private because its rows quote Chaehan's notes: the flagged words and where they stood, why Chaehan rejected them in his words, the repair, and why the repair is better. When the exchange holds no reason, ask Chaehan for it. A complaint that something ordinary was missed goes into the file's second table.
 2. A word or idiom that can recur becomes a row in `robot_markers.tsv` (this folder), with Chaehan's repair as its fix. One flag is enough.
-3. A flag no pattern can find again (a one-off sentence, a heading style, the layout of a whole answer) is named in the writer's-pass list of `tests/test_wording_inventory.py`. That test fails on any row Chaehan called robotic that is in neither place.
+3. A flag no pattern can find again (a one-off sentence, a heading style, the layout of a whole answer) is named in the writer's-pass list of socrates `tests/test_wording_inventory.py`. That test fails on any row Chaehan called robotic that is in neither place.
 4. A new class of defect becomes a kind in this rule.
 
 **Run the checker before anything ships.**
@@ -793,11 +789,7 @@ one will eventually be chosen.
   becomes a fact about someone, read the label on that line and one line each
   side.
 - **An ordinal names its series.** "First", "second" or "last" is written
-  with what it counts: "the second of the four flat viewings", four visits to four different flats. A count of meetings with one person names that person ("your first meeting with the landlord") and comes only from a line that counts meetings with that person. A bare "second meeting" binds to the nearest person and invents a history with them.
-
-
-
- Test: read the ordinal
+  with what it counts: "the second of the four flat viewings", four visits to four different flats. A count of meetings with one person names that person ("your first meeting with the landlord") and comes only from a line that counts meetings with that person. A bare "second meeting" binds to the nearest person and invents a history with them. Test: read the ordinal
   beside the nearest person's name; if it can count meetings with that
   person, the series is missing. `scripts/wording_lint.py` warns on a bare
   "second date" or "second meeting" outside a quote, and the writer settles
@@ -1250,7 +1242,6 @@ Neighbours: rule 28.
 
 Evidence: the entry "Evidence for rule 31" in socrates `agent/failures.md`.
 
-
 ### 32. README is part of the CLI change — update it in the same slice
 
 Any change to the command surface (a subcommand, a flag, an env var, an
@@ -1677,8 +1668,7 @@ reflections, syntheses). It does not apply to information queries, where
 a faithful list of findings is the correct output, or to chat replies
 carrying fresh facts.
 
-Instruction basis: on 2026-09-17 the first version of a planning note was rejected:
- "the wording is just a reformulation of my
+Instruction basis: on 2026-09-17 the first version of a planning note was rejected: "the wording is just a reformulation of my
 input - i expected a much more intellectual, human and witty reflection,
 not just a rephrasing. i already gave you the whole structure. you must
 give added benefit, e.g. interesting new info, speculative optimistic
@@ -3418,7 +3408,7 @@ A text students will read (a handout, a tips sheet, an announcement) is written 
 
 - Before writing, read the course's own student-facing texts (syllabus, overviews, announcements, the user's earlier instructions to students) and the session feedback file; the new text matches their voice and reuses their names for things.
 - When the user says "I will tell that", the material right there is what stays out of the written text.
-- Same family as rule 57 (reader-facing text) and rule 2 (robotic wording); the instances are rows in `common_sense.md`.
+- Same family as rule 57 (reader-facing text) and rule 2 (robotic wording); the instances are rows in socrates `agent/wording cases.md`.
 
 Instruction basis: 2026-10-12, the S6 tips sheet. Chaehan: "no you wrote the text too literally without thinking for the students ... these are tips, so they must easy to understand and follow, reference to terminology and examples in parentheses, and reference the problems surfaced during the presentations and my feedback on sessions?"
 
@@ -3745,7 +3735,7 @@ Evidence: the entry "Evidence for rule 173" in socrates `agent/failures.md`.
 
 Two corrections on one subject - wording (how something is written) or precision (how exactly a thing is stated or diagnosed) - and the storage is the agent's own step, taken in the turn that carries the second one, without a request. A correction of a fact the agent could not have known does not count toward the two.
 
-- Wording: the accepted version verbatim, the rejected version beside it, and the reason the accepted one is better - one row in `common_sense.md`; a new class also becomes a bullet in rule 2.
+- Wording: the accepted version verbatim, the rejected version beside it, and the reason the accepted one is better - one row in socrates `agent/wording cases.md`; a new class also becomes a bullet in rule 2.
 - Procedure: a numbered entry in the failure register with the rule that would have prevented it, the instance and the user's exact words, the cause, and the fix.
 - The accepted wording is stored word for word; a later correction adds a second version rather than replacing the first.
 - The records are committed in the same session.
@@ -4612,9 +4602,6 @@ present, not proof of a listing. An availability claim carries the product URL
 beside it or it is not made, and "it was available last time" is not usage data
 for today.
 
-
-
-
 Neighbours: rules 175, 231 and 247.
 
 Evidence: failure 110, and the entry "Evidence for rule 211", in socrates `agent/failures.md`.
@@ -4629,13 +4616,11 @@ limits, funding, trial count and heterogeneity come after, as a separate
 statement of confidence. Skepticism lowers confidence; it never cancels a
 number already shown to clear the source's own bar. Quoting "+8.9 points" and
 then calling the result "implausibly high" in the next paragraph is a
-self-contradiction when the same paper sets the threshold for a clinically important change at 8.4
- — the reader is left with two incompatible readings of one figure.
+self-contradiction when the same paper sets the threshold for a clinically important change at 8.4 — the reader is left with two incompatible readings of one figure.
 
 The same discipline governs the arithmetic around a dose. A strength on a label
 is a salt weight, and a comparison between products is made on the free active:
-3 g of magnesium citrate holds ~0.48 g of magnesium, while 3 g of magnesium oxide holds ~1.8 g.
- Getting that backwards reverses the
+3 g of magnesium citrate holds ~0.48 g of magnesium, while 3 g of magnesium oxide holds ~1.8 g. Getting that backwards reverses the
 recommendation.
 
 Neighbours: rules 89 and 244.
@@ -5690,9 +5675,6 @@ measured in a fluid, a listed side effect, a pass rate a page reports. It
 belongs in the summary with its evidence and its status in the same line, not only in the section that
 carries the detail. A summary of the proven claims alone withholds the one
 thing he would hedge against.
-
-
-
 
 Neighbours: rules 212, 244 and 254.
 

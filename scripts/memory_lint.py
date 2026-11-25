@@ -16,8 +16,7 @@ M2  an old value kept beside its replacement ("superseded", "no longer", "was wr
     heading.
 M3  an agent's conclusion stated as fact ("assessment:", "best-fitting", "leading cause") with no hedge
     in the line: say it with "likely" or "may" inside the sentence, or cut it. A hedge in the sentence
-    is the mark ("after a long run, the dark urine color likely comes from too little water"),
- so "likely", "probably", "suggests" and their kin pass.
+    is the mark ("after a long run, the dark urine color likely comes from too little water"), so "likely", "probably", "suggests" and their kin pass.
 M4  a person entry with no date and no event ("- **Name:** ..."): a person's role is attached to a dated
     event in one line, or a model attaches the person to the next event it needs a helper for (Minho's
     wire transfers in the furniture shipment, 2026-11-08).

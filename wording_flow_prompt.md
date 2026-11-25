@@ -11,10 +11,10 @@ Example, from another record:
 L1 (lead)	Your boiler service at Seogyo 11 is booked for 2026-04-02 at 10:00.
 L2 (bullet)	Your boiler service at Seogyo 11 costs 90000 won, paid on the day.
 L3 (bullet)	Your boiler service at Seogyo 11 needs the gas valve open from 09:30.
-L4 (bullet) Your landlord Park Minseo pays half of the boiler service, 45000 won, after 2026-04-30.
+L4 (bullet)	Your landlord Park Minseo pays half of the boiler service, 45000 won, after 2026-04-30.
 Answer:
 L1	Your boiler service at Seogyo 11 is booked for 2026-04-02 at 10:00.
 L2,L3	It costs 90000 won, paid on the day, and needs the gas valve open from 09:30.
-L4 Your landlord Park Minseo pays half of it, 45000 won, after 2026-04-30.
+L4	Your landlord Park Minseo pays half of it, 45000 won, after 2026-04-30.
 
 Answer with one line for each new line: the ids of the lines it holds, separated by commas, a tab, and the new line. Write nothing else.

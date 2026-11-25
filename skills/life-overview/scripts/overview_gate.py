@@ -244,9 +244,7 @@ def check(draft: str, original: str | None = None, linked: list[str] | None = No
     """`verbatim` is text Chaehan wrote that the note carries as he wrote it: its lines are exempt from the form
     checks (T5, T12, T13, T16), and T20 fails when one of its sentences is missing or changed.
 
-    `person` names the other person a note is about. In such a note that person may lead: "she", "her" and her name count as a subject in T13 and T15 beside "you". T12's cap of seven items stays.
-
- T5
+    `person` names the other person a note is about. In such a note that person may lead: "she", "her" and her name count as a subject in T13 and T15 beside "you". T12's cap of seven items stays. T5
     leaves the sections in STORY_SECTIONS to prose, since the skill tells the turning point as a story."""
     fails: list[str] = []
     is_v = _verbatim_test(verbatim)
@@ -342,7 +340,6 @@ def _verbatim_kept(draft: str, verbatim: str) -> list[str]:
 
 
 # A note about another person tells its turning point as a story in paragraphs.
-
 # With `person`, T5 leaves these sections to prose.
 STORY_SECTIONS = frozenset({"The turning point"})
 
