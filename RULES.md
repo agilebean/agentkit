@@ -998,6 +998,8 @@ with an agent-made dichotomy. A proposed check must also sit where
 the information can exist. A trait observable only in live conversation is tested in the
 conversation, or not at all.
 
+**A contrast he draws is the pattern to test.** When he sets two sides against each other (what one person asks of him and what that person does for him), the analysis tests that contrast with every example on both sides. His examples are evidence like any record line, and a line the other person said once never outweighs examples he repeats. Chaehan, 2026-11-26: "you must semantically understand that on a deeper level, not on the surface level!!!" (failure 261 in socrates `agent/failures.md`).
+
 Neighbours: rule 9.
 
 Evidence: failures 107 and 150, and the entry "Evidence for rule 22", in socrates `agent/failures.md`.
@@ -1519,6 +1521,14 @@ emoji glyphs, not text characters: ☐ rendered thin, colorless, and
 unclickable in Evernote, and the todo tag was changed to 📌.
 
 Failure mode: a summary or note without bullets and subsections.
+
+- **A section is one list.** After its opening sentence, each top-level bullet is a
+  bold label, then one sentence of its point, then sub-bullets. A research finding
+  always sits in a sub-bullet under the claim it supports. A quote carries its point
+  time; a span of time is written only when its length is the point. Chaehan,
+  2026-11-26: "use just one bullet list with subbullets, but keep the bold on the
+  top level, one summary sentence after, and then the subbullets" and "research
+  findings should always be in subbullets".
 
 Neighbours: rules 19, 106 and 127.
 
@@ -3050,6 +3060,8 @@ Failure mode, 2026-10-07: the Kobe beef block said "nothing rated 3.5 or higher 
 
 **An asset list is enumerated in full before any claim about what a page contains.** A filename is not evidence about a file's content, and a filtered list is not the list: read every entry, then claim.
 
+**His own examples are rows.** A summary of a person ("does what you ask", "never offers") is tested against every example his message gives before it is written; one example against it rewrites the summary (failure 261 in socrates `agent/failures.md`).
+
 Neighbours: rules 121, 158 and 222.
 
 Evidence: the entry "Evidence for rule 122" in socrates `agent/failures.md`.
@@ -3326,6 +3338,8 @@ Two clauses about evidence prepared for someone else to read or hear:
 - **A test offered to tell two categories apart must match one of them and exclude the other.** Run the proposed rule against the other category before presenting it: if the same form, syntax, or attribute also describes it, the test separates nothing and leaves the audience exactly as confused as before. The test that works names the attribute that exists on one side only — a need statement carries a unit of measure with a direction of change (time, effort, likelihood, skill), a job statement carries none — not the shape the two share.
 
 Instruction basis: 2026-10-12, the Kalbach need-versus-outcome question. Chaehan: "your research doesn't exactly show that kalbach sees needs synonymous with outcomes. he merely points to ODI where this exists." and "you must make it clearer not covering all details but showing exactly what relates to what and why."
+
+- **What someone said is quoted in that person's words.** A verdict, an opinion or a promise is cited from the speaker's own line, with its time. Another person's summary of it goes beneath as a side note, and a line whose speaker no word shows is written as "someone said" (failure 261 in socrates `agent/failures.md`).
 
 Neighbours: rules 160, 161 and 222.
 
@@ -3621,6 +3635,8 @@ Where the marks can be located by measurement, do that rather than by eye (the c
 When the user gives the values himself, his readings are the record: they are applied, and only the cells where the ink still reads differently to the agent are named, without arguing the mark. A number he states from what he *instructed* is not the delivered value - where the two can differ (a block's planned or ordered length against the one that ran), the delivered value is what the record takes, and the instruction is named beside it.
 
 Instruction basis: 2026-10-17, the KUBS S5 run sheet (`KUBS DT S5/e5 runsheet.jpeg`). Chaehan: "card 2 was 35, card 3 was 25, card 4 was 10 with Q&A, card 5 was 5 card 6 20 card 7 5m. so all in all +10 overrun which is marked."
+
+A speaker read off a voice (its pitch, its place in a recording) is a reading too. A speaker is named from the words or from his account of the setting; a recording that starts before the person arrives (a taxi, a walk to the place) holds other people's voices (failure 261 in socrates `agent/failures.md`).
 
 Neighbours: rules 171 and 249.
 
@@ -4698,6 +4714,8 @@ Evidence: the entry "Evidence for rule 214" in socrates `agent/failures.md`.
 A reader scans headings. He does not read a paragraph to find the thing he came for, and when the paragraph is long he does not read it at all. So the new term, the chosen cue, the decision the section exists for sits in the heading, and the first line under it is one sentence.
 
 Instruction basis, 2026-10-26, the swim drills section of "My Swim Training": the heading read "Warmup drills: left-roll right-up" while the cue Chaehan had just chosen sat inside a 60-word paragraph below the table. Chaehan: "how am i supposed to see my cue in this long paragraph ... the section header is: Warmup drills: left-roll right-up still doesn't contain the new cue!!! this is common sense, a human doesn't read a whole paragraph until see the important information, he doesn't read it at all. you could summarize this as: must feel the heavy water in the left arm and elbow. and put the cue into the section header!"
+
+A heading or a bold label has at most four words. Elsewhere in the text an item is named by what it is, never by its place in a list ("the cheaper flat", not "the second option"). Chaehan, 2026-11-26: "generally the titles are too long" and "don't reference numbers on a list ... always concise semantic references!!!".
 
 Neighbours: rules 20, 131 and 214.
 
