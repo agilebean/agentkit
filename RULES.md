@@ -953,9 +953,19 @@ describes how something acts ("it blunts the inflammatory response to muscle
 damage") says nothing about whether the answer is yes or no, and leaves the
 reader to derive the verdict himself.
 
+**The verdict answers his question in his terms, and a fact about him the
+record lacks is asked.** A reply that opens by denying a claim he did not make
+("the 8 weeks isn't the deciding fact") answers a question of its own, and its
+evidence usually held his answer. When the yes or the no turns on
+a fact about Chaehan that the record does not hold (one treatment session or
+the last of a course; a price per session or per package), the first sentences
+give the verdict for each value of that fact, and the question tool asks which
+it is. The likely value is never assumed and built on, since everything after
+it then answers a case he may not be in.
+
 Neighbours: rule 244.
 
-Evidence: failures 118 and 141, and the entry "Evidence for rule 21", in socrates `agent/failures.md`.
+Evidence: failures 118, 141 and 262, and the entry "Evidence for rule 21", in socrates `agent/failures.md`.
 
 ### 22. User-stated patterns are facts, not bias observations
 
