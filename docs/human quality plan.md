@@ -1,6 +1,6 @@
 # Human quality plan
 
-**Plan, not implemented yet.** This file plans how the notes DeepSeek writes into Evernote and Hanji become knowledge you can act on, and it is the one place where that work is tracked: the status board holds each task's state, and the log at the foot of this file holds the dated reason for every change. Its tasks are written for the session that takes them up, most of them for a frontier model such as Claude Opus 5.5 or Claude Fable 5.2. The dated analyses it builds on stay as written, in socrates under `docs/human quality/`: the 2026-11-05 agent writing summary, the note wording analyses of 2026-11-15 and 2026-11-17, and the 2026-11-17 build spec.
+**Plan, not implemented yet.** This file plans how the notes DeepSeek writes into Evernote and Hanji, and its chat replies in opencode, become knowledge you can act on, and it is the one place where that work is tracked: the status board holds each task's state, and the log at the foot of this file holds the dated reason for every change. Its tasks are written for the session that takes them up, most of them for a frontier model such as Claude Opus 5.5 or Claude Fable 5.2. The dated analyses it builds on stay as written, in socrates under `docs/human quality/`: the 2026-11-05 agent writing summary, the note wording analyses of 2026-11-15 and 2026-11-17, the 2026-11-17 build spec and the 2026-11-27 chat reply baseline.
 
 agentkit is a public repository. Nothing from Chaehan's notes or memory (names, health, money, dates with people) goes into this file or any other agentkit file: test notes, gold lists and measured builds live in socrates, which is private, under `docs/human quality/`, with the data the scripts read in its `data/` folder. This file holds task states and aggregate numbers.
 
@@ -12,6 +12,7 @@ agentkit is a public repository. Nothing from Chaehan's notes or memory (names, 
 - On 2026-11-16 an open question found the idea of a conversation in 4 of 4 DeepSeek runs and the full instruction in 0 of 4, so understanding has to come before any rule of form.
 - If notes built from your live decisions still miss them in your blind read, DeepSeek's judgment is the limit, and the step that finds the point moves to a stronger model (~$0.05 a note by the 2026-11-15 estimate).
 - So the next gain is one missing layer, your live decisions held as data with a test that a note conveys them; every check of form added so far has been met with a new robotic form.
+- Your chat replies with Socrates never pass this path. After the rule fix of 2026-11-27 a rerun passed the lint with 0 hits and opened one of two replies with your yes, and it answered each ban with a form the lint does not know (HQ-11).
 
 ## What your corrections have in common
 
@@ -81,6 +82,8 @@ After this plan, every note goes through seven steps; three exist today and one 
 
 Rule 17 keeps its force inside this path: a person, a cause, a payment or a date is attached to an event only when one record line names both. A derived card adds no such link; it computes what the cited lines already hold.
 
+A chat reply takes steps 1, 2, 5 and 6 (HQ-11), since it has no sections to choose among.
+
 ## Status board
 
 This table is where progress is tracked. A session that takes a task sets its status here before it starts, and every change of status gets a dated entry in the log at the foot of this file, with its reason and numbers. Tasks are numbered HQ, for human quality, in causal order: the measure first, then the layers from meaning down to wording, then the rules and the spread to every skill. The decisions D0 to D5 are yours and are listed after the board.
@@ -98,6 +101,7 @@ This table is where progress is tracked. A session that takes a task sets its st
 | HQ-08 | Retire rules and checks that write form | rules | frontier | D5 per batch | ready |
 | HQ-09 | One builder for every note skill | all | frontier | HQ-03 to HQ-06 | blocked |
 | HQ-10 | Memory index and dated fact lines | truth | any | your yes on part b's move of `memory/health.md` | part a done, 2026-11-21; part b ready to propose |
+| HQ-11 | Chat replies through the card path | meaning, truth, wording | frontier designs; DeepSeek runs | D6, D7, D8 | waits on D6 to D8, 2026-11-27 |
 
 Frontier means Claude Opus 5.5, Claude Fable 5.2 or a newer model; any means a model that writes and tests code well, DeepSeek included.
 
@@ -111,6 +115,9 @@ The session that reaches a decision asks it with the question tool, quoting this
 - D3, for HQ-04, decided on 2026-11-21: "Derived and readings". A line may state what two or more record lines on one matter mean together, with its premises cited and its numbers recomputed by a script, and a link the record does not state appears only written as the agent's reading or as open (2026-11-23, Chaehan: the label leaves notes and memory, and the hedge goes inside the sentence, "the dark urine color comes likely from too little water"). Whether "probably" and "may" may stand in a line about evidence, as the Cochrane Handbook uses them, stays open.
 - D4, for HQ-07, decided on 2026-11-21: "Case first". A correction of yours about a note becomes a case of the layer it hit before it becomes a rule, and a new rule or check is kept only when the measures improve; core 0 of `AGENTS.md` changes with HQ-07.
 - D5, for HQ-08. Each batch of rules to merge or retire, shown to you as a before and after.
+- D6, for HQ-11. Which chat replies go through the path. A reply takes 66 to 101 s today, and the path adds an estimated ~4 minutes ±1, from the 118 to 248 s one `card_fill.py` call took for six record lines, plus the understanding and writing calls.
+- D7, for HQ-11. The route. A tool the agent calls is the smaller build and works only while DeepSeek calls it: in the first session of failure 262 it skipped the lint "for chat" by its own reading. A plugin hook that rewrites every finished reply reaches every reply through opencode's `experimental.text.complete`, and it is unverified whether the opencode window then shows the rewritten text.
+- D8, for HQ-11. Where the accepted replies in the writer's examples come from.
 
 ## Tasks
 
@@ -263,6 +270,40 @@ Steps: part a of step 7 of the 2026-11-17 build spec as written (an index in thr
 
 Acceptance: as the build spec states for each part.
 
+### HQ-11 Chat replies through the card path
+
+Goal: a Socrates reply in opencode passes the steps a note passes, understanding first, then cards and examples, then the lint, so the call that writes it sees your question, its cards and replies you accepted, and no rule.
+
+Why here: a chat reply gets only the bans of core 4 in `AGENTS.md`, which the model that writes it reads beside every rule, and every task above builds notes. It reuses `card_fill.py`, `card_check.py`, `say.py`'s checks and `say_flow.py` as they are, keeps its own understanding question as date analysis does (HQ-03 step 1), and waits on no other task.
+
+Test case: failure 262 in socrates, one yes/no question over two turns, answered in opencode by deepseek-v4.1-flash at high reasoning in session `ses_de4d21f69ffe1xy1a21BQJmrKd` and again in `ses_de4bfa69dffey60UuZb0Z4pcC7`, which ran with the yes/no clause of core 1 and the lint path of core 4 (agentkit 27f7647). The rerun ran the lint on each draft and rewrote it until it passed. The replies it sent have forms the lint does not know: five colon labels ("So the shape is:", "What that leaves:"), one frame "X, it does not Y", and 20 thousand separators against core 8, where the first session had none. Its first reply took as fact a count the record lacks, as the first session did. The per-turn reasons are in socrates `docs/human quality/2026-11-27 chat reply baseline.md`.
+
+| Measure | How it is taken | Baseline, first session; rerun | Target |
+|---|---|---|---|
+| Your answer first | a fresh DeepSeek call reads your question and the reply's first two sentences against the gold answer you confirmed: a yes/no question gets its yes or no in your terms, and when the answer turns on a fact about you the record lacks, the answer for each value of that fact | 0 of 2 turns; 1 of 2 | every turn |
+| Facts about you the record lacks | turns that build on a fact about you that no record line and no message of yours states | 2 of 2; 2 of 2 | none |
+| The question tool | turns that call it when the answer turns on such a fact; `opencode run` cancels the call, so the call is counted | 0 of 2; 1 of 2 | every such turn |
+| Facts against their page | numbers and names of the reply missing from the page or record line it cites | 1; not measured | none |
+| Wording | hits of `wording_lint.py --strict` on the reply as sent | 11 and 8; 0 and 0 after the agent's own lint loop | 0 from the path's own checks |
+| Your blind read | the built reply against the rerun's reply, one pair per turn | not taken | the built reply in both turns |
+| Wait | seconds from your message to the reply | 101 and 94; 87 and 66 | reported, no target |
+
+Steps, after D6 to D8:
+
+1. `scripts/reply.py <dir>`, three steps, each a fresh DeepSeek call that sees its inputs and nothing else.
+   - Point: `reply_point_prompt.md` asks one open question with no rule of form. It asks what you want to decide with this message, in your words, and the kind of answer that takes. It then asks for the answer, and, when the answer turns on a fact about you the record lacks, for that fact and the answer for each value. The call reads your message, the turns before it and `sources.md`, and writes `point.md`, at high reasoning with the idle cut raised as in HQ-03 step 2.
+   - Cards: `card_fill.py` on the lines of `sources.md` that `point.md` cites, then `card_check.py` with check T19. A line of `sources.md` reads `<src> | <line>`, its src a memory line (`memory/health.md:96`), a page's URL or one of your messages (`chat:2`), so a card about you needs a record line or your own words.
+   - Say: `reply_writer_prompt.md` holds examples only, each a point with its cards and the reply you accepted (D8), kept in socrates `docs/human quality/data/`. Its user message is the answer of `point.md` and the cards. The checks of `say.py` hold: every number and name of the cards in the reply, none added, and no hit of `wording_lint.py --strict`. A reply that fails is asked for once more with the reasons, and a second failure is written from the cards' fields, as `say.py` does; `say_flow.py` then passes over its lines as one section.
+2. The route of D7: the socrates agent writes `sources.md` and runs `reply.py`, or a plugin hands each finished reply to it with the agent's draft as one more source. The reply goes out as `reply.py` printed it.
+3. `tests/test_reply.py` with a stubbed model and invented records.
+4. Draft the gold answer of each test turn from the record, and you confirm it with the question tool, kept in socrates `docs/human quality/data/`. Rerun both turns in opencode (`opencode run --agent socrates`), three runs each and timed, and give you the best built reply of each turn blind against the rerun's reply.
+
+Model: a frontier model writes the script, the prompts, the tests and the drafts of the gold answers. DeepSeek V4.1 Flash runs every call of a reply and the judge, through OpenCode Go with the direct DeepSeek API as fallback, and no stronger model is a run-time option (rule 245). A run counts only as an opencode run.
+
+Acceptance: you prefer the built reply in both turns of your blind read, and across the six runs every first sentence holds your answer in your terms, no reply builds on a fact about you the record lacks, and the lint finds 0 hits. When you prefer the rerun's reply, the session records the numbers and which step lost, and changes nothing else.
+
+Leave alone: every note path, `say.py`'s writer prompt and its examples, rules 2, 19 and 21, and cores 1 and 4, until HQ-08 retires what the path enforces.
+
 ## How a session takes a task
 
 1. Read the Summary, the board and the task, then every file the task names, and check `git status` in agentkit and socrates for another session's edits on those files (core 7).
@@ -298,6 +339,7 @@ Suggestion: a frontier-model session takes HQ-01 now, which changes no rule, gat
 
 ## Log
 
+- 2026-11-27: HQ-11 added, chat replies through the card path, after failure 262 in socrates. The rule fix of agentkit 27f7647 brought the rerun's lint hits from 11 and 8 to 0 and 0 and one of two openings to your yes, and the replies met each ban with a new form: colon labels, a contrast frame the lint misses, thousand separators. HQ-11 waits on D6 to D8, which go to you with the question tool, and nothing is built before you answer.
 - 2026-11-21, sixth entry: HQ-02 is done. You checked 10 of the 12 decisions drafted from the 2026-11-16 Life Challenges note, the 2026-11-20 Stock Review and the memory files (two stock decisions stayed unchecked), and they are in `socrates/life/2026-11-21-decisions.tsv`. The life-challenges skill now asks by checkbox after it presents the challenges and before it creates the note, and both life skills read the newest file. HQ-05 is ready, and part b of HQ-10 waits on your yes to its proposed move of `memory/health.md`.
 - 2026-11-21, fifth entry: HQ-06 is built and waits for your blind read, and part a of HQ-10 is done. `scripts/say_flow.py` sends each section's written lines with their place to one call with `wording_flow_prompt.md` and checks the answer with say.py's checks. It reads a note's lines, since the cards of A4 were gone from the temporary folders, and it sits beside `say.py`, which another session was editing. Two passes over A4 (22 calls, 862 s) took the pairs of sentences in a row that name one thing again from 21 to 2, one of them a dose. The median sentence went from 13.5 to 14.5 words, 1098 words to 1053, with no lint flag before or after, and `wording_eval.py --say` stayed at 11 of 11 in three runs. The rebuild is `A4-flow.md` in socrates' step 8 folder (fc06a71). Part a of HQ-10: `memory_index.py` in socrates writes `memory/index.md`, one row for each of the 45 memory files, and a heading index with line ranges for the 19 over 1500 words. `kubs.index.md` came out unchanged, and socrates.md now reads by these indexes.
 - 2026-11-21, fourth entry: you answered D2, D3 and D4 with the question tool. D2: the life-challenges skill asks, after it presents the challenges and before it creates the note, which decisions are valid, one checkbox each, and writes the confirmed ones to a dated file in `socrates/life/`, which HQ-05 and part b of HQ-10 read. The register in `decisions/` that the question proposed is dropped. D3: derived lines with cited premises and recomputed numbers, and readings marked as the agent's or as open. The Cochrane wording stays open. D4: case first. HQ-02, HQ-04 and HQ-07 are ready, and HQ-05 and part b of HQ-10 wait on HQ-02.
