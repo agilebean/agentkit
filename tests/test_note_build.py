@@ -553,6 +553,18 @@ def _as_is(tmp_path, monkeypatch, text):
 
 
 @needs_socrates
+def test_a_draft_with_no_h2_heading_is_refused(tmp_path, monkeypatch, capsys) -> None:
+    # 2026-11-27, the knee note: built from a "--format text" read of a template, so the headings and the bullets
+    # arrived as plain lines and Hanji showed the note with no formatting at all.
+    d, rc = _as_is(tmp_path, monkeypatch,
+                   "Summary\n\nYour knees swelled after three days of walking.\n\nThe swelling\n\nThree days of load.\n")
+    out = capsys.readouterr().out
+    assert rc == 1, out
+    assert "carries no '## ' heading" in out, out
+    assert not (d / "original.md").read_text().startswith("## ")
+
+
+@needs_socrates
 def test_a_text_written_elsewhere_is_gated_stamped_and_written_with_its_photos(tmp_path, monkeypatch, capsys) -> None:
     import hashlib
     img = _photo(tmp_path)

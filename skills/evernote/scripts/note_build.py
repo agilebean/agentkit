@@ -1056,6 +1056,11 @@ def check_as_is(d: Path) -> int:
     _imgs, text, errs = local_images(draft)
     # The read-back is checked against this text; photo lines leave it, since their paths are no facts.
     (d / "original.md").write_text(text, encoding="utf-8")
+    if not any(line.startswith("## ") for line in text.splitlines()):
+        print(f"The draft carries no '## ' heading, so every section name would arrive as body text and the note "
+              f"would show no formatting at all. Give every section an H2 ('## Summary', '## What the swelling is') "
+              f"with its points as bullets under a lead line, in {d / 'draft.md'}, then run next again.")
+        return 1
     person = json.loads((d / "meta.json").read_text(encoding="utf-8")).get("person")
     fails = errs + g.check(text, None, note=True, table_titles=True, verbatim=verbatim_text(d), person=person)
     if fails:
