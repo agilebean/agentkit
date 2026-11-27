@@ -944,36 +944,48 @@ mechanism blocks, a candidate table, and caveats; the user rejected it as
 standard.
 
 **Every part of the question gets its own verdict, and a mechanism is not a
-verdict.** A yes/no question opens with the yes or the no. A question with two
-parts ("help recovery or performance", "soreness and repair") gets two
-answers, one each, before any mechanism. The verdicts come first even when
+verdict.** A yes/no question opens with the yes or the no, except one that
+asks whether the user's amount is enough, which opens with the norm (next
+paragraph). A question with two parts ("help recovery or performance",
+"soreness and repair") gets two answers, one each, before any mechanism. The verdicts come first even when
 they differ in strength ("yes a little, for one of them; no for the other"),
 because the reader's next decision depends on which is which. A sentence that
 describes how something acts ("it blunts the inflammatory response to muscle
 damage") says nothing about whether the answer is yes or no, and leaves the
 reader to derive the verdict himself.
 
-**The verdict answers his question in his terms, and a fact about him the
-record lacks is asked.** A reply that opens by denying a claim he did not make
-("the 8 weeks isn't the deciding fact") answers a question of its own, and its
-evidence usually held his answer. The test is the reply's first word: Yes or
-No. A sentence that denies both sides ("nothing blocks another session, and
-nothing requires one") passes the contrast-frame check and still gives no
-verdict. A fact about him counts as missing only after memory and his Evernote
+**A question whether the user's amount is enough is answered with the norm.**
+When the user asks whether a time, dose or distance justifies a step ("if the
+time after the last one justifies another one"), the answer is the normal value
+for that step with its number, and then the user's amount placed on it: the
+sessions of a treatment course come 2 to 4 weeks apart and a maintenance session
+4 to 12 months after the course, so ten weeks sits between the two. The norm is
+the decisive number, as the 1.9 days of incubation are in the model answer. A
+judgement on the user's amount without the norm ("No, the ten weeks on its own
+doesn't justify it") or a denial that the amount decides ("the 8 weeks isn't the
+deciding fact") leaves the user without the one number to time the next session
+by. A test on the reply's first word cannot repair this, since "No." passes it
+and still leaves the interval out. The class is recognised by its shape: the
+user gives the time since a step and asks whether to repeat it ("i had an eye
+ipl 2 months ago ... is it necessary?") or whether an amount is enough. The test
+is the first sentence: it states the normal value with its number, in the
+user's seat, and the user's amount stands in the next. An opening verdict fails
+even when the norm follows it ("Not necessary.", "On timing alone, no. At 10
+weeks you are a third of the way into the 6-12 months", the rerun of
+2026-11-28). A fact
+about the user counts as missing only after memory and the user's Evernote
 notes are searched; in failure 262 three dated treatment notes with their
-receipts sat in Evernote while the reply guessed. When the yes or the no turns on
-a fact about Chaehan that the record does not hold (one treatment session or
-the last of a course; a price per session or per package), the first sentences
-give the verdict for each value of that fact, and the question tool asks which
-it is. The likely value is never assumed and built on, since everything after
-it then answers a case he may not be in. A claim of his that seems to conflict
-with the evidence is the same case ("by far the cheapest", beside a price that
-reads high for one session): the reply first finds the reading of his words
-under which the claim holds (the price covers several sessions), gives the
-verdict under each reading, and asks which he meant before any sentence calls
-him wrong. An explanation that makes him wrong ("maybe he assumed a stronger
-dollar") is a guess about him, and a guess about him needs a record line like
-any other fact.
+receipts sat in Evernote while the reply guessed. When the answer turns on a
+fact about the user that the record does not hold (one treatment session or the
+last of a course; a price per session or per package), the reply gives the norm
+for each value of that fact, and the question tool asks which it is, never
+building on the likely value. A claim of the user's that seems to conflict with
+the evidence ("by far the cheapest", beside a price that reads high for one
+session) is read first in the sense that makes it hold (the price covers several
+sessions), answered under each reading, and asked about before any sentence
+calls the user wrong. An explanation that makes the user wrong (that the
+user assumed a stronger dollar) is a guess about the user, and a guess about the
+user needs a record line like any other fact.
 
 Neighbours: rule 244.
 
@@ -5187,6 +5199,8 @@ long swim races, the max i'd do is 1km indoors, i never do open water!"
 The fix is structural: state the limit above the options in the user's own terms
 ("pool only, 1 km maximum, indoors"), then derive the options from it. An option that
 crosses the limit is not ranked low — it is not in the list.
+
+A limit on what he can do (where or when he can meet someone, act or buy) is the same: it comes from his words or a record line that states it, never from his schedule or a travel plan. On 2026-11-26 a note told him he could meet no one while abroad, and he corrected it two days later with the service that already lets him (failure 264 in socrates `agent/failures.md`).
 
 Neighbours: rules 5, 138 and 177.
 
