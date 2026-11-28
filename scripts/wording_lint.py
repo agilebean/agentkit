@@ -15,7 +15,11 @@ own list names the shared one as well. `--strict` makes every warn a failure:
 a text Chaehan reads as a finished note carries no
 contrast frame and no container word at all. The list
 is the checkable subset by design: three-item runs, embedded clauses, headings
-over one sentence and colon-field blocks stay a writer's pass.
+over one sentence and colon-field blocks stay a writer's pass. `rhythm_hits`
+adds what a word list cannot see: three sentences in a row opening with "You",
+a paragraph of only instructions, a colon frame ("So the shape is:"), a bold
+lead-in and a thousand separator. `scripts/reply_gate.py` runs all of it on
+every chat reply as a Claude Code Stop hook.
 
 The language check is mechanical because the drift is not: a Han character in
 the writer's own text is a `flag` (RULES.md rule 217). Chaehan reads English,
@@ -154,6 +158,130 @@ def lint_text(text: str, rules) -> list[tuple[int, str, str, str]]:
     return hits
 
 
+# Run-level checks: the forms a word list cannot see, because they live in a run
+# of sentences or in a sentence's shape. Chaehan, 2026-11-14: "the constant
+# second person wording sounds repetitive and unnatural" and "only instructions
+# is also very unnatural". The colon frames and bold lead-ins are what the
+# 2026-11-27 chat reply baseline found in replies the marker list passed with
+# 0 hits ("So the shape is:", "One number decides it:").
+FENCE = re.compile(r"^\s*(?:```|~~~)")
+LIST_MARK = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+")
+BOLD_LEAD = re.compile(r"^\s*(?:(?:[-*+]|\d+[.)])\s+)?\*\*[^*\n]+\*\*[:.]?\s*\S")
+THOUSANDS = re.compile(r"(?<![\d,.])\d{1,3}(?:,\d{3})+(?![\d,])")
+SENTENCE = re.compile(r"\S.*?(?:[.!?](?=\s|$)|$)", re.S)
+YOU_OPEN = re.compile(r"^[\"'(]*(?:you|your|yours|you're|you'll|you've|you'd)\b", re.I)
+IMPERATIVE = frozenset("""add always apply ask avoid book bring buy call cancel check choose claim
+close confirm consider cut do don't drink drop eat email expect file find follow get give go hold
+increase keep leave let limit look lower make mention move never note open pay pick plan prefer put
+raise read reduce remember repeat reply rest return run save schedule send set show skip sleep start
+stop stretch swim take tell text treat try use wait walk watch write""".split())
+FRAME_HEAD = re.compile(r"^([A-Z][^:.!?\n]{0,70}?):(?=\s|$)")
+FRAME_WH = re.compile(r"^(?:so |and |but |here'?s |here is )?(?:what|why|how|where|when|which|who)\b", re.I)
+FRAME_END = frozenset("""is are was were be it this that these here down follows goes means matters
+leaves shows says counts decides holds stands remains comes happens verdict answer point shape catch
+upshot takeaway gist question rule test reason result call plan line version picture twist trick
+kicker key problem issue""".split())
+
+YOU_RUN_FIX = ("three sentences in a row open with 'You': make one a plain statement of fact "
+               "(Chaehan, 2026-11-14: \"the constant second person wording sounds repetitive\")")
+YOU_SHARE_FIX = "most sentences open with 'You': mix in plain statements of fact, as speech does (core 1)"
+IMPERATIVE_FIX = ("a paragraph of only instructions: state the facts they rest on, as speech mixes "
+                  "them (Chaehan, 2026-11-14: \"only instructions is also very unnatural\")")
+FRAME_FIX = "colon frame: the words before the colon announce the content; write the content as the sentence"
+BOLD_FIX = "bold lead-in: write the point as the paragraph's first sentence (RULES.md 19)"
+THOUSANDS_FIX = "a thousand separator: write numbers without one (core 8)"
+
+
+def _prose_blocks(text: str) -> list[list[tuple[int, str]]]:
+    """The writer's prose as paragraphs of (line, text): code fences, quotes,
+    tables, headings and declared excerpts left out, inline code stripped."""
+    blocks, block = [], []
+    in_fence = in_excerpt = False
+    for lineno, line in enumerate(text.splitlines(), 1):
+        if FENCE.match(line):
+            in_fence = not in_fence
+            line = ""
+        elif EXCERPT_OPEN.match(line):
+            in_excerpt = True
+        elif EXCERPT_CLOSE.match(line):
+            in_excerpt = False
+            line = ""
+        stripped = line.strip()
+        if in_fence or in_excerpt or not stripped or stripped[0] in ">|#" or stripped.startswith("<!--"):
+            if block:
+                blocks.append(block)
+                block = []
+            continue
+        block.append((lineno, re.sub(r"`[^`]*`", "", line)))
+    if block:
+        blocks.append(block)
+    return blocks
+
+
+def _sentences(block: list[tuple[int, str]]) -> list[tuple[int, str, bool]]:
+    """A paragraph's sentences as (line, text, inside a list); a list item
+    always starts a sentence. List markers and bold markers are dropped."""
+    out = []
+    pending: list[tuple[int, str, bool]] = []
+    for lineno, line in block:
+        is_item = bool(LIST_MARK.match(line))
+        body = LIST_MARK.sub("", line).replace("**", "").strip()
+        if is_item or not pending:
+            pending.append((lineno, body, is_item))
+        else:
+            ln, prev, item = pending[-1]
+            pending[-1] = (ln, prev + " " + body, item)
+    for lineno, body, item in pending:
+        for m in SENTENCE.finditer(body):
+            out.append((lineno, m.group(0).strip(), item))
+    return out
+
+
+def _is_frame(sentence: str) -> bool:
+    m = FRAME_HEAD.match(sentence)
+    if not m:
+        return False
+    words = m.group(1).split()
+    if len(words) < 2 or len(words) > 8:
+        return False
+    return bool(FRAME_WH.match(m.group(1))) or words[-1].lower().strip(",") in FRAME_END
+
+
+def rhythm_hits(text: str) -> list[tuple[int, str, str, str]]:
+    """The run-level and shape markers in a text: (line, level, the words, the fix)."""
+    hits = []
+    total = you = 0
+    first_line = None
+    for block in _prose_blocks(text):
+        for lineno, line in block:
+            if BOLD_LEAD.match(line):
+                hits.append((lineno, "flag", line.strip()[:50], BOLD_FIX))
+            for m in THOUSANDS.finditer(line):
+                hits.append((lineno, "flag", m.group(0), THOUSANDS_FIX))
+        sentences = _sentences(block)
+        run: list[tuple[int, str]] = []
+        for lineno, s, _item in sentences + [(0, "", False)]:
+            if s and YOU_OPEN.match(s):
+                run.append((lineno, s))
+                continue
+            if len(run) >= 3:
+                hits.append((run[0][0], "flag", " / ".join(x[1][:25] for x in run[:3]), YOU_RUN_FIX))
+            run = []
+        for lineno, s, _item in sentences:
+            if _is_frame(s):
+                hits.append((lineno, "flag", s.split(":", 1)[0] + ":", FRAME_FIX))
+            total += 1
+            you += bool(YOU_OPEN.match(s))
+            first_line = first_line or lineno
+        prose = [s for _l, s, item in sentences if not item]
+        if len(prose) >= 3 and len(prose) == len(sentences) and all(
+                s.split()[0].lower().strip("\"'(,") in IMPERATIVE for s in prose):
+            hits.append((sentences[0][0], "warn", prose[0][:40], IMPERATIVE_FIX))
+    if total >= 6 and you / total > 0.6:
+        hits.append((first_line or 1, "warn", f"{you} of {total} sentences open with 'You'", YOU_SHARE_FIX))
+    return sorted(hits)
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--markers", action="append", default=[],
@@ -188,7 +316,7 @@ def main(argv=None) -> int:
             print(f"  missing: {path}")
             continue
         body = open(path, encoding="utf-8").read()
-        for lineno, level, match, fix in lint_text(body, rules):
+        for lineno, level, match, fix in lint_text(body, rules) + rhythm_hits(body):
             print(f"  {path}:{lineno}: {level} '{match}' - {fix}")
             if level == "flag" or args.strict:
                 flags += 1

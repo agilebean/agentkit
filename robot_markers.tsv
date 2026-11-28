@@ -9,7 +9,9 @@
 # A quoted excerpt is declared by `<!-- verbatim -->` ... `<!-- end verbatim -->`
 # and its lines are skipped whole: the source's text is not the writer's.
 # The list is the checkable subset by design: three-item runs, embedded clauses,
-# headings over one sentence and colon-field blocks stay a writer's pass.
+# headings over one sentence and colon-field blocks stay a writer's pass. The run-level
+# forms ("You" openings, instruction-only paragraphs, colon frames, bold lead-ins,
+# thousand separators) are code, in `rhythm_hits` of the checker.
 flag	—	write periods and short sentences, not em-dashes
 flag	\s---\s	write periods and short sentences, not " --- " as a dash	^\s*\|
 flag	\bit'?s not (?:just|about)\b	say the one thing; drop the "not just" frame
