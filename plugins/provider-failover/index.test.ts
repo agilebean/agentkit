@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import plugin, { FALLBACK_AFTER, isConnectionFailure, isQuotaFailure, stillOnFallback, waitedFor } from "./index"
+import plugin, { FALLBACK_AFTER, TURN_END, isConnectionFailure, isQuotaFailure, stillOnFallback, waitedFor } from "./index"
 
 describe("failure class", () => {
   test("a socket reset on the transport is the class that moves the session", () => {
@@ -144,4 +144,40 @@ test("a spent gateway quota moves the session on its first failure", () => {
   expect(isQuotaFailure({ type: "provider.quota", message: "Go usage limit exceeded" })).toBe(true)
   expect(isQuotaFailure({ type: "provider.transport", message: "ECONNRESET" })).toBe(false)
   expect(isConnectionFailure({ type: "provider.quota", message: "Go usage limit exceeded" })).toBe(false)
+})
+
+
+// opencode v2.0.32 ends a turn with session.execution.* and never sends
+// session.idle (traced on the live service, 2026-11-28).
+describe("turn end", () => {
+  test("every way a turn ends restores, and the deprecated idle event is kept", () => {
+    for (const type of ["succeeded", "failed", "interrupted"]) expect(TURN_END.has(`session.execution.${type}`)).toBe(true)
+    expect(TURN_END.has("session.idle")).toBe(true)
+    expect(TURN_END.has("session.execution.started")).toBe(false)
+  })
+
+  test("a turn that ends with session.execution.succeeded puts the session back on the gateway", async () => {
+    const h = harness()
+    let release: () => void = () => undefined
+    const turnEnded = new Promise<void>((resolve) => (release = resolve))
+    const ctx = {
+      ...h.ctx,
+      event: {
+        subscribe: async function* () {
+          await turnEnded
+          yield { type: "session.execution.succeeded", data: { sessionID: "ses_test" } }
+        },
+      },
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cleanup = await plugin.setup(ctx as any)
+    const input = retry(h)
+    for (let i = 0; i < 4; i++) await h.hooks.retry(input)
+    expect(h.model()?.providerID).toBe("deepseek")
+    release()
+    for (let i = 0; i < 50 && h.model()?.providerID !== "opencode-go"; i++) await new Promise((r) => setTimeout(r, 10))
+    expect(h.model()).toEqual({ providerID: "opencode-go", id: "deepseek-v4.1-flash", variant: "high" })
+    expect(h.storage.size).toBe(0)
+    await cleanup?.()
+  })
 })

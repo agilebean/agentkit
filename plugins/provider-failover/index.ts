@@ -29,7 +29,7 @@
 //
 // Going back is remembered, not left to the next restart: the turn's original
 // model ref is written to plugin storage the moment the switch happens, and the
-// session is switched back when the turn ends (session.idle) or, if the app died
+// session is switched back when the turn ends (TURN_END) or, if the app died
 // first, on the next prompt of that session or on the next plugin setup. A
 // restore only touches a session whose model is still the fallback, so a model
 // the user picks during the fallback turn is never overwritten.
@@ -50,6 +50,20 @@ export const FALLBACK_AFTER = 4
 export const RETRY_GAPS_MS = [2_000, 4_000, 8_000]
 /** Wait before the attempt that runs on the fallback model. */
 const SWITCH_DELAY_MS = 1_000
+
+/**
+ * The events that end a turn. opencode v2.0.32 ends a turn with one of the three
+ * `session.execution.*` events and never emits `session.idle`, which its schema
+ * marks deprecated (traced on the live service, 2026-11-28); until then the
+ * turn-end restore never ran, and a session stayed on the fallback until its
+ * next prompt. `session.idle` stays in the set for a version that still sends it.
+ */
+export const TURN_END = new Set([
+  "session.execution.succeeded",
+  "session.execution.failed",
+  "session.execution.interrupted",
+  "session.idle",
+])
 
 const STORAGE_PREFIX = "agentkit.provider-failover:"
 const LOG_PATH = join(homedir(), ".local/share/opencode/log/provider-failover.log")
@@ -188,7 +202,7 @@ export default Plugin.define({
       try {
         for await (const event of ctx.event.subscribe({ signal: stop.signal })) {
           try {
-            if (event.type !== "session.idle") continue
+            if (!TURN_END.has(event.type)) continue
             const sessionID = (event as { data?: { sessionID?: string } }).data?.sessionID
             if (sessionID && (switched.has(sessionID) || (await ctx.storage.get(key(sessionID)).catch(() => undefined))))
               await restore(sessionID)
