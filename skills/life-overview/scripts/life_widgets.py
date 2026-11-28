@@ -30,6 +30,7 @@ Requires Pillow (socrates env) and the Apple SD Gothic Neo font.
 from __future__ import annotations
 
 import json
+import math
 import sys
 from datetime import date
 from pathlib import Path
@@ -62,8 +63,13 @@ def number(v: float) -> str:
 
 
 def decimals(vals: list[float]) -> int:
-    """The baseline is rounded to the precision the readings are given in."""
-    return max((len(f"{v:g}".split(".")[1]) if "." in f"{v:g}" else 0) for v in vals)
+    """The baseline is rounded to the precision the readings are given in, never past three
+    significant digits: a pace whose readings average to 96.667 s prints 104, not 104.278
+    (2026-11-28, the 90% pace card)."""
+    given = max((len(f"{v:g}".split(".")[1]) if "." in f"{v:g}" else 0) for v in vals)
+    mean = sum(vals[:3]) / len(vals[:3])
+    sig = 2 - math.floor(math.log10(abs(mean))) if mean else 0
+    return min(given, max(sig, 0))
 
 
 def axis_date(iso: str, span_years: bool) -> str:
