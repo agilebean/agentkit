@@ -91,3 +91,37 @@ def test_fences_and_quotes_are_not_read(tmp_path) -> None:
     p = tmp_path / "r.md"
     p.write_text("The command is below.\n\n```\nflag — in order to leverage\n```\n\n> In order to leverage it\n")
     assert gate.main([str(p)]) == 0
+
+
+def _run_harness(monkeypatch, capsys, tmp_path, text: str, *flags: str) -> tuple[int, str, dict]:
+    monkeypatch.setattr(gate, "LOG", tmp_path / "log.jsonl")
+    monkeypatch.setattr("sys.stdin", io.StringIO(text))
+    code = gate.main(["--harness", "opencode", "--session", "ses_1", "--message", "msg_1", *flags, "-"])
+    logged = json.loads((tmp_path / "log.jsonl").read_text().splitlines()[-1])
+    return code, capsys.readouterr().out, logged
+
+
+def test_a_harness_run_exits_2_with_the_reason_and_is_logged(monkeypatch, capsys, tmp_path) -> None:
+    code, out, logged = _run_harness(monkeypatch, capsys, tmp_path, BAD)
+    assert code == 2 and "bold lead-in" in out
+    assert logged["harness"] == "opencode" and logged["session"] == "ses_1" and logged["message"] == "msg_1"
+    assert logged["blocked"] is True and logged["flags"] >= 2
+
+
+def test_a_harness_run_passes_a_clean_reply(monkeypatch, capsys, tmp_path) -> None:
+    code, out, logged = _run_harness(monkeypatch, capsys, tmp_path, GOOD)
+    assert (code, out) == (0, "") and logged["blocked"] is False and logged["flags"] == 0
+
+
+def test_a_harness_second_pass_is_logged_and_never_blocked(monkeypatch, capsys, tmp_path) -> None:
+    code, out, logged = _run_harness(monkeypatch, capsys, tmp_path, BAD, "--second-pass")
+    assert (code, out) == (0, "") and logged["second_pass"] is True and logged["blocked"] is False
+    assert logged["flags"] >= 2
+
+
+def test_a_hand_run_on_a_draft_is_not_logged(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(gate, "LOG", tmp_path / "log.jsonl")
+    p = tmp_path / "r.md"
+    p.write_text(BAD + "\n")
+    assert gate.main([str(p)]) == 2
+    assert not (tmp_path / "log.jsonl").exists()

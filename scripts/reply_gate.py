@@ -11,17 +11,24 @@ bold lead-ins, thousand separators) and the Han script check.
 Usage:
   reply_gate.py --claude-stop            Claude Code Stop hook: the hook's JSON on stdin
   reply_gate.py [--strict] FILE | -      any harness: the reply's text in a file or on stdin
+  reply_gate.py --harness NAME [--session ID] [--message ID] [--second-pass] -
+                                         a harness plugin (opencode's plugins/reply-gate):
+                                         plain mode, and the run is logged
 
 A reply with a flag is sent back once: Claude Code gets {"decision": "block"}
 with the hits as the reason, and the agent posts the reply again, rewritten.
 A warn is listed only when a flag blocks; `--strict` (or REPLY_GATE_STRICT=1)
 blocks on a warn too. The second pass is never blocked again
-(`stop_hook_active`), so a reply costs at most one rewrite. Code fences, quoted
+(`stop_hook_active`, or `--second-pass` from a plugin), so a reply costs at
+most one rewrite. In plain mode the exit code carries the decision: 2 with the
+reason on stdout when the reply goes back, 0 when it passes. Code fences, quoted
 lines and declared excerpts are not the writer's prose and are not read.
 
-Every run appends one line to ~/.cache/agentkit/reply-gate/log.jsonl (words,
-flags, warns, blocked), the record that shows whether the standard is active.
-The gate fails open: an error is logged and the reply goes through.
+Every harness run (`--claude-stop` or `--harness`) appends one line to
+~/.cache/agentkit/reply-gate/log.jsonl (words, flags, warns, blocked), the
+record that shows whether the standard is active; a run by hand on a draft is
+not logged. The gate fails open: an error is logged and the reply goes through
+(a `--harness` run exits 1, and the plugin sends nothing).
 """
 from __future__ import annotations
 
@@ -153,10 +160,39 @@ def claude_stop(strict: bool) -> int:
         return 0
 
 
+def harness_run(args, strict: bool) -> int:
+    """Plain mode for a harness plugin: the decision in the exit code, the run logged."""
+    record = {"time": time.strftime("%Y-%m-%dT%H:%M:%S"), "harness": args.harness,
+              "session": args.session, "message": args.message, "cwd": os.getcwd()}
+    if args.second_pass:
+        record["second_pass"] = True
+    try:
+        text = sys.stdin.read() if args.file == "-" else open(args.file, encoding="utf-8").read()
+        hits = check(text)
+        record.update(words=len(text.split()), flags=sum(h[1] == "flag" for h in hits),
+                      warns=sum(h[1] == "warn" for h in hits))
+        blocked = bool(text.strip()) and blocks(hits, strict) and not args.second_pass
+        record["blocked"] = blocked
+        log(record)
+        if blocked:
+            print(reason(hits, text))
+            return 2
+        return 0
+    except Exception as error:  # the gate must never break a session
+        record["error"] = repr(error)[:300]
+        log(record)
+        print(record["error"], file=sys.stderr)
+        return 1
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--claude-stop", action="store_true", help="read a Claude Code Stop hook's JSON on stdin")
     ap.add_argument("--strict", action="store_true", help="a warn blocks as a flag does")
+    ap.add_argument("--harness", help="the harness that runs the gate (opencode); the run is logged")
+    ap.add_argument("--session", help="the harness's session id, for the log")
+    ap.add_argument("--message", help="the reply's message id, for the log")
+    ap.add_argument("--second-pass", action="store_true", help="the rewrite of a reply sent back: logged, never blocked")
     ap.add_argument("file", nargs="?", help="the reply's text, or - for stdin")
     args = ap.parse_args(argv)
     strict = args.strict or os.environ.get("REPLY_GATE_STRICT") == "1"
@@ -164,6 +200,8 @@ def main(argv=None) -> int:
         return claude_stop(strict)
     if not args.file:
         ap.error("give FILE, - or --claude-stop")
+    if args.harness:
+        return harness_run(args, strict)
     text = sys.stdin.read() if args.file == "-" else open(args.file, encoding="utf-8").read()
     hits = check(text)
     if blocks(hits, strict):
