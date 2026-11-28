@@ -115,7 +115,7 @@ def card(draw, w, x, y, colour):
     # is the card's big number already, so the curve carries no second copy of it.
     base_txt = number(baseline)
     gutter = max(52, draw.textlength(base_txt, font=font(22, BOLD)) + 10)
-    x0, x1 = x + PAD + gutter, x + COL - PAD - 18
+    x0, x1 = x + PAD + gutter, x + COL - PAD - 46
     y0, y1 = y + 102, y + 146
     ords = [date.fromisoformat(d).toordinal() for d, _ in series]
     lo, hi = min(vals), max(vals)
@@ -131,6 +131,59 @@ def card(draw, w, x, y, colour):
         draw.ellipse([px - 4, py - 4, px + 4, py + 4], fill=colour)
     px, py = pts[best_i]
     draw.ellipse([px - 7, py - 7, px + 7, py + 7], fill=colour)
+    # The two numbers the curve itself has to carry (Chaehan, 2026-11-28: "the
+    # visualizations lack the number at the end of chart and at the max"): the
+    # highest reading, and the reading it ended on. The best is the big number
+    # at the top, the baseline is numbered at the left, and a point that is both
+    # the highest and the last carries one number.
+    f2 = font(20, BOLD)
+
+    def rect_for(text, cx, cy, align="c"):
+        tw = draw.textlength(text, font=f2)
+        h = 24
+        left = cx - tw / 2 if align == "c" else (cx if align == "l" else cx - tw)
+        left = min(max(left, x0), x + COL - PAD - tw)
+        top = min(max(cy - h / 2, y + 94), y + 154)
+        return (left - 4, top, left + tw + 4, top + h)
+
+    def chip(text, cx, cy, align="c", r=None):
+        r = r or rect_for(text, cx, cy, align)
+        tw = draw.textlength(text, font=f2)
+        draw.rounded_rectangle(list(r), radius=7, fill=CARD)
+        draw.text((r[0] + 4, (r[1] + r[3]) / 2), text, font=f2, fill=INK, anchor="lm")
+        return r
+
+    def hits(a, b):
+        return not (a[2] <= b[0] or b[2] <= a[0] or a[3] <= b[1] or b[3] <= a[1])
+
+    # The two numbers the curve itself carries (Chaehan, 2026-11-28: "the
+    # visualizations lack the number at the end of chart and at the max"): the
+    # highest reading and the reading it ended on. The best is the big number at
+    # the top and the baseline is numbered at the left, so neither chip covers
+    # those, and the dots are redrawn on top so a chip never hides its own point.
+    last_px, last_py = pts[-1]
+    last_txt = number(vals[-1])
+    taken = [chip(last_txt, x + COL - PAD, last_py, "r")]
+    bh = font(22, BOLD)
+    taken.append((x0 - 8 - draw.textlength(base_txt, font=bh), by - 12, x0 + 12, by + 12))
+    max_i = vals.index(max(vals))
+    mx, my = pts[max_i]
+    max_txt = number(vals[max_i])
+    if max_i != len(vals) - 1 and max_txt != last_txt:
+        tw = draw.textlength(max_txt, font=f2)
+        for cx, cy in ((mx, my - 16), (mx, my + 16), (mx + tw / 2 + 44, my), (mx - tw / 2 - 44, my),
+                       (mx + tw / 2 + 44, my + 28), (mx + tw / 2 + 44, my - 28)):
+            r = rect_for(max_txt, cx, cy, "c")
+            if r[1] < y + 94 or r[3] > y + 154:
+                continue
+            if any(hits(r, q) for q in taken):
+                continue
+            chip(max_txt, cx, cy, "c", r)
+            break
+    draw.ellipse([last_px - 4, last_py - 4, last_px + 4, last_py + 4], fill=colour)
+    draw.ellipse([px - 5, py - 5, px + 5, py + 5], fill=colour)
+    bx, byy = pts[max_i]
+    draw.ellipse([bx - 5, byy - 5, bx + 5, byy + 5], fill=colour)
     span_years = series[0][0][:4] != series[-1][0][:4]
     draw.text((x + PAD, y + CARD_H - 8), axis_date(series[0][0], span_years), font=font(22),
               fill=GREY, anchor="ld")
